@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-const API_URL_ROOT = import.meta.env.VITE_API_URL !== undefined ? import.meta.env.VITE_API_URL : 'http://localhost:8080';
+const API_URL_ROOT = import.meta.env.PROD ? "" : (import.meta.env.VITE_API_URL || 'http://localhost:8080');
 const API_BASE = `${API_URL_ROOT}/api/admin`;
 
 function App() {

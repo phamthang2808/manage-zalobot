@@ -22,6 +22,8 @@ function App() {
   const [activeTab, setActiveTab] = useState(() => sessionStorage.getItem('adminTab') || 'dashboard');
   const [view, setView] = useState(() => sessionStorage.getItem('adminView') || 'home'); // 'home' or 'admin'
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const [stats, setStats] = useState({
     totalMembers: 0,
     totalOrders: 0,
@@ -153,25 +155,55 @@ function App() {
     }
   }, [token, user]);
 
-  // Google Sign-In Initializer
+  // Google Sign-In Initializer with polling to handle race conditions & responsive button width
   useEffect(() => {
-    if (isLoginModalOpen && !token && window.google) {
-      const timer = setTimeout(() => {
+    if (!isLoginModalOpen || token) return;
+
+    let intervalId;
+    let attempts = 0;
+
+    const initializeGoogleBtn = () => {
+      if (window.google) {
         try {
           window.google.accounts.id.initialize({
             client_id: '195858897824-4h5ffebs0djtuncmhod98o0ca495ju71.apps.googleusercontent.com',
             callback: handleGoogleLoginSuccess
           });
-          window.google.accounts.id.renderButton(
-            document.getElementById('google-signin-btn'),
-            { theme: 'dark', size: 'large', width: 336 }
-          );
+
+          // Determine button width dynamically to fit mobile viewport
+          const calculatedWidth = Math.max(200, Math.min(336, window.innerWidth - 64));
+
+          const btnElem = document.getElementById('google-signin-btn');
+          if (btnElem) {
+            window.google.accounts.id.renderButton(
+              btnElem,
+              { theme: 'dark', size: 'large', width: calculatedWidth }
+            );
+          }
+          if (intervalId) clearInterval(intervalId);
         } catch (err) {
           console.error('Lỗi khi load nút Google Login:', err);
         }
-      }, 100);
-      return () => clearTimeout(timer);
+      }
+    };
+
+    // Try immediately
+    initializeGoogleBtn();
+
+    // If window.google is not ready, check every 200ms
+    if (!window.google) {
+      intervalId = setInterval(() => {
+        attempts++;
+        if (window.google || attempts > 50) { // Max 10 seconds
+          initializeGoogleBtn();
+          clearInterval(intervalId);
+        }
+      }, 200);
     }
+
+    return () => {
+      if (intervalId) clearInterval(intervalId);
+    };
   }, [isLoginModalOpen, token]);
 
   const handleGoogleLoginSuccess = async (response) => {
@@ -413,10 +445,41 @@ function App() {
         {/* Header / Navbar */}
         <header className="landing-header">
           <div className="landing-logo">🤖 28Symues Affiliate</div>
-          <nav className="landing-nav">
-            <a href="#home">Trang chủ</a>
-            <a href="#features">Tính năng</a>
-            <a href="#steps">Hướng dẫn</a>
+          <nav className={`landing-nav${mobileMenuOpen ? ' open' : ''}`}>
+            <a href="#home" onClick={() => setMobileMenuOpen(false)}>Trang chủ</a>
+            <a href="#features" onClick={() => setMobileMenuOpen(false)}>Tính năng</a>
+            <a href="#steps" onClick={() => setMobileMenuOpen(false)}>Hướng dẫn</a>
+            {/* Mobile-only actions inside nav */}
+            <div className="mobile-nav-actions">
+              {token ? (
+                <>
+                  <div className="user-widget">
+                    {user?.avatarUrl ? (
+                      <img src={user.avatarUrl} alt="Avatar" referrerPolicy="no-referrer" style={{ width: '28px', height: '28px', borderRadius: '50%' }} />
+                    ) : (
+                      <div className="user-widget-avatar">{(user?.fullName || 'U').substring(0,1).toUpperCase()}</div>
+                    )}
+                    <span className="user-widget-name">{user?.fullName}</span>
+                  </div>
+                  {isAdmin && (
+                    <button className="btn btn-glow" onClick={() => { setView('admin'); sessionStorage.setItem('adminView','admin'); setMobileMenuOpen(false); }}>
+                      ⚙️ Trang Quản Trị
+                    </button>
+                  )}
+                  <button className="btn" onClick={() => { handleLogout(); setMobileMenuOpen(false); }} style={{ border: '1px solid rgba(255,255,255,0.1)' }}>
+                    Đăng xuất
+                  </button>
+                </>
+              ) : (
+                <button className="btn btn-glow" onClick={() => {
+                  setLoginError('');
+                  setIsLoginModalOpen(true);
+                  setMobileMenuOpen(false);
+                }}>
+                  Đăng nhập
+                </button>
+              )}
+            </div>
           </nav>
           <div className="landing-actions">
             {token ? (
@@ -449,7 +512,19 @@ function App() {
               </button>
             )}
           </div>
+          {/* Hamburger button - mobile only */}
+          <button
+            className={`hamburger${mobileMenuOpen ? ' active' : ''}`}
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            aria-label="Toggle menu"
+          >
+            <span></span>
+            <span></span>
+            <span></span>
+          </button>
         </header>
+        {/* Mobile menu overlay */}
+        {mobileMenuOpen && <div className="mobile-overlay" onClick={() => setMobileMenuOpen(false)}></div>}
 
         {/* Hero Section */}
         <section id="home" className="hero-section">
@@ -505,7 +580,7 @@ function App() {
         </section>
 
         {/* Steps Section */}
-        <section id="steps" className="instructions-section" style={{ borderTop: '1px solid var(--border-color)', borderBottom: '1px solid var(--border-color)' }}>
+        <section id="steps" className="instructions-section" style={{ borderTop: '1px solid rgba(255,255,255,0.06)', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
           <h2 className="section-title">3 Bước Bắt Đầu Đơn Giản</h2>
           <p className="section-subtitle">Chỉ mất 5 phút để thiết lập và khởi chạy chatbot trong nhóm của bạn</p>
           <div className="instructions-grid">
@@ -587,8 +662,10 @@ function App() {
 
   return (
     <div className="app-container">
+      {/* Mobile sidebar overlay */}
+      {sidebarOpen && <div className="sidebar-overlay" onClick={() => setSidebarOpen(false)}></div>}
       {/* Sidebar Navigation */}
-      <aside className="sidebar">
+      <aside className={`sidebar${sidebarOpen ? ' open' : ''}`}>
         <div className="sidebar-header">
           <div className="sidebar-logo">
             <span>🤖 28Symues Admin</span>
@@ -597,7 +674,7 @@ function App() {
         <ul className="sidebar-menu">
           <li 
             className="menu-item"
-            onClick={() => { setView('home'); sessionStorage.removeItem('adminView'); }}
+            onClick={() => { setView('home'); sessionStorage.removeItem('adminView'); setSidebarOpen(false); }}
             style={{ 
               background: 'rgba(56, 189, 248, 0.05)', 
               color: '#38BDF8', 
@@ -610,25 +687,25 @@ function App() {
           </li>
           <li 
             className={`menu-item ${activeTab === 'dashboard' ? 'active' : ''}`}
-            onClick={() => { setActiveTab('dashboard'); sessionStorage.setItem('adminTab','dashboard'); sessionStorage.setItem('adminView','admin'); }}
+            onClick={() => { setActiveTab('dashboard'); sessionStorage.setItem('adminTab','dashboard'); sessionStorage.setItem('adminView','admin'); setSidebarOpen(false); }}
           >
             📊 Tổng quan
           </li>
           <li 
             className={`menu-item ${activeTab === 'users' ? 'active' : ''}`}
-            onClick={() => { setActiveTab('users'); sessionStorage.setItem('adminTab','users'); sessionStorage.setItem('adminView','admin'); }}
+            onClick={() => { setActiveTab('users'); sessionStorage.setItem('adminTab','users'); sessionStorage.setItem('adminView','admin'); setSidebarOpen(false); }}
           >
             👥 Thành viên
           </li>
           <li 
             className={`menu-item ${activeTab === 'orders' ? 'active' : ''}`}
-            onClick={() => { setActiveTab('orders'); sessionStorage.setItem('adminTab','orders'); sessionStorage.setItem('adminView','admin'); }}
+            onClick={() => { setActiveTab('orders'); sessionStorage.setItem('adminTab','orders'); sessionStorage.setItem('adminView','admin'); setSidebarOpen(false); }}
           >
             🛒 Đơn hàng
           </li>
           <li 
             className={`menu-item ${activeTab === 'payouts' ? 'active' : ''}`}
-            onClick={() => { setActiveTab('payouts'); sessionStorage.setItem('adminTab','payouts'); sessionStorage.setItem('adminView','admin'); }}
+            onClick={() => { setActiveTab('payouts'); sessionStorage.setItem('adminTab','payouts'); sessionStorage.setItem('adminView','admin'); setSidebarOpen(false); }}
           >
             💳 Rút tiền {stats.pendingPayoutsCount > 0 && (
               <span style={{
@@ -671,6 +748,9 @@ function App() {
       {/* Main Panel Content */}
       <main className="main-content">
         <header className="dashboard-header">
+          <button className="sidebar-toggle" onClick={() => setSidebarOpen(!sidebarOpen)} aria-label="Toggle sidebar">
+            <span></span><span></span><span></span>
+          </button>
           <h1 className="header-title">
             {activeTab === 'dashboard' && 'Bảng Điều Khiển Tổng Quan'}
             {activeTab === 'users' && 'Quản Lý Thành Viên'}
@@ -1056,13 +1136,13 @@ function App() {
 
       {selectedUser && (
         <div className="modal-overlay" onClick={() => setSelectedUser(null)}>
-          <div className="modal-content" onClick={(e) => e.stopPropagation()} style={{ width: '95vw', maxWidth: '1100px', padding: '30px', borderRadius: '16px' }}>
+          <div className="modal-content user-detail-modal" onClick={(e) => e.stopPropagation()}>
             <header className="modal-header" style={{ marginBottom: '20px' }}>
               <h2 className="modal-title" style={{ fontSize: '24px' }}>👤 Chi Tiết Thành Viên</h2>
               <button className="modal-close" onClick={() => setSelectedUser(null)} style={{ fontSize: '28px' }}>&times;</button>
             </header>
             <div className="modal-body">
-              <div className="member-detail-grid" style={{ gridTemplateColumns: '1fr 1fr', gap: '20px', marginBottom: '24px' }}>
+              <div className="member-detail-grid">
                 <div className="detail-item" style={{ padding: '20px', background: 'rgba(255,255,255,0.03)', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.05)' }}>
                   <div className="detail-label" style={{ fontSize: '12px', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '8px', color: 'var(--text-muted)' }}>Tên thành viên</div>
                   <div className="detail-value" style={{ color: 'var(--color-primary)', fontSize: '22px', fontWeight: '700' }}>{selectedUser.zaloName || 'Vô danh'}</div>
@@ -1082,7 +1162,7 @@ function App() {
               </div>
 
               {/* Mini user wallet stats */}
-              <div className="stats-grid" style={{ marginBottom: '20px', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px' }}>
+              <div className="stats-grid modal-stats-grid">
                 <div className="stat-card" style={{ padding: '16px' }}>
                   <span className="stat-label">Chờ xử lý</span>
                   <span className="stat-val" style={{ fontSize: '22px' }}>{formatMoney(selectedUser.wallet?.pendingCommission)}</span>

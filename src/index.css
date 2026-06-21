@@ -99,12 +99,15 @@ h1, h2, h3, h4 {
   font-size: 20px;
   font-weight: 800;
   letter-spacing: -0.5px;
-  background: linear-gradient(135deg, #FB923C, #F97316);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
   display: flex;
   align-items: center;
   gap: 8px;
+}
+
+.sidebar-logo span {
+  background: linear-gradient(135deg, #FB923C, #F97316);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
 .sidebar-menu {
@@ -622,12 +625,15 @@ tr:hover td {
   font-family: var(--font-heading);
   font-size: 22px;
   font-weight: 800;
-  background: linear-gradient(135deg, #f97316, #ec4899, #8b5cf6);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
   display: flex;
   align-items: center;
   gap: 10px;
+}
+
+.landing-logo span {
+  background: linear-gradient(135deg, #f97316, #ec4899, #8b5cf6);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
 .landing-nav {
@@ -1035,27 +1041,31 @@ tr:hover td {
 .modal-login-btn {
   width: 100%;
   padding: 12px;
-  background: #38BDF8;
-  color: #0B0E14;
+  background: linear-gradient(135deg, #f97316, #ec4899, #8b5cf6);
+  background-size: 200% auto;
+  color: #ffffff;
   border: none;
   border-radius: 8px;
   font-size: 15px;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.3s ease;
   margin-top: 10px;
-  box-shadow: 0 4px 12px rgba(56, 189, 248, 0.25);
+  box-shadow: 0 4px 15px rgba(236, 72, 153, 0.35);
 }
 
 .modal-login-btn:hover {
-  background: #7dd3fc;
-  box-shadow: 0 4px 20px rgba(56, 189, 248, 0.4);
+  background-position: right center;
+  box-shadow: 0 6px 20px rgba(236, 72, 153, 0.5), 0 0 12px rgba(139, 92, 246, 0.3);
+  transform: translateY(-1px);
 }
 
 .modal-login-btn:disabled {
-  background: #64748B;
+  background: #475569;
+  color: #94a3b8;
   cursor: not-allowed;
   box-shadow: none;
+  transform: none;
 }
 
 .modal-divider {
@@ -1699,4 +1709,35 @@ tr:hover td {
   .data-card h3 {
     font-size: 13px !important;
   }
+}
+
+/* Pricing Card Glow Styles */
+.pricing-card {
+  position: relative;
+}
+
+.pricing-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 24px;
+  padding: 1px;
+  background: linear-gradient(135deg, #f97316, #ec4899, #8b5cf6);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: 0.15;
+  transition: opacity 0.3s ease;
+}
+
+.pricing-card:hover {
+  transform: translateY(-8px);
+  background: rgba(255, 255, 255, 0.06) !important;
+  box-shadow: 0 20px 40px -15px rgba(139, 92, 246, 0.4), 0 0 30px rgba(249, 115, 22, 0.15) !important;
+  border-color: rgba(255, 255, 255, 0.15) !important;
+}
+
+.pricing-card:hover::before {
+  opacity: 1;
 }

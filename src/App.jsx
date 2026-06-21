@@ -46,6 +46,14 @@ function App() {
   // Modal State
   const [selectedUser, setSelectedUser] = useState(null);
 
+  const [windowWidth, setWindowWidth] = useState(() => typeof window !== 'undefined' ? window.innerWidth : 375);
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const handleResize = () => setWindowWidth(window.innerWidth);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   // Fetch all data
   const fetchData = async (currentToken, currentUser) => {
     console.log(">>> [fetchData] currentToken:", currentToken, "currentUser:", currentUser);
@@ -177,7 +185,12 @@ function App() {
           if (btnElem) {
             window.google.accounts.id.renderButton(
               btnElem,
-              { theme: 'dark', size: 'large', width: calculatedWidth }
+              { 
+                theme: 'dark', 
+                size: 'large', 
+                width: calculatedWidth,
+                shape: 'rectangular'
+              }
             );
           }
           if (intervalId) clearInterval(intervalId);
@@ -444,11 +457,15 @@ function App() {
       <div className="landing-page">
         {/* Header / Navbar */}
         <header className="landing-header">
-          <div className="landing-logo">🤖 28Symues Affiliate</div>
+          <div className="landing-logo">
+            <img src="/logo.jpg" alt="Logo" style={{ width: '32px', height: '32px', borderRadius: '50%', objectFit: 'cover' }} />
+            <span>28Symues Affiliate</span>
+          </div>
           <nav className={`landing-nav${mobileMenuOpen ? ' open' : ''}`}>
             <a href="#home" onClick={() => setMobileMenuOpen(false)}>Trang chủ</a>
             <a href="#features" onClick={() => setMobileMenuOpen(false)}>Tính năng</a>
             <a href="#steps" onClick={() => setMobileMenuOpen(false)}>Hướng dẫn</a>
+            <a href="#pricing" onClick={() => setMobileMenuOpen(false)}>Bảng giá</a>
             {/* Mobile-only actions inside nav */}
             <div className="mobile-nav-actions">
               {token ? (
@@ -602,6 +619,76 @@ function App() {
           </div>
         </section>
 
+        {/* Pricing Section */}
+        <section id="pricing" className="pricing-section" style={{ padding: '80px 20px', textAlign: 'center', position: 'relative', zIndex: 10 }}>
+          <h2 className="section-title">Bảng Giá Dịch Vụ</h2>
+          <p className="section-subtitle">Chi phí tối ưu, hiệu quả tối đa cho nhóm Zalo săn sale của bạn</p>
+          
+          <div className="pricing-card" style={{
+            background: 'rgba(255, 255, 255, 0.03)',
+            border: '1px solid rgba(255, 255, 255, 0.08)',
+            borderRadius: '24px',
+            padding: '40px 32px',
+            maxWidth: '400px',
+            margin: '40px auto 0',
+            backdropFilter: 'blur(10px)',
+            boxShadow: '0 20px 40px -15px rgba(139, 92, 246, 0.25)',
+            position: 'relative',
+            overflow: 'hidden',
+            transition: 'all 0.3s ease'
+          }}>
+            <div style={{
+              background: 'linear-gradient(135deg, #f97316, #ec4899)',
+              color: '#fff',
+              padding: '6px 16px',
+              borderRadius: '20px',
+              fontSize: '12px',
+              fontWeight: '700',
+              textTransform: 'uppercase',
+              display: 'inline-block',
+              marginBottom: '20px'
+            }}>
+              Phổ Biến Nhất
+            </div>
+            <h3 style={{ fontSize: '24px', color: '#fff', marginBottom: '8px' }}>Zalo Bot Affiliate Pro</h3>
+            <p style={{ color: 'rgba(255, 255, 255, 0.5)', fontSize: '14px', marginBottom: '24px' }}>Cài đặt và cấu hình chatbot chạy 24/7</p>
+            
+            <div style={{ marginBottom: '32px' }}>
+              <span style={{ fontSize: '48px', fontWeight: '800', color: '#fff', fontFamily: 'var(--font-heading)' }}>199.000đ</span>
+              <span style={{ color: 'rgba(255, 255, 255, 0.6)', fontSize: '16px' }}> / tháng</span>
+            </div>
+            
+            <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 32px 0', textAlign: 'left', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+              <li style={{ display: 'flex', alignItems: 'center', gap: '10px', color: 'rgba(255, 255, 255, 0.8)', fontSize: '14.5px' }}>
+                <span style={{ color: '#34d399', fontWeight: 'bold' }}>✓</span> Tự động chuyển đổi link Shopee, Lazada, TikTok Shop
+              </li>
+              <li style={{ display: 'flex', alignItems: 'center', gap: '10px', color: 'rgba(255, 255, 255, 0.8)', fontSize: '14.5px' }}>
+                <span style={{ color: '#34d399', fontWeight: 'bold' }}>✓</span> Tương tác phản hồi tự động bằng AI GPT-4o
+              </li>
+              <li style={{ display: 'flex', alignItems: 'center', gap: '10px', color: 'rgba(255, 255, 255, 0.8)', fontSize: '14.5px' }}>
+                <span style={{ color: '#34d399', fontWeight: 'bold' }}>✓</span> Thống kê chi tiết đơn hàng và doanh số hoa hồng
+              </li>
+              <li style={{ display: 'flex', alignItems: 'center', gap: '10px', color: 'rgba(255, 255, 255, 0.8)', fontSize: '14.5px' }}>
+                <span style={{ color: '#34d399', fontWeight: 'bold' }}>✓</span> Rút tiền tự động bằng lệnh chat của thành viên
+              </li>
+              <li style={{ display: 'flex', alignItems: 'center', gap: '10px', color: 'rgba(255, 255, 255, 0.8)', fontSize: '14.5px' }}>
+                <span style={{ color: '#34d399', fontWeight: 'bold' }}>✓</span> Hỗ trợ bảo trì và cấu hình trọn gói 24/7
+              </li>
+            </ul>
+            
+            <button 
+              className="btn btn-glow" 
+              onClick={() => {
+                alert("Để đăng ký và sở hữu Bot, vui lòng liên hệ trực tiếp Zalo: 0888728256 (Phạm Thắng) để được hỗ trợ cấu hình và kích hoạt nhanh nhất!");
+                window.open("https://zalo.me/0888728256", "_blank");
+              }}
+              style={{ width: '100%', padding: '14px', borderRadius: '12px', fontSize: '16px', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+            >
+              🚀 Mua Ngay
+            </button>
+          </div>
+        </section>
+
         {/* Footer */}
         <footer className="landing-footer">
           <p>© 2026 28Symues Affiliate. Phát triển bằng sự tương tác thông minh và an toàn.</p>
@@ -612,9 +699,10 @@ function App() {
           <div className="modal-overlay" onClick={() => setIsLoginModalOpen(false)}>
             <div className="login-modal-content" onClick={(e) => e.stopPropagation()}>
               <div style={{ padding: '32px' }}>
-                <div className="login-modal-header">
-                  <h2 className="login-modal-title">🤖 Đăng nhập</h2>
-                  <button className="login-modal-close" onClick={() => setIsLoginModalOpen(false)}>&times;</button>
+                <div className="login-modal-header" style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                  <img src="/logo.jpg" alt="Logo" style={{ width: '28px', height: '28px', borderRadius: '50%', objectFit: 'cover' }} />
+                  <h2 className="login-modal-title">Đăng nhập</h2>
+                  <button className="login-modal-close" onClick={() => setIsLoginModalOpen(false)} style={{ marginLeft: 'auto' }}>&times;</button>
                 </div>
                 
                 {loginError && <div className="error-alert" style={{ marginBottom: '16px' }}>⚠️ {loginError}</div>}
@@ -625,7 +713,6 @@ function App() {
                     <input 
                       type="email" 
                       className="modal-form-input" 
-                      placeholder="admin@botzalo.com"
                       required
                       value={loginEmail}
                       onChange={(e) => setLoginEmail(e.target.value)}
@@ -636,7 +723,6 @@ function App() {
                     <input 
                       type="password" 
                       className="modal-form-input" 
-                      placeholder="••••••••"
                       required
                       value={loginPassword}
                       onChange={(e) => setLoginPassword(e.target.value)}
@@ -649,9 +735,61 @@ function App() {
                 
                 <div className="modal-divider">Hoặc</div>
                 
-                <div className="modal-google-container">
-                  <div id="google-signin-btn"></div>
-                </div>
+                {(() => {
+                  const calculatedWidth = Math.max(200, Math.min(336, windowWidth - 64));
+                  return (
+                    <div className="modal-google-container" style={{ 
+                      position: 'relative', 
+                      width: `${calculatedWidth}px`, 
+                      height: '40px', 
+                      margin: '16px auto 0' 
+                    }}>
+                      {/* Our custom premium gradient button */}
+                      <button className="btn-google-custom" style={{
+                        position: 'absolute',
+                        top: 0,
+                        left: 0,
+                        width: '100%',
+                        height: '100%',
+                        background: 'linear-gradient(135deg, #f97316, #ec4899, #8b5cf6)',
+                        backgroundSize: '200% auto',
+                        color: '#ffffff',
+                        border: 'none',
+                        borderRadius: '8px',
+                        fontSize: '14px',
+                        fontWeight: '600',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: '10px',
+                        boxShadow: '0 4px 15px rgba(236, 72, 153, 0.35)',
+                        cursor: 'pointer',
+                        pointerEvents: 'none',
+                        transition: 'all 0.3s ease'
+                      }}>
+                        <svg width="18" height="18" viewBox="0 0 18 18">
+                          <path fill="#fff" d="M17.64 9.2c0-.63-.06-1.25-.16-1.84H9v3.47h4.84c-.21 1.12-.84 2.07-1.8 2.71v2.24h2.91c1.7-1.56 2.69-3.87 2.69-6.58z"/>
+                          <path fill="#fff" d="M9 18c2.43 0 4.47-.8 5.96-2.22l-2.91-2.24c-.8.54-1.84.87-3.05.87-2.35 0-4.33-1.58-5.04-3.71H.95v2.3C2.43 15.98 5.48 18 9 18z"/>
+                          <path fill="#fff" d="M3.96 10.7c-.18-.54-.28-1.12-.28-1.7s.1-1.16.28-1.7V5.01H.95C.34 6.22 0 7.58 0 9s.34 2.78.95 3.99l3.01-2.29z"/>
+                          <path fill="#fff" d="M9 3.58c1.32 0 2.5.45 3.44 1.35L15 2.4C13.46.97 11.43 0 9 0 5.48 0 2.43 2.02.95 5.01l3.01 2.29c.71-2.13 2.69-3.71 5.04-3.71z"/>
+                        </svg>
+                        Đăng nhập bằng Google
+                      </button>
+                      
+                      {/* The invisible official Google button container */}
+                      <div id="google-signin-btn" style={{
+                        position: 'absolute',
+                        top: 0,
+                        left: 0,
+                        width: '100%',
+                        height: '100%',
+                        opacity: 0.01,
+                        cursor: 'pointer',
+                        zIndex: 10
+                      }}></div>
+                    </div>
+                  );
+                })()}
               </div>
             </div>
           </div>
@@ -668,7 +806,8 @@ function App() {
       <aside className={`sidebar${sidebarOpen ? ' open' : ''}`}>
         <div className="sidebar-header">
           <div className="sidebar-logo">
-            <span>🤖 28Symues Admin</span>
+            <img src="/logo.jpg" alt="Logo" style={{ width: '32px', height: '32px', borderRadius: '50%', objectFit: 'cover' }} />
+            <span>28Symues Admin</span>
           </div>
         </div>
         <ul className="sidebar-menu">

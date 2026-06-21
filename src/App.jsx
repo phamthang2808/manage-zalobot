@@ -163,7 +163,7 @@ function App() {
     let attempts = 0;
 
     const initializeGoogleBtn = () => {
-      if (window.google) {
+      if (window.google  ) {
         try {
           window.google.accounts.id.initialize({
             client_id: '195858897824-4h5ffebs0djtuncmhod98o0ca495ju71.apps.googleusercontent.com',

@@ -807,7 +807,7 @@ function App() {
               </button>
             </div>
 
-            {/* Gói Pro ... */}
+            {/* Gói Pro Max */}
             <div className="pricing-card" style={{
               background: 'rgba(255, 255, 255, 0.02)',
               border: '1px solid rgba(255, 255, 255, 0.05)',

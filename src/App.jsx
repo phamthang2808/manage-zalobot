@@ -156,6 +156,52 @@ function App() {
     checkSession();
   }, []);
 
+  // Handle Google Redirect login token on page load
+  useEffect(() => {
+    const handleRedirectHash = async () => {
+      try {
+        const hash = window.location.hash;
+        if (hash && (hash.includes('id_token=') || hash.includes('access_token='))) {
+          const params = new URLSearchParams(hash.substring(1));
+          const idToken = params.get('id_token');
+          if (idToken) {
+            setLoginLoading(true);
+            setLoginError('');
+            setIsLoginModalOpen(true);
+            console.log(">>> [Google Redirect Flow] Sending id_token to backend...");
+            const res = await fetch(`${API_URL_ROOT}/api/users/google-login`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ token: idToken }),
+              credentials: 'include'
+            });
+            const result = await res.json();
+            if (!res.ok) {
+              throw new Error(result.message || 'Xác thực Google thất bại');
+            }
+            const authData = result.data;
+            console.log(">>> [Google Redirect Flow] Success! authData:", authData);
+            setToken('session-cookie');
+            setUser(authData.user);
+            sessionStorage.setItem('adminUser', JSON.stringify(authData.user));
+            sessionStorage.setItem('adminToken', 'session-cookie');
+            setIsLoginModalOpen(false);
+            
+            // Clean hash from URL without reloading the page
+            window.history.replaceState(null, null, window.location.pathname + window.location.search);
+          }
+        }
+      } catch (err) {
+        console.error(">>> [Google Redirect Flow] Error:", err);
+        setLoginError(err.message);
+        setIsLoginModalOpen(true);
+      } finally {
+        setLoginLoading(false);
+      }
+    };
+    handleRedirectHash();
+  }, []);
+
   useEffect(() => {
     console.log(">>> [useEffect] token or user changed. token:", token, "user:", user);
     if (token && user) {
@@ -621,71 +667,203 @@ function App() {
 
         {/* Pricing Section */}
         <section id="pricing" className="pricing-section" style={{ padding: '80px 20px', textAlign: 'center', position: 'relative', zIndex: 10 }}>
-          <h2 className="section-title">Bảng Giá Dịch Vụ</h2>
-          <p className="section-subtitle">Chi phí tối ưu, hiệu quả tối đa cho nhóm Zalo săn sale của bạn</p>
+          <h2 className="section-title" style={{ fontSize: '36px', fontWeight: '800', color: '#fff', marginBottom: '12px' }}>Bảng Giá Dịch Vụ</h2>
+          <p className="section-subtitle" style={{ color: 'rgba(255, 255, 255, 0.6)', fontSize: '16px', marginBottom: '48px' }}>Chi phí tối ưu, hiệu quả tối đa cho nhóm Zalo săn sale của bạn</p>
           
-          <div className="pricing-card" style={{
-            background: 'rgba(255, 255, 255, 0.03)',
-            border: '1px solid rgba(255, 255, 255, 0.08)',
-            borderRadius: '24px',
-            padding: '40px 32px',
-            maxWidth: '400px',
-            margin: '40px auto 0',
-            backdropFilter: 'blur(10px)',
-            boxShadow: '0 20px 40px -15px rgba(139, 92, 246, 0.25)',
-            position: 'relative',
-            overflow: 'hidden',
-            transition: 'all 0.3s ease'
+          <div style={{
+            display: 'flex',
+            flexWrap: 'wrap',
+            justifyContent: 'center',
+            gap: '24px',
+            maxWidth: '1200px',
+            margin: '0 auto'
           }}>
-            <div style={{
-              background: 'linear-gradient(135deg, #f97316, #ec4899)',
-              color: '#fff',
-              padding: '6px 16px',
-              borderRadius: '20px',
-              fontSize: '12px',
-              fontWeight: '700',
-              textTransform: 'uppercase',
-              display: 'inline-block',
-              marginBottom: '20px'
+            
+            {/* Gói Thường */}
+            <div className="pricing-card" style={{
+              background: 'rgba(255, 255, 255, 0.02)',
+              border: '1px solid rgba(255, 255, 255, 0.05)',
+              borderRadius: '24px',
+              padding: '40px 32px',
+              width: '100%',
+              maxWidth: '360px',
+              backdropFilter: 'blur(10px)',
+              boxShadow: '0 10px 30px -10px rgba(0, 0, 0, 0.3)',
+              position: 'relative',
+              overflow: 'hidden',
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'space-between',
+              transition: 'all 0.3s ease'
             }}>
-              Phổ Biến Nhất
+              <div>
+                <h3 style={{ fontSize: '22px', color: '#fff', marginBottom: '8px', fontWeight: '700' }}>Zalo Bot Affiliate</h3>
+                <p style={{ color: 'rgba(255, 255, 255, 0.5)', fontSize: '14px', marginBottom: '24px' }}>Bản tiêu chuẩn chuyển đổi link cơ bản</p>
+                
+                <div style={{ marginBottom: '32px' }}>
+                  <span style={{ fontSize: '42px', fontWeight: '800', color: '#fff', fontFamily: 'var(--font-heading)' }}>199.000đ</span>
+                  <span style={{ color: 'rgba(255, 255, 255, 0.6)', fontSize: '15px' }}> / tháng</span>
+                </div>
+                
+                <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 32px 0', textAlign: 'left', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                  <li style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', color: 'rgba(255, 255, 255, 0.8)', fontSize: '14px' }}>
+                    <span style={{ color: '#34d399', fontWeight: 'bold' }}>✓</span> Tự động nhận diện và chuyển đổi link Shopee, Lazada, TikTok Shop
+                  </li>
+                  <li style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', color: 'rgba(255, 255, 255, 0.8)', fontSize: '14px' }}>
+                    <span style={{ color: '#34d399', fontWeight: 'bold' }}>✓</span> Gắn mã SubID theo Zalo ID người gửi
+                  </li>
+                  <li style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', color: 'rgba(255, 255, 255, 0.8)', fontSize: '14px' }}>
+                    <span style={{ color: '#34d399', fontWeight: 'bold' }}>✓</span> Chatbot phản hồi tự động trong nhóm chat 24/7
+                  </li>
+                  <li style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', color: 'rgba(255, 255, 255, 0.8)', fontSize: '14px' }}>
+                    <span style={{ color: '#34d399', fontWeight: 'bold' }}>✓</span> Cấu hình mẫu tin nhắn phản hồi cơ bản
+                  </li>
+                </ul>
+              </div>
+              
+              <button 
+                className="btn" 
+                onClick={() => {
+                  alert("Để đăng ký và sở hữu Bot, vui lòng liên hệ trực tiếp Zalo: 0888728256 (Phạm Thắng) để được hỗ trợ cấu hình và kích hoạt nhanh nhất!");
+                  window.open("https://zalo.me/0888728256", "_blank");
+                }}
+                style={{ width: '100%', padding: '14px', borderRadius: '12px', fontSize: '15px', border: '1px solid rgba(255,255,255,0.1)', cursor: 'pointer', background: 'transparent', color: '#fff' }}
+              >
+                Liên Hệ Ngay
+              </button>
             </div>
-            <h3 style={{ fontSize: '24px', color: '#fff', marginBottom: '8px' }}>Zalo Bot Affiliate Pro</h3>
-            <p style={{ color: 'rgba(255, 255, 255, 0.5)', fontSize: '14px', marginBottom: '24px' }}>Cài đặt và cấu hình chatbot chạy 24/7</p>
-            
-            <div style={{ marginBottom: '32px' }}>
-              <span style={{ fontSize: '48px', fontWeight: '800', color: '#fff', fontFamily: 'var(--font-heading)' }}>199.000đ</span>
-              <span style={{ color: 'rgba(255, 255, 255, 0.6)', fontSize: '16px' }}> / tháng</span>
+
+            {/* Gói Pro - Phổ biến nhất */}
+            <div className="pricing-card" style={{
+              background: 'rgba(255, 255, 255, 0.04)',
+              border: '1px solid rgba(139, 92, 246, 0.3)',
+              borderRadius: '24px',
+              padding: '40px 32px',
+              width: '100%',
+              maxWidth: '360px',
+              backdropFilter: 'blur(10px)',
+              boxShadow: '0 20px 40px -15px rgba(139, 92, 246, 0.25)',
+              position: 'relative',
+              overflow: 'hidden',
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'space-between',
+              transition: 'all 0.3s ease',
+              transform: windowWidth >= 768 ? 'scale(1.03)' : 'none',
+              zIndex: 2
+            }}>
+              <div style={{
+                position: 'absolute',
+                top: '0',
+                right: '0',
+                background: 'linear-gradient(135deg, #f97316, #ec4899)',
+                color: '#fff',
+                padding: '6px 20px',
+                borderBottomLeftRadius: '16px',
+                fontSize: '11px',
+                fontWeight: '700',
+                textTransform: 'uppercase',
+                letterSpacing: '0.5px'
+              }}>
+                Phổ Biến Nhất
+              </div>
+              <div>
+                <h3 style={{ fontSize: '22px', color: '#fff', marginBottom: '8px', fontWeight: '700', marginTop: '10px' }}>Zalo Bot Affiliate Pro</h3>
+                <p style={{ color: 'rgba(255, 255, 255, 0.5)', fontSize: '14px', marginBottom: '24px' }}>Như bản thương mại, có thêm Web quản lý đối soát riêng</p>
+                
+                <div style={{ marginBottom: '32px' }}>
+                  <span style={{ fontSize: '42px', fontWeight: '800', color: '#fff', fontFamily: 'var(--font-heading)' }}>299.000đ</span>
+                  <span style={{ color: 'rgba(255, 255, 255, 0.6)', fontSize: '15px' }}> / tháng</span>
+                </div>
+                
+                <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 32px 0', textAlign: 'left', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                  <li style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', color: 'rgba(255, 255, 255, 0.8)', fontSize: '14px' }}>
+                    <span style={{ color: '#34d399', fontWeight: 'bold' }}>✓</span> Tự động chuyển đổi link Shopee, Lazada, TikTok Shop
+                  </li>
+                  <li style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', color: 'rgba(255, 255, 255, 0.8)', fontSize: '14px' }}>
+                    <span style={{ color: '#34d399', fontWeight: 'bold' }}>✓</span> Tương tác phản hồi tự động bằng AI GPT-4o
+                  </li>
+                  <li style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', color: 'rgba(255, 255, 255, 0.8)', fontSize: '14px' }}>
+                    <span style={{ color: '#34d399', fontWeight: 'bold' }}>✓</span> **Có giao diện Web quản lý & đối soát hoa hồng riêng**
+                  </li>
+                  <li style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', color: 'rgba(255, 255, 255, 0.8)', fontSize: '14px' }}>
+                    <span style={{ color: '#34d399', fontWeight: 'bold' }}>✓</span> Lọc trùng đơn hàng, tự động dịch SubID không dấu sang tên Zalo gốc
+                  </li>
+                  <li style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', color: 'rgba(255, 255, 255, 0.8)', fontSize: '14px' }}>
+                    <span style={{ color: '#34d399', fontWeight: 'bold' }}>✓</span> Đánh dấu thanh toán và thống kê hoa hồng real-time
+                  </li>
+                </ul>
+              </div>
+              
+              <button 
+                className="btn btn-glow" 
+                onClick={() => {
+                  alert("Để đăng ký và sở hữu Bot, vui lòng liên hệ trực tiếp Zalo: 0888728256 (Phạm Thắng) để được hỗ trợ cấu hình và kích hoạt nhanh nhất!");
+                  window.open("https://zalo.me/0888728256", "_blank");
+                }}
+                style={{ width: '100%', padding: '14px', borderRadius: '12px', fontSize: '15px', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+              >
+                🚀 Mua Ngay
+              </button>
             </div>
-            
-            <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 32px 0', textAlign: 'left', display: 'flex', flexDirection: 'column', gap: '16px' }}>
-              <li style={{ display: 'flex', alignItems: 'center', gap: '10px', color: 'rgba(255, 255, 255, 0.8)', fontSize: '14.5px' }}>
-                <span style={{ color: '#34d399', fontWeight: 'bold' }}>✓</span> Tự động chuyển đổi link Shopee, Lazada, TikTok Shop
-              </li>
-              <li style={{ display: 'flex', alignItems: 'center', gap: '10px', color: 'rgba(255, 255, 255, 0.8)', fontSize: '14.5px' }}>
-                <span style={{ color: '#34d399', fontWeight: 'bold' }}>✓</span> Tương tác phản hồi tự động bằng AI GPT-4o
-              </li>
-              <li style={{ display: 'flex', alignItems: 'center', gap: '10px', color: 'rgba(255, 255, 255, 0.8)', fontSize: '14.5px' }}>
-                <span style={{ color: '#34d399', fontWeight: 'bold' }}>✓</span> Thống kê chi tiết đơn hàng và doanh số hoa hồng
-              </li>
-              <li style={{ display: 'flex', alignItems: 'center', gap: '10px', color: 'rgba(255, 255, 255, 0.8)', fontSize: '14.5px' }}>
-                <span style={{ color: '#34d399', fontWeight: 'bold' }}>✓</span> Rút tiền tự động bằng lệnh chat của thành viên
-              </li>
-              <li style={{ display: 'flex', alignItems: 'center', gap: '10px', color: 'rgba(255, 255, 255, 0.8)', fontSize: '14.5px' }}>
-                <span style={{ color: '#34d399', fontWeight: 'bold' }}>✓</span> Hỗ trợ bảo trì và cấu hình trọn gói 24/7
-              </li>
-            </ul>
-            
-            <button 
-              className="btn btn-glow" 
-              onClick={() => {
-                alert("Để đăng ký và sở hữu Bot, vui lòng liên hệ trực tiếp Zalo: 0888728256 (Phạm Thắng) để được hỗ trợ cấu hình và kích hoạt nhanh nhất!");
-                window.open("https://zalo.me/0888728256", "_blank");
-              }}
-              style={{ width: '100%', padding: '14px', borderRadius: '12px', fontSize: '16px', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-            >
-              🚀 Mua Ngay
-            </button>
+
+            {/* Gói Pro ... */}
+            <div className="pricing-card" style={{
+              background: 'rgba(255, 255, 255, 0.02)',
+              border: '1px solid rgba(255, 255, 255, 0.05)',
+              borderRadius: '24px',
+              padding: '40px 32px',
+              width: '100%',
+              maxWidth: '360px',
+              backdropFilter: 'blur(10px)',
+              boxShadow: '0 10px 30px -10px rgba(0, 0, 0, 0.3)',
+              position: 'relative',
+              overflow: 'hidden',
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'space-between',
+              transition: 'all 0.3s ease'
+            }}>
+              <div>
+                <h3 style={{ fontSize: '22px', color: '#fff', marginBottom: '8px', fontWeight: '700' }}>Zalo Bot Affiliate Pro Max</h3>
+                <p style={{ color: 'rgba(255, 255, 255, 0.5)', fontSize: '14px', marginBottom: '24px' }}>Bản cao cấp đầy đủ tính năng, hiệu năng tối ưu nhất</p>
+                
+                <div style={{ marginBottom: '32px' }}>
+                  <span style={{ fontSize: '42px', fontWeight: '800', color: '#fff', fontFamily: 'var(--font-heading)' }}>499.000đ</span>
+                  <span style={{ color: 'rgba(255, 255, 255, 0.6)', fontSize: '15px' }}> / tháng</span>
+                </div>
+                
+                <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 32px 0', textAlign: 'left', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                  <li style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', color: 'rgba(255, 255, 255, 0.8)', fontSize: '14px' }}>
+                    <span style={{ color: '#34d399', fontWeight: 'bold' }}>✓</span> Đầy đủ tính năng của bản Pro
+                  </li>
+                  <li style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', color: 'rgba(255, 255, 255, 0.8)', fontSize: '14px' }}>
+                    <span style={{ color: '#34d399', fontWeight: 'bold' }}>✓</span> Tương thích 100% với hệ thống Zalo Bot chính thức
+                  </li>
+                  <li style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', color: 'rgba(255, 255, 255, 0.8)', fontSize: '14px' }}>
+                    <span style={{ color: '#34d399', fontWeight: 'bold' }}>✓</span> Hạ tầng riêng biệt, tốc độ phản hồi nhanh chóng
+                  </li>
+                  <li style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', color: 'rgba(255, 255, 255, 0.8)', fontSize: '14px' }}>
+                    <span style={{ color: '#34d399', fontWeight: 'bold' }}>✓</span> Hệ thống ví thành viên, rút tiền tự động qua câu lệnh chat
+                  </li>
+                  <li style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', color: 'rgba(255, 255, 255, 0.8)', fontSize: '14px' }}>
+                    <span style={{ color: '#34d399', fontWeight: 'bold' }}>✓</span> Support ưu tiên, hỗ trợ kỹ thuật trực tiếp 24/7
+                  </li>
+                </ul>
+              </div>
+              
+              <button 
+                className="btn" 
+                onClick={() => {
+                  alert("Để đăng ký và sở hữu Bot, vui lòng liên hệ trực tiếp Zalo: 0888728256 (Phạm Thắng) để được hỗ trợ cấu hình và kích hoạt nhanh nhất!");
+                  window.open("https://zalo.me/0888728256", "_blank");
+                }}
+                style={{ width: '100%', padding: '14px', borderRadius: '12px', fontSize: '15px', border: '1px solid rgba(255,255,255,0.1)', cursor: 'pointer', background: 'transparent', color: '#fff' }}
+              >
+                Liên Hệ Ngay
+              </button>
+            </div>
+
           </div>
         </section>
 
@@ -737,6 +915,17 @@ function App() {
                 
                 {(() => {
                   const calculatedWidth = Math.max(200, Math.min(336, windowWidth - 64));
+                  const isMobile = windowWidth < 768;
+                  
+                  const handleGoogleLoginMobile = () => {
+                    const clientId = '195858897824-4h5ffebs0djtuncmhod98o0ca495ju71.apps.googleusercontent.com';
+                    // OAuth redirect URI must match origin (usually without trailing slash)
+                    const redirectUri = window.location.origin;
+                    const nonce = Math.random().toString(36).substring(2) + Date.now();
+                    const url = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=id_token&scope=openid%20profile%20email&nonce=${nonce}`;
+                    window.location.href = url;
+                  };
+
                   return (
                     <div className="modal-google-container" style={{ 
                       position: 'relative', 
@@ -745,28 +934,32 @@ function App() {
                       margin: '16px auto 0' 
                     }}>
                       {/* Our custom premium gradient button */}
-                      <button className="btn-google-custom" style={{
-                        position: 'absolute',
-                        top: 0,
-                        left: 0,
-                        width: '100%',
-                        height: '100%',
-                        background: 'linear-gradient(135deg, #f97316, #ec4899, #8b5cf6)',
-                        backgroundSize: '200% auto',
-                        color: '#ffffff',
-                        border: 'none',
-                        borderRadius: '8px',
-                        fontSize: '14px',
-                        fontWeight: '600',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        gap: '10px',
-                        boxShadow: '0 4px 15px rgba(236, 72, 153, 0.35)',
-                        cursor: 'pointer',
-                        pointerEvents: 'none',
-                        transition: 'all 0.3s ease'
-                      }}>
+                      <button 
+                        className="btn-google-custom" 
+                        onClick={isMobile ? handleGoogleLoginMobile : undefined}
+                        style={{
+                          position: 'absolute',
+                          top: 0,
+                          left: 0,
+                          width: '100%',
+                          height: '100%',
+                          background: 'linear-gradient(135deg, #f97316, #ec4899, #8b5cf6)',
+                          backgroundSize: '200% auto',
+                          color: '#ffffff',
+                          border: 'none',
+                          borderRadius: '8px',
+                          fontSize: '14px',
+                          fontWeight: '600',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          gap: '10px',
+                          boxShadow: '0 4px 15px rgba(236, 72, 153, 0.35)',
+                          cursor: 'pointer',
+                          pointerEvents: isMobile ? 'auto' : 'none',
+                          transition: 'all 0.3s ease'
+                        }}
+                      >
                         <svg width="18" height="18" viewBox="0 0 18 18">
                           <path fill="#fff" d="M17.64 9.2c0-.63-.06-1.25-.16-1.84H9v3.47h4.84c-.21 1.12-.84 2.07-1.8 2.71v2.24h2.91c1.7-1.56 2.69-3.87 2.69-6.58z"/>
                           <path fill="#fff" d="M9 18c2.43 0 4.47-.8 5.96-2.22l-2.91-2.24c-.8.54-1.84.87-3.05.87-2.35 0-4.33-1.58-5.04-3.71H.95v2.3C2.43 15.98 5.48 18 9 18z"/>
@@ -776,17 +969,19 @@ function App() {
                         Đăng nhập bằng Google
                       </button>
                       
-                      {/* The invisible official Google button container */}
-                      <div id="google-signin-btn" style={{
-                        position: 'absolute',
-                        top: 0,
-                        left: 0,
-                        width: '100%',
-                        height: '100%',
-                        opacity: 0.01,
-                        cursor: 'pointer',
-                        zIndex: 10
-                      }}></div>
+                      {/* The invisible official Google button container (only active on desktop) */}
+                      {!isMobile && (
+                        <div id="google-signin-btn" style={{
+                          position: 'absolute',
+                          top: 0,
+                          left: 0,
+                          width: '100%',
+                          height: '100%',
+                          opacity: 0.01,
+                          cursor: 'pointer',
+                          zIndex: 10
+                        }}></div>
+                      )}
                     </div>
                   );
                 })()}

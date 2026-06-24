@@ -727,7 +727,7 @@ function App() {
                   alert("Để đăng ký và sở hữu Bot, vui lòng liên hệ trực tiếp Zalo: 0888728256 (Phạm Thắng) để được hỗ trợ cấu hình và kích hoạt nhanh nhất!");
                   window.open("https://zalo.me/0888728256", "_blank");
                 }}
-                style={{ width: '100%', padding: '14px', borderRadius: '12px', fontSize: '15px', border: '1px solid rgba(255,255,255,0.1)', cursor: 'pointer', background: 'transparent', color: '#fff' }}
+                style={{ width: '100%', padding: '14px', borderRadius: '12px', fontSize: '15px', border: '1px solid rgba(255,255,255,0.1)', cursor: 'pointer', background: 'transparent', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
               >
                 Liên Hệ Ngay
               </button>
@@ -858,7 +858,7 @@ function App() {
                   alert("Để đăng ký và sở hữu Bot, vui lòng liên hệ trực tiếp Zalo: 0888728256 (Phạm Thắng) để được hỗ trợ cấu hình và kích hoạt nhanh nhất!");
                   window.open("https://zalo.me/0888728256", "_blank");
                 }}
-                style={{ width: '100%', padding: '14px', borderRadius: '12px', fontSize: '15px', border: '1px solid rgba(255,255,255,0.1)', cursor: 'pointer', background: 'transparent', color: '#fff' }}
+                style={{ width: '100%', padding: '14px', borderRadius: '12px', fontSize: '15px', border: '1px solid rgba(255,255,255,0.1)', cursor: 'pointer', background: 'transparent', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
               >
                 Liên Hệ Ngay
               </button>

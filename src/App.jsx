@@ -20,9 +20,45 @@ function App() {
   const [loginLoading, setLoginLoading] = useState(false);
 
   const [activeTab, setActiveTab] = useState(() => sessionStorage.getItem('adminTab') || 'dashboard');
-  const [view, setView] = useState(() => sessionStorage.getItem('adminView') || 'home'); // 'home' or 'admin'
+  const [view, setView] = useState(() => {
+    const path = window.location.pathname;
+    if (path.includes('/lookup') || path.includes('/tra-cuu') || window.location.search.includes('view=lookup') || window.location.hash.includes('lookup')) {
+      return 'lookup';
+    }
+    return sessionStorage.getItem('adminView') || 'home';
+  });
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+
+  // Public Lookup States
+  const [lookupSearchType, setLookupSearchType] = useState('NAME');
+  const [lookupQuery, setLookupQuery] = useState('');
+  const [lookupStartDate, setLookupStartDate] = useState('');
+  const [lookupEndDate, setLookupEndDate] = useState('');
+  const [lookupLoading, setLookupLoading] = useState(false);
+  const [lookupError, setLookupError] = useState('');
+  const [lookupResult, setLookupResult] = useState(null);
+  const [lookupRecentSearches, setLookupRecentSearches] = useState(() => {
+    try {
+      const saved = localStorage.getItem('recentLookups');
+      return saved ? JSON.parse(saved) : [];
+    } catch (e) {
+      return [];
+    }
+  });
+  const [lookupLocalFilter, setLookupLocalFilter] = useState('');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  // Public Lookup Actions States
+  const [isEditingBank, setIsEditingBank] = useState(false);
+  const [editBankName, setEditBankName] = useState('');
+  const [editAccountNumber, setEditAccountNumber] = useState('');
+  const [bankSaveError, setBankSaveError] = useState('');
+  const [bankSaveLoading, setBankSaveLoading] = useState(false);
+
+  const [payoutAmount, setPayoutAmount] = useState('');
+  const [payoutSaveError, setPayoutSaveError] = useState('');
+  const [payoutSaveLoading, setPayoutSaveLoading] = useState(false);
+  const [payoutSuccess, setPayoutSuccess] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [stats, setStats] = useState({
     totalMembers: 0,
@@ -134,7 +170,13 @@ function App() {
         } else {
           setUser(null);
           setToken('');
-          setView('home');
+          const path = window.location.pathname;
+          const search = window.location.search;
+          const hash = window.location.hash;
+          const isLookup = path.includes('/lookup') || path.includes('/tra-cuu') || search.includes('view=lookup') || hash.includes('lookup');
+          if (!isLookup) {
+            setView('home');
+          }
           sessionStorage.removeItem('adminView');
           sessionStorage.removeItem('adminTab');
           sessionStorage.removeItem('adminUser');
@@ -145,7 +187,13 @@ function App() {
         console.error(">>> [checkSession] error:", err);
         setUser(null);
         setToken('');
-        setView('home');
+        const path = window.location.pathname;
+        const search = window.location.search;
+        const hash = window.location.hash;
+        const isLookup = path.includes('/lookup') || path.includes('/tra-cuu') || search.includes('view=lookup') || hash.includes('lookup');
+        if (!isLookup) {
+          setView('home');
+        }
         sessionStorage.removeItem('adminView');
         sessionStorage.removeItem('adminTab');
         sessionStorage.removeItem('adminUser');
@@ -264,6 +312,161 @@ function App() {
       if (intervalId) clearInterval(intervalId);
     };
   }, [isLoginModalOpen, token]);
+
+  const handlePublicLookup = async (overrideQuery = null, overrideType = null) => {
+    const q = overrideQuery !== null ? overrideQuery : lookupQuery;
+    const type = overrideType !== null ? overrideType : lookupSearchType;
+
+    if (!q || !q.trim()) {
+      setLookupError('Vui lòng nhập từ khóa tìm kiếm');
+      return;
+    }
+
+    setLookupLoading(true);
+    setLookupError('');
+    setLookupResult(null);
+
+    try {
+      let url = `${API_URL_ROOT}/api/public/lookup?searchType=${type}&query=${encodeURIComponent(q.trim())}`;
+      if (lookupStartDate) url += `&startDate=${lookupStartDate}`;
+      if (lookupEndDate) url += `&endDate=${lookupEndDate}`;
+
+      const res = await fetch(url);
+      const json = await res.json();
+
+      if (!res.ok) {
+        throw new Error(json.message || 'Lỗi tra cứu thông tin');
+      }
+
+      setLookupResult(json.data);
+
+      // Save to recent search history
+      setLookupRecentSearches(prev => {
+        const item = { query: q.trim(), searchType: type };
+        const filtered = prev.filter(x => !(x.query.toLowerCase() === item.query.toLowerCase() && x.searchType === item.searchType));
+        const updated = [item, ...filtered].slice(0, 5);
+        localStorage.setItem('recentLookups', JSON.stringify(updated));
+        return updated;
+      });
+
+    } catch (err) {
+      console.error(err);
+      setLookupError(err.message);
+    } finally {
+      setLookupLoading(false);
+    }
+  };
+
+  const handleSaveBankInfo = async () => {
+    if (!editBankName.trim() || !editAccountNumber.trim()) {
+      setBankSaveError('Vui lòng điền đầy đủ tên ngân hàng và số tài khoản');
+      return;
+    }
+
+    setBankSaveLoading(true);
+    setBankSaveError('');
+
+    try {
+      const res = await fetch(`${API_URL_ROOT}/api/public/bank-info`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          zaloId: lookupResult.zaloId,
+          bankName: editBankName.trim(),
+          accountNumber: editAccountNumber.trim()
+        })
+      });
+      const json = await res.json();
+      if (!res.ok) {
+        throw new Error(json.message || 'Lỗi khi lưu thông tin ngân hàng');
+      }
+
+      // Cập nhật state cục bộ
+      setLookupResult(prev => ({
+        ...prev,
+        bankName: editBankName.trim(),
+        accountNumber: editAccountNumber.trim()
+      }));
+      setIsEditingBank(false);
+      alert('Đã cập nhật thông tin ngân hàng thành công!');
+    } catch (err) {
+      setBankSaveError(err.message);
+    } finally {
+      setBankSaveLoading(false);
+    }
+  };
+
+  const handleRequestPayout = async () => {
+    const amountVal = parseFloat(payoutAmount.replace(/[^\d]/g, ''));
+    if (isNaN(amountVal) || amountVal <= 0) {
+      setPayoutSaveError('Vui lòng nhập số tiền rút hợp lệ (lớn hơn 0đ)');
+      return;
+    }
+
+    if (!lookupResult.bankName || !lookupResult.accountNumber) {
+      setPayoutSaveError('Vui lòng thiết lập thông tin ngân hàng nhận tiền trước');
+      return;
+    }
+
+    setPayoutSaveLoading(true);
+    setPayoutSaveError('');
+
+    try {
+      const res = await fetch(`${API_URL_ROOT}/api/public/payout`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          zaloId: lookupResult.zaloId,
+          amount: amountVal
+        })
+      });
+      const json = await res.json();
+      if (!res.ok) {
+        throw new Error(json.message || 'Lỗi khi yêu cầu rút tiền');
+      }
+
+      setPayoutSuccess(true);
+      setPayoutAmount('');
+      // Tải lại dữ liệu ví tiền
+      handlePublicLookup(lookupResult.zaloId, 'ZALO_ID');
+    } catch (err) {
+      setPayoutSaveError(err.message);
+    } finally {
+      setPayoutSaveLoading(false);
+    }
+  };
+
+  // Auto-run lookup if search params are present in the URL on load
+  useEffect(() => {
+    if (view === 'lookup') {
+      const params = new URLSearchParams(window.location.search);
+      const urlSearchType = params.get('searchType');
+      const urlQuery = params.get('query') || params.get('q');
+      const urlStartDate = params.get('startDate');
+      const urlEndDate = params.get('endDate');
+
+      if (urlQuery) {
+        setLookupQuery(urlQuery);
+        if (urlSearchType) {
+          setLookupSearchType(urlSearchType);
+        }
+        if (urlStartDate) setLookupStartDate(urlStartDate);
+        if (urlEndDate) setLookupEndDate(urlEndDate);
+        
+        // Auto-trigger search
+        handlePublicLookup(urlQuery, urlSearchType || 'NAME');
+      }
+    }
+  }, [view]);
+
+  const removeRecentSearch = (e, index) => {
+    e.stopPropagation();
+    setLookupRecentSearches(prev => {
+      const updated = prev.filter((_, i) => i !== index);
+      localStorage.setItem('recentLookups', JSON.stringify(updated));
+      return updated;
+    });
+  };
 
   const handleGoogleLoginSuccess = async (response) => {
     console.log(">>> [handleGoogleLoginSuccess] response credential length:", response.credential?.length);
@@ -495,6 +698,811 @@ function App() {
            p.zaloId.includes(payoutSearch) ||
            String(p.id).includes(payoutSearch);
   });
+
+  if (view === 'lookup') {
+    const totalCommission = lookupResult 
+      ? (lookupResult.wallet.completedCommission + lookupResult.wallet.pendingCommission) 
+      : 0;
+
+    // Local filter of orders
+    const searchedOrders = lookupResult
+      ? lookupResult.orders.filter(o => 
+          o.orderId?.toLowerCase().includes(lookupLocalFilter.toLowerCase()) ||
+          o.productName?.toLowerCase().includes(lookupLocalFilter.toLowerCase())
+        )
+      : [];
+
+    return (
+      <div className="lookup-page-container">
+        <style dangerouslySetInnerHTML={{__html: `
+          .lookup-page-container {
+            min-height: 100vh;
+            width: 100%;
+            background: linear-gradient(135deg, #0f0c29 0%, #1a1040 25%, #24243e 50%, #1b1145 75%, #0f0c29 100%);
+            color: #e2e8f0;
+            font-family: 'Inter', system-ui, sans-serif;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+          }
+          /* Animated gradient orbs */
+          .lookup-page-container::before {
+            content: '';
+            position: absolute;
+            top: -15%;
+            left: -10%;
+            width: 700px;
+            height: 700px;
+            background: radial-gradient(circle, rgba(139, 92, 246, 0.25) 0%, rgba(59, 130, 246, 0.1) 40%, transparent 70%);
+            z-index: 1;
+            pointer-events: none;
+            animation: lookupFloatOrb1 8s ease-in-out infinite;
+          }
+          .lookup-page-container::after {
+            content: '';
+            position: absolute;
+            bottom: -20%;
+            right: -10%;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(236, 72, 153, 0.2) 0%, rgba(249, 115, 22, 0.08) 40%, transparent 70%);
+            z-index: 1;
+            pointer-events: none;
+            animation: lookupFloatOrb2 10s ease-in-out infinite;
+          }
+          @keyframes lookupFloatOrb1 {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(40px, 30px) scale(1.1); }
+          }
+          @keyframes lookupFloatOrb2 {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(-30px, -40px) scale(1.05); }
+          }
+          /* Ensure child content stays on top of orbs */
+          .lookup-header, .lookup-card, .stats-container, .orders-container, .lookup-error {
+            position: relative;
+            z-index: 2;
+          }
+          .lookup-header {
+            width: 100%;
+            max-width: 600px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+          }
+          .lookup-logo {
+            font-size: 18px;
+            font-weight: 800;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+          }
+          .lookup-logo span {
+            background: linear-gradient(135deg, #FB923C, #F97316);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+          }
+          .lookup-logo img {
+            border: 1px solid rgba(255, 255, 255, 0.15);
+          }
+          .lookup-admin-link {
+            font-size: 13px;
+            color: #9ca3af;
+            text-decoration: none;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 6px 12px;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            transition: all 0.2s ease;
+          }
+          .lookup-admin-link:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            border-color: #38bdf8;
+          }
+          .lookup-card {
+            width: 100%;
+            max-width: 600px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.5);
+            margin-bottom: 24px;
+          }
+          .lookup-title {
+            font-size: 22px;
+            font-weight: 700;
+            text-align: center;
+            color: #fff;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+          }
+          .lookup-subtitle {
+            font-size: 13px;
+            color: #a8a29e;
+            text-align: center;
+            margin-bottom: 24px;
+          }
+          .lookup-tabs {
+            display: flex;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            padding: 4px;
+            border-radius: 8px;
+            margin-bottom: 16px;
+          }
+          .lookup-tab {
+            flex: 1;
+            text-align: center;
+            padding: 10px;
+            font-size: 13px;
+            font-weight: 600;
+            border-radius: 6px;
+            cursor: pointer;
+            background: transparent;
+            border: none;
+            color: #94a3b8;
+            transition: all 0.2s ease;
+          }
+          .lookup-tab.active {
+            background: linear-gradient(135deg, #ec4899, #8b5cf6);
+            color: #fff;
+            box-shadow: 0 4px 12px rgba(139, 92, 246, 0.25);
+          }
+          .lookup-input-group {
+            margin-bottom: 16px;
+          }
+          .lookup-label {
+            display: block;
+            font-size: 11px;
+            font-weight: 600;
+            color: #d6d3d1;
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+          }
+          .lookup-input {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 8px;
+            padding: 12px 14px;
+            color: #fff;
+            font-size: 15px;
+            outline: none;
+            transition: all 0.2s ease;
+          }
+          .lookup-input:focus {
+            border-color: #38bdf8;
+            background: rgba(255, 255, 255, 0.05);
+            box-shadow: 0 0 12px rgba(56, 189, 248, 0.15);
+          }
+          .lookup-date-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 20px;
+          }
+          .lookup-btn {
+            width: 100%;
+            background: linear-gradient(135deg, #f97316, #ec4899, #8b5cf6);
+            background-size: 200% auto;
+            color: #fff;
+            font-size: 15px;
+            font-weight: 700;
+            border: none;
+            border-radius: 8px;
+            padding: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            box-shadow: 0 4px 15px rgba(236, 72, 153, 0.35);
+          }
+          .lookup-btn:hover {
+            background-position: right center;
+            box-shadow: 0 6px 20px rgba(236, 72, 153, 0.5), 0 0 12px rgba(139, 92, 246, 0.3);
+            transform: translateY(-1px);
+          }
+          .lookup-btn:disabled {
+            background: #475569;
+            color: #94a3b8;
+            cursor: not-allowed;
+            box-shadow: none;
+            transform: none;
+          }
+          .recent-searches {
+            margin-top: 16px;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+            color: #a8a29e;
+          }
+          .recent-tag {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            padding: 4px 10px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s ease;
+            color: #d6d3d1;
+          }
+          .recent-tag:hover {
+            border-color: #38bdf8;
+            background: rgba(255, 255, 255, 0.08);
+            color: #fff;
+          }
+          .recent-close {
+            font-size: 12px;
+            color: #ef4444;
+            font-weight: bold;
+          }
+          .lookup-error {
+            width: 100%;
+            max-width: 600px;
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid #ef4444;
+            color: #fca5a5;
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
+          }
+          .stats-container {
+            width: 100%;
+            max-width: 600px;
+            margin-bottom: 24px;
+          }
+          .stats-section-title {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+          }
+          .stats-cards-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+          }
+          .stats-cards-grid > :first-child {
+            grid-column: span 2;
+          }
+          .stat-card-item {
+            border-radius: 12px;
+            padding: 16px;
+            border: 1px solid rgba(255,255,255,0.06);
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+          }
+          .stat-card-item.total {
+            background: linear-gradient(135deg, #7c2d12 0%, #1c1917 100%);
+            border-color: #ea580c;
+          }
+          .stat-card-item.pending {
+            background: linear-gradient(135deg, #78350f 0%, #1c1917 100%);
+            border-color: #d97706;
+          }
+          .stat-card-item.completed {
+            background: linear-gradient(135deg, #064e3b 0%, #1c1917 100%);
+            border-color: #059669;
+          }
+          .stat-card-item.withdrawable {
+            background: linear-gradient(135deg, #0f172a 0%, #1c1917 100%);
+            border-color: #38bdf8;
+          }
+          .stat-card-item.received {
+            background: linear-gradient(135deg, #1e1b4b 0%, #1c1917 100%);
+            border-color: #4f46e5;
+          }
+          .stat-card-label {
+            font-size: 11px;
+            text-transform: uppercase;
+            color: #a8a29e;
+            margin-bottom: 4px;
+            font-weight: 600;
+          }
+          .stat-card-value {
+            font-size: 22px;
+            font-weight: 800;
+            color: #fff;
+          }
+          .stat-card-value.primary {
+            color: #fdba74;
+          }
+          .orders-container {
+            width: 100%;
+            max-width: 600px;
+          }
+          .order-card-item {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 12px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+          }
+          .order-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+            font-size: 12px;
+            color: #a8a29e;
+          }
+          .order-id-badge {
+            font-family: monospace;
+            font-weight: 700;
+            color: #f97316;
+          }
+          .order-card-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #fff;
+            margin-bottom: 10px;
+            line-height: 1.4;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+          }
+          .order-card-commission-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px dashed rgba(255,255,255,0.08);
+            padding-top: 10px;
+          }
+          .order-commission-label {
+            font-size: 12px;
+            color: #a8a29e;
+          }
+          .order-commission-val {
+            font-size: 15px;
+            font-weight: 700;
+            color: #10b981;
+          }
+          .order-status-badge {
+            font-size: 11px;
+            padding: 3px 8px;
+            border-radius: 20px;
+            font-weight: 700;
+          }
+          .order-status-badge.completed {
+            background: rgba(16, 185, 129, 0.15);
+            color: #10b981;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+          }
+          .order-status-badge.pending {
+            background: rgba(245, 158, 11, 0.15);
+            color: #f59e0b;
+            border: 1px solid rgba(245, 158, 11, 0.3);
+          }
+          .order-status-badge.cancelled {
+            background: rgba(239, 68, 68, 0.15);
+            color: #ef4444;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+          }
+          .lookup-spinner {
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,0.3);
+            border-top-color: #fff;
+            border-radius: 50%;
+            animation: lookup-spin 1s linear infinite;
+          }
+          @keyframes lookup-spin {
+            to { transform: rotate(360deg); }
+          }
+        `}} />
+
+        {/* Top Navbar */}
+        <header className="lookup-header">
+          <div className="lookup-logo">
+            <img src="/logo.jpg" alt="Logo" style={{ width: '32px', height: '32px', borderRadius: '50%', objectFit: 'cover' }} />
+            <span>28Symues Affiliate</span>
+          </div>
+          <button 
+            className="lookup-admin-link" 
+            onClick={() => {
+              setView('home');
+              sessionStorage.setItem('adminView', 'home');
+              window.location.hash = '';
+            }}
+          >
+            🏠 Về Trang Chủ
+          </button>
+        </header>
+
+        {/* Search Panel Card */}
+        <div className="lookup-card">
+          <h2 className="lookup-title">🔍 Tra Cứu Đơn Hàng & Ví Tiền</h2>
+          <p className="lookup-subtitle">Nhập thông tin cá nhân để tra cứu hoa hồng và trạng thái đơn</p>
+
+          <div className="lookup-tabs">
+            <button 
+              className={`lookup-tab ${lookupSearchType === 'NAME' ? 'active' : ''}`}
+              onClick={() => setLookupSearchType('NAME')}
+            >
+              👤 Tên Khách Hàng
+            </button>
+            <button 
+              className={`lookup-tab ${lookupSearchType === 'ORDER_ID' ? 'active' : ''}`}
+              onClick={() => setLookupSearchType('ORDER_ID')}
+            >
+              🛒 Mã Đơn Hàng
+            </button>
+          </div>
+
+          <div className="lookup-input-group">
+            <label className="lookup-label">
+              {lookupSearchType === 'NAME' ? 'Nhập tên của sếp' : 'Nhập mã đơn hàng (Shopee)'}
+            </label>
+            <input 
+              type="text"
+              className="lookup-input"
+              value={lookupQuery}
+              onChange={(e) => setLookupQuery(e.target.value)}
+              placeholder={lookupSearchType === 'NAME' ? 'Ví dụ: Oanh, Thắng...' : 'Ví dụ: 260606C8W7YARK...'}
+              onKeyDown={(e) => e.key === 'Enter' && handlePublicLookup()}
+            />
+          </div>
+
+          <div className="lookup-date-grid">
+            <div className="lookup-input-group" style={{ marginBottom: 0 }}>
+              <label className="lookup-label">Từ Ngày</label>
+              <input 
+                type="date"
+                className="lookup-input"
+                value={lookupStartDate}
+                onChange={(e) => setLookupStartDate(e.target.value)}
+              />
+            </div>
+            <div className="lookup-input-group" style={{ marginBottom: 0 }}>
+              <label className="lookup-label">Đến Ngày</label>
+              <input 
+                type="date"
+                className="lookup-input"
+                value={lookupEndDate}
+                onChange={(e) => setLookupEndDate(e.target.value)}
+              />
+            </div>
+          </div>
+
+          <button 
+            className="lookup-btn"
+            onClick={() => handlePublicLookup()}
+            disabled={lookupLoading}
+          >
+            {lookupLoading ? (
+              <>
+                <div className="lookup-spinner"></div>
+                Đang tìm kiếm...
+              </>
+            ) : (
+              'Tra cứu ngay'
+            )}
+          </button>
+
+          {/* Recent Searches */}
+          {lookupRecentSearches.length > 0 && (
+            <div className="recent-searches">
+              <span>Lịch sử:</span>
+              {lookupRecentSearches.map((item, idx) => (
+                <div 
+                  key={idx} 
+                  className="recent-tag"
+                  onClick={() => {
+                    setLookupQuery(item.query);
+                    setLookupSearchType(item.searchType);
+                    handlePublicLookup(item.query, item.searchType);
+                  }}
+                >
+                  <span>{item.searchType === 'NAME' ? '👤' : '🛒'} {item.query}</span>
+                  <span className="recent-close" onClick={(e) => removeRecentSearch(e, idx)}>&times;</span>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Error Alert */}
+        {lookupError && (
+          <div className="lookup-error">
+            ⚠️ {lookupError}
+          </div>
+        )}
+
+        {/* Results Panel */}
+        {lookupResult && (
+          <>
+            {/* 0. Bank Info Card */}
+            <div className="lookup-card" style={{ marginBottom: '24px' }}>
+              <h3 className="stats-section-title" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', margin: 0 }}>
+                <span>🏦 Thông Tin Ngân Hàng Nhận Tiền</span>
+                {!isEditingBank && (
+                  <button 
+                    className="lookup-admin-link" 
+                    style={{ fontSize: '12px', padding: '4px 10px', background: 'rgba(56, 189, 248, 0.1)', color: '#38bdf8', borderColor: 'rgba(56, 189, 248, 0.3)' }}
+                    onClick={() => {
+                      setEditBankName(lookupResult.bankName || '');
+                      setEditAccountNumber(lookupResult.accountNumber || '');
+                      setBankSaveError('');
+                      setIsEditingBank(true);
+                    }}
+                  >
+                    ✏️ {lookupResult.bankName ? 'Sửa' : 'Cài đặt'}
+                  </button>
+                )}
+              </h3>
+              
+              {isEditingBank ? (
+                <div style={{ marginTop: '16px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                  <div className="lookup-date-grid" style={{ marginBottom: '4px' }}>
+                    <div className="lookup-input-group" style={{ marginBottom: 0 }}>
+                      <label className="lookup-label">Tên Ngân Hàng</label>
+                      <input 
+                        type="text" 
+                        className="lookup-input" 
+                        placeholder="Ví dụ: MB, Techcombank..." 
+                        value={editBankName}
+                        onChange={(e) => setEditBankName(e.target.value)}
+                      />
+                    </div>
+                    <div className="lookup-input-group" style={{ marginBottom: 0 }}>
+                      <label className="lookup-label">Số Tài Khoản</label>
+                      <input 
+                        type="text" 
+                        className="lookup-input" 
+                        placeholder="Số tài khoản..." 
+                        value={editAccountNumber}
+                        onChange={(e) => setEditAccountNumber(e.target.value)}
+                      />
+                    </div>
+                  </div>
+                  {bankSaveError && <div style={{ color: '#f87171', fontSize: '12px' }}>⚠️ {bankSaveError}</div>}
+                  <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end', marginTop: '4px' }}>
+                    <button 
+                      className="lookup-admin-link" 
+                      style={{ padding: '6px 14px', background: 'rgba(255, 255, 255, 0.05)', color: '#9ca3af' }}
+                      onClick={() => setIsEditingBank(false)}
+                      disabled={bankSaveLoading}
+                    >
+                      Hủy
+                    </button>
+                    <button 
+                      className="lookup-btn" 
+                      style={{ width: 'auto', padding: '6px 16px', fontSize: '13px' }}
+                      onClick={handleSaveBankInfo}
+                      disabled={bankSaveLoading}
+                    >
+                      {bankSaveLoading ? 'Đang lưu...' : 'Lưu thông tin'}
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <div style={{ marginTop: '16px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', background: 'rgba(255, 255, 255, 0.02)', padding: '12px 16px', borderRadius: '8px', border: '1px solid rgba(255, 255, 255, 0.04)' }}>
+                  <div>
+                    <span className="lookup-label" style={{ fontSize: '10px', color: '#94a3b8' }}>Ngân Hàng</span>
+                    <strong style={{ fontSize: '15px', color: '#fff' }}>{lookupResult.bankName || 'Chưa thiết lập'}</strong>
+                  </div>
+                  <div>
+                    <span className="lookup-label" style={{ fontSize: '10px', color: '#94a3b8' }}>Số Tài Khoản</span>
+                    <strong style={{ fontSize: '15px', color: '#fff' }}>{lookupResult.accountNumber || 'Chưa thiết lập'}</strong>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* 1. Wallet Stats */}
+            <div className="stats-container">
+              <h3 className="stats-section-title">
+                💰 Thống Kê Hoa Hồng của: <span style={{ color: '#38bdf8' }}>{lookupResult.zaloName}</span>
+              </h3>
+              <div className="stats-cards-grid">
+                <div className="stat-card-item total">
+                  <span className="stat-card-label">Tổng tích lũy (Hoàn thành + Chờ)</span>
+                  <span className="stat-card-value primary">{formatMoney(totalCommission)}</span>
+                </div>
+                <div className="stat-card-item pending">
+                  <span className="stat-card-label">Đang chờ xử lý (Shopee đối soát)</span>
+                  <span className="stat-card-value">{formatMoney(lookupResult.wallet.pendingCommission)}</span>
+                </div>
+                <div className="stat-card-item completed">
+                  <span className="stat-card-label">Đã hoàn thành</span>
+                  <span className="stat-card-value">{formatMoney(lookupResult.wallet.completedCommission)}</span>
+                </div>
+                <div className="stat-card-item withdrawable">
+                  <span className="stat-card-label">Có thể rút ngay (Khả dụng)</span>
+                  <span className="stat-card-value" style={{ color: '#38bdf8' }}>{formatMoney(lookupResult.wallet.withdrawableCommission)}</span>
+                </div>
+                <div className="stat-card-item received">
+                  <span className="stat-card-label">Đã nhận (Đã thanh toán)</span>
+                  <span className="stat-card-value" style={{ color: '#818cf8' }}>{formatMoney(lookupResult.wallet.receivedCommission)}</span>
+                </div>
+              </div>
+            </div>
+
+            {/* 1.5. Payout Request Card */}
+            <div className="lookup-card" style={{ marginBottom: '24px' }}>
+              <h3 className="stats-section-title" style={{ margin: 0, marginBottom: '12px' }}>
+                <span>💸 Rút Tiền Hoa Hồng Khả Dụng</span>
+              </h3>
+              <p style={{ fontSize: '12.5px', color: '#a8a29e', margin: '0 0 16px 0', lineHeight: '1.4' }}>
+                Tiền hoa hồng của đơn "Hoàn thành" sau 3 ngày sẽ tự động chuyển xuống ví khả dụng để rút. Lệnh rút tiền sau khi gửi sẽ được duyệt thủ công bởi Trưởng nhóm Phạm Thắng.
+              </p>
+
+              {lookupResult.wallet.withdrawableCommission > 0 ? (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                  <div className="lookup-input-group" style={{ marginBottom: 0 }}>
+                    <label className="lookup-label">Số Tiền Muốn Rút (đ)</label>
+                    <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
+                      <input 
+                        type="text" 
+                        className="lookup-input" 
+                        placeholder={`Tối đa: ${formatMoney(lookupResult.wallet.withdrawableCommission)}`}
+                        value={payoutAmount}
+                        onChange={(e) => {
+                          const val = e.target.value.replace(/[^\d]/g, '');
+                          if (val) {
+                            setPayoutAmount(new Intl.NumberFormat('vi-VN').format(parseFloat(val)));
+                          } else {
+                            setPayoutAmount('');
+                          }
+                        }}
+                      />
+                      <button 
+                        className="lookup-admin-link"
+                        style={{ position: 'absolute', right: '8px', fontSize: '11px', padding: '4px 8px', background: 'rgba(56, 189, 248, 0.1)', color: '#38bdf8', borderColor: 'rgba(56, 189, 248, 0.2)' }}
+                        onClick={() => setPayoutAmount(new Intl.NumberFormat('vi-VN').format(lookupResult.wallet.withdrawableCommission))}
+                      >
+                        Rút hết
+                      </button>
+                    </div>
+                  </div>
+                  
+                  {payoutSaveError && <div style={{ color: '#f87171', fontSize: '12px' }}>⚠️ {payoutSaveError}</div>}
+                  
+                  <button 
+                    className="lookup-btn" 
+                    onClick={handleRequestPayout}
+                    disabled={payoutSaveLoading || !payoutAmount}
+                    style={{ marginTop: '4px' }}
+                  >
+                    {payoutSaveLoading ? (
+                      <>
+                        <div className="lookup-spinner"></div>
+                        Đang gửi yêu cầu...
+                      </>
+                    ) : (
+                      'Gửi yêu cầu rút tiền'
+                    )}
+                  </button>
+                </div>
+              ) : (
+                <div style={{ padding: '16px', background: 'rgba(239, 68, 68, 0.05)', border: '1px dashed rgba(239, 68, 68, 0.2)', borderRadius: '8px', textAlign: 'center', color: '#fca5a5', fontSize: '13px' }}>
+                  🔒 Số dư khả dụng của sếp hiện đang là 0đ. Chưa thể rút tiền lúc này.
+                </div>
+              )}
+            </div>
+
+            {/* 2. Orders Cards List */}
+            <div className="orders-container">
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
+                <h3 className="stats-section-title" style={{ marginBottom: 0 }}>
+                  🛒 Đơn hàng đã tìm thấy ({searchedOrders.length})
+                </h3>
+                <input 
+                  type="text" 
+                  placeholder="Lọc nhanh đơn hàng..." 
+                  className="lookup-input"
+                  style={{ width: '160px', padding: '6px 10px', fontSize: '12px', borderRadius: '6px' }}
+                  value={lookupLocalFilter}
+                  onChange={(e) => setLookupLocalFilter(e.target.value)}
+                />
+              </div>
+
+              {searchedOrders.length === 0 ? (
+                <div className="lookup-card" style={{ padding: '24px', textAlign: 'center', color: '#a8a29e' }}>
+                  📭 Không tìm thấy đơn hàng nào khớp điều kiện lọc.
+                </div>
+              ) : (
+                searchedOrders.map((o) => (
+                  <div key={o.id} className="order-card-item">
+                    <div className="order-card-header">
+                      <span>📅 {formatDateTime(o.purchaseTime)}</span>
+                      <span>Mã đơn: <span className="order-id-badge">{o.orderId}</span></span>
+                    </div>
+                    <div className="order-card-title" title={o.productName}>
+                      {o.productName}
+                    </div>
+                    <div className="order-card-commission-row">
+                      <span className="order-status-badge completed" style={{ 
+                        background: o.status === 'Hoàn thành' ? 'rgba(16, 185, 129, 0.15)' : 
+                                    o.status === 'Hủy' ? 'rgba(239, 68, 68, 0.15)' : 'rgba(245, 158, 11, 0.15)',
+                        color: o.status === 'Hoàn thành' ? '#10b981' : 
+                               o.status === 'Hủy' ? '#ef4444' : '#f59e0b',
+                        border: `1px solid ${o.status === 'Hoàn thành' ? 'rgba(16, 185, 129, 0.3)' : 
+                                              o.status === 'Hủy' ? 'rgba(239, 68, 68, 0.3)' : 'rgba(245, 158, 11, 0.3)'}`
+                      }}>
+                        {o.status}
+                      </span>
+                      <div style={{ textAlign: 'right' }}>
+                        <span className="order-commission-label">Hoa hồng: </span>
+                        <span className="order-commission-val">{formatMoney(o.commission)}</span>
+                      </div>
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
+          </>
+        )}
+
+        {/* Payout Success Alert Modal */}
+        {payoutSuccess && (
+          <div style={{
+            position: 'fixed',
+            inset: 0,
+            background: 'rgba(0, 0, 0, 0.7)',
+            backdropFilter: 'blur(8px)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 9999,
+            padding: '16px'
+          }}>
+            <div className="lookup-card" style={{
+              maxWidth: '450px',
+              textAlign: 'center',
+              border: '1px solid rgba(52, 211, 153, 0.3)',
+              boxShadow: '0 20px 40px rgba(0,0,0,0.6), 0 0 30px rgba(52, 211, 153, 0.1)',
+              background: '#0f0c29'
+            }}>
+              <div style={{ fontSize: '48px', marginBottom: '16px' }}>🎉</div>
+              <h3 style={{ fontSize: '20px', fontWeight: 'bold', color: '#34d399', marginBottom: '12px' }}>Yêu Cầu Rút Tiền Thành Công!</h3>
+              <p style={{ fontSize: '14px', color: '#d1d5db', lineHeight: '1.5', marginBottom: '24px' }}>
+                Yêu cầu rút tiền của sếp đã được gửi lên hệ thống. Trưởng nhóm **Phạm Thắng** sẽ duyệt giao dịch và chuyển khoản cho sếp trong thời gian sớm nhất có thể! 🌷
+              </p>
+              <button 
+                className="lookup-btn" 
+                onClick={() => setPayoutSuccess(false)}
+                style={{ background: 'linear-gradient(135deg, #34d399, #059669)', boxShadow: '0 4px 15px rgba(5, 150, 105, 0.3)' }}
+              >
+                Đóng
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
+    );
+  }
 
   if (view === 'home') {
     const isAdmin = user && (user.role === 'ADMIN' || user.role === 'SUPER_ADMIN');

@@ -59,6 +59,7 @@ function App() {
   const [payoutSaveError, setPayoutSaveError] = useState('');
   const [payoutSaveLoading, setPayoutSaveLoading] = useState(false);
   const [payoutSuccess, setPayoutSuccess] = useState(false);
+  const [showBanner, setShowBanner] = useState(true);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [stats, setStats] = useState({
     totalMembers: 0,
@@ -896,6 +897,11 @@ function App() {
             gap: 12px;
             margin-bottom: 20px;
           }
+          @media (max-width: 480px) {
+            .lookup-date-grid {
+              grid-template-columns: 1fr;
+            }
+          }
           .lookup-btn {
             width: 100%;
             background: linear-gradient(135deg, #f97316, #ec4899, #8b5cf6);
@@ -1119,6 +1125,49 @@ function App() {
           }
           @keyframes lookup-spin {
             to { transform: rotate(360deg); }
+          }
+          .floating-banner {
+            position: fixed;
+            bottom: 20px;
+            right: 16px;
+            width: 130px;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.5), 0 0 16px rgba(56, 189, 248, 0.2);
+            cursor: pointer;
+            z-index: 999;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: 2px solid rgba(56, 189, 248, 0.3);
+            animation: banner-float 3s ease-in-out infinite;
+          }
+          .floating-banner:hover {
+            transform: scale(1.06) translateY(-4px);
+            box-shadow: 0 12px 40px rgba(0,0,0,0.6), 0 0 24px rgba(56, 189, 248, 0.4);
+          }
+          .floating-banner img {
+            width: 100%;
+            display: block;
+          }
+          .floating-banner-close {
+            position: absolute;
+            top: 4px;
+            right: 4px;
+            background: rgba(0,0,0,0.5);
+            color: #fff;
+            border: none;
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            font-size: 11px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            line-height: 1;
+          }
+          @keyframes banner-float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-6px); }
           }
         `}} />
 
@@ -1498,6 +1547,18 @@ function App() {
                 Đóng
               </button>
             </div>
+          </div>
+        )}
+        {/* Floating QR Banner */}
+        {showBanner && (
+          <div className="floating-banner" style={{ position: 'relative' }}>
+            <button 
+              className="floating-banner-close"
+              onClick={(e) => { e.stopPropagation(); setShowBanner(false); }}
+            >
+              ×
+            </button>
+            <img src="/banner.jpg" alt="Tham gia Zalo Group nhận hoa hồng" />
           </div>
         )}
       </div>

@@ -582,8 +582,8 @@ function App() {
 
   // Format currency
   const formatMoney = (val) => {
-    if (val === undefined || val === null) return '0đ';
-    return new Intl.NumberFormat('vi-VN').format(val) + 'đ';
+    if (val === undefined || val === null || isNaN(val)) return '0đ';
+    return Math.round(val).toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.') + 'đ';
   };
 
   // Format DateTime string
@@ -1640,6 +1640,7 @@ function App() {
             <a href="#features" onClick={() => setMobileMenuOpen(false)}>Tính năng</a>
             <a href="#steps" onClick={() => setMobileMenuOpen(false)}>Hướng dẫn</a>
             <a href="#pricing" onClick={() => setMobileMenuOpen(false)}>Bảng giá</a>
+            <a href="#" onClick={(e) => { e.preventDefault(); setView('lookup'); window.history.pushState({}, '', '/?view=lookup'); setMobileMenuOpen(false); }} style={{ color: '#38bdf8', fontWeight: '700' }}>🔍 Tra cứu đơn hàng</a>
             {/* Mobile-only actions inside nav */}
             <div className="mobile-nav-actions">
               {token ? (
@@ -1728,6 +1729,9 @@ function App() {
             <a href="#steps" className="btn btn-glow" style={{ padding: '12px 30px', textDecoration: 'none', display: 'inline-block', borderRadius: '8px' }}>
               Bắt đầu ngay
             </a>
+            <button onClick={() => { setView('lookup'); window.history.pushState({}, '', '/?view=lookup'); }} className="btn" style={{ padding: '12px 30px', background: 'rgba(56, 189, 248, 0.15)', color: '#38bdf8', border: '1px solid rgba(56, 189, 248, 0.4)', textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '8px', borderRadius: '8px', fontWeight: '600', cursor: 'pointer' }}>
+              🔍 Tra cứu đơn hàng
+            </button>
             <a href="#features" className="btn" style={{ padding: '12px 30px', border: '1px solid rgba(255,255,255,0.1)', textDecoration: 'none', display: 'inline-block', borderRadius: '8px' }}>
               Tìm hiểu tính năng
             </a>
@@ -2107,43 +2111,40 @@ function App() {
                     <div className="modal-google-container" style={{ 
                       position: 'relative', 
                       width: `${calculatedWidth}px`, 
-                      height: '40px', 
+                      minHeight: '40px', 
                       margin: '16px auto 0' 
                     }}>
-                      {/* Our custom premium gradient button */}
+                      {/* Premium White Google Button matching official brand guidelines */}
                       <button 
                         className="btn-google-custom" 
                         onClick={isMobile ? handleGoogleLoginMobile : undefined}
                         style={{
-                          position: 'absolute',
-                          top: 0,
-                          left: 0,
+                          position: 'relative',
                           width: '100%',
-                          height: '100%',
-                          background: 'linear-gradient(135deg, #f97316, #ec4899, #8b5cf6)',
-                          backgroundSize: '200% auto',
-                          color: '#ffffff',
-                          border: 'none',
+                          height: '42px',
+                          background: '#ffffff',
+                          color: '#1f2937',
+                          border: '1px solid #d1d5db',
                           borderRadius: '8px',
-                          fontSize: '14px',
+                          fontSize: '14.5px',
                           fontWeight: '600',
                           display: 'flex',
                           alignItems: 'center',
                           justifyContent: 'center',
-                          gap: '10px',
-                          boxShadow: '0 4px 15px rgba(236, 72, 153, 0.35)',
+                          gap: '12px',
+                          boxShadow: '0 2px 6px rgba(0,0,0,0.15)',
                           cursor: 'pointer',
                           pointerEvents: isMobile ? 'auto' : 'none',
-                          transition: 'all 0.3s ease'
+                          transition: 'all 0.2s ease'
                         }}
                       >
-                        <svg width="18" height="18" viewBox="0 0 18 18">
-                          <path fill="#fff" d="M17.64 9.2c0-.63-.06-1.25-.16-1.84H9v3.47h4.84c-.21 1.12-.84 2.07-1.8 2.71v2.24h2.91c1.7-1.56 2.69-3.87 2.69-6.58z"/>
-                          <path fill="#fff" d="M9 18c2.43 0 4.47-.8 5.96-2.22l-2.91-2.24c-.8.54-1.84.87-3.05.87-2.35 0-4.33-1.58-5.04-3.71H.95v2.3C2.43 15.98 5.48 18 9 18z"/>
-                          <path fill="#fff" d="M3.96 10.7c-.18-.54-.28-1.12-.28-1.7s.1-1.16.28-1.7V5.01H.95C.34 6.22 0 7.58 0 9s.34 2.78.95 3.99l3.01-2.29z"/>
-                          <path fill="#fff" d="M9 3.58c1.32 0 2.5.45 3.44 1.35L15 2.4C13.46.97 11.43 0 9 0 5.48 0 2.43 2.02.95 5.01l3.01 2.29c.71-2.13 2.69-3.71 5.04-3.71z"/>
+                        <svg width="20" height="20" viewBox="0 0 48 48">
+                          <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
+                          <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
+                          <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>
+                          <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
                         </svg>
-                        Đăng nhập bằng Google
+                        <span>Đăng nhập bằng Google</span>
                       </button>
                       
                       {/* The invisible official Google button container (only active on desktop) */}
@@ -2153,11 +2154,28 @@ function App() {
                           top: 0,
                           left: 0,
                           width: '100%',
-                          height: '100%',
+                          height: '42px',
                           opacity: 0.01,
                           cursor: 'pointer',
                           zIndex: 10
                         }}></div>
+                      )}
+
+                      {/* Thông báo hướng dẫn trên mobile khi mở qua trình duyệt Zalo/Facebook */}
+                      {isMobile && (
+                        <div style={{
+                          marginTop: '12px',
+                          padding: '10px 12px',
+                          background: 'rgba(234, 179, 8, 0.12)',
+                          border: '1px dashed rgba(234, 179, 8, 0.35)',
+                          borderRadius: '8px',
+                          color: '#fde047',
+                          fontSize: '11.5px',
+                          lineHeight: '1.45',
+                          textAlign: 'left'
+                        }}>
+                          💡 <b>Lỗi 403 trên Zalo?</b> Do Google bảo mật không cho đăng nhập trong ứng dụng chat. Vui lòng bấm dấu <b>[...]</b> ở góc trên bên phải màn hình ➔ Chọn <b>Mở bằng trình duyệt (Chrome/Safari)</b> để đăng nhập.
+                        </div>
                       )}
                     </div>
                   );

@@ -1159,6 +1159,9 @@ function App() {
             margin: 0 0 12px;
             text-transform: uppercase;
             letter-spacing: 1px;
+            text-align: center;
+            padding: 0 16px;
+            line-height: 1.4;
           }
           .lookup-banner-img-wrap {
             position: relative;
@@ -1980,7 +1983,7 @@ function App() {
             position: 'relative',
             zIndex: 2
           }}>
-            <h3 style={{ fontSize: '20px', color: '#fff', marginBottom: '16px', fontWeight: '700', textShadow: '0 2px 4px rgba(0,0,0,0.5)' }}>
+            <h3 style={{ fontSize: '18px', color: '#fff', marginBottom: '16px', fontWeight: '700', textShadow: '0 2px 4px rgba(0,0,0,0.5)', textAlign: 'center', padding: '0 16px', lineHeight: '1.4' }}>
               🌟 Quét QR Tham Gia Nhóm Zalo Nhận Hoàn Tiền Ngay
             </h3>
             <div style={{

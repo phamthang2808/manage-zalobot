@@ -1726,13 +1726,13 @@ function App() {
             Biến mọi liên kết mua sắm trong nhóm chat Zalo của bạn thành nguồn thu nhập thụ động chỉ trong vài giây. Tiện lợi, tự động và hoàn toàn minh bạch.
           </p>
           <div className="hero-buttons">
-            <a href="#steps" className="btn btn-glow" style={{ padding: '12px 30px', textDecoration: 'none', display: 'inline-block', borderRadius: '8px' }}>
+            <a href="#steps" className="btn btn-hero-1" style={{ padding: '12px 30px', textDecoration: 'none', display: 'inline-block', borderRadius: '8px' }}>
               Bắt đầu ngay
             </a>
-            <button onClick={() => { setView('lookup'); window.history.pushState({}, '', '/?view=lookup'); }} className="btn" style={{ padding: '12px 30px', background: 'rgba(56, 189, 248, 0.15)', color: '#38bdf8', border: '1px solid rgba(56, 189, 248, 0.4)', textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '8px', borderRadius: '8px', fontWeight: '600', cursor: 'pointer' }}>
+            <button onClick={() => { setView('lookup'); window.history.pushState({}, '', '/?view=lookup'); }} className="btn btn-hero-2" style={{ padding: '12px 30px', textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '8px', borderRadius: '8px', cursor: 'pointer' }}>
               🔍 Tra cứu đơn hàng
             </button>
-            <a href="#features" className="btn" style={{ padding: '12px 30px', border: '1px solid rgba(255,255,255,0.1)', textDecoration: 'none', display: 'inline-block', borderRadius: '8px' }}>
+            <a href="#features" className="btn btn-hero-3" style={{ padding: '12px 30px', textDecoration: 'none', display: 'inline-block', borderRadius: '8px' }}>
               Tìm hiểu tính năng
             </a>
           </div>

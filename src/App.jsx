@@ -1203,6 +1203,24 @@ function App() {
             0%, 100% { transform: translateY(0); }
             50% { transform: translateY(-8px); }
           }
+          @media (max-width: 480px) {
+            .stats-cards-grid {
+              grid-template-columns: 1fr;
+            }
+            .stats-cards-grid > :first-child {
+              grid-column: span 1;
+            }
+            .lookup-card {
+              padding: 16px;
+            }
+            .stat-card-value {
+              font-size: 20px;
+            }
+            .lookup-banner-img-wrap {
+              width: 100%;
+              max-width: 280px;
+            }
+          }
         `}} />
 
         {/* Top Navbar */}
@@ -1414,19 +1432,23 @@ function App() {
                   <span className="stat-card-value primary">{formatMoney(totalCommission)}</span>
                 </div>
                 <div className="stat-card-item pending">
-                  <span className="stat-card-label">Đang chờ xử lý (Shopee đối soát)</span>
+                  <span className="stat-card-label">Đang chờ xử lý</span>
+                  <span style={{ fontSize: '11px', color: '#94a3b8', marginBottom: '4px' }}>Đang vận chuyển hoặc chưa xác nhận</span>
                   <span className="stat-card-value">{formatMoney(lookupResult.wallet.pendingCommission)}</span>
                 </div>
                 <div className="stat-card-item completed">
                   <span className="stat-card-label">Đã hoàn thành</span>
+                  <span style={{ fontSize: '11px', color: '#94a3b8', marginBottom: '4px' }}>Đã ấn giao hàng thành công</span>
                   <span className="stat-card-value">{formatMoney(lookupResult.wallet.completedCommission)}</span>
                 </div>
                 <div className="stat-card-item withdrawable">
                   <span className="stat-card-label">Có thể rút ngay (Khả dụng)</span>
+                  <span style={{ fontSize: '11px', color: '#38bdf8', marginBottom: '4px' }}>Sau 3 ngày • Đã trừ thuế & chia 8-2</span>
                   <span className="stat-card-value" style={{ color: '#38bdf8' }}>{formatMoney(lookupResult.wallet.withdrawableCommission)}</span>
                 </div>
                 <div className="stat-card-item received">
                   <span className="stat-card-label">Đã nhận (Đã thanh toán)</span>
+                  <span style={{ fontSize: '11px', color: '#94a3b8', marginBottom: '4px' }}>Tổng tiền đã rút về tài khoản</span>
                   <span className="stat-card-value" style={{ color: '#818cf8' }}>{formatMoney(lookupResult.wallet.receivedCommission)}</span>
                 </div>
               </div>
@@ -1438,7 +1460,7 @@ function App() {
                 <span>💸 Rút Tiền Hoa Hồng Khả Dụng</span>
               </h3>
               <p style={{ fontSize: '12.5px', color: '#a8a29e', margin: '0 0 16px 0', lineHeight: '1.4' }}>
-                Tiền hoa hồng của đơn "Hoàn thành" sau 3 ngày sẽ tự động chuyển xuống ví khả dụng để rút. Lệnh rút tiền sau khi gửi sẽ được duyệt thủ công bởi Trưởng nhóm Phạm Thắng.
+                Tiền hoa hồng của đơn "Hoàn thành" sau 3 ngày sẽ tự động chuyển xuống ví khả dụng để rút (đã trừ thuế Shopee và chia 8-2). Lệnh rút tiền sau khi gửi sẽ được duyệt thủ công bởi Trưởng nhóm Phạm Thắng.
               </p>
 
               {lookupResult.wallet.withdrawableCommission > 0 ? (

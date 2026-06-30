@@ -779,6 +779,10 @@ function App() {
             0%, 100% { transform: translate(0, 0) scale(1); }
             50% { transform: translate(-30px, -40px) scale(1.05); }
           }
+          /* Ensure universal border-box box-sizing inside lookup card so all edges align perfectly */
+          .lookup-card, .lookup-card * {
+            box-sizing: border-box !important;
+          }
           /* Ensure child content stays on top of orbs */
           .lookup-header, .lookup-card, .stats-container, .orders-container, .lookup-error {
             position: relative;
@@ -884,6 +888,9 @@ function App() {
           }
           .lookup-input-group {
             margin-bottom: 16px;
+            width: 100% !important;
+            max-width: 100% !important;
+            box-sizing: border-box !important;
           }
           .lookup-label {
             display: block;
@@ -895,8 +902,8 @@ function App() {
             letter-spacing: 0.5px;
           }
           .lookup-input {
-            width: 100%;
-            min-width: 0 !important;
+            width: 100% !important;
+            min-width: 100% !important;
             max-width: 100% !important;
             box-sizing: border-box !important;
             background: rgba(255, 255, 255, 0.03);
@@ -907,7 +914,16 @@ function App() {
             font-size: 15px;
             outline: none;
             transition: all 0.2s ease;
-            display: block;
+            display: block !important;
+            -webkit-appearance: none;
+            appearance: none;
+          }
+          input[type="date"].lookup-input {
+            width: 100% !important;
+            min-width: 100% !important;
+            max-width: 100% !important;
+            box-sizing: border-box !important;
+            display: block !important;
           }
           .lookup-input:focus {
             border-color: #38bdf8;
@@ -919,17 +935,26 @@ function App() {
             grid-template-columns: 1fr 1fr;
             gap: 12px;
             margin-bottom: 20px;
-            width: 100%;
-            max-width: 100%;
-            box-sizing: border-box;
+            width: 100% !important;
+            max-width: 100% !important;
+            box-sizing: border-box !important;
           }
           @media (max-width: 768px) {
             .lookup-date-grid {
-              grid-template-columns: 1fr;
+              display: flex !important;
+              flex-direction: column !important;
+              gap: 16px !important;
+              width: 100% !important;
+            }
+            .lookup-date-grid .lookup-input-group {
+              width: 100% !important;
+              margin-bottom: 0 !important;
             }
           }
           .lookup-btn {
             width: 100%;
+            max-width: 100% !important;
+            box-sizing: border-box !important;
             background: linear-gradient(135deg, #f97316, #ec4899, #8b5cf6);
             background-size: 200% auto;
             color: #fff;

@@ -30,7 +30,7 @@ function App() {
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
 
   // Public Lookup States
-  const [lookupSearchType, setLookupSearchType] = useState('NAME');
+  const [lookupSearchType, setLookupSearchType] = useState('ZALO_ID');
   const [lookupQuery, setLookupQuery] = useState('');
   const [lookupStartDate, setLookupStartDate] = useState('');
   const [lookupEndDate, setLookupEndDate] = useState('');
@@ -314,7 +314,24 @@ function App() {
     };
   }, [isLoginModalOpen, token]);
 
+  // Auto-lookup khi mở link có ?zaloId=xxx (từ lệnh /tracuu của bot)
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const autoZaloId = params.get('zaloId');
+    if (autoZaloId && autoZaloId.trim()) {
+      setView('lookup');
+      setLookupSearchType('ZALO_ID');
+      setLookupQuery(autoZaloId.trim());
+      // Trigger search sau khi state set xong
+      setTimeout(() => {
+        handlePublicLookup(autoZaloId.trim(), 'ZALO_ID');
+      }, 100);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const handlePublicLookup = async (overrideQuery = null, overrideType = null) => {
+
     const q = overrideQuery !== null ? overrideQuery : lookupQuery;
     const type = overrideType !== null ? overrideType : lookupSearchType;
 
@@ -1126,48 +1143,62 @@ function App() {
           @keyframes lookup-spin {
             to { transform: rotate(360deg); }
           }
-          .floating-banner {
-            position: fixed;
-            bottom: 20px;
-            right: 16px;
-            width: 130px;
-            border-radius: 12px;
+          .lookup-banner-section {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            margin: 32px 0 8px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            z-index: 2;
+          }
+          .lookup-banner-section h4 {
+            font-size: 13px;
+            color: #94a3b8;
+            margin: 0 0 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+          }
+          .lookup-banner-img-wrap {
+            position: relative;
+            width: 260px;
+            border-radius: 16px;
             overflow: hidden;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.5), 0 0 16px rgba(56, 189, 248, 0.2);
-            cursor: pointer;
-            z-index: 999;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.5), 0 0 20px rgba(56, 189, 248, 0.2);
+            border: 2px solid rgba(56, 189, 248, 0.25);
+            animation: banner-float 4s ease-in-out infinite;
             transition: transform 0.3s ease, box-shadow 0.3s ease;
-            border: 2px solid rgba(56, 189, 248, 0.3);
-            animation: banner-float 3s ease-in-out infinite;
           }
-          .floating-banner:hover {
-            transform: scale(1.06) translateY(-4px);
-            box-shadow: 0 12px 40px rgba(0,0,0,0.6), 0 0 24px rgba(56, 189, 248, 0.4);
+          .lookup-banner-img-wrap:hover {
+            transform: scale(1.03) translateY(-4px);
+            box-shadow: 0 12px 40px rgba(0,0,0,0.6), 0 0 30px rgba(56, 189, 248, 0.35);
           }
-          .floating-banner img {
+          .lookup-banner-img-wrap img {
             width: 100%;
             display: block;
           }
-          .floating-banner-close {
+          .lookup-banner-close {
             position: absolute;
-            top: 4px;
-            right: 4px;
-            background: rgba(0,0,0,0.5);
+            top: 6px;
+            right: 6px;
+            background: rgba(0,0,0,0.6);
             color: #fff;
             border: none;
             border-radius: 50%;
-            width: 18px;
-            height: 18px;
-            font-size: 11px;
+            width: 22px;
+            height: 22px;
+            font-size: 14px;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
             line-height: 1;
+            backdrop-filter: blur(4px);
           }
           @keyframes banner-float {
             0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-6px); }
+            50% { transform: translateY(-8px); }
           }
         `}} />
 
@@ -1196,10 +1227,10 @@ function App() {
 
           <div className="lookup-tabs">
             <button 
-              className={`lookup-tab ${lookupSearchType === 'NAME' ? 'active' : ''}`}
-              onClick={() => setLookupSearchType('NAME')}
+              className={`lookup-tab ${lookupSearchType === 'ZALO_ID' ? 'active' : ''}`}
+              onClick={() => setLookupSearchType('ZALO_ID')}
             >
-              👤 Tên Khách Hàng
+              🔑 Zalo ID
             </button>
             <button 
               className={`lookup-tab ${lookupSearchType === 'ORDER_ID' ? 'active' : ''}`}
@@ -1211,14 +1242,14 @@ function App() {
 
           <div className="lookup-input-group">
             <label className="lookup-label">
-              {lookupSearchType === 'NAME' ? 'Nhập tên của sếp' : 'Nhập mã đơn hàng (Shopee)'}
+              {lookupSearchType === 'ZALO_ID' ? 'Nhập Zalo ID của sếp' : 'Nhập mã đơn hàng (Shopee)'}
             </label>
             <input 
               type="text"
               className="lookup-input"
               value={lookupQuery}
               onChange={(e) => setLookupQuery(e.target.value)}
-              placeholder={lookupSearchType === 'NAME' ? 'Ví dụ: Oanh, Thắng...' : 'Ví dụ: 260606C8W7YARK...'}
+              placeholder={lookupSearchType === 'ZALO_ID' ? 'Ví dụ: 5128074989288259190...' : 'Ví dụ: 260606C8W7YARK...'}
               onKeyDown={(e) => e.key === 'Enter' && handlePublicLookup()}
             />
           </div>
@@ -1549,16 +1580,19 @@ function App() {
             </div>
           </div>
         )}
-        {/* Floating QR Banner */}
+        {/* QR Banner — dưới cùng trang tra cứu */}
         {showBanner && (
-          <div className="floating-banner" style={{ position: 'relative' }}>
-            <button 
-              className="floating-banner-close"
-              onClick={(e) => { e.stopPropagation(); setShowBanner(false); }}
-            >
-              ×
-            </button>
-            <img src="/banner.jpg" alt="Tham gia Zalo Group nhận hoa hồng" />
+          <div className="lookup-banner-section">
+            <h4>🌟 Tham gia nhóm Zalo nhận hoàn tiền</h4>
+            <div className="lookup-banner-img-wrap">
+              <button
+                className="lookup-banner-close"
+                onClick={(e) => { e.stopPropagation(); setShowBanner(false); }}
+              >
+                ×
+              </button>
+              <img src="/banner.jpg" alt="Tham gia Zalo Group nhận hoa hồng" />
+            </div>
           </div>
         )}
       </div>

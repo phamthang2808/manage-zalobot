@@ -941,6 +941,21 @@ tr:hover td {
 }
 
 /* 3 Hero Buttons with unique premium colors & glowing borders */
+.btn-hero-1, .btn-hero-2, .btn-hero-3 {
+  font-family: inherit;
+  font-size: 15px !important;
+  line-height: 1.5;
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  text-align: center;
+  padding: 12px 30px !important;
+  border-radius: 8px !important;
+  text-decoration: none !important;
+  cursor: pointer;
+}
+
 .btn-hero-1 {
   background: linear-gradient(135deg, #ea580c, #ec4899);
   color: #ffffff !important;
@@ -1414,11 +1429,19 @@ tr:hover td {
   .hero-buttons {
     flex-direction: column;
     width: 100%;
-    max-width: 300px;
+    max-width: 320px;
+    align-items: stretch;
   }
 
-  .hero-buttons a {
-    text-align: center;
+  .hero-buttons a, .hero-buttons button, .btn-hero-1, .btn-hero-2, .btn-hero-3 {
+    width: 100% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center !important;
+    font-size: 15px !important;
+    padding: 13px 20px !important;
+    box-sizing: border-box;
   }
 
   /* ====== Features responsive ====== */

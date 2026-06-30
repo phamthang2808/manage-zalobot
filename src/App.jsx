@@ -1970,6 +1970,55 @@ function App() {
           </div>
         </section>
 
+        {/* QR Banner Section trên Trang Chủ */}
+        {showBanner && (
+          <section style={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            margin: '40px 0 20px',
+            position: 'relative',
+            zIndex: 2
+          }}>
+            <h3 style={{ fontSize: '20px', color: '#fff', marginBottom: '16px', fontWeight: '700', textShadow: '0 2px 4px rgba(0,0,0,0.5)' }}>
+              🌟 Quét QR Tham Gia Nhóm Zalo Nhận Hoàn Tiền Ngay
+            </h3>
+            <div style={{
+              position: 'relative',
+              width: '280px',
+              borderRadius: '16px',
+              overflow: 'hidden',
+              boxShadow: '0 12px 40px rgba(0,0,0,0.6), 0 0 30px rgba(139, 92, 246, 0.35)',
+              border: '2px solid rgba(139, 92, 246, 0.4)',
+              transition: 'transform 0.3s ease'
+            }}>
+              <button
+                onClick={(e) => { e.stopPropagation(); setShowBanner(false); }}
+                style={{
+                  position: 'absolute',
+                  top: '8px',
+                  right: '8px',
+                  background: 'rgba(0,0,0,0.6)',
+                  color: '#fff',
+                  border: 'none',
+                  borderRadius: '50%',
+                  width: '26px',
+                  height: '26px',
+                  fontSize: '16px',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  zIndex: 5
+                }}
+              >
+                ×
+              </button>
+              <img src="/banner.jpg" alt="Tham gia Zalo Group nhận hoa hồng" style={{ width: '100%', display: 'block' }} />
+            </div>
+          </section>
+        )}
+
         {/* Footer */}
         <footer className="landing-footer">
           <p>© 2026 28Symues Affiliate. Phát triển bằng sự tương tác thông minh và an toàn.</p>

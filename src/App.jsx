@@ -1553,15 +1553,15 @@ function App() {
 
             {/* 2. Orders Cards List */}
             <div className="orders-container">
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
-                <h3 className="stats-section-title" style={{ marginBottom: 0 }}>
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '10px', marginBottom: '16px', width: '100%' }}>
+                <h3 className="stats-section-title" style={{ marginBottom: 0, width: '100%', fontSize: '16px', fontWeight: '700', color: '#fff' }}>
                   🛒 Đơn hàng đã tìm thấy ({searchedOrders.length})
                 </h3>
                 <input 
                   type="text" 
                   placeholder="Lọc nhanh đơn hàng..." 
                   className="lookup-input"
-                  style={{ width: '160px', padding: '6px 10px', fontSize: '12px', borderRadius: '6px' }}
+                  style={{ width: '100%', maxWidth: '100%', padding: '8px 12px', fontSize: '13px', borderRadius: '8px', margin: 0 }}
                   value={lookupLocalFilter}
                   onChange={(e) => setLookupLocalFilter(e.target.value)}
                 />

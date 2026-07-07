@@ -352,7 +352,7 @@ function App() {
       setView('lookup');
       const targetType = 'ZALO_ID';
       setLookupSearchType(targetType);
-      setLookupQuery(targetQuery.trim());
+      setLookupQuery('');
       // Trigger search sau khi state set xong
       setTimeout(() => {
         handlePublicLookup(targetQuery.trim(), targetType);
@@ -393,14 +393,16 @@ function App() {
 
       setLookupResult(json.data);
 
-      // Save to recent search history
-      setLookupRecentSearches(prev => {
-        const item = { query: q.trim(), searchType: type };
-        const filtered = prev.filter(x => !(x.query.toLowerCase() === item.query.toLowerCase() && x.searchType === item.searchType));
-        const updated = [item, ...filtered].slice(0, 5);
-        localStorage.setItem('recentLookups', JSON.stringify(updated));
-        return updated;
-      });
+      // Save to recent search history only for ORDER_ID
+      if (type === 'ORDER_ID') {
+        setLookupRecentSearches(prev => {
+          const item = { query: q.trim(), searchType: type };
+          const filtered = prev.filter(x => !(x.query.toLowerCase() === item.query.toLowerCase() && x.searchType === item.searchType));
+          const updated = [item, ...filtered].slice(0, 5);
+          localStorage.setItem('recentLookups', JSON.stringify(updated));
+          return updated;
+        });
+      }
 
     } catch (err) {
       console.error(err);
@@ -564,7 +566,11 @@ function App() {
       const urlEndDate = params.get('endDate');
 
       if (urlQuery) {
-        setLookupQuery(urlQuery);
+        if (urlSearchType === 'ORDER_ID') {
+          setLookupQuery(urlQuery);
+        } else {
+          setLookupQuery('');
+        }
         if (urlSearchType) {
           setLookupSearchType(urlSearchType);
         }

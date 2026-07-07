@@ -327,7 +327,7 @@ function App() {
     const targetQuery = autoToken || autoZaloId;
     if (targetQuery && targetQuery.trim()) {
       setView('lookup');
-      const targetType = autoToken ? 'token' : 'ZALO_ID';
+      const targetType = 'ZALO_ID';
       setLookupSearchType(targetType);
       setLookupQuery(targetQuery.trim());
       // Trigger search sau khi state set xong
@@ -516,7 +516,7 @@ function App() {
     if (view === 'lookup') {
       const params = new URLSearchParams(window.location.search);
       const urlToken = params.get('token');
-      const urlSearchType = urlToken ? 'token' : params.get('searchType');
+      const urlSearchType = urlToken ? 'ZALO_ID' : (params.get('searchType') || 'ZALO_ID');
       const urlQuery = urlToken || params.get('query') || params.get('q') || params.get('zaloId');
       const urlStartDate = params.get('startDate');
       const urlEndDate = params.get('endDate');

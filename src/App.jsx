@@ -1485,10 +1485,10 @@ function App() {
           </button>
 
           {/* Recent Searches */}
-          {lookupRecentSearches.length > 0 && (
+          {lookupRecentSearches.filter(item => item.searchType === 'ORDER_ID').length > 0 && (
             <div className="recent-searches">
               <span>Lịch sử:</span>
-              {lookupRecentSearches.map((item, idx) => (
+              {lookupRecentSearches.filter(item => item.searchType === 'ORDER_ID').map((item, idx) => (
                 <div 
                   key={idx} 
                   className="recent-tag"
@@ -1498,7 +1498,7 @@ function App() {
                     handlePublicLookup(item.query, item.searchType);
                   }}
                 >
-                  <span>{(item.searchType === 'ZALO_ID' || item.searchType === 'token') ? '🔑' : (item.searchType === 'NAME' ? '👤' : '🛒')} {item.query.length > 15 ? item.query.substring(0, 15) + '...' : item.query}</span>
+                  <span>🛒 {item.query.length > 15 ? item.query.substring(0, 15) + '...' : item.query}</span>
                   <span className="recent-close" onClick={(e) => removeRecentSearch(e, idx)}>&times;</span>
                 </div>
               ))}

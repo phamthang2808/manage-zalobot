@@ -66,6 +66,21 @@ function App() {
   const [otpError, setOtpError] = useState('');
   const [showBanner, setShowBanner] = useState(true);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  // Custom Toast Notification State
+  const [toast, setToast] = useState(null);
+  const showToast = (message, type = 'success') => {
+    setToast({ message, type, id: Date.now() });
+  };
+
+  useEffect(() => {
+    if (toast) {
+      const timer = setTimeout(() => {
+        setToast(null);
+      }, 4000);
+      return () => clearTimeout(timer);
+    }
+  }, [toast]);
   const [stats, setStats] = useState({
     totalMembers: 0,
     totalOrders: 0,
@@ -417,8 +432,9 @@ function App() {
       setOtpActionType(action);
       setOtpCode('');
       setOtpModalOpen(true);
+      showToast('Đã gửi mã xác thực OTP vào tin nhắn riêng Zalo!', 'success');
     } catch (err) {
-      alert('⚠️ Lỗi: ' + err.message);
+      showToast(err.message, 'error');
     } finally {
       setOtpSending(false);
     }
@@ -458,7 +474,7 @@ function App() {
       }));
       setIsEditingBank(false);
       setOtpModalOpen(false);
-      alert('Đã cập nhật thông tin ngân hàng thành công!');
+      showToast('Đã cập nhật thông tin ngân hàng thành công!', 'success');
     } catch (err) {
       setBankSaveError(err.message);
       if (otpModalOpen) setOtpError(err.message);
@@ -720,10 +736,10 @@ function App() {
         const errMsg = await res.text();
         throw new Error(errMsg || 'Phê duyệt thất bại');
       }
-      alert('Đã phê duyệt giao dịch thành công!');
+      showToast('Đã phê duyệt giao dịch thành công!', 'success');
       fetchData(token, user); // Refresh data
     } catch (err) {
-      alert(`Lỗi: ${err.message}`);
+      showToast(`Lỗi: ${err.message}`, 'error');
     }
   };
 
@@ -1295,6 +1311,14 @@ function App() {
             0%, 100% { transform: translateY(0); }
             50% { transform: translateY(-8px); }
           }
+          @keyframes toastSlideIn {
+            from { opacity: 0; transform: translate(50px, -10px) scale(0.95); }
+            to { opacity: 1; transform: translate(0, 0) scale(1); }
+          }
+          @keyframes toastProgress {
+            from { width: 100%; }
+            to { width: 0%; }
+          }
           @media (max-width: 480px) {
             .stats-cards-grid {
               grid-template-columns: 1fr;
@@ -1314,6 +1338,81 @@ function App() {
             }
           }
         `}} />
+
+        {/* Custom Toast Notification Top-Right có viền chạy tiến trình */}
+        {toast && (
+          <div style={{
+            position: 'fixed',
+            top: '24px',
+            right: '24px',
+            zIndex: 9999999,
+            minWidth: '310px',
+            maxWidth: '400px',
+            background: 'linear-gradient(135deg, rgba(23, 19, 55, 0.96), rgba(10, 8, 29, 0.98))',
+            border: `1px solid ${toast.type === 'success' ? 'rgba(52, 211, 153, 0.6)' : (toast.type === 'error' ? 'rgba(248, 113, 113, 0.6)' : 'rgba(139, 92, 246, 0.6)')}`,
+            borderRadius: '16px',
+            boxShadow: '0 20px 40px -10px rgba(0, 0, 0, 0.85), 0 0 35px rgba(139, 92, 246, 0.25)',
+            padding: '16px 20px',
+            backdropFilter: 'blur(16px)',
+            animation: 'toastSlideIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+            display: 'flex',
+            alignItems: 'flex-start',
+            gap: '14px',
+            overflow: 'hidden'
+          }}>
+            {/* Icon */}
+            <div style={{
+              width: '36px',
+              height: '36px',
+              borderRadius: '50%',
+              background: toast.type === 'success' ? 'rgba(52, 211, 153, 0.15)' : (toast.type === 'error' ? 'rgba(248, 113, 113, 0.15)' : 'rgba(139, 92, 246, 0.15)'),
+              border: `1px solid ${toast.type === 'success' ? 'rgba(52, 211, 153, 0.4)' : (toast.type === 'error' ? 'rgba(248, 113, 113, 0.4)' : 'rgba(139, 92, 246, 0.4)')}`,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontSize: '18px',
+              flexShrink: 0
+            }}>
+              {toast.type === 'success' ? '🎉' : (toast.type === 'error' ? '⚠️' : '💡')}
+            </div>
+
+            {/* Content */}
+            <div style={{ flex: 1, textAlign: 'left', paddingRight: '10px' }}>
+              <div style={{ fontSize: '14.5px', fontWeight: '700', color: '#fff', marginBottom: '4px' }}>
+                {toast.type === 'success' ? 'Thành công!' : (toast.type === 'error' ? 'Có lỗi xảy ra!' : 'Thông báo')}
+              </div>
+              <div style={{ fontSize: '13px', color: '#cbd5e1', lineHeight: '1.4' }}>
+                {toast.message}
+              </div>
+            </div>
+
+            {/* Close Button */}
+            <button
+              onClick={() => setToast(null)}
+              style={{
+                background: 'transparent',
+                border: 'none',
+                color: '#94a3b8',
+                fontSize: '18px',
+                cursor: 'pointer',
+                padding: '2px',
+                lineHeight: 1
+              }}
+            >
+              &times;
+            </button>
+
+            {/* Progress Bar (Viền chạy chạy dưới đáy tự tắt sau 4s) */}
+            <div style={{
+              position: 'absolute',
+              bottom: 0,
+              left: 0,
+              height: '3px',
+              background: toast.type === 'success' ? 'linear-gradient(90deg, #34d399, #10b981)' : (toast.type === 'error' ? 'linear-gradient(90deg, #f87171, #ef4444)' : 'linear-gradient(90deg, #a78bfa, #38bdf8)'),
+              animation: 'toastProgress 4s linear forwards'
+            }} />
+          </div>
+        )}
 
         {/* Top Navbar */}
         <header className="lookup-header">
@@ -1703,8 +1802,8 @@ function App() {
           <div style={{
             position: 'fixed',
             inset: 0,
-            background: 'rgba(0, 0, 0, 0.75)',
-            backdropFilter: 'blur(10px)',
+            background: 'rgba(0, 0, 0, 0.8)',
+            backdropFilter: 'blur(12px)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
@@ -1713,60 +1812,97 @@ function App() {
           }}>
             <div className="lookup-card" style={{
               width: '100%',
-              maxWidth: '420px',
+              maxWidth: '400px',
               textAlign: 'center',
-              border: '1px solid rgba(139, 92, 246, 0.4)',
-              boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.7), 0 0 35px rgba(139, 92, 246, 0.2)',
-              background: '#0f0c29',
-              padding: '28px 24px'
+              border: '1px solid rgba(139, 92, 246, 0.45)',
+              borderRadius: '24px',
+              boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.85), 0 0 45px rgba(139, 92, 246, 0.22)',
+              background: 'linear-gradient(145deg, #130f37, #0a081d)',
+              padding: '32px 24px',
+              position: 'relative',
+              overflow: 'hidden'
             }}>
-              <div style={{ fontSize: '46px', marginBottom: '12px' }}>🔒</div>
-              <h3 style={{ fontSize: '20px', fontWeight: 'bold', color: '#fff', marginBottom: '8px' }}>Xác Thực Bảo Mật OTP</h3>
-              <p style={{ fontSize: '13.5px', color: '#cbd5e1', lineHeight: '1.5', marginBottom: '20px' }}>
-                Mã xác thực 6 số vừa được gửi đến <b>tin nhắn riêng Zalo</b> của bạn.
-                <br/>
-                <span style={{ fontSize: '12px', color: '#38bdf8' }}>💡 Nếu chưa nhận được tin nhắn hoặc mã bị lỗi, hãy bấm nút <b>🔄 Gửi lại mã OTP</b> bên dưới nhé!</span>
+              {/* Glowing Lock Badge */}
+              <div style={{
+                width: '76px',
+                height: '76px',
+                borderRadius: '50%',
+                background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.25), rgba(56, 189, 248, 0.25))',
+                border: '1px solid rgba(139, 92, 246, 0.5)',
+                boxShadow: '0 0 25px rgba(139, 92, 246, 0.35)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                margin: '0 auto 18px',
+                fontSize: '36px'
+              }}>
+                🔒
+              </div>
+
+              <h3 style={{ fontSize: '20px', fontWeight: '800', color: '#ffffff', marginBottom: '8px', letterSpacing: '-0.3px' }}>
+                Xác Thực Bảo Mật OTP
+              </h3>
+              <p style={{ fontSize: '13.5px', color: '#cbd5e1', lineHeight: '1.5', marginBottom: '16px', padding: '0 8px' }}>
+                Mã xác thực 6 số vừa được gửi đến <span style={{ color: '#38bdf8', fontWeight: '600' }}>tin nhắn riêng Zalo</span> của bạn.
               </p>
 
-              <div style={{ marginBottom: '16px' }}>
+              {/* Alert Info Box thay cho văn bản có emoji dễ lỗi */}
+              <div style={{
+                background: 'rgba(56, 189, 248, 0.08)',
+                border: '1px solid rgba(56, 189, 248, 0.22)',
+                borderRadius: '12px',
+                padding: '10px 12px',
+                fontSize: '12.5px',
+                color: '#7dd3fc',
+                marginBottom: '22px',
+                lineHeight: '1.4',
+                textAlign: 'left',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px'
+              }}>
+                <span style={{ fontSize: '16px' }}>💡</span>
+                <span>Chưa nhận được mã hoặc mã lỗi? Hãy bấm nút <b>Gửi lại mã OTP</b> bên dưới nhé!</span>
+              </div>
+
+              <div style={{ marginBottom: '20px' }}>
                 <input
                   type="text"
                   maxLength="6"
-                  placeholder="Nhập 6 số OTP..."
+                  placeholder="• • • • • •"
                   value={otpCode}
                   onChange={(e) => setOtpCode(e.target.value.replace(/[^\d]/g, ''))}
                   style={{
                     width: '100%',
-                    padding: '12px',
-                    fontSize: '20px',
+                    padding: '14px 12px',
+                    fontSize: '22px',
                     textAlign: 'center',
-                    letterSpacing: '6px',
-                    fontWeight: 'bold',
-                    borderRadius: '10px',
-                    border: '1px solid rgba(255, 255, 255, 0.2)',
-                    background: 'rgba(0, 0, 0, 0.4)',
+                    letterSpacing: '8px',
+                    fontWeight: '800',
+                    borderRadius: '14px',
+                    border: '1.5px solid rgba(139, 92, 246, 0.5)',
+                    background: 'rgba(0, 0, 0, 0.5)',
                     color: '#38bdf8',
-                    outline: 'none'
+                    outline: 'none',
+                    boxShadow: 'inset 0 2px 5px rgba(0,0,0,0.5)'
                   }}
                 />
               </div>
 
               {otpError && (
-                <div style={{ color: '#f87171', fontSize: '13px', marginBottom: '16px', background: 'rgba(239, 68, 68, 0.1)', padding: '8px', borderRadius: '6px' }}>
+                <div style={{ color: '#f87171', fontSize: '13px', marginBottom: '18px', background: 'rgba(239, 68, 68, 0.12)', border: '1px solid rgba(239, 68, 68, 0.3)', padding: '10px', borderRadius: '10px', fontWeight: '500' }}>
                   ⚠️ {otpError}
                 </div>
               )}
 
-              <div style={{ display: 'flex', gap: '10px' }}>
+              <div style={{ display: 'flex', gap: '12px', marginBottom: '22px' }}>
                 <button
-                  className="lookup-admin-link"
                   onClick={() => setOtpModalOpen(false)}
-                  style={{ flex: 1, padding: '12px', borderRadius: '10px', background: 'rgba(255, 255, 255, 0.05)', color: '#9ca3af', border: '1px solid rgba(255, 255, 255, 0.1)', cursor: 'pointer', fontWeight: '600' }}
+                  style={{ flex: 1, padding: '13px', borderRadius: '12px', background: 'rgba(255, 255, 255, 0.06)', color: '#cbd5e1', border: '1px solid rgba(255, 255, 255, 0.12)', cursor: 'pointer', fontWeight: '600', fontSize: '14px', transition: 'all 0.2s' }}
                 >
                   Hủy bỏ
                 </button>
                 <button
-                  className="lookup-btn"
                   onClick={() => {
                     if (!otpCode || otpCode.length !== 6) {
                       setOtpError('Vui lòng nhập đủ 6 số OTP');
@@ -1776,19 +1912,35 @@ function App() {
                     if (otpActionType === 'PAYOUT') handleRequestPayout(otpCode);
                   }}
                   disabled={bankSaveLoading || payoutSaveLoading}
-                  style={{ flex: 1.5, padding: '12px', borderRadius: '10px', fontSize: '14px', background: 'linear-gradient(135deg, #8b5cf6, #6366f1)', color: '#fff', border: 'none', cursor: 'pointer', fontWeight: 'bold', boxShadow: '0 4px 15px rgba(139, 92, 246, 0.3)' }}
+                  style={{ flex: 1.4, padding: '13px', borderRadius: '12px', fontSize: '14.5px', background: 'linear-gradient(135deg, #8b5cf6, #6366f1)', color: '#fff', border: 'none', cursor: 'pointer', fontWeight: 'bold', boxShadow: '0 6px 20px rgba(139, 92, 246, 0.4)', transition: 'all 0.2s' }}
                 >
-                  {(bankSaveLoading || payoutSaveLoading) ? 'Đang kiểm tra...' : 'Xác nhận'}
+                  {(bankSaveLoading || payoutSaveLoading) ? 'Đang kiểm tra...' : 'Xác nhận ngay'}
                 </button>
               </div>
 
-              <div style={{ marginTop: '16px' }}>
+              {/* Pill Button Gửi lại mã OTP - Dùng SVG thay thế emoji để không bao giờ bị lỗi font ô vuông */}
+              <div style={{ borderTop: '1px solid rgba(255, 255, 255, 0.08)', paddingTop: '18px' }}>
                 <button
                   onClick={() => sendOtpToUser(otpActionType)}
                   disabled={otpSending}
-                  style={{ background: 'transparent', border: 'none', color: '#a8a29e', fontSize: '12px', cursor: 'pointer', textDecoration: 'underline' }}
+                  style={{
+                    background: 'rgba(255, 255, 255, 0.05)',
+                    border: '1px solid rgba(255, 255, 255, 0.14)',
+                    borderRadius: '20px',
+                    padding: '8px 18px',
+                    color: '#e2e8f0',
+                    fontSize: '13px',
+                    fontWeight: '600',
+                    cursor: 'pointer',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    transition: 'all 0.2s',
+                    boxShadow: '0 2px 6px rgba(0,0,0,0.2)'
+                  }}
                 >
-                  {otpSending ? 'Đang gửi lại...' : '🔄 Gửi lại mã OTP'}
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: '6px' }}><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/><path d="M16 16h5v5"/></svg>
+                  {otpSending ? 'Đang gửi lại...' : 'Gửi lại mã OTP (Miễn phí)'}
                 </button>
               </div>
             </div>
@@ -2045,7 +2197,7 @@ function App() {
               <button 
                 className="btn" 
                 onClick={() => {
-                  alert("Để đăng ký và sở hữu Bot, vui lòng liên hệ trực tiếp Zalo: 0888728256 (Phạm Thắng) để được hỗ trợ cấu hình và kích hoạt nhanh nhất!");
+                  showToast("Để đăng ký và sở hữu Bot, vui lòng liên hệ Zalo: 0888728256 (Phạm Thắng)!", 'info');
                   window.open("https://zalo.me/0888728256", "_blank");
                 }}
                 style={{ width: '100%', padding: '14px', borderRadius: '12px', fontSize: '15px', border: '1px solid rgba(255,255,255,0.1)', cursor: 'pointer', background: 'transparent', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
@@ -2119,7 +2271,7 @@ function App() {
               <button 
                 className="btn btn-glow" 
                 onClick={() => {
-                  alert("Để đăng ký và sở hữu Bot, vui lòng liên hệ trực tiếp Zalo: 0888728256 (Phạm Thắng) để được hỗ trợ cấu hình và kích hoạt nhanh nhất!");
+                  showToast("Để đăng ký và sở hữu Bot, vui lòng liên hệ Zalo: 0888728256 (Phạm Thắng)!", 'info');
                   window.open("https://zalo.me/0888728256", "_blank");
                 }}
                 style={{ width: '100%', padding: '14px', borderRadius: '12px', fontSize: '15px', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
@@ -2176,7 +2328,7 @@ function App() {
               <button 
                 className="btn" 
                 onClick={() => {
-                  alert("Để đăng ký và sở hữu Bot, vui lòng liên hệ trực tiếp Zalo: 0888728256 (Phạm Thắng) để được hỗ trợ cấu hình và kích hoạt nhanh nhất!");
+                  showToast("Để đăng ký và sở hữu Bot, vui lòng liên hệ Zalo: 0888728256 (Phạm Thắng)!", 'info');
                   window.open("https://zalo.me/0888728256", "_blank");
                 }}
                 style={{ width: '100%', padding: '14px', borderRadius: '12px', fontSize: '15px', border: '1px solid rgba(255,255,255,0.1)', cursor: 'pointer', background: 'transparent', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center' }}

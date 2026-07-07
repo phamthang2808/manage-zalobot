@@ -360,6 +360,7 @@ function App() {
 
     if (!q || !q.trim()) {
       setLookupError('Vui lòng nhập từ khóa tìm kiếm');
+      showToast('Vui lòng nhập từ khóa tìm kiếm', 'error');
       return;
     }
 
@@ -393,6 +394,7 @@ function App() {
     } catch (err) {
       console.error(err);
       setLookupError(err.message);
+      showToast(err.message, 'error');
     } finally {
       setLookupLoading(false);
     }
@@ -443,6 +445,7 @@ function App() {
   const handleSaveBankInfo = async (code = '') => {
     if (!editBankName.trim() || !editAccountNumber.trim()) {
       setBankSaveError('Vui lòng điền đầy đủ tên ngân hàng và số tài khoản');
+      showToast('Vui lòng điền đầy đủ tên ngân hàng và số tài khoản', 'error');
       return;
     }
 
@@ -478,6 +481,7 @@ function App() {
     } catch (err) {
       setBankSaveError(err.message);
       if (otpModalOpen) setOtpError(err.message);
+      showToast(err.message, 'error');
     } finally {
       setBankSaveLoading(false);
     }
@@ -487,11 +491,13 @@ function App() {
     const amountVal = parseFloat(payoutAmount.replace(/[^\d]/g, ''));
     if (isNaN(amountVal) || amountVal <= 0) {
       setPayoutSaveError('Vui lòng nhập số tiền rút hợp lệ (lớn hơn 0đ)');
+      showToast('Vui lòng nhập số tiền rút hợp lệ (lớn hơn 0đ)', 'error');
       return;
     }
 
     if (!lookupResult.bankName || !lookupResult.accountNumber) {
       setPayoutSaveError('Vui lòng thiết lập thông tin ngân hàng nhận tiền trước');
+      showToast('Vui lòng thiết lập thông tin ngân hàng nhận tiền trước', 'error');
       return;
     }
 
@@ -514,14 +520,15 @@ function App() {
         throw new Error(json.message || 'Lỗi khi yêu cầu rút tiền');
       }
 
-      setPayoutSuccess(true);
       setPayoutAmount('');
       setOtpModalOpen(false);
+      showToast('🎉 Yêu cầu rút tiền thành công! Trưởng nhóm Phạm Thắng sẽ duyệt và chuyển khoản cho sếp sớm nhất!', 'success');
       // Tải lại dữ liệu ví tiền
       handlePublicLookup(lookupResult.zaloId, 'ZALO_ID');
     } catch (err) {
       setPayoutSaveError(err.message);
       if (otpModalOpen) setOtpError(err.message);
+      showToast(err.message, 'error');
     } finally {
       setPayoutSaveLoading(false);
     }
@@ -584,9 +591,11 @@ function App() {
       sessionStorage.setItem('adminUser', JSON.stringify(authData.user));
       sessionStorage.setItem('adminToken', 'session-cookie');
       setIsLoginModalOpen(false);
+      showToast('Đăng nhập thành công!', 'success');
     } catch (err) {
       console.error(">>> [handleGoogleLoginSuccess] error:", err);
       setLoginError(err.message);
+      showToast(err.message, 'error');
     } finally {
       setLoginLoading(false);
     }
@@ -616,9 +625,11 @@ function App() {
       sessionStorage.setItem('adminUser', JSON.stringify(authData.user));
       sessionStorage.setItem('adminToken', 'session-cookie');
       setIsLoginModalOpen(false);
+      showToast('Đăng nhập thành công!', 'success');
     } catch (err) {
       console.error(">>> [handleLocalLogin] error:", err);
       setLoginError(err.message);
+      showToast(err.message, 'error');
     } finally {
       setLoginLoading(false);
     }
@@ -763,10 +774,12 @@ function App() {
       const text = await res.text();
       if (!res.ok) throw new Error(text);
       setImportResult({ success: true, message: text });
+      showToast('Import file Excel thành công: ' + text, 'success');
       setImportFile(null);
       fetchData(token, user); // Refresh toàn bộ data
     } catch (err) {
       setImportResult({ success: false, message: err.message });
+      showToast('Lỗi Import Excel: ' + err.message, 'error');
     } finally {
       setImportLoading(false);
     }
@@ -790,6 +803,79 @@ function App() {
            p.zaloId.includes(payoutSearch) ||
            String(p.id).includes(payoutSearch);
   });
+
+  const toastElement = toast && (
+    <div style={{
+      position: 'fixed',
+      top: '24px',
+      right: '24px',
+      zIndex: 9999999,
+      minWidth: '310px',
+      maxWidth: '400px',
+      background: 'linear-gradient(135deg, rgba(23, 19, 55, 0.96), rgba(10, 8, 29, 0.98))',
+      border: `1px solid ${toast.type === 'success' ? 'rgba(52, 211, 153, 0.6)' : (toast.type === 'error' ? 'rgba(248, 113, 113, 0.6)' : 'rgba(139, 92, 246, 0.6)')}`,
+      borderRadius: '16px',
+      boxShadow: '0 20px 40px -10px rgba(0, 0, 0, 0.85), 0 0 35px rgba(139, 92, 246, 0.25)',
+      padding: '16px 20px',
+      backdropFilter: 'blur(16px)',
+      animation: 'toastSlideIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+      display: 'flex',
+      alignItems: 'flex-start',
+      gap: '14px',
+      overflow: 'hidden'
+    }}>
+      {/* Icon */}
+      <div style={{
+        width: '36px',
+        height: '36px',
+        borderRadius: '50%',
+        background: toast.type === 'success' ? 'rgba(52, 211, 153, 0.15)' : (toast.type === 'error' ? 'rgba(248, 113, 113, 0.15)' : 'rgba(139, 92, 246, 0.15)'),
+        border: `1px solid ${toast.type === 'success' ? 'rgba(52, 211, 153, 0.4)' : (toast.type === 'error' ? 'rgba(248, 113, 113, 0.4)' : 'rgba(139, 92, 246, 0.4)')}`,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        fontSize: '18px',
+        flexShrink: 0
+      }}>
+        {toast.type === 'success' ? '🎉' : (toast.type === 'error' ? '⚠️' : '💡')}
+      </div>
+
+      {/* Content */}
+      <div style={{ flex: 1, textAlign: 'left', paddingRight: '10px' }}>
+        <div style={{ fontSize: '14.5px', fontWeight: '700', color: '#fff', marginBottom: '4px' }}>
+          {toast.type === 'success' ? 'Thành công!' : (toast.type === 'error' ? 'Có lỗi xảy ra!' : 'Thông báo')}
+        </div>
+        <div style={{ fontSize: '13px', color: '#cbd5e1', lineHeight: '1.4' }}>
+          {toast.message}
+        </div>
+      </div>
+
+      {/* Close Button */}
+      <button
+        onClick={() => setToast(null)}
+        style={{
+          background: 'transparent',
+          border: 'none',
+          color: '#94a3b8',
+          fontSize: '18px',
+          cursor: 'pointer',
+          padding: '2px',
+          lineHeight: 1
+        }}
+      >
+        &times;
+      </button>
+      {/* Progress Bar (Viền chạy chạy dưới đáy tự tắt sau 4s) */}
+      <div style={{
+        position: 'absolute',
+        bottom: 0,
+        left: 0,
+        height: '3px',
+        background: toast.type === 'success' ? 'linear-gradient(90deg, #34d399, #10b981)' : (toast.type === 'error' ? 'linear-gradient(90deg, #f87171, #ef4444)' : 'linear-gradient(90deg, #a78bfa, #38bdf8)'),
+        animation: 'toastProgress 4s linear forwards'
+      }} />
+    </div>
+  );
 
   if (view === 'lookup') {
     const totalCommission = lookupResult 
@@ -1339,80 +1425,8 @@ function App() {
           }
         `}} />
 
-        {/* Custom Toast Notification Top-Right có viền chạy tiến trình */}
-        {toast && (
-          <div style={{
-            position: 'fixed',
-            top: '24px',
-            right: '24px',
-            zIndex: 9999999,
-            minWidth: '310px',
-            maxWidth: '400px',
-            background: 'linear-gradient(135deg, rgba(23, 19, 55, 0.96), rgba(10, 8, 29, 0.98))',
-            border: `1px solid ${toast.type === 'success' ? 'rgba(52, 211, 153, 0.6)' : (toast.type === 'error' ? 'rgba(248, 113, 113, 0.6)' : 'rgba(139, 92, 246, 0.6)')}`,
-            borderRadius: '16px',
-            boxShadow: '0 20px 40px -10px rgba(0, 0, 0, 0.85), 0 0 35px rgba(139, 92, 246, 0.25)',
-            padding: '16px 20px',
-            backdropFilter: 'blur(16px)',
-            animation: 'toastSlideIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards',
-            display: 'flex',
-            alignItems: 'flex-start',
-            gap: '14px',
-            overflow: 'hidden'
-          }}>
-            {/* Icon */}
-            <div style={{
-              width: '36px',
-              height: '36px',
-              borderRadius: '50%',
-              background: toast.type === 'success' ? 'rgba(52, 211, 153, 0.15)' : (toast.type === 'error' ? 'rgba(248, 113, 113, 0.15)' : 'rgba(139, 92, 246, 0.15)'),
-              border: `1px solid ${toast.type === 'success' ? 'rgba(52, 211, 153, 0.4)' : (toast.type === 'error' ? 'rgba(248, 113, 113, 0.4)' : 'rgba(139, 92, 246, 0.4)')}`,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              fontSize: '18px',
-              flexShrink: 0
-            }}>
-              {toast.type === 'success' ? '🎉' : (toast.type === 'error' ? '⚠️' : '💡')}
-            </div>
-
-            {/* Content */}
-            <div style={{ flex: 1, textAlign: 'left', paddingRight: '10px' }}>
-              <div style={{ fontSize: '14.5px', fontWeight: '700', color: '#fff', marginBottom: '4px' }}>
-                {toast.type === 'success' ? 'Thành công!' : (toast.type === 'error' ? 'Có lỗi xảy ra!' : 'Thông báo')}
-              </div>
-              <div style={{ fontSize: '13px', color: '#cbd5e1', lineHeight: '1.4' }}>
-                {toast.message}
-              </div>
-            </div>
-
-            {/* Close Button */}
-            <button
-              onClick={() => setToast(null)}
-              style={{
-                background: 'transparent',
-                border: 'none',
-                color: '#94a3b8',
-                fontSize: '18px',
-                cursor: 'pointer',
-                padding: '2px',
-                lineHeight: 1
-              }}
-            >
-              &times;
-            </button>
-
-            {/* Progress Bar (Viền chạy chạy dưới đáy tự tắt sau 4s) */}
-            <div style={{
-              position: 'absolute',
-              bottom: 0,
-              left: 0,
-              height: '3px',
-              background: toast.type === 'success' ? 'linear-gradient(90deg, #34d399, #10b981)' : (toast.type === 'error' ? 'linear-gradient(90deg, #f87171, #ef4444)' : 'linear-gradient(90deg, #a78bfa, #38bdf8)'),
-              animation: 'toastProgress 4s linear forwards'
-            }} />
-          </div>
-        )}
+        {/* Custom Toast Notification Top-Right */}
+        {toastElement}
 
         {/* Top Navbar */}
         <header className="lookup-header">
@@ -1523,13 +1537,6 @@ function App() {
             </div>
           )}
         </div>
-
-        {/* Error Alert */}
-        {lookupError && (
-          <div className="lookup-error">
-            ⚠️ {lookupError}
-          </div>
-        )}
 
         {/* Results Panel */}
         {lookupResult && (
@@ -1761,42 +1768,6 @@ function App() {
           </>
         )}
 
-        {/* Payout Success Alert Modal */}
-        {payoutSuccess && (
-          <div style={{
-            position: 'fixed',
-            inset: 0,
-            background: 'rgba(0, 0, 0, 0.7)',
-            backdropFilter: 'blur(8px)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            zIndex: 9999,
-            padding: '16px'
-          }}>
-            <div className="lookup-card" style={{
-              maxWidth: '450px',
-              textAlign: 'center',
-              border: '1px solid rgba(52, 211, 153, 0.3)',
-              boxShadow: '0 20px 40px rgba(0,0,0,0.6), 0 0 30px rgba(52, 211, 153, 0.1)',
-              background: '#0f0c29'
-            }}>
-              <div style={{ fontSize: '48px', marginBottom: '16px' }}>🎉</div>
-              <h3 style={{ fontSize: '20px', fontWeight: 'bold', color: '#34d399', marginBottom: '12px' }}>Yêu Cầu Rút Tiền Thành Công!</h3>
-              <p style={{ fontSize: '14px', color: '#d1d5db', lineHeight: '1.5', marginBottom: '24px' }}>
-                Yêu cầu rút tiền của sếp đã được gửi lên hệ thống. Trưởng nhóm **Phạm Thắng** sẽ duyệt giao dịch và chuyển khoản cho sếp trong thời gian sớm nhất có thể! 🌷
-              </p>
-              <button 
-                className="lookup-btn" 
-                onClick={() => setPayoutSuccess(false)}
-                style={{ background: 'linear-gradient(135deg, #34d399, #059669)', boxShadow: '0 4px 15px rgba(5, 150, 105, 0.3)' }}
-              >
-                Đóng
-              </button>
-            </div>
-          </div>
-        )}
-
         {/* OTP Verification Modal */}
         {otpModalOpen && (
           <div style={{
@@ -1970,6 +1941,9 @@ function App() {
     
     return (
       <div className="landing-page">
+        {/* Custom Toast Notification Top-Right */}
+        {toastElement}
+
         {/* Header / Navbar */}
         <header className="landing-header">
           <div className="landing-logo">
@@ -2405,8 +2379,6 @@ function App() {
                   <button className="login-modal-close" onClick={() => setIsLoginModalOpen(false)} style={{ marginLeft: 'auto' }}>&times;</button>
                 </div>
                 
-                {loginError && <div className="error-alert" style={{ marginBottom: '16px' }}>⚠️ {loginError}</div>}
-                
                 <form onSubmit={handleLocalLogin}>
                   <div className="modal-form-group">
                     <label className="modal-form-label">Email</label>
@@ -2531,6 +2503,9 @@ function App() {
 
   return (
     <div className="app-container">
+      {/* Custom Toast Notification Top-Right in Admin Panel */}
+      {toastElement}
+
       {/* Mobile sidebar overlay */}
       {sidebarOpen && <div className="sidebar-overlay" onClick={() => setSidebarOpen(false)}></div>}
       {/* Sidebar Navigation */}

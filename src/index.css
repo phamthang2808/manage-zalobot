@@ -1016,17 +1016,17 @@ tr:hover td {
 
 /* Custom Login Modal Styles */
 .login-modal-content {
-  background: rgba(18, 22, 33, 0.95);
+  background: linear-gradient(135deg, rgba(23, 19, 55, 0.95) 0%, rgba(15, 12, 41, 0.98) 100%);
   backdrop-filter: blur(25px);
   -webkit-backdrop-filter: blur(25px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 16px;
+  border: 1px solid rgba(139, 92, 246, 0.4);
+  border-radius: 20px;
   width: 100%;
   max-width: 420px;
   margin: auto;
   max-height: 90vh;
   overflow-y: auto;
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+  box-shadow: 0 25px 60px -10px rgba(0, 0, 0, 0.85), 0 0 40px rgba(139, 92, 246, 0.25);
   animation: modalFadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   z-index: 1001;
 }
@@ -1034,6 +1034,16 @@ tr:hover td {
 @keyframes modalFadeIn {
   from { transform: scale(0.95); opacity: 0; }
   to { transform: scale(1); opacity: 1; }
+}
+
+@keyframes toastSlideIn {
+  from { opacity: 0; transform: translate(50px, -10px) scale(0.95); }
+  to { opacity: 1; transform: translate(0, 0) scale(1); }
+}
+
+@keyframes toastProgress {
+  from { width: 100%; }
+  to { width: 0%; }
 }
 
 .login-modal-header {
@@ -1047,7 +1057,7 @@ tr:hover td {
   font-family: var(--font-heading);
   font-size: 22px;
   font-weight: 800;
-  background: linear-gradient(135deg, #38BDF8, #818CF8);
+  background: linear-gradient(135deg, #38bdf8, #c084fc, #f472b6);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   margin: 0;
@@ -1083,41 +1093,41 @@ tr:hover td {
 .modal-form-input {
   width: 100%;
   padding: 12px 16px;
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(139, 92, 246, 0.3);
+  border-radius: 10px;
   color: #FFFFFF;
   font-size: 14px;
-  transition: all 0.2s ease;
+  transition: all 0.25s ease;
 }
 
 .modal-form-input:focus {
   outline: none;
-  border-color: #38BDF8;
-  background: rgba(255, 255, 255, 0.05);
-  box-shadow: 0 0 12px rgba(56, 189, 248, 0.15);
+  border-color: #38bdf8;
+  background: rgba(255, 255, 255, 0.08);
+  box-shadow: 0 0 15px rgba(56, 189, 248, 0.3);
 }
 
 .modal-login-btn {
   width: 100%;
-  padding: 12px;
-  background: linear-gradient(135deg, #f97316, #ec4899, #8b5cf6);
+  padding: 12.5px;
+  background: linear-gradient(135deg, #8b5cf6, #6366f1, #38bdf8);
   background-size: 200% auto;
   color: #ffffff;
-  border: none;
-  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 10px;
   font-size: 15px;
-  font-weight: 600;
+  font-weight: 700;
   cursor: pointer;
   transition: all 0.3s ease;
   margin-top: 10px;
-  box-shadow: 0 4px 15px rgba(236, 72, 153, 0.35);
+  box-shadow: 0 4px 20px rgba(139, 92, 246, 0.4);
 }
 
 .modal-login-btn:hover {
   background-position: right center;
-  box-shadow: 0 6px 20px rgba(236, 72, 153, 0.5), 0 0 12px rgba(139, 92, 246, 0.3);
-  transform: translateY(-1px);
+  box-shadow: 0 6px 25px rgba(139, 92, 246, 0.6), 0 0 15px rgba(56, 189, 248, 0.4);
+  transform: translateY(-2px);
 }
 
 .modal-login-btn:disabled {

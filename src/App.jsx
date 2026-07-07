@@ -1417,7 +1417,7 @@ function App() {
                     handlePublicLookup(item.query, item.searchType);
                   }}
                 >
-                  <span>{item.searchType === 'NAME' ? '👤' : '🛒'} {item.query}</span>
+                  <span>{(item.searchType === 'ZALO_ID' || item.searchType === 'token') ? '🔑' : (item.searchType === 'NAME' ? '👤' : '🛒')} {item.query.length > 15 ? item.query.substring(0, 15) + '...' : item.query}</span>
                   <span className="recent-close" onClick={(e) => removeRecentSearch(e, idx)}>&times;</span>
                 </div>
               ))}

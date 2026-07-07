@@ -64,6 +64,7 @@ function App() {
   const [otpCode, setOtpCode] = useState('');
   const [otpSending, setOtpSending] = useState(false);
   const [otpError, setOtpError] = useState('');
+  const [otpCountdown, setOtpCountdown] = useState(0);
   const [showBanner, setShowBanner] = useState(true);
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
@@ -81,6 +82,13 @@ function App() {
       return () => clearTimeout(timer);
     }
   }, [toast]);
+
+  useEffect(() => {
+    if (otpCountdown > 0) {
+      const timer = setTimeout(() => setOtpCountdown(otpCountdown - 1), 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [otpCountdown]);
   const [stats, setStats] = useState({
     totalMembers: 0,
     totalOrders: 0,
@@ -401,6 +409,11 @@ function App() {
   };
 
   const sendOtpToUser = async (action) => {
+    if (otpCountdown > 0) {
+      showToast(`Vui lòng đợi ${otpCountdown} giây trước khi yêu cầu gửi lại mã OTP mới!`, 'warning');
+      return;
+    }
+
     if (action === 'BANK') {
       if (!editBankName.trim() || !editAccountNumber.trim()) {
         setBankSaveError('Vui lòng điền đầy đủ tên ngân hàng và số tài khoản');
@@ -434,6 +447,7 @@ function App() {
       setOtpActionType(action);
       setOtpCode('');
       setOtpModalOpen(true);
+      setOtpCountdown(60);
       showToast('Đã gửi mã xác thực OTP vào tin nhắn riêng Zalo!', 'success');
     } catch (err) {
       showToast(err.message, 'error');
@@ -477,6 +491,7 @@ function App() {
       }));
       setIsEditingBank(false);
       setOtpModalOpen(false);
+      setOtpCountdown(0);
       showToast('Đã cập nhật thông tin ngân hàng thành công!', 'success');
     } catch (err) {
       setBankSaveError(err.message);
@@ -522,6 +537,7 @@ function App() {
 
       setPayoutAmount('');
       setOtpModalOpen(false);
+      setOtpCountdown(0);
       showToast('🎉 Yêu cầu rút tiền thành công! Trưởng nhóm Phạm Thắng sẽ duyệt và chuyển khoản cho sếp sớm nhất!', 'success');
       // Tải lại dữ liệu ví tiền
       handlePublicLookup(lookupResult.zaloId, 'ZALO_ID');
@@ -1893,16 +1909,16 @@ function App() {
               <div style={{ borderTop: '1px solid rgba(255, 255, 255, 0.08)', paddingTop: '18px' }}>
                 <button
                   onClick={() => sendOtpToUser(otpActionType)}
-                  disabled={otpSending}
+                  disabled={otpSending || otpCountdown > 0}
                   style={{
-                    background: 'rgba(255, 255, 255, 0.05)',
+                    background: (otpSending || otpCountdown > 0) ? 'rgba(255, 255, 255, 0.02)' : 'rgba(255, 255, 255, 0.05)',
                     border: '1px solid rgba(255, 255, 255, 0.14)',
                     borderRadius: '20px',
                     padding: '8px 18px',
-                    color: '#e2e8f0',
+                    color: (otpSending || otpCountdown > 0) ? '#64748b' : '#e2e8f0',
                     fontSize: '13px',
                     fontWeight: '600',
-                    cursor: 'pointer',
+                    cursor: (otpSending || otpCountdown > 0) ? 'not-allowed' : 'pointer',
                     display: 'inline-flex',
                     alignItems: 'center',
                     justifyContent: 'center',
@@ -1911,7 +1927,7 @@ function App() {
                   }}
                 >
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: '6px' }}><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/><path d="M16 16h5v5"/></svg>
-                  {otpSending ? 'Đang gửi lại...' : 'Gửi lại mã OTP (Miễn phí)'}
+                  {otpSending ? 'Đang gửi lại...' : (otpCountdown > 0 ? `Gửi lại mã sau (${otpCountdown}s)` : 'Gửi lại mã OTP (Miễn phí)')}
                 </button>
               </div>
             </div>

@@ -821,24 +821,9 @@ function App() {
   });
 
   const toastElement = toast && (
-    <div style={{
-      position: 'fixed',
-      top: '24px',
-      right: '24px',
-      zIndex: 9999999,
-      minWidth: '310px',
-      maxWidth: '400px',
+    <div className="custom-toast-popup" style={{
       background: 'linear-gradient(135deg, rgba(23, 19, 55, 0.96), rgba(10, 8, 29, 0.98))',
-      border: `1px solid ${toast.type === 'success' ? 'rgba(52, 211, 153, 0.6)' : (toast.type === 'error' ? 'rgba(248, 113, 113, 0.6)' : 'rgba(139, 92, 246, 0.6)')}`,
-      borderRadius: '16px',
-      boxShadow: '0 20px 40px -10px rgba(0, 0, 0, 0.85), 0 0 35px rgba(139, 92, 246, 0.25)',
-      padding: '16px 20px',
-      backdropFilter: 'blur(16px)',
-      animation: 'toastSlideIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards',
-      display: 'flex',
-      alignItems: 'flex-start',
-      gap: '14px',
-      overflow: 'hidden'
+      border: `1px solid ${toast.type === 'success' ? 'rgba(52, 211, 153, 0.6)' : (toast.type === 'error' ? 'rgba(248, 113, 113, 0.6)' : 'rgba(139, 92, 246, 0.6)')}`
     }}>
       {/* Icon */}
       <div style={{

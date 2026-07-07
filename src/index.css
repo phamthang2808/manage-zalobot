@@ -1046,6 +1046,36 @@ tr:hover td {
   to { width: 0%; }
 }
 
+.custom-toast-popup {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 9999999;
+  min-width: 310px;
+  max-width: 400px;
+  border-radius: 16px;
+  box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.85), 0 0 35px rgba(139, 92, 246, 0.25);
+  padding: 16px 20px;
+  backdrop-filter: blur(16px);
+  animation: toastSlideIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  overflow: hidden;
+}
+
+@media (max-width: 480px) {
+  .custom-toast-popup {
+    top: 14px;
+    right: 14px;
+    left: 14px;
+    width: auto;
+    min-width: 0;
+    max-width: none;
+    box-sizing: border-box;
+  }
+}
+
 .login-modal-header {
   display: flex;
   justify-content: space-between;

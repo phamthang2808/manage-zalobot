@@ -30,7 +30,7 @@ function App() {
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
 
   // Public Lookup States
-  const [lookupSearchType, setLookupSearchType] = useState('ZALO_ID');
+  const [lookupSearchType, setLookupSearchType] = useState('ORDER_ID');
   const [lookupQuery, setLookupQuery] = useState('');
   const [lookupStartDate, setLookupStartDate] = useState('');
   const [lookupEndDate, setLookupEndDate] = useState('');
@@ -365,6 +365,9 @@ function App() {
 
     const q = overrideQuery !== null ? overrideQuery : lookupQuery;
     const type = overrideType !== null ? overrideType : lookupSearchType;
+    if (overrideType !== null) {
+      setLookupSearchType(overrideType);
+    }
 
     if (!q || !q.trim()) {
       setLookupError('Vui lòng nhập từ khóa tìm kiếm');
@@ -1449,62 +1452,26 @@ function App() {
 
         {/* Search Panel Card */}
         <div className="lookup-card">
-          <h2 className="lookup-title">🔍 Tra Cứu Đơn Hàng & Ví Tiền</h2>
-          <p className="lookup-subtitle">Nhập thông tin cá nhân để tra cứu hoa hồng và trạng thái đơn</p>
-
-          <div className="lookup-tabs">
-            <button 
-              className={`lookup-tab ${lookupSearchType === 'ZALO_ID' ? 'active' : ''}`}
-              onClick={() => setLookupSearchType('ZALO_ID')}
-            >
-              🔑 Zalo ID
-            </button>
-            <button 
-              className={`lookup-tab ${lookupSearchType === 'ORDER_ID' ? 'active' : ''}`}
-              onClick={() => setLookupSearchType('ORDER_ID')}
-            >
-              🛒 Mã Đơn Hàng
-            </button>
-          </div>
+          <h2 className="lookup-title">🔍 Tra Cứu Đơn Hàng Shopee</h2>
+          <p className="lookup-subtitle">Nhập mã đơn hàng để kiểm tra trạng thái và hoa hồng</p>
 
           <div className="lookup-input-group">
             <label className="lookup-label">
-              {lookupSearchType === 'ZALO_ID' ? 'Nhập Zalo ID của sếp' : 'Nhập mã đơn hàng (Shopee)'}
+              Nhập mã đơn hàng (Shopee)
             </label>
             <input 
               type="text"
               className="lookup-input"
               value={lookupQuery}
               onChange={(e) => setLookupQuery(e.target.value)}
-              placeholder={lookupSearchType === 'ZALO_ID' ? 'Ví dụ: 5128074989288259190...' : 'Ví dụ: 260606C8W7YARK...'}
-              onKeyDown={(e) => e.key === 'Enter' && handlePublicLookup()}
+              placeholder="Ví dụ: 260606C8W7YARK..."
+              onKeyDown={(e) => e.key === 'Enter' && handlePublicLookup(null, 'ORDER_ID')}
             />
-          </div>
-
-          <div className="lookup-date-grid">
-            <div className="lookup-input-group" style={{ marginBottom: 0 }}>
-              <label className="lookup-label">Từ Ngày</label>
-              <input 
-                type="date"
-                className="lookup-input"
-                value={lookupStartDate}
-                onChange={(e) => setLookupStartDate(e.target.value)}
-              />
-            </div>
-            <div className="lookup-input-group" style={{ marginBottom: 0 }}>
-              <label className="lookup-label">Đến Ngày</label>
-              <input 
-                type="date"
-                className="lookup-input"
-                value={lookupEndDate}
-                onChange={(e) => setLookupEndDate(e.target.value)}
-              />
-            </div>
           </div>
 
           <button 
             className="lookup-btn"
-            onClick={() => handlePublicLookup()}
+            onClick={() => handlePublicLookup(null, 'ORDER_ID')}
             disabled={lookupLoading}
           >
             {lookupLoading ? (
@@ -1542,194 +1509,200 @@ function App() {
         {/* Results Panel */}
         {lookupResult && (
           <>
-            {/* 0. Bank Info Card */}
-            <div className="lookup-card" style={{ marginBottom: '24px' }}>
-              <h3 className="stats-section-title" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', margin: 0 }}>
-                <span>🏦 Thông Tin Ngân Hàng Nhận Tiền</span>
-                {!isEditingBank && (
-                  <button 
-                    className="lookup-admin-link" 
-                    style={{ fontSize: '12px', padding: '4px 10px', background: 'rgba(56, 189, 248, 0.1)', color: '#38bdf8', borderColor: 'rgba(56, 189, 248, 0.3)' }}
-                    onClick={() => {
-                      setEditBankName(lookupResult.bankName || '');
-                      setEditAccountNumber(lookupResult.accountNumber || '');
-                      setBankSaveError('');
-                      setIsEditingBank(true);
-                    }}
-                  >
-                    ✏️ {lookupResult.bankName ? 'Sửa' : 'Cài đặt'}
-                  </button>
-                )}
-              </h3>
-              
-              {isEditingBank ? (
-                <div style={{ marginTop: '16px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                  <div className="lookup-date-grid" style={{ marginBottom: '4px' }}>
-                    <div className="lookup-input-group" style={{ marginBottom: 0 }}>
-                      <label className="lookup-label">Tên Ngân Hàng</label>
-                      <input 
-                        type="text" 
-                        className="lookup-input" 
-                        placeholder="Ví dụ: MB, Techcombank..." 
-                        value={editBankName}
-                        onChange={(e) => setEditBankName(e.target.value)}
-                      />
-                    </div>
-                    <div className="lookup-input-group" style={{ marginBottom: 0 }}>
-                      <label className="lookup-label">Số Tài Khoản</label>
-                      <input 
-                        type="text" 
-                        className="lookup-input" 
-                        placeholder="Số tài khoản..." 
-                        value={editAccountNumber}
-                        onChange={(e) => setEditAccountNumber(e.target.value)}
-                      />
-                    </div>
-                  </div>
-                  {bankSaveError && <div style={{ color: '#f87171', fontSize: '12px' }}>⚠️ {bankSaveError}</div>}
-                  <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end', marginTop: '4px' }}>
-                    <button 
-                      className="lookup-admin-link" 
-                      style={{ padding: '6px 14px', background: 'rgba(255, 255, 255, 0.05)', color: '#9ca3af' }}
-                      onClick={() => setIsEditingBank(false)}
-                      disabled={bankSaveLoading}
-                    >
-                      Hủy
-                    </button>
-                    <button 
-                      className="lookup-btn" 
-                      style={{ width: 'auto', padding: '6px 16px', fontSize: '13px' }}
-                      onClick={() => sendOtpToUser('BANK')}
-                      disabled={bankSaveLoading}
-                    >
-                      {bankSaveLoading ? 'Đang lưu...' : 'Lưu thông tin'}
-                    </button>
-                  </div>
-                </div>
-              ) : (
-                <div style={{ marginTop: '16px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', background: 'rgba(255, 255, 255, 0.02)', padding: '12px 16px', borderRadius: '8px', border: '1px solid rgba(255, 255, 255, 0.04)' }}>
-                  <div>
-                    <span className="lookup-label" style={{ fontSize: '10px', color: '#94a3b8' }}>Ngân Hàng</span>
-                    <strong style={{ fontSize: '15px', color: '#fff' }}>{lookupResult.bankName || 'Chưa thiết lập'}</strong>
-                  </div>
-                  <div>
-                    <span className="lookup-label" style={{ fontSize: '10px', color: '#94a3b8' }}>Số Tài Khoản</span>
-                    <strong style={{ fontSize: '15px', color: '#fff' }}>{lookupResult.accountNumber || 'Chưa thiết lập'}</strong>
-                  </div>
-                </div>
-              )}
-            </div>
-
-            {/* 1. Wallet Stats */}
-            <div className="stats-container">
-              <h3 className="stats-section-title">
-                💰 Thống Kê Hoa Hồng của: <span style={{ color: '#38bdf8' }}>{lookupResult.zaloName}</span>
-              </h3>
-              <div className="stats-cards-grid">
-                <div className="stat-card-item total">
-                  <span className="stat-card-label">Tổng tích lũy (Hoàn thành + Chờ)</span>
-                  <span className="stat-card-value primary">{formatMoney(totalCommission)}</span>
-                </div>
-                <div className="stat-card-item pending">
-                  <span className="stat-card-label">Đang chờ xử lý</span>
-                  <span style={{ fontSize: '11px', color: '#94a3b8', marginBottom: '4px' }}>Đang vận chuyển hoặc chưa xác nhận</span>
-                  <span className="stat-card-value">{formatMoney(lookupResult.wallet.pendingCommission)}</span>
-                </div>
-                <div className="stat-card-item completed">
-                  <span className="stat-card-label">Đã hoàn thành</span>
-                  <span style={{ fontSize: '11px', color: '#94a3b8', marginBottom: '4px' }}>Đã ấn giao hàng thành công</span>
-                  <span className="stat-card-value">{formatMoney(lookupResult.wallet.completedCommission)}</span>
-                </div>
-                <div className="stat-card-item withdrawable">
-                  <span className="stat-card-label">Có thể rút ngay (Khả dụng)</span>
-                  <span style={{ fontSize: '11px', color: '#38bdf8', marginBottom: '4px' }}>Sau 3 ngày • Đã trừ thuế & chia 8-2</span>
-                  <span className="stat-card-value" style={{ color: '#38bdf8' }}>{formatMoney(lookupResult.wallet.withdrawableCommission)}</span>
-                </div>
-                <div className="stat-card-item received">
-                  <span className="stat-card-label">Đã nhận (Đã thanh toán)</span>
-                  <span style={{ fontSize: '11px', color: '#94a3b8', marginBottom: '4px' }}>Tổng tiền đã rút về tài khoản</span>
-                  <span className="stat-card-value" style={{ color: '#818cf8' }}>{formatMoney(lookupResult.wallet.receivedCommission)}</span>
-                </div>
-              </div>
-            </div>
-
-            {/* 1.5. Payout Request Card */}
-            <div className="lookup-card" style={{ marginBottom: '24px' }}>
-              <h3 className="stats-section-title" style={{ margin: 0, marginBottom: '12px' }}>
-                <span>💸 Rút Tiền Hoa Hồng Khả Dụng</span>
-              </h3>
-              <p style={{ fontSize: '12.5px', color: '#a8a29e', margin: '0 0 16px 0', lineHeight: '1.4' }}>
-                Tiền hoa hồng của đơn "Hoàn thành" sau 3 ngày sẽ tự động chuyển xuống ví khả dụng để rút (đã trừ thuế Shopee và chia 8-2). Lệnh rút tiền sau khi gửi sẽ được duyệt thủ công bởi Trưởng nhóm Phạm Thắng.
-              </p>
-
-              {lookupResult.wallet.withdrawableCommission > 0 ? (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                  <div className="lookup-input-group" style={{ marginBottom: 0 }}>
-                    <label className="lookup-label">Số Tiền Muốn Rút (đ)</label>
-                    <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
-                      <input 
-                        type="text" 
-                        className="lookup-input" 
-                        placeholder={`Tối đa: ${formatMoney(lookupResult.wallet.withdrawableCommission)}`}
-                        value={payoutAmount}
-                        onChange={(e) => {
-                          const val = e.target.value.replace(/[^\d]/g, '');
-                          if (val) {
-                            setPayoutAmount(new Intl.NumberFormat('vi-VN').format(parseFloat(val)));
-                          } else {
-                            setPayoutAmount('');
-                          }
-                        }}
-                      />
+            {lookupSearchType !== 'ORDER_ID' && (
+              <>
+                {/* 0. Bank Info Card */}
+                <div className="lookup-card" style={{ marginBottom: '24px' }}>
+                  <h3 className="stats-section-title" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', margin: 0 }}>
+                    <span>🏦 Thông Tin Ngân Hàng Nhận Tiền</span>
+                    {!isEditingBank && (
                       <button 
-                        className="lookup-admin-link"
-                        style={{ position: 'absolute', right: '8px', fontSize: '11px', padding: '4px 8px', background: 'rgba(56, 189, 248, 0.1)', color: '#38bdf8', borderColor: 'rgba(56, 189, 248, 0.2)' }}
-                        onClick={() => setPayoutAmount(new Intl.NumberFormat('vi-VN').format(lookupResult.wallet.withdrawableCommission))}
+                        className="lookup-admin-link" 
+                        style={{ fontSize: '12px', padding: '4px 10px', background: 'rgba(56, 189, 248, 0.1)', color: '#38bdf8', borderColor: 'rgba(56, 189, 248, 0.3)' }}
+                        onClick={() => {
+                          setEditBankName(lookupResult.bankName || '');
+                          setEditAccountNumber(lookupResult.accountNumber || '');
+                          setBankSaveError('');
+                          setIsEditingBank(true);
+                        }}
                       >
-                        Rút hết
+                        ✏️ {lookupResult.bankName ? 'Sửa' : 'Cài đặt'}
+                      </button>
+                    )}
+                  </h3>
+                  
+                  {isEditingBank ? (
+                    <div style={{ marginTop: '16px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                      <div className="lookup-date-grid" style={{ marginBottom: '4px' }}>
+                        <div className="lookup-input-group" style={{ marginBottom: 0 }}>
+                          <label className="lookup-label">Tên Ngân Hàng</label>
+                          <input 
+                            type="text" 
+                            className="lookup-input" 
+                            placeholder="Ví dụ: MB, Techcombank..." 
+                            value={editBankName}
+                            onChange={(e) => setEditBankName(e.target.value)}
+                          />
+                        </div>
+                        <div className="lookup-input-group" style={{ marginBottom: 0 }}>
+                          <label className="lookup-label">Số Tài Khoản</label>
+                          <input 
+                            type="text" 
+                            className="lookup-input" 
+                            placeholder="Số tài khoản..." 
+                            value={editAccountNumber}
+                            onChange={(e) => setEditAccountNumber(e.target.value)}
+                          />
+                        </div>
+                      </div>
+                      {bankSaveError && <div style={{ color: '#f87171', fontSize: '12px' }}>⚠️ {bankSaveError}</div>}
+                      <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end', marginTop: '4px' }}>
+                        <button 
+                          className="lookup-admin-link" 
+                          style={{ padding: '6px 14px', background: 'rgba(255, 255, 255, 0.05)', color: '#9ca3af' }}
+                          onClick={() => setIsEditingBank(false)}
+                          disabled={bankSaveLoading}
+                        >
+                          Hủy
+                        </button>
+                        <button 
+                          className="lookup-btn" 
+                          style={{ width: 'auto', padding: '6px 16px', fontSize: '13px' }}
+                          onClick={() => sendOtpToUser('BANK')}
+                          disabled={bankSaveLoading}
+                        >
+                          {bankSaveLoading ? 'Đang lưu...' : 'Lưu thông tin'}
+                        </button>
+                      </div>
+                    </div>
+                  ) : (
+                    <div style={{ marginTop: '16px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', background: 'rgba(255, 255, 255, 0.02)', padding: '12px 16px', borderRadius: '8px', border: '1px solid rgba(255, 255, 255, 0.04)' }}>
+                      <div>
+                        <span className="lookup-label" style={{ fontSize: '10px', color: '#94a3b8' }}>Ngân Hàng</span>
+                        <strong style={{ fontSize: '15px', color: '#fff' }}>{lookupResult.bankName || 'Chưa thiết lập'}</strong>
+                      </div>
+                      <div>
+                        <span className="lookup-label" style={{ fontSize: '10px', color: '#94a3b8' }}>Số Tài Khoản</span>
+                        <strong style={{ fontSize: '15px', color: '#fff' }}>{lookupResult.accountNumber || 'Chưa thiết lập'}</strong>
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* 1. Wallet Stats */}
+                <div className="stats-container">
+                  <h3 className="stats-section-title">
+                    💰 Thống Kê Hoa Hồng của: <span style={{ color: '#38bdf8' }}>{lookupResult.zaloName}</span>
+                  </h3>
+                  <div className="stats-cards-grid">
+                    <div className="stat-card-item total">
+                      <span className="stat-card-label">Tổng tích lũy (Hoàn thành + Chờ)</span>
+                      <span className="stat-card-value primary">{formatMoney(totalCommission)}</span>
+                    </div>
+                    <div className="stat-card-item pending">
+                      <span className="stat-card-label">Đang chờ xử lý</span>
+                      <span style={{ fontSize: '11px', color: '#94a3b8', marginBottom: '4px' }}>Đang vận chuyển hoặc chưa xác nhận</span>
+                      <span className="stat-card-value">{formatMoney(lookupResult.wallet.pendingCommission)}</span>
+                    </div>
+                    <div className="stat-card-item completed">
+                      <span className="stat-card-label">Đã hoàn thành</span>
+                      <span style={{ fontSize: '11px', color: '#94a3b8', marginBottom: '4px' }}>Đã ấn giao hàng thành công</span>
+                      <span className="stat-card-value">{formatMoney(lookupResult.wallet.completedCommission)}</span>
+                    </div>
+                    <div className="stat-card-item withdrawable">
+                      <span className="stat-card-label">Có thể rút ngay (Khả dụng)</span>
+                      <span style={{ fontSize: '11px', color: '#38bdf8', marginBottom: '4px' }}>Sau 3 ngày • Đã trừ thuế & chia 8-2</span>
+                      <span className="stat-card-value" style={{ color: '#38bdf8' }}>{formatMoney(lookupResult.wallet.withdrawableCommission)}</span>
+                    </div>
+                    <div className="stat-card-item received">
+                      <span className="stat-card-label">Đã nhận (Đã thanh toán)</span>
+                      <span style={{ fontSize: '11px', color: '#94a3b8', marginBottom: '4px' }}>Tổng tiền đã rút về tài khoản</span>
+                      <span className="stat-card-value" style={{ color: '#818cf8' }}>{formatMoney(lookupResult.wallet.receivedCommission)}</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* 1.5. Payout Request Card */}
+                <div className="lookup-card" style={{ marginBottom: '24px' }}>
+                  <h3 className="stats-section-title" style={{ margin: 0, marginBottom: '12px' }}>
+                    <span>💸 Rút Tiền Hoa Hồng Khả Dụng</span>
+                  </h3>
+                  <p style={{ fontSize: '12.5px', color: '#a8a29e', margin: '0 0 16px 0', lineHeight: '1.4' }}>
+                    Tiền hoa hồng của đơn "Hoàn thành" sau 3 ngày sẽ tự động chuyển xuống ví khả dụng để rút (đã trừ thuế Shopee và chia 8-2). Lệnh rút tiền sau khi gửi sẽ được duyệt thủ công bởi Trưởng nhóm Phạm Thắng.
+                  </p>
+
+                  {lookupResult.wallet.withdrawableCommission > 0 ? (
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                      <div className="lookup-input-group" style={{ marginBottom: 0 }}>
+                        <label className="lookup-label">Số Tiền Muốn Rút (đ)</label>
+                        <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
+                          <input 
+                            type="text" 
+                            className="lookup-input" 
+                            placeholder={`Tối đa: ${formatMoney(lookupResult.wallet.withdrawableCommission)}`}
+                            value={payoutAmount}
+                            onChange={(e) => {
+                              const val = e.target.value.replace(/[^\d]/g, '');
+                              if (val) {
+                                setPayoutAmount(new Intl.NumberFormat('vi-VN').format(parseFloat(val)));
+                              } else {
+                                setPayoutAmount('');
+                              }
+                            }}
+                          />
+                          <button 
+                            className="lookup-admin-link"
+                            style={{ position: 'absolute', right: '8px', fontSize: '11px', padding: '4px 8px', background: 'rgba(56, 189, 248, 0.1)', color: '#38bdf8', borderColor: 'rgba(56, 189, 248, 0.2)' }}
+                            onClick={() => setPayoutAmount(new Intl.NumberFormat('vi-VN').format(lookupResult.wallet.withdrawableCommission))}
+                          >
+                            Rút hết
+                          </button>
+                        </div>
+                      </div>
+                      
+                      {payoutSaveError && <div style={{ color: '#f87171', fontSize: '12px' }}>⚠️ {payoutSaveError}</div>}
+                      
+                      <button 
+                        className="lookup-btn" 
+                        onClick={() => sendOtpToUser('PAYOUT')}
+                        disabled={payoutSaveLoading || !payoutAmount}
+                        style={{ marginTop: '4px' }}
+                      >
+                        {payoutSaveLoading ? (
+                          <>
+                            <div className="lookup-spinner"></div>
+                            Đang gửi yêu cầu...
+                          </>
+                        ) : (
+                          'Gửi yêu cầu rút tiền'
+                        )}
                       </button>
                     </div>
-                  </div>
-                  
-                  {payoutSaveError && <div style={{ color: '#f87171', fontSize: '12px' }}>⚠️ {payoutSaveError}</div>}
-                  
-                  <button 
-                    className="lookup-btn" 
-                    onClick={() => sendOtpToUser('PAYOUT')}
-                    disabled={payoutSaveLoading || !payoutAmount}
-                    style={{ marginTop: '4px' }}
-                  >
-                    {payoutSaveLoading ? (
-                      <>
-                        <div className="lookup-spinner"></div>
-                        Đang gửi yêu cầu...
-                      </>
-                    ) : (
-                      'Gửi yêu cầu rút tiền'
-                    )}
-                  </button>
+                  ) : (
+                    <div style={{ padding: '16px', background: 'rgba(239, 68, 68, 0.05)', border: '1px dashed rgba(239, 68, 68, 0.2)', borderRadius: '8px', textAlign: 'center', color: '#fca5a5', fontSize: '13px' }}>
+                      🔒 Số dư khả dụng của sếp hiện đang là 0đ. Chưa thể rút tiền lúc này.
+                    </div>
+                  )}
                 </div>
-              ) : (
-                <div style={{ padding: '16px', background: 'rgba(239, 68, 68, 0.05)', border: '1px dashed rgba(239, 68, 68, 0.2)', borderRadius: '8px', textAlign: 'center', color: '#fca5a5', fontSize: '13px' }}>
-                  🔒 Số dư khả dụng của sếp hiện đang là 0đ. Chưa thể rút tiền lúc này.
-                </div>
-              )}
-            </div>
+              </>
+            )}
 
             {/* 2. Orders Cards List */}
             <div className="orders-container">
               <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '10px', marginBottom: '16px', width: '100%' }}>
                 <h3 className="stats-section-title" style={{ marginBottom: 0, width: '100%', fontSize: '16px', fontWeight: '700', color: '#fff' }}>
-                  🛒 Đơn hàng đã tìm thấy ({searchedOrders.length})
+                  {lookupSearchType === 'ORDER_ID' ? '🛒 Kết Quả Tra Cứu Đơn Hàng' : `🛒 Đơn hàng đã mua (${searchedOrders.length})`}
                 </h3>
-                <input 
-                  type="text" 
-                  placeholder="Lọc nhanh đơn hàng..." 
-                  className="lookup-input"
-                  style={{ width: '100%', maxWidth: '100%', padding: '8px 12px', fontSize: '13px', borderRadius: '8px', margin: 0 }}
-                  value={lookupLocalFilter}
-                  onChange={(e) => setLookupLocalFilter(e.target.value)}
-                />
+                {lookupSearchType !== 'ORDER_ID' && (
+                  <input 
+                    type="text" 
+                    placeholder="Lọc nhanh đơn hàng..." 
+                    className="lookup-input"
+                    style={{ width: '100%', maxWidth: '100%', padding: '8px 12px', fontSize: '13px', borderRadius: '8px', margin: 0 }}
+                    value={lookupLocalFilter}
+                    onChange={(e) => setLookupLocalFilter(e.target.value)}
+                  />
+                )}
               </div>
 
               {searchedOrders.length === 0 ? (

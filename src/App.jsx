@@ -59,6 +59,11 @@ function App() {
   const [payoutSaveError, setPayoutSaveError] = useState('');
   const [payoutSaveLoading, setPayoutSaveLoading] = useState(false);
   const [payoutSuccess, setPayoutSuccess] = useState(false);
+  const [otpModalOpen, setOtpModalOpen] = useState(false);
+  const [otpActionType, setOtpActionType] = useState(''); // 'BANK' or 'PAYOUT'
+  const [otpCode, setOtpCode] = useState('');
+  const [otpSending, setOtpSending] = useState(false);
+  const [otpError, setOtpError] = useState('');
   const [showBanner, setShowBanner] = useState(true);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [stats, setStats] = useState({
@@ -314,17 +319,20 @@ function App() {
     };
   }, [isLoginModalOpen, token]);
 
-  // Auto-lookup khi mở link có ?zaloId=xxx (từ lệnh /tracuu của bot)
+  // Auto-lookup khi mở link có ?zaloId=xxx hoặc ?token=xxx (từ lệnh /tracuu của bot)
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
+    const autoToken = params.get('token');
     const autoZaloId = params.get('zaloId');
-    if (autoZaloId && autoZaloId.trim()) {
+    const targetQuery = autoToken || autoZaloId;
+    if (targetQuery && targetQuery.trim()) {
       setView('lookup');
-      setLookupSearchType('ZALO_ID');
-      setLookupQuery(autoZaloId.trim());
+      const targetType = autoToken ? 'token' : 'ZALO_ID';
+      setLookupSearchType(targetType);
+      setLookupQuery(targetQuery.trim());
       // Trigger search sau khi state set xong
       setTimeout(() => {
-        handlePublicLookup(autoZaloId.trim(), 'ZALO_ID');
+        handlePublicLookup(targetQuery.trim(), targetType);
       }, 100);
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -375,7 +383,48 @@ function App() {
     }
   };
 
-  const handleSaveBankInfo = async () => {
+  const sendOtpToUser = async (action) => {
+    if (action === 'BANK') {
+      if (!editBankName.trim() || !editAccountNumber.trim()) {
+        setBankSaveError('Vui lòng điền đầy đủ tên ngân hàng và số tài khoản');
+        return;
+      }
+    } else if (action === 'PAYOUT') {
+      const amountVal = parseFloat(payoutAmount.replace(/[^\d]/g, ''));
+      if (isNaN(amountVal) || amountVal <= 0) {
+        setPayoutSaveError('Vui lòng nhập số tiền rút hợp lệ (lớn hơn 0đ)');
+        return;
+      }
+      if (!lookupResult.bankName || !lookupResult.accountNumber) {
+        setPayoutSaveError('Vui lòng thiết lập thông tin ngân hàng nhận tiền trước');
+        return;
+      }
+    }
+
+    setOtpSending(true);
+    setOtpError('');
+    try {
+      const res = await fetch(`${API_URL_ROOT}/api/public/send-otp`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          zaloId: lookupResult.zaloId,
+          zaloName: lookupResult.zaloName || 'Sếp'
+        })
+      });
+      const json = await res.json();
+      if (!res.ok) throw new Error(json.message || 'Lỗi gửi mã OTP');
+      setOtpActionType(action);
+      setOtpCode('');
+      setOtpModalOpen(true);
+    } catch (err) {
+      alert('⚠️ Lỗi: ' + err.message);
+    } finally {
+      setOtpSending(false);
+    }
+  };
+
+  const handleSaveBankInfo = async (code = '') => {
     if (!editBankName.trim() || !editAccountNumber.trim()) {
       setBankSaveError('Vui lòng điền đầy đủ tên ngân hàng và số tài khoản');
       return;
@@ -383,6 +432,7 @@ function App() {
 
     setBankSaveLoading(true);
     setBankSaveError('');
+    setOtpError('');
 
     try {
       const res = await fetch(`${API_URL_ROOT}/api/public/bank-info`, {
@@ -391,7 +441,8 @@ function App() {
         body: JSON.stringify({
           zaloId: lookupResult.zaloId,
           bankName: editBankName.trim(),
-          accountNumber: editAccountNumber.trim()
+          accountNumber: editAccountNumber.trim(),
+          otp: code
         })
       });
       const json = await res.json();
@@ -406,15 +457,17 @@ function App() {
         accountNumber: editAccountNumber.trim()
       }));
       setIsEditingBank(false);
+      setOtpModalOpen(false);
       alert('Đã cập nhật thông tin ngân hàng thành công!');
     } catch (err) {
       setBankSaveError(err.message);
+      if (otpModalOpen) setOtpError(err.message);
     } finally {
       setBankSaveLoading(false);
     }
   };
 
-  const handleRequestPayout = async () => {
+  const handleRequestPayout = async (code = '') => {
     const amountVal = parseFloat(payoutAmount.replace(/[^\d]/g, ''));
     if (isNaN(amountVal) || amountVal <= 0) {
       setPayoutSaveError('Vui lòng nhập số tiền rút hợp lệ (lớn hơn 0đ)');
@@ -428,6 +481,7 @@ function App() {
 
     setPayoutSaveLoading(true);
     setPayoutSaveError('');
+    setOtpError('');
 
     try {
       const res = await fetch(`${API_URL_ROOT}/api/public/payout`, {
@@ -435,7 +489,8 @@ function App() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           zaloId: lookupResult.zaloId,
-          amount: amountVal
+          amount: amountVal,
+          otp: code
         })
       });
       const json = await res.json();
@@ -445,10 +500,12 @@ function App() {
 
       setPayoutSuccess(true);
       setPayoutAmount('');
+      setOtpModalOpen(false);
       // Tải lại dữ liệu ví tiền
       handlePublicLookup(lookupResult.zaloId, 'ZALO_ID');
     } catch (err) {
       setPayoutSaveError(err.message);
+      if (otpModalOpen) setOtpError(err.message);
     } finally {
       setPayoutSaveLoading(false);
     }
@@ -458,8 +515,9 @@ function App() {
   useEffect(() => {
     if (view === 'lookup') {
       const params = new URLSearchParams(window.location.search);
-      const urlSearchType = params.get('searchType');
-      const urlQuery = params.get('query') || params.get('q');
+      const urlToken = params.get('token');
+      const urlSearchType = urlToken ? 'token' : params.get('searchType');
+      const urlQuery = urlToken || params.get('query') || params.get('q') || params.get('zaloId');
       const urlStartDate = params.get('startDate');
       const urlEndDate = params.get('endDate');
 
@@ -1434,7 +1492,7 @@ function App() {
                     <button 
                       className="lookup-btn" 
                       style={{ width: 'auto', padding: '6px 16px', fontSize: '13px' }}
-                      onClick={handleSaveBankInfo}
+                      onClick={() => sendOtpToUser('BANK')}
                       disabled={bankSaveLoading}
                     >
                       {bankSaveLoading ? 'Đang lưu...' : 'Lưu thông tin'}
@@ -1530,7 +1588,7 @@ function App() {
                   
                   <button 
                     className="lookup-btn" 
-                    onClick={handleRequestPayout}
+                    onClick={() => sendOtpToUser('PAYOUT')}
                     disabled={payoutSaveLoading || !payoutAmount}
                     style={{ marginTop: '4px' }}
                   >
@@ -1636,6 +1694,103 @@ function App() {
               >
                 Đóng
               </button>
+            </div>
+          </div>
+        )}
+
+        {/* OTP Verification Modal */}
+        {otpModalOpen && (
+          <div style={{
+            position: 'fixed',
+            inset: 0,
+            background: 'rgba(0, 0, 0, 0.75)',
+            backdropFilter: 'blur(10px)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 99999,
+            padding: '16px'
+          }}>
+            <div className="lookup-card" style={{
+              width: '100%',
+              maxWidth: '420px',
+              textAlign: 'center',
+              border: '1px solid rgba(139, 92, 246, 0.4)',
+              boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.7), 0 0 35px rgba(139, 92, 246, 0.2)',
+              background: '#0f0c29',
+              padding: '28px 24px'
+            }}>
+              <div style={{ fontSize: '46px', marginBottom: '12px' }}>🔒</div>
+              <h3 style={{ fontSize: '20px', fontWeight: 'bold', color: '#fff', marginBottom: '8px' }}>Xác Thực Bảo Mật OTP</h3>
+              <p style={{ fontSize: '13.5px', color: '#cbd5e1', lineHeight: '1.5', marginBottom: '20px' }}>
+                Mã xác thực 6 số vừa được gửi đến <b>tin nhắn riêng Zalo</b> của bạn.
+                <br/>
+                <span style={{ fontSize: '12px', color: '#38bdf8' }}>💡 Nếu chưa nhận được tin nhắn hoặc mã bị lỗi, hãy bấm nút <b>🔄 Gửi lại mã OTP</b> bên dưới nhé!</span>
+              </p>
+
+              <div style={{ marginBottom: '16px' }}>
+                <input
+                  type="text"
+                  maxLength="6"
+                  placeholder="Nhập 6 số OTP..."
+                  value={otpCode}
+                  onChange={(e) => setOtpCode(e.target.value.replace(/[^\d]/g, ''))}
+                  style={{
+                    width: '100%',
+                    padding: '12px',
+                    fontSize: '20px',
+                    textAlign: 'center',
+                    letterSpacing: '6px',
+                    fontWeight: 'bold',
+                    borderRadius: '10px',
+                    border: '1px solid rgba(255, 255, 255, 0.2)',
+                    background: 'rgba(0, 0, 0, 0.4)',
+                    color: '#38bdf8',
+                    outline: 'none'
+                  }}
+                />
+              </div>
+
+              {otpError && (
+                <div style={{ color: '#f87171', fontSize: '13px', marginBottom: '16px', background: 'rgba(239, 68, 68, 0.1)', padding: '8px', borderRadius: '6px' }}>
+                  ⚠️ {otpError}
+                </div>
+              )}
+
+              <div style={{ display: 'flex', gap: '10px' }}>
+                <button
+                  className="lookup-admin-link"
+                  onClick={() => setOtpModalOpen(false)}
+                  style={{ flex: 1, padding: '12px', borderRadius: '10px', background: 'rgba(255, 255, 255, 0.05)', color: '#9ca3af', border: '1px solid rgba(255, 255, 255, 0.1)', cursor: 'pointer', fontWeight: '600' }}
+                >
+                  Hủy bỏ
+                </button>
+                <button
+                  className="lookup-btn"
+                  onClick={() => {
+                    if (!otpCode || otpCode.length !== 6) {
+                      setOtpError('Vui lòng nhập đủ 6 số OTP');
+                      return;
+                    }
+                    if (otpActionType === 'BANK') handleSaveBankInfo(otpCode);
+                    if (otpActionType === 'PAYOUT') handleRequestPayout(otpCode);
+                  }}
+                  disabled={bankSaveLoading || payoutSaveLoading}
+                  style={{ flex: 1.5, padding: '12px', borderRadius: '10px', fontSize: '14px', background: 'linear-gradient(135deg, #8b5cf6, #6366f1)', color: '#fff', border: 'none', cursor: 'pointer', fontWeight: 'bold', boxShadow: '0 4px 15px rgba(139, 92, 246, 0.3)' }}
+                >
+                  {(bankSaveLoading || payoutSaveLoading) ? 'Đang kiểm tra...' : 'Xác nhận'}
+                </button>
+              </div>
+
+              <div style={{ marginTop: '16px' }}>
+                <button
+                  onClick={() => sendOtpToUser(otpActionType)}
+                  disabled={otpSending}
+                  style={{ background: 'transparent', border: 'none', color: '#a8a29e', fontSize: '12px', cursor: 'pointer', textDecoration: 'underline' }}
+                >
+                  {otpSending ? 'Đang gửi lại...' : '🔄 Gửi lại mã OTP'}
+                </button>
+              </div>
             </div>
           </div>
         )}

@@ -1,10 +1,10 @@
 :root {
-  /* Premium Shopee Light Theme Color Palette */
-  --bg-main: #F9FAFB; /* Clean light background */
-  --bg-card: rgba(255, 255, 255, 0.95);
-  --bg-sidebar: rgba(255, 255, 255, 0.98);
-  --bg-hover: rgba(238, 77, 45, 0.1);
-  --border-color: rgba(0, 0, 0, 0.08);
+  /* Premium Dark Theme Color Palette matching Lookup / Homepage */
+  --bg-main: linear-gradient(135deg, #0f0c29 0%, #1a1040 25%, #24243e 50%, #1b1145 75%, #0f0c29 100%);
+  --bg-card: rgba(255, 255, 255, 0.04);
+  --bg-sidebar: rgba(15, 12, 41, 0.88);
+  --bg-hover: rgba(238, 77, 45, 0.18);
+  --border-color: rgba(255, 255, 255, 0.08);
   
   --color-primary: #EE4D2D; /* Shopee Orange */
   --color-primary-rgb: 238, 77, 45;
@@ -13,9 +13,9 @@
   --color-warning: #FBBF24; /* Amber Yellow */
   --color-danger: #F87171; /* Coral Red */
   
-  --text-main: #333333;
-  --text-muted: #666666;
-  --text-bright: #000000;
+  --text-main: #e2e8f0;
+  --text-muted: #9ca3af;
+  --text-bright: #ffffff;
   
   --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
   --font-heading: 'Outfit', 'Inter', system-ui, sans-serif;
@@ -41,6 +41,7 @@ body {
   margin: 0;
   padding: 0;
   overflow-x: hidden;
+  background: #0f0c29;
   background: var(--bg-main);
   background-attachment: fixed;
   -webkit-font-smoothing: antialiased;
@@ -162,8 +163,8 @@ h1, h2, h3, h4 {
   align-items: center;
   justify-content: space-between;
   padding: 0 32px;
-  background-color: rgba(255, 255, 255, 0.9);
-  backdrop-filter: blur(10px);
+  background-color: rgba(15, 12, 41, 0.85);
+  backdrop-filter: blur(16px);
   position: sticky;
   top: 0;
   z-index: 100;
@@ -307,7 +308,7 @@ table {
 }
 
 th {
-  background-color: rgba(240, 240, 240, 0.8);
+  background-color: rgba(255, 255, 255, 0.05);
   padding: 16px 20px;
   color: var(--text-muted);
   font-size: 13px;
@@ -418,7 +419,7 @@ tr:hover td {
 }
 
 .form-control {
-  background-color: rgba(255, 255, 255, 0.9);
+  background-color: rgba(255, 255, 255, 0.05);
   border: 1px solid var(--border-color);
   border-radius: 10px;
   padding: 12px 16px;

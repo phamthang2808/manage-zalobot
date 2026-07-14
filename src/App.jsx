@@ -834,7 +834,7 @@ function App() {
       background: 'linear-gradient(135deg, rgba(23, 19, 55, 0.96), rgba(10, 8, 29, 0.98))',
       border: `1px solid ${toast.type === 'success' ? 'rgba(52, 211, 153, 0.6)' : (toast.type === 'error' ? 'rgba(248, 113, 113, 0.6)' : 'rgba(139, 92, 246, 0.6)')}`
     }}>
-      {/* Icon */}
+      {/* Premium SVG Icon */}
       <div style={{
         width: '36px',
         height: '36px',
@@ -844,10 +844,21 @@ function App() {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        fontSize: '18px',
         flexShrink: 0
       }}>
-        {toast.type === 'success' ? '🎉' : (toast.type === 'error' ? '⚠️' : '💡')}
+        {toast.type === 'success' ? (
+          <svg style={{ width: '18px', height: '18px', color: '#34d399' }} fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5"></path>
+          </svg>
+        ) : toast.type === 'error' ? (
+          <svg style={{ width: '18px', height: '18px', color: '#f87171' }} fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12"></path>
+          </svg>
+        ) : (
+          <svg style={{ width: '18px', height: '18px', color: '#a78bfa' }} fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 111.085 1.085l-1.086 1.086L10.5 13.5H12.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+          </svg>
+        )}
       </div>
 
       {/* Content */}
@@ -2594,7 +2605,40 @@ function App() {
             ) : (
               <div className="avatar">{(user?.fullName || 'PT').substring(0, 2).toUpperCase()}</div>
             )}
-            <button className="btn" onClick={() => fetchData(token, user)} style={{ marginLeft: '12px' }}>🔄 Làm mới</button>
+            <button 
+              className="btn btn-refresh" 
+              onClick={(e) => {
+                const svg = e.currentTarget.querySelector('svg');
+                if (svg) {
+                  svg.style.transform = 'rotate(360deg)';
+                  svg.style.transition = 'transform 0.6s cubic-bezier(0.4, 0, 0.2, 1)';
+                  setTimeout(() => {
+                    svg.style.transform = 'none';
+                    svg.style.transition = 'none';
+                  }, 600);
+                }
+                fetchData(token, user);
+              }} 
+              style={{ 
+                marginLeft: '12px', 
+                display: 'inline-flex', 
+                alignItems: 'center', 
+                gap: '8px', 
+                padding: '8px 16px',
+                background: 'rgba(56, 189, 248, 0.1)',
+                color: '#38bdf8',
+                border: '1px solid rgba(56, 189, 248, 0.25)',
+                fontWeight: '600',
+                fontSize: '13.5px',
+                borderRadius: '8px',
+                transition: 'all 0.2s ease'
+              }}
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ transition: 'transform 0.5s ease' }}>
+                <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l.73-.73"/>
+              </svg>
+              Làm mới
+            </button>
           </div>
         </header>
 
@@ -2716,26 +2760,23 @@ function App() {
                     />
                   </div>
                   <div className="table-container">
-                    <table>
+                    <table style={{ tableLayout: 'fixed', width: '100%' }}>
                       <thead>
                         <tr>
-                          <th>Zalo ID</th>
-                          <th>Tên thành viên</th>
-                          <th>Ngân hàng</th>
-                          <th>Số tài khoản</th>
-                          <th title="Đơn đang chờ Shopee đối soát">Chờ xử lý</th>
-                          <th>Đã tích lũy (gốc)</th>
-                          <th>Sau thuế</th>
-                          <th>Thực nhận</th>
-                          <th title="Số tiền có thể rút ngay (đơn hoàn thành quá 3 ngày, trừ đã yêu cầu rút)">Khả dụng rút</th>
-                          <th>Đã rút</th>
-                          <th>Chi tiết</th>
+                          <th style={{ width: '110px' }}>Zalo ID</th>
+                          <th style={{ width: '130px' }}>Tên thành viên</th>
+                          <th style={{ width: '150px' }}>Tài khoản nhận tiền</th>
+                          <th style={{ width: '95px', textAlign: 'right' }} title="Đơn đang chờ Shopee đối soát">Chờ xử lý</th>
+                          <th style={{ width: '150px', textAlign: 'right' }}>Tích lũy hoàn thành</th>
+                          <th style={{ width: '105px', textAlign: 'right' }} title="Số tiền có thể rút ngay (đơn hoàn thành quá 3 ngày, trừ đã rút)">Khả dụng rút</th>
+                          <th style={{ width: '90px', textAlign: 'right' }}>Đã rút</th>
+                          <th style={{ width: '70px', textAlign: 'center' }}>Chi tiết</th>
                         </tr>
                       </thead>
                       <tbody>
                         {filteredUsers.length === 0 ? (
                           <tr>
-                            <td colSpan="11" style={{ textAlign: 'center', color: 'var(--text-muted)' }}>
+                            <td colSpan="8" style={{ textAlign: 'center', color: 'var(--text-muted)' }}>
                               Không tìm thấy thành viên phù hợp
                             </td>
                           </tr>
@@ -2744,20 +2785,35 @@ function App() {
                             const bankAndAcc = getBankAndAccount(u);
                             return (
                               <tr key={u.zaloId}>
-                                <td><code style={{ color: 'var(--text-muted)' }}>{u.zaloId}</code></td>
-                                <td><strong>{u.zaloName || 'Vô danh (Chờ đồng bộ)'}</strong></td>
-                                <td style={{ fontSize: '13px' }}>{bankAndAcc.bankName || '⚠️ Chưa cập nhật'}</td>
-                                <td style={{ fontSize: '13px' }}><code>{bankAndAcc.accountNumber || '⚠️ Chưa cập nhật'}</code></td>
-                                <td style={{ color: 'var(--color-warning)' }}>{formatMoney(u.wallet?.pendingCommission)}</td>
-                                <td>{formatMoney(u.wallet?.completedCommission)}</td>
-                                <td style={{ color: 'var(--color-warning)' }}>{formatMoney((u.wallet?.completedCommission || 0) * 0.9)}</td>
-                                <td style={{ color: 'var(--color-success)' }}>{formatMoney((u.wallet?.completedCommission || 0) * 0.9 * 0.8)}</td>
-                                <td style={{ color: 'var(--color-success)', fontWeight: '600' }}>{formatMoney(u.wallet?.withdrawableCommission)}</td>
-                                <td>{formatMoney(u.wallet?.receivedCommission)}</td>
+                                <td style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                                  <code style={{ color: 'var(--text-muted)', fontSize: '11.5px' }} title={u.zaloId}>{u.zaloId}</code>
+                                </td>
+                                <td style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                                  <strong title={u.zaloName}>{u.zaloName || 'Vô danh (Chờ đồng bộ)'}</strong>
+                                </td>
                                 <td>
+                                  <div style={{ fontSize: '13px', fontWeight: '500' }}>{bankAndAcc.bankName || '⚠️ Chưa cập nhật'}</div>
+                                  {bankAndAcc.accountNumber && <div style={{ fontSize: '11.5px', color: 'var(--text-muted)', marginTop: '2px' }}><code>{bankAndAcc.accountNumber}</code></div>}
+                                </td>
+                                <td style={{ color: 'var(--color-warning)', textAlign: 'right', fontWeight: '500' }}>
+                                  {formatMoney(u.wallet?.pendingCommission)}
+                                </td>
+                                <td style={{ textAlign: 'right' }}>
+                                  <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>Gốc: {formatMoney(u.wallet?.completedCommission)}</div>
+                                  <div style={{ fontSize: '11.5px', color: 'var(--color-warning)', marginTop: '2px' }}>Thuế: {formatMoney((u.wallet?.completedCommission || 0) * 0.9)}</div>
+                                  <div style={{ fontSize: '11.5px', color: 'var(--color-success)', marginTop: '2px', fontWeight: '600' }}>Khách: {formatMoney((u.wallet?.completedCommission || 0) * 0.9 * 0.8)}</div>
+                                </td>
+                                <td style={{ color: 'var(--color-success)', fontWeight: '700', textAlign: 'right' }}>
+                                  {formatMoney(u.wallet?.withdrawableCommission)}
+                                </td>
+                                <td style={{ textAlign: 'right', color: 'var(--text-muted)' }}>
+                                  {formatMoney(u.wallet?.receivedCommission)}
+                                </td>
+                                <td style={{ textAlign: 'center' }}>
                                   <button
                                     className="btn"
                                     onClick={() => setSelectedUser(u)}
+                                    style={{ padding: '4px 8px', fontSize: '12px' }}
                                   >
                                     👁 Xem
                                   </button>
@@ -2821,25 +2877,24 @@ function App() {
                   </div>
 
                   <div className="table-container">
-                    <table>
+                    <table style={{ tableLayout: 'fixed', width: '100%' }}>
                       <thead>
                         <tr>
-                          <th>Mã đơn hàng</th>
-                          <th>Tên sản phẩm</th>
-                          <th>Sub_id (Shopee)</th>
-                          <th>Thành viên mua</th>
-                          <th>HH Shopee (gốc)</th>
-                          <th>Sau thuế</th>
-                          <th>Thực nhận</th>
-                          <th>Ngày mua</th>
-                          <th>Ngày hoàn thành</th>
-                          <th>Trạng thái</th>
+                          <th style={{ width: '130px' }}>Mã đơn hàng</th>
+                          <th style={{ width: '140px' }}>Tên sản phẩm</th>
+                          <th style={{ width: '100px' }}>Sub_id (Zalo)</th>
+                          <th style={{ width: '100px' }}>Thành viên</th>
+                          <th style={{ width: '85px', textAlign: 'right' }}>HH Gốc</th>
+                          <th style={{ width: '85px', textAlign: 'right' }}>Sau thuế</th>
+                          <th style={{ width: '85px', textAlign: 'right' }}>Thực nhận</th>
+                          <th style={{ width: '120px' }}>Thời gian</th>
+                          <th style={{ width: '95px', textAlign: 'center' }}>Trạng thái</th>
                         </tr>
                       </thead>
                       <tbody>
                         {filteredOrders.length === 0 ? (
                           <tr>
-                            <td colSpan="10" style={{ textAlign: 'center', color: 'var(--text-muted)' }}>
+                            <td colSpan="9" style={{ textAlign: 'center', color: 'var(--text-muted)' }}>
                               Không tìm thấy đơn hàng nào
                             </td>
                           </tr>
@@ -2850,22 +2905,42 @@ function App() {
                             const afterDeduction = afterTax * 0.8;
                             return (
                               <tr key={o.id}>
-                                <td><code style={{ fontWeight: 'bold' }}>{o.orderId}</code></td>
-                                <td title={o.productName} style={{ maxWidth: '200px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                                <td>
+                                  <code style={{ fontWeight: 'bold', fontSize: '12.5px', color: '#fff' }}>{o.orderId}</code>
+                                </td>
+                                <td title={o.productName} style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                                   {o.productName}
                                 </td>
-                                <td><code style={{ fontSize: '12px', color: 'var(--color-primary)' }}>{o.subId || '-'}</code></td>
-                                <td>{orderUser ? orderUser.zaloName : <code style={{ color: 'var(--color-danger)', fontSize: '11px' }}>{o.zaloId || 'UNKNOWN'}</code>}</td>
-                                <td style={{ color: 'var(--text-muted)', fontWeight: '500' }}>{formatMoney(o.commission)}</td>
-                                <td style={{ color: 'var(--color-warning)', fontWeight: '600' }}>{formatMoney(afterTax)}</td>
-                                <td style={{ color: 'var(--color-success)', fontWeight: '700' }}>{formatMoney(afterDeduction)}</td>
-                                <td>{formatDateTime(o.purchaseTime)}</td>
-                                <td>{formatDateTime(o.completeTime)}</td>
+                                <td style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                                  <code style={{ fontSize: '11.5px', color: 'var(--color-primary)' }} title={o.subId}>{o.subId || '-'}</code>
+                                </td>
+                                <td style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                                  <span style={{ fontSize: '13px' }} title={orderUser ? orderUser.zaloName : (o.zaloId || 'UNKNOWN')}>
+                                    {orderUser ? orderUser.zaloName : <code style={{ color: 'var(--color-danger)', fontSize: '11px' }}>{o.zaloId || 'UNKNOWN'}</code>}
+                                  </span>
+                                </td>
+                                <td style={{ color: 'var(--text-muted)', fontWeight: '500', textAlign: 'right' }}>
+                                  {formatMoney(o.commission)}
+                                </td>
+                                <td style={{ color: 'var(--color-warning)', fontWeight: '600', textAlign: 'right' }}>
+                                  {formatMoney(afterTax)}
+                                </td>
+                                <td style={{ color: 'var(--color-success)', fontWeight: '700', textAlign: 'right' }}>
+                                  {formatMoney(afterDeduction)}
+                                </td>
                                 <td>
+                                  <div style={{ fontSize: '12px' }} title={`Đặt mua: ${formatDateTime(o.purchaseTime)}`}>Đặt: {formatDateTime(o.purchaseTime)}</div>
+                                  {o.completeTime && (
+                                    <div style={{ fontSize: '11px', color: 'var(--text-muted)', marginTop: '2px' }} title={`Hoàn thành: ${formatDateTime(o.completeTime)}`}>
+                                      Xong: {formatDateTime(o.completeTime)}
+                                    </div>
+                                  )}
+                                </td>
+                                <td style={{ textAlign: 'center' }}>
                                   <span className={`badge ${
                                     o.status === 'Hoàn thành' ? 'badge-completed' :
                                     o.status === 'Đã hủy' ? 'badge-cancelled' : 'badge-pending'
-                                  }`}>
+                                  }`} style={{ fontSize: '11px', padding: '3px 8px' }}>
                                     {o.status}
                                   </span>
                                 </td>

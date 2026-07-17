@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 const API_URL_ROOT = import.meta.env.PROD ? "" : (import.meta.env.VITE_API_URL || 'http://localhost:8080');
 const API_BASE = `${API_URL_ROOT}/api/admin`;
@@ -25,9 +25,11 @@ function App() {
     if (path.includes('/lookup') || path.includes('/tra-cuu') || window.location.search.includes('view=lookup') || window.location.hash.includes('lookup')) {
       return 'lookup';
     }
+    if (path.includes('/login') || window.location.search.includes('view=login') || window.location.hash.includes('login')) {
+      return 'login';
+    }
     return sessionStorage.getItem('adminView') || 'home';
   });
-  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
 
   // Public Lookup States
   const [lookupSearchType, setLookupSearchType] = useState('ORDER_ID');
@@ -47,6 +49,17 @@ function App() {
   });
   const [lookupLocalFilter, setLookupLocalFilter] = useState('');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [cfStatus, setCfStatus] = useState('verifying');
+
+  useEffect(() => {
+    if (view === 'login') {
+      setCfStatus('verifying');
+      const timer = setTimeout(() => {
+        setCfStatus('success');
+      }, 1500);
+      return () => clearTimeout(timer);
+    }
+  }, [view]);
 
   // Public Lookup Actions States
   const [isEditingBank, setIsEditingBank] = useState(false);
@@ -244,7 +257,7 @@ function App() {
           if (idToken) {
             setLoginLoading(true);
             setLoginError('');
-            setIsLoginModalOpen(true);
+            setView('login');
             console.log(">>> [Google Redirect Flow] Sending id_token to backend...");
             const res = await fetch(`${API_URL_ROOT}/api/users/google-login`, {
               method: 'POST',
@@ -262,7 +275,13 @@ function App() {
             setUser(authData.user);
             sessionStorage.setItem('adminUser', JSON.stringify(authData.user));
             sessionStorage.setItem('adminToken', 'session-cookie');
-            setIsLoginModalOpen(false);
+            
+            if (authData.user && (authData.user.role === 'ADMIN' || authData.user.role === 'SUPER_ADMIN')) {
+              setView('admin');
+              sessionStorage.setItem('adminView', 'admin');
+            } else {
+              setView('home');
+            }
             
             // Clean hash from URL without reloading the page
             window.history.replaceState(null, null, window.location.pathname + window.location.search);
@@ -271,7 +290,7 @@ function App() {
       } catch (err) {
         console.error(">>> [Google Redirect Flow] Error:", err);
         setLoginError(err.message);
-        setIsLoginModalOpen(true);
+        setView('login');
       } finally {
         setLoginLoading(false);
       }
@@ -288,7 +307,7 @@ function App() {
 
   // Google Sign-In Initializer with polling to handle race conditions & responsive button width
   useEffect(() => {
-    if (!isLoginModalOpen || token) return;
+    if (view !== 'login' || token) return;
 
     let intervalId;
     let attempts = 0;
@@ -309,10 +328,10 @@ function App() {
             window.google.accounts.id.renderButton(
               btnElem,
               { 
-                theme: 'dark', 
+                theme: 'outline', 
                 size: 'large', 
                 width: calculatedWidth,
-                shape: 'rectangular'
+                shape: 'pill'
               }
             );
           }
@@ -328,7 +347,7 @@ function App() {
 
     // If window.google is not ready, check every 200ms
     if (!window.google) {
-      intervalId = setInterval(() => {
+       intervalId = setInterval(() => {
         attempts++;
         if (window.google || attempts > 50) { // Max 10 seconds
           initializeGoogleBtn();
@@ -340,7 +359,7 @@ function App() {
     return () => {
       if (intervalId) clearInterval(intervalId);
     };
-  }, [isLoginModalOpen, token]);
+  }, [view, token]);
 
   // Auto-lookup khi mở link có ?zaloId=xxx hoặc ?token=xxx (từ lệnh /tracuu của bot)
   useEffect(() => {
@@ -615,7 +634,14 @@ function App() {
       setUser(authData.user);
       sessionStorage.setItem('adminUser', JSON.stringify(authData.user));
       sessionStorage.setItem('adminToken', 'session-cookie');
-      setIsLoginModalOpen(false);
+      
+      if (authData.user && (authData.user.role === 'ADMIN' || authData.user.role === 'SUPER_ADMIN')) {
+        setView('admin');
+        sessionStorage.setItem('adminView', 'admin');
+      } else {
+        setView('home');
+      }
+      
       showToast('Đăng nhập thành công!', 'success');
     } catch (err) {
       console.error(">>> [handleGoogleLoginSuccess] error:", err);
@@ -649,7 +675,14 @@ function App() {
       setUser(authData.user);
       sessionStorage.setItem('adminUser', JSON.stringify(authData.user));
       sessionStorage.setItem('adminToken', 'session-cookie');
-      setIsLoginModalOpen(false);
+      
+      if (authData.user && (authData.user.role === 'ADMIN' || authData.user.role === 'SUPER_ADMIN')) {
+        setView('admin');
+        sessionStorage.setItem('adminView', 'admin');
+      } else {
+        setView('home');
+      }
+      
       showToast('Đăng nhập thành công!', 'success');
     } catch (err) {
       console.error(">>> [handleLocalLogin] error:", err);
@@ -674,10 +707,6 @@ function App() {
     setUser(null);
     setView('home');
     sessionStorage.removeItem('adminView');
-    sessionStorage.removeItem('adminTab');
-    sessionStorage.removeItem('adminUser');
-    sessionStorage.removeItem('adminToken');
-    setIsLoginModalOpen(false);
     setStats({
       totalMembers: 0,
       totalOrders: 0,
@@ -917,7 +946,7 @@ function App() {
           .lookup-page-container {
             min-height: 100vh;
             width: 100%;
-            background: linear-gradient(135deg, #0f0c29 0%, #1a1040 25%, #24243e 50%, #1b1145 75%, #0f0c29 100%);
+            background: #0b0f17;
             color: #e2e8f0;
             font-family: 'Inter', system-ui, sans-serif;
             padding: 16px;
@@ -935,7 +964,7 @@ function App() {
             left: -10%;
             width: 700px;
             height: 700px;
-            background: radial-gradient(circle, rgba(139, 92, 246, 0.25) 0%, rgba(59, 130, 246, 0.1) 40%, transparent 70%);
+            background: radial-gradient(circle, rgba(245, 158, 11, 0.12) 0%, rgba(251, 191, 36, 0.05) 40%, transparent 70%);
             z-index: 1;
             pointer-events: none;
             animation: lookupFloatOrb1 8s ease-in-out infinite;
@@ -947,7 +976,7 @@ function App() {
             right: -10%;
             width: 600px;
             height: 600px;
-            background: radial-gradient(circle, rgba(236, 72, 153, 0.2) 0%, rgba(249, 115, 22, 0.08) 40%, transparent 70%);
+            background: radial-gradient(circle, rgba(245, 158, 11, 0.08) 0%, rgba(251, 191, 36, 0.04) 40%, transparent 70%);
             z-index: 1;
             pointer-events: none;
             animation: lookupFloatOrb2 10s ease-in-out infinite;
@@ -1008,7 +1037,7 @@ function App() {
           .lookup-admin-link:hover {
             background: rgba(255, 255, 255, 0.1);
             color: #fff;
-            border-color: #38bdf8;
+            border-color: #fbbf24;
           }
           .lookup-card {
             width: 100%;
@@ -1063,9 +1092,9 @@ function App() {
             transition: all 0.2s ease;
           }
           .lookup-tab.active {
-            background: linear-gradient(135deg, #ec4899, #8b5cf6);
-            color: #fff;
-            box-shadow: 0 4px 12px rgba(139, 92, 246, 0.25);
+            background: linear-gradient(135deg, #fbbf24, #d97706);
+            color: #0b0f17;
+            box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
           }
           .lookup-input-group {
             margin-bottom: 16px;
@@ -1107,9 +1136,9 @@ function App() {
             display: block !important;
           }
           .lookup-input:focus {
-            border-color: #38bdf8;
+            border-color: #fbbf24;
             background: rgba(255, 255, 255, 0.05);
-            box-shadow: 0 0 12px rgba(56, 189, 248, 0.15);
+            box-shadow: 0 0 12px rgba(245, 158, 11, 0.15);
           }
           .lookup-date-grid {
             display: grid;
@@ -1136,9 +1165,9 @@ function App() {
             width: 100%;
             max-width: 100% !important;
             box-sizing: border-box !important;
-            background: linear-gradient(135deg, #f97316, #ec4899, #8b5cf6);
+            background: linear-gradient(135deg, #fbbf24, #d97706);
             background-size: 200% auto;
-            color: #fff;
+            color: #0b0f17;
             font-size: 15px;
             font-weight: 700;
             border: none;
@@ -1150,11 +1179,11 @@ function App() {
             align-items: center;
             justify-content: center;
             gap: 8px;
-            box-shadow: 0 4px 15px rgba(236, 72, 153, 0.35);
+            box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3);
           }
           .lookup-btn:hover {
             background-position: right center;
-            box-shadow: 0 6px 20px rgba(236, 72, 153, 0.5), 0 0 12px rgba(139, 92, 246, 0.3);
+            box-shadow: 0 6px 20px rgba(245, 158, 11, 0.5), 0 0 12px rgba(245, 158, 11, 0.2);
             transform: translateY(-1px);
           }
           .lookup-btn:disabled {
@@ -1186,7 +1215,7 @@ function App() {
             color: #d6d3d1;
           }
           .recent-tag:hover {
-            border-color: #38bdf8;
+            border-color: #fbbf24;
             background: rgba(255, 255, 255, 0.08);
             color: #fff;
           }
@@ -1249,12 +1278,12 @@ function App() {
             border-color: #059669;
           }
           .stat-card-item.withdrawable {
-            background: linear-gradient(135deg, #0f172a 0%, #1c1917 100%);
-            border-color: #38bdf8;
+            background: linear-gradient(135deg, #0b1120 0%, #1c1917 100%);
+            border-color: #fbbf24;
           }
           .stat-card-item.received {
-            background: linear-gradient(135deg, #1e1b4b 0%, #1c1917 100%);
-            border-color: #4f46e5;
+            background: linear-gradient(135deg, #1e1008 0%, #1c1917 100%);
+            border-color: #d97706;
           }
           .stat-card-label {
             font-size: 11px;
@@ -1383,14 +1412,14 @@ function App() {
             width: 260px;
             border-radius: 16px;
             overflow: hidden;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.5), 0 0 20px rgba(56, 189, 248, 0.2);
-            border: 2px solid rgba(56, 189, 248, 0.25);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.5), 0 0 20px rgba(245, 158, 11, 0.15);
+            border: 2px solid rgba(245, 158, 11, 0.25);
             animation: banner-float 4s ease-in-out infinite;
             transition: transform 0.3s ease, box-shadow 0.3s ease;
           }
           .lookup-banner-img-wrap:hover {
             transform: scale(1.03) translateY(-4px);
-            box-shadow: 0 12px 40px rgba(0,0,0,0.6), 0 0 30px rgba(56, 189, 248, 0.35);
+            box-shadow: 0 12px 40px rgba(0,0,0,0.6), 0 0 30px rgba(245, 158, 11, 0.3);
           }
           .lookup-banner-img-wrap img {
             width: 100%;
@@ -1463,13 +1492,15 @@ function App() {
               window.location.hash = '';
             }}
           >
-            🏠 Về Trang Chủ
+            <i className="fa-solid fa-house" style={{ marginRight: '6px' }}></i> Về Trang Chủ
           </button>
         </header>
 
         {/* Search Panel Card */}
         <div className="lookup-card">
-          <h2 className="lookup-title">🔍 Tra Cứu Đơn Hàng Shopee</h2>
+          <h2 className="lookup-title">
+            <i className="fa-thin fa-magnifying-glass" style={{ marginRight: '8px' }}></i> Tra Cứu Đơn Hàng Shopee
+          </h2>
           <p className="lookup-subtitle">Nhập mã đơn hàng để kiểm tra trạng thái và hoa hồng</p>
 
           <div className="lookup-input-group">
@@ -1535,7 +1566,7 @@ function App() {
                     {!isEditingBank && (
                       <button 
                         className="lookup-admin-link" 
-                        style={{ fontSize: '12px', padding: '4px 10px', background: 'rgba(56, 189, 248, 0.1)', color: '#38bdf8', borderColor: 'rgba(56, 189, 248, 0.3)' }}
+                        style={{ fontSize: '12px', padding: '4px 10px', background: 'rgba(245, 158, 11, 0.1)', color: '#fbbf24', border: '1px solid rgba(245, 158, 11, 0.25)' }}
                         onClick={() => {
                           setEditBankName(lookupResult.bankName || '');
                           setEditAccountNumber(lookupResult.accountNumber || '');
@@ -1609,7 +1640,7 @@ function App() {
                 {/* 1. Wallet Stats */}
                 <div className="stats-container">
                   <h3 className="stats-section-title">
-                    💰 Thống Kê Hoa Hồng của: <span style={{ color: '#38bdf8' }}>{lookupResult.zaloName}</span>
+                    💰 Thống Kê Hoa Hồng của: <span style={{ color: '#fbbf24' }}>{lookupResult.zaloName}</span>
                   </h3>
                   <div className="stats-cards-grid">
                     <div className="stat-card-item total">
@@ -1628,13 +1659,13 @@ function App() {
                     </div>
                     <div className="stat-card-item withdrawable">
                       <span className="stat-card-label">Có thể rút ngay (Khả dụng)</span>
-                      <span style={{ fontSize: '11px', color: '#38bdf8', marginBottom: '4px' }}>Sau 3 ngày • Đã trừ thuế & chia 8-2</span>
-                      <span className="stat-card-value" style={{ color: '#38bdf8' }}>{formatMoney(lookupResult.wallet.withdrawableCommission)}</span>
+                      <span style={{ fontSize: '11px', color: '#fbbf24', marginBottom: '4px' }}>Sau 3 ngày • Đã trừ thuế & chia 8-2</span>
+                      <span className="stat-card-value" style={{ color: '#fbbf24' }}>{formatMoney(lookupResult.wallet.withdrawableCommission)}</span>
                     </div>
                     <div className="stat-card-item received">
                       <span className="stat-card-label">Đã nhận (Đã thanh toán)</span>
                       <span style={{ fontSize: '11px', color: '#94a3b8', marginBottom: '4px' }}>Tổng tiền đã rút về tài khoản</span>
-                      <span className="stat-card-value" style={{ color: '#818cf8' }}>{formatMoney(lookupResult.wallet.receivedCommission)}</span>
+                      <span className="stat-card-value" style={{ color: '#d97706' }}>{formatMoney(lookupResult.wallet.receivedCommission)}</span>
                     </div>
                   </div>
                 </div>
@@ -1669,7 +1700,7 @@ function App() {
                           />
                           <button 
                             className="lookup-admin-link"
-                            style={{ position: 'absolute', right: '8px', fontSize: '11px', padding: '4px 8px', background: 'rgba(56, 189, 248, 0.1)', color: '#38bdf8', borderColor: 'rgba(56, 189, 248, 0.2)' }}
+                            style={{ position: 'absolute', right: '8px', fontSize: '11px', padding: '4px 8px', background: 'rgba(245, 158, 11, 0.1)', color: '#fbbf24', borderColor: 'rgba(245, 158, 11, 0.2)' }}
                             onClick={() => setPayoutAmount(new Intl.NumberFormat('vi-VN').format(lookupResult.wallet.withdrawableCommission))}
                           >
                             Rút hết
@@ -1776,10 +1807,10 @@ function App() {
               width: '100%',
               maxWidth: '400px',
               textAlign: 'center',
-              border: '1px solid rgba(139, 92, 246, 0.45)',
+              border: '1px solid rgba(245, 158, 11, 0.35)',
               borderRadius: '24px',
-              boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.85), 0 0 45px rgba(139, 92, 246, 0.22)',
-              background: 'linear-gradient(145deg, #130f37, #0a081d)',
+              boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.85), 0 0 45px rgba(245, 158, 11, 0.15)',
+              background: 'linear-gradient(145deg, #0d1117, #0b0f17)',
               padding: '32px 24px',
               position: 'relative',
               overflow: 'hidden'
@@ -1789,9 +1820,9 @@ function App() {
                 width: '76px',
                 height: '76px',
                 borderRadius: '50%',
-                background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.25), rgba(56, 189, 248, 0.25))',
-                border: '1px solid rgba(139, 92, 246, 0.5)',
-                boxShadow: '0 0 25px rgba(139, 92, 246, 0.35)',
+                background: 'linear-gradient(135deg, rgba(245, 158, 11, 0.2), rgba(251, 191, 36, 0.1))',
+                border: '1px solid rgba(245, 158, 11, 0.4)',
+                boxShadow: '0 0 25px rgba(245, 158, 11, 0.25)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
@@ -1805,17 +1836,17 @@ function App() {
                 Xác Thực Bảo Mật OTP
               </h3>
               <p style={{ fontSize: '13.5px', color: '#cbd5e1', lineHeight: '1.5', marginBottom: '16px', padding: '0 8px' }}>
-                Mã xác thực 6 số vừa được gửi đến <span style={{ color: '#38bdf8', fontWeight: '600' }}>tin nhắn riêng Zalo</span> của bạn.
+                Mã xác thực 6 số vừa được gửi đến <span style={{ color: '#fbbf24', fontWeight: '600' }}>tin nhắn riêng Zalo</span> của bạn.
               </p>
 
               {/* Alert Info Box thay cho văn bản có emoji dễ lỗi */}
               <div style={{
-                background: 'rgba(56, 189, 248, 0.08)',
-                border: '1px solid rgba(56, 189, 248, 0.22)',
+                background: 'rgba(245, 158, 11, 0.08)',
+                border: '1px solid rgba(245, 158, 11, 0.22)',
                 borderRadius: '12px',
                 padding: '10px 12px',
                 fontSize: '12.5px',
-                color: '#7dd3fc',
+                color: '#fde68a',
                 marginBottom: '22px',
                 lineHeight: '1.4',
                 textAlign: 'left',
@@ -1842,9 +1873,9 @@ function App() {
                     letterSpacing: '8px',
                     fontWeight: '800',
                     borderRadius: '14px',
-                    border: '1.5px solid rgba(139, 92, 246, 0.5)',
+                    border: '1.5px solid rgba(245, 158, 11, 0.45)',
                     background: 'rgba(0, 0, 0, 0.5)',
-                    color: '#38bdf8',
+                    color: '#fbbf24',
                     outline: 'none',
                     boxShadow: 'inset 0 2px 5px rgba(0,0,0,0.5)'
                   }}
@@ -1874,7 +1905,7 @@ function App() {
                     if (otpActionType === 'PAYOUT') handleRequestPayout(otpCode);
                   }}
                   disabled={bankSaveLoading || payoutSaveLoading}
-                  style={{ flex: 1.4, padding: '13px', borderRadius: '12px', fontSize: '14.5px', background: 'linear-gradient(135deg, #8b5cf6, #6366f1)', color: '#fff', border: 'none', cursor: 'pointer', fontWeight: 'bold', boxShadow: '0 6px 20px rgba(139, 92, 246, 0.4)', transition: 'all 0.2s' }}
+                  style={{ flex: 1.4, padding: '13px', borderRadius: '12px', fontSize: '14.5px', background: 'linear-gradient(135deg, #fbbf24, #d97706)', color: '#0b0f17', border: 'none', cursor: 'pointer', fontWeight: 'bold', boxShadow: '0 6px 20px rgba(245, 158, 11, 0.4)', transition: 'all 0.2s' }}
                 >
                   {(bankSaveLoading || payoutSaveLoading) ? 'Đang kiểm tra...' : 'Xác nhận ngay'}
                 </button>
@@ -1927,6 +1958,521 @@ function App() {
     );
   }
 
+  if (view === 'login') {
+    const calculatedWidth = Math.max(200, Math.min(336, windowWidth - 64));
+    const isMobile = windowWidth < 768;
+    
+    const handleGoogleLoginMobile = () => {
+      const clientId = '195858897824-4h5ffebs0djtuncmhod98o0ca495ju71.apps.googleusercontent.com';
+      const redirectUri = window.location.origin;
+      const nonce = Math.random().toString(36).substring(2) + Date.now();
+      const url = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=id_token&scope=openid%20profile%20email&nonce=${nonce}`;
+      window.location.href = url;
+    };
+
+    return (
+      <div className="login-page-split">
+        <style dangerouslySetInnerHTML={{__html: `
+          .login-page-split {
+            height: 100vh;
+            width: 100%;
+            background: #0b0f17;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow: hidden;
+            box-sizing: border-box;
+            color: #e2e8f0;
+          }
+          .login-page-split::before {
+            content: '';
+            position: absolute;
+            top: -10%;
+            left: -10%;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(245, 158, 11, 0.12) 0%, rgba(251, 191, 36, 0.05) 40%, transparent 70%);
+            z-index: 1;
+            pointer-events: none;
+            animation: floatOrb1 12s ease-in-out infinite;
+          }
+          .login-page-split::after {
+            content: '';
+            position: absolute;
+            bottom: -10%;
+            right: -10%;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(245, 158, 11, 0.08) 0%, rgba(251, 191, 36, 0.03) 40%, transparent 70%);
+            z-index: 1;
+            pointer-events: none;
+            animation: floatOrb2 15s ease-in-out infinite;
+          }
+          .login-split-header {
+            height: 70px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 40px;
+            z-index: 10;
+            width: 100%;
+            box-sizing: border-box;
+          }
+          .login-split-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+          }
+          .login-split-logo img {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border: 1px solid rgba(245, 158, 11, 0.35);
+            object-fit: cover;
+          }
+          .login-split-logo span {
+            font-family: var(--font-heading);
+            font-size: 20px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #ffffff 40%, #fbbf24 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: 0.5px;
+          }
+          .login-split-nav {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+          }
+          .login-split-nav a {
+            color: var(--text-muted);
+            font-size: 14.5px;
+            transition: color 0.2s;
+            text-decoration: none;
+            cursor: pointer;
+          }
+          .login-split-nav a:hover {
+            color: #fff;
+          }
+          .login-split-nav .btn-back {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #fff;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 13.5px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+          }
+          .login-split-nav .btn-back:hover {
+            background: rgba(255, 255, 255, 0.12);
+            border-color: rgba(255, 255, 255, 0.2);
+          }
+          .login-split-content {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 80px;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+            gap: 60px;
+            z-index: 10;
+            box-sizing: border-box;
+          }
+          .login-split-left {
+            flex: 1.1;
+            text-align: left;
+          }
+          .login-split-left .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(245, 158, 11, 0.15);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            color: #fbbf24;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            margin-bottom: 24px;
+          }
+          .login-split-left h1 {
+            font-family: var(--font-heading);
+            font-size: 40px;
+            font-weight: 800;
+            color: #fff;
+            line-height: 1.3;
+            margin: 0 0 20px;
+          }
+          .login-split-left p {
+            font-size: 16px;
+            color: var(--text-muted);
+            line-height: 1.6;
+            margin: 0;
+          }
+          .login-split-right {
+            flex: 0.9;
+            display: flex;
+            justify-content: flex-end;
+            width: 100%;
+          }
+          .login-split-card {
+            background: rgba(11, 15, 23, 0.75);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            border: 1px solid rgba(245, 158, 11, 0.25);
+            border-radius: 24px;
+            width: 100%;
+            max-width: 440px;
+            padding: 24px 32px;
+            box-shadow: 0 25px 60px -10px rgba(0, 0, 0, 0.8), 0 0 50px rgba(245, 158, 11, 0.1);
+            box-sizing: border-box;
+          }
+          .login-split-card h2 {
+            font-family: var(--font-heading);
+            font-size: 28px;
+            font-weight: 800;
+            color: #fff;
+            margin: 0 0 8px;
+            text-align: left;
+          }
+          .login-split-card .subtitle {
+            font-size: 13.5px;
+            color: var(--text-muted);
+            margin-bottom: 12px;
+            text-align: left;
+          }
+          .form-label {
+            display: block;
+            text-align: left;
+            font-size: 13px;
+            font-weight: 600;
+            color: #ccc;
+            margin-bottom: 8px;
+          }
+          .form-input-wrapper {
+            position: relative;
+            margin-bottom: 10px;
+          }
+          .form-input {
+            width: 100%;
+            padding: 13px 16px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            color: #fff;
+            font-size: 14.5px;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            box-sizing: border-box;
+          }
+          .form-input:focus {
+            outline: none;
+            border-color: #fbbf24;
+            background: rgba(255, 255, 255, 0.06);
+            box-shadow: 0 0 20px rgba(245, 158, 11, 0.25);
+          }
+          
+          /* Simulated Cloudflare Turnstile CSS */
+          .cf-turnstile-sim {
+            background: #1b1b1b;
+            border: 1px solid #2e2e2e;
+            border-radius: 4px;
+            padding: 10px 14px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            min-height: 58px;
+            margin: 16px 0 20px;
+            box-sizing: border-box;
+            color: #fff;
+            user-select: none;
+          }
+          .cf-verifying {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            width: 100%;
+            font-size: 13px;
+            color: #bbb;
+            text-align: left;
+          }
+          .cf-spinner {
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255,255,255,0.1);
+            border-top-color: #f38020;
+            border-radius: 50%;
+            animation: cfSpin 0.8s linear infinite;
+            flex-shrink: 0;
+          }
+          @keyframes cfSpin {
+            to { transform: rotate(360deg); }
+          }
+          .cf-success {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+          }
+          .cf-success-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+          }
+          .cf-check-circle {
+            width: 24px;
+            height: 24px;
+            background: #22c55e;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 12px;
+          }
+          .cf-success-left span {
+            font-size: 14px;
+            font-weight: 500;
+            color: #e2e8f0;
+          }
+          .cf-success-right {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 1px;
+            line-height: 1;
+          }
+          .cf-cloud-svg {
+            width: 20px;
+            height: 12px;
+          }
+          .cf-brand-text {
+            font-size: 7px;
+            font-weight: 800;
+            letter-spacing: 0.8px;
+            color: #bbb;
+          }
+          .cf-links {
+            display: flex;
+            gap: 6px;
+            margin-top: 1px;
+          }
+          .cf-links a {
+            font-size: 8px;
+            color: #888;
+            text-decoration: underline;
+          }
+          .cf-links a:hover {
+            color: #ccc;
+          }
+
+          .login-split-footer {
+            text-align: center;
+            margin-top: 24px;
+            font-size: 13.5px;
+            color: var(--text-muted);
+          }
+          .login-split-footer a {
+            color: #fbbf24;
+            text-decoration: underline;
+          }
+
+          @media (max-width: 992px) {
+            .login-split-content {
+              flex-direction: column;
+              padding: 40px 24px;
+              gap: 40px;
+            }
+            .login-split-left {
+              text-align: center;
+              max-width: 100%;
+            }
+            .login-split-left h1 {
+              font-size: 32px;
+            }
+            .login-split-right {
+              justify-content: center;
+              width: 100%;
+            }
+          }
+        `}} />
+
+        {/* Header */}
+        <header className="login-split-header">
+          <div className="login-split-logo">
+            <img src="/logo.jpg" alt="Logo" />
+            <span>28Symues Affiliate</span>
+          </div>
+          <div className="login-split-nav">
+            <button 
+              className="btn-back" 
+              onClick={() => {
+                setView('home');
+                window.history.pushState({}, '', '/');
+              }}
+            >
+              <i className="fa-solid fa-house"></i> Trang chủ
+            </button>
+          </div>
+        </header>
+
+        {/* Main Content split */}
+        <div className="login-split-content">
+          <div className="login-split-left">
+            <div className="badge">
+              <i className="fa-thin fa-robot" style={{ fontSize: '14px' }}></i> 28Symues Affiliate
+            </div>
+            <h1>Đăng nhập tài khoản</h1>
+            <p>
+              Đăng nhập để theo dõi trạng thái đơn hàng Shopee, xem thống kê doanh số hoa hồng tạm tính và duyệt yêu cầu rút tiền tự động của các thành viên trong hệ thống.
+            </p>
+          </div>
+
+          <div className="login-split-right">
+            <div className="login-split-card">
+              <h2>Đăng nhập</h2>
+              <p className="subtitle">Phiên đăng nhập được lưu trên trình duyệt hiện tại.</p>
+
+              {loginError && <div className="login-error-msg">{loginError}</div>}
+
+              <form onSubmit={handleLocalLogin}>
+                <div className="form-group" style={{ marginBottom: '20px' }}>
+                  <label className="form-label">Username</label>
+                  <div className="form-input-wrapper">
+                    <input 
+                      type="email" 
+                      className="form-input" 
+                      placeholder="Email của bạn"
+                      required
+                      value={loginEmail}
+                      onChange={(e) => setLoginEmail(e.target.value)}
+                    />
+                  </div>
+                </div>
+
+                <div className="form-group" style={{ marginBottom: '20px' }}>
+                  <label className="form-label">Password</label>
+                  <div className="form-input-wrapper">
+                    <input 
+                      type="password" 
+                      className="form-input" 
+                      placeholder="••••••••••••"
+                      required
+                      value={loginPassword}
+                      onChange={(e) => setLoginPassword(e.target.value)}
+                    />
+                  </div>
+                </div>
+
+                {/* Terms Acceptance checkbox */}
+                <div className="terms-checkbox-wrapper" style={{ display: 'flex', alignItems: 'flex-start', gap: '8px', textAlign: 'left', margin: '16px 0 10px', fontSize: '13px', color: 'var(--text-muted)' }}>
+                  <input 
+                    type="checkbox" 
+                    id="accept-terms" 
+                    required 
+                    style={{ marginTop: '3px', cursor: 'pointer' }}
+                  />
+                  <label htmlFor="accept-terms" style={{ cursor: 'pointer', lineHeight: '1.4' }}>
+                    Tôi đồng ý với <a href="#" onClick={(e) => e.preventDefault()} style={{ color: '#fbbf24', textDecoration: 'underline' }}>Điều khoản dịch vụ</a> và <a href="#" onClick={(e) => e.preventDefault()} style={{ color: '#fbbf24', textDecoration: 'underline' }}>Chính sách bảo mật</a>.
+                  </label>
+                </div>
+
+                {/* Simulated Cloudflare Turnstile Widget */}
+                <div className="cf-turnstile-sim">
+                  {cfStatus === 'verifying' ? (
+                    <div className="cf-verifying">
+                      <div className="cf-spinner"></div>
+                      <span>Đang kiểm tra an toàn kết nối...</span>
+                    </div>
+                  ) : (
+                    <div className="cf-success">
+                      <div className="cf-success-left">
+                        <div className="cf-check-circle">
+                          <i className="fa-solid fa-check"></i>
+                        </div>
+                        <span>Thành công!</span>
+                      </div>
+                      <div className="cf-success-right">
+                        <svg className="cf-cloud-svg" viewBox="0 0 24 24">
+                          <path fill="#f38020" d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96z"/>
+                        </svg>
+                        <span className="cf-brand-text">CLOUDFLARE</span>
+                        <div className="cf-links">
+                          <a href="#" onClick={(e) => e.preventDefault()}>Quyền riêng tư</a>
+                          <a href="#" onClick={(e) => e.preventDefault()}>Giúp đỡ</a>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                <button type="submit" className="modal-login-btn" disabled={loginLoading || cfStatus === 'verifying'} style={{ marginTop: '0px' }}>
+                  {loginLoading ? 'Đang xác thực...' : 'Đăng nhập'}
+                </button>
+              </form>
+
+              <div className="modal-divider">Hoặc</div>
+
+              <div className="modal-google-container" style={{ 
+                position: 'relative', 
+                width: `${calculatedWidth}px`, 
+                minHeight: '40px', 
+                margin: '0 auto' 
+              }}>
+                {isMobile ? (
+                  <button 
+                    className="btn-google-custom" 
+                    onClick={handleGoogleLoginMobile}
+                    style={{
+                      width: '100%',
+                      height: '42px',
+                      background: '#ffffff',
+                      color: '#1f2937',
+                      border: '1px solid #d1d5db',
+                      borderRadius: '24px',
+                      fontSize: '14.5px',
+                      fontWeight: '600',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '12px',
+                      boxShadow: '0 2px 6px rgba(0,0,0,0.15)',
+                      cursor: 'pointer',
+                      transition: 'all 0.2s ease'
+                    }}
+                  >
+                    <svg width="20" height="20" viewBox="0 0 48 48">
+                      <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
+                      <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
+                      <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>
+                      <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
+                    </svg>
+                    <span>Đăng nhập bằng Google</span>
+                  </button>
+                ) : (
+                  <div id="google-signin-btn" style={{
+                    width: '100%',
+                    height: '42px',
+                    display: 'flex',
+                    justifyContent: 'center',
+                    cursor: 'pointer'
+                  }}></div>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   if (view === 'home') {
     const isAdmin = user && (user.role === 'ADMIN' || user.role === 'SUPER_ADMIN');
     
@@ -1946,7 +2492,7 @@ function App() {
             <a href="#features" onClick={() => setMobileMenuOpen(false)}>Tính năng</a>
             <a href="#steps" onClick={() => setMobileMenuOpen(false)}>Hướng dẫn</a>
             <a href="#pricing" onClick={() => setMobileMenuOpen(false)}>Bảng giá</a>
-            <a href="#" onClick={(e) => { e.preventDefault(); setView('lookup'); window.history.pushState({}, '', '/?view=lookup'); setMobileMenuOpen(false); }} style={{ color: '#38bdf8', fontWeight: '700' }}>🔍 Tra cứu đơn hàng</a>
+            <a href="#" onClick={(e) => { e.preventDefault(); setView('lookup'); window.history.pushState({}, '', '/?view=lookup'); setMobileMenuOpen(false); }} style={{ color: '#fbbf24', fontWeight: '700' }}><i className="fa-thin fa-magnifying-glass" style={{ marginRight: '6px' }}></i>Tra cứu đơn hàng</a>
             {/* Mobile-only actions inside nav */}
             <div className="mobile-nav-actions">
               {token ? (
@@ -1971,7 +2517,8 @@ function App() {
               ) : (
                 <button className="btn btn-glow" onClick={() => {
                   setLoginError('');
-                  setIsLoginModalOpen(true);
+                  setView('login');
+                  window.history.pushState({}, '', '/?view=login');
                   setMobileMenuOpen(false);
                 }}>
                   Đăng nhập
@@ -2004,7 +2551,8 @@ function App() {
             ) : (
               <button className="btn btn-glow" onClick={() => {
                 setLoginError('');
-                setIsLoginModalOpen(true);
+                setView('login');
+                window.history.pushState({}, '', '/?view=login');
               }}>
                 Đăng nhập
               </button>
@@ -2026,7 +2574,7 @@ function App() {
 
         {/* Hero Section */}
         <section id="home" className="hero-section">
-          <div className="hero-badge">🤖 HỆ THỐNG AUTOMATION AFFILIATE</div>
+          <div className="hero-badge"><i className="fa-thin fa-robot" style={{ marginRight: '8px', fontSize: '18px', verticalAlign: 'middle' }}></i> HỆ THỐNG AUTOMATION AFFILIATE</div>
           <h1 className="hero-title">Tự Động Hóa Shopee Affiliate<br />Với 28Symues</h1>
           <p className="hero-subtitle">
             Biến mọi liên kết mua sắm trong nhóm chat Zalo của bạn thành nguồn thu nhập thụ động chỉ trong vài giây. Tiện lợi, tự động và hoàn toàn minh bạch.
@@ -2036,7 +2584,7 @@ function App() {
               Bắt đầu ngay
             </a>
             <button onClick={() => { setView('lookup'); window.history.pushState({}, '', '/?view=lookup'); }} className="btn btn-hero-2">
-              🔍 Tra cứu đơn hàng
+              <i className="fa-thin fa-magnifying-glass"></i> Tra cứu đơn hàng
             </button>
             <a href="#features" className="btn btn-hero-3">
               Tìm hiểu tính năng
@@ -2050,28 +2598,28 @@ function App() {
           <p className="section-subtitle">Mọi thứ bạn cần để vận hành hệ thống săn sale hoa hồng tự động</p>
           <div className="features-grid">
             <div className="feature-card">
-              <div className="feature-icon">🔗</div>
+              <div className="feature-icon"><i className="fa-regular fa-link"></i></div>
               <h3 className="feature-title">Chuyển Đổi Link Tự Động</h3>
               <p className="feature-desc">
                 Tự động nhận diện link Shopee, Lazada, TikTok Shop và chuyển đổi thành link affiliate có gắn Zalo ID của người gửi làm sub_id.
               </p>
             </div>
             <div className="feature-card success">
-              <div className="feature-icon">💬</div>
+              <div className="feature-icon"><i className="fa-brands fa-bots"></i></div>
               <h3 className="feature-title">Tương Tác Bằng AI</h3>
               <p className="feature-desc">
                 Sử dụng mô hình AI GPT-4o để tự động soạn thảo lời phản hồi vui nhộn, hấp dẫn, nâng cao tỷ lệ nhấn click mua sản phẩm.
               </p>
             </div>
             <div className="feature-card warning">
-              <div className="feature-icon">📊</div>
+              <div className="feature-icon"><i className="fa-regular fa-chart-area"></i></div>
               <h3 className="feature-title">Thống Kê Chi Tiết</h3>
               <p className="feature-desc">
                 Theo dõi đầy đủ lịch sử đơn hàng đã mua, phần trăm hoa hồng tạm tính và doanh số rút tiền của từng thành viên trong hệ thống.
               </p>
             </div>
             <div className="feature-card">
-              <div className="feature-icon">💳</div>
+              <div className="feature-icon"><i className="fa-brands fa-cc-apple-pay"></i></div>
               <h3 className="feature-title">Rút Tiền Tự Động</h3>
               <p className="feature-desc">
                 Thành viên yêu cầu rút tiền trực tiếp bằng cú pháp `/rut-tien` trong nhóm Zalo. Admin phê duyệt nhanh chóng trên Dashboard.
@@ -2174,13 +2722,13 @@ function App() {
             {/* Gói Pro - Phổ biến nhất */}
             <div className="pricing-card" style={{
               background: 'rgba(255, 255, 255, 0.04)',
-              border: '1px solid rgba(139, 92, 246, 0.3)',
+              border: '1px solid rgba(245, 158, 11, 0.4)',
               borderRadius: '24px',
               padding: '40px 32px',
               width: '100%',
               maxWidth: '360px',
               backdropFilter: 'blur(10px)',
-              boxShadow: '0 20px 40px -15px rgba(139, 92, 246, 0.25)',
+              boxShadow: '0 20px 40px -15px rgba(245, 158, 11, 0.2)',
               position: 'relative',
               overflow: 'hidden',
               display: 'flex',
@@ -2194,8 +2742,8 @@ function App() {
                 position: 'absolute',
                 top: '0',
                 right: '0',
-                background: 'linear-gradient(135deg, #f97316, #ec4899)',
-                color: '#fff',
+                background: 'linear-gradient(135deg, #fbbf24, #d97706)',
+                color: '#0b0f17',
                 padding: '6px 20px',
                 borderBottomLeftRadius: '16px',
                 fontSize: '11px',
@@ -2323,8 +2871,8 @@ function App() {
               width: '280px',
               borderRadius: '16px',
               overflow: 'hidden',
-              boxShadow: '0 12px 40px rgba(0,0,0,0.6), 0 0 30px rgba(139, 92, 246, 0.35)',
-              border: '2px solid rgba(139, 92, 246, 0.4)',
+              boxShadow: '0 12px 40px rgba(0,0,0,0.6), 0 0 30px rgba(245, 158, 11, 0.2)',
+              border: '2px solid rgba(245, 158, 11, 0.3)',
               transition: 'transform 0.3s ease'
             }}>
               <button
@@ -2359,135 +2907,7 @@ function App() {
           <p>© 2026 28Symues Affiliate. Phát triển bằng sự tương tác thông minh và an toàn.</p>
         </footer>
 
-        {/* LOGIN MODAL OVERLAY */}
-        {isLoginModalOpen && (
-          <div className="modal-overlay" onClick={() => setIsLoginModalOpen(false)}>
-            <div className="login-modal-content" onClick={(e) => e.stopPropagation()}>
-              <div style={{ padding: '32px' }}>
-                <div className="login-modal-header" style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                  <img src="/logo.jpg" alt="Logo" style={{ width: '28px', height: '28px', borderRadius: '50%', objectFit: 'cover' }} />
-                  <h2 className="login-modal-title">Đăng nhập</h2>
-                  <button className="login-modal-close" onClick={() => setIsLoginModalOpen(false)} style={{ marginLeft: 'auto' }}>&times;</button>
-                </div>
-                
-                <form onSubmit={handleLocalLogin}>
-                  <div className="modal-form-group">
-                    <label className="modal-form-label">Email</label>
-                    <input 
-                      type="email" 
-                      className="modal-form-input" 
-                      required
-                      value={loginEmail}
-                      onChange={(e) => setLoginEmail(e.target.value)}
-                    />
-                  </div>
-                  <div className="modal-form-group">
-                    <label className="modal-form-label">Mật khẩu</label>
-                    <input 
-                      type="password" 
-                      className="modal-form-input" 
-                      required
-                      value={loginPassword}
-                      onChange={(e) => setLoginPassword(e.target.value)}
-                    />
-                  </div>
-                  <button type="submit" className="modal-login-btn" disabled={loginLoading}>
-                    {loginLoading ? 'Đang xác thực...' : 'Đăng nhập'}
-                  </button>
-                </form>
-                
-                <div className="modal-divider">Hoặc</div>
-                
-                {(() => {
-                  const calculatedWidth = Math.max(200, Math.min(336, windowWidth - 64));
-                  const isMobile = windowWidth < 768;
-                  
-                  const handleGoogleLoginMobile = () => {
-                    const clientId = '195858897824-4h5ffebs0djtuncmhod98o0ca495ju71.apps.googleusercontent.com';
-                    // OAuth redirect URI must match origin (usually without trailing slash)
-                    const redirectUri = window.location.origin;
-                    const nonce = Math.random().toString(36).substring(2) + Date.now();
-                    const url = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=id_token&scope=openid%20profile%20email&nonce=${nonce}`;
-                    window.location.href = url;
-                  };
 
-                  return (
-                    <div className="modal-google-container" style={{ 
-                      position: 'relative', 
-                      width: `${calculatedWidth}px`, 
-                      minHeight: '40px', 
-                      margin: '16px auto 0' 
-                    }}>
-                      {/* Premium White Google Button matching official brand guidelines */}
-                      <button 
-                        className="btn-google-custom" 
-                        onClick={isMobile ? handleGoogleLoginMobile : undefined}
-                        style={{
-                          position: 'relative',
-                          width: '100%',
-                          height: '42px',
-                          background: '#ffffff',
-                          color: '#1f2937',
-                          border: '1px solid #d1d5db',
-                          borderRadius: '8px',
-                          fontSize: '14.5px',
-                          fontWeight: '600',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          gap: '12px',
-                          boxShadow: '0 2px 6px rgba(0,0,0,0.15)',
-                          cursor: 'pointer',
-                          pointerEvents: isMobile ? 'auto' : 'none',
-                          transition: 'all 0.2s ease'
-                        }}
-                      >
-                        <svg width="20" height="20" viewBox="0 0 48 48">
-                          <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
-                          <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
-                          <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>
-                          <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
-                        </svg>
-                        <span>Đăng nhập bằng Google</span>
-                      </button>
-                      
-                      {/* The invisible official Google button container (only active on desktop) */}
-                      {!isMobile && (
-                        <div id="google-signin-btn" style={{
-                          position: 'absolute',
-                          top: 0,
-                          left: 0,
-                          width: '100%',
-                          height: '42px',
-                          opacity: 0.01,
-                          cursor: 'pointer',
-                          zIndex: 10
-                        }}></div>
-                      )}
-
-                      {/* Thông báo hướng dẫn trên mobile khi mở qua trình duyệt Zalo/Facebook */}
-                      {isMobile && (
-                        <div style={{
-                          marginTop: '12px',
-                          padding: '10px 12px',
-                          background: 'rgba(234, 179, 8, 0.12)',
-                          border: '1px dashed rgba(234, 179, 8, 0.35)',
-                          borderRadius: '8px',
-                          color: '#fde047',
-                          fontSize: '11.5px',
-                          lineHeight: '1.45',
-                          textAlign: 'left'
-                        }}>
-                          💡 <b>Lỗi 403 trên Zalo?</b> Do Google bảo mật không cho đăng nhập trong ứng dụng chat. Vui lòng bấm dấu <b>[...]</b> ở góc trên bên phải màn hình ➔ Chọn <b>Mở bằng trình duyệt (Chrome/Safari)</b> để đăng nhập.
-                        </div>
-                      )}
-                    </div>
-                  );
-                })()}
-              </div>
-            </div>
-          </div>
-        )}
       </div>
     );
   }
@@ -2512,14 +2932,14 @@ function App() {
             className="menu-item"
             onClick={() => { setView('home'); sessionStorage.removeItem('adminView'); setSidebarOpen(false); }}
             style={{ 
-              background: 'rgba(56, 189, 248, 0.05)', 
-              color: '#38BDF8', 
+              background: 'rgba(245, 158, 11, 0.08)', 
+              color: '#fbbf24', 
               fontWeight: '600', 
-              borderLeft: '3px solid #38BDF8', 
+              borderLeft: '3px solid #fbbf24', 
               marginBottom: '8px' 
             }}
           >
-            🏠 Về Trang Chủ
+            <i className="fa-solid fa-house" style={{ marginRight: '8px' }}></i> Về Trang Chủ
           </li>
           <li 
             className={`menu-item ${activeTab === 'dashboard' ? 'active' : ''}`}
@@ -2545,7 +2965,7 @@ function App() {
           >
             💳 Rút tiền {stats.pendingPayoutsCount > 0 && (
               <span style={{
-                background: 'var(--color-danger)',
+                background: '#ef4444',
                 color: '#fff',
                 fontSize: '11px',
                 padding: '2px 6px',
@@ -2572,10 +2992,10 @@ function App() {
             )}
             <div style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
               <div style={{ fontSize: '13px', fontWeight: 'bold', color: '#fff' }}>{user?.fullName}</div>
-              <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>{user?.role}</div>
+              <div style={{ fontSize: '11px', color: '#94a3b8' }}>{user?.role}</div>
             </div>
           </div>
-          <button className="btn btn-danger" onClick={handleLogout} style={{ width: '100%', fontSize: '13px', padding: '8px', background: 'var(--color-danger)', color: '#fff', border: 'none', borderRadius: '6px', cursor: 'pointer' }}>
+          <button className="btn btn-danger" onClick={handleLogout} style={{ width: '100%', fontSize: '13px', padding: '8px', background: '#ef4444', color: '#fff', border: 'none', borderRadius: '6px', cursor: 'pointer' }}>
             🚪 Đăng xuất
           </button>
         </div>
@@ -2625,9 +3045,9 @@ function App() {
                 alignItems: 'center', 
                 gap: '8px', 
                 padding: '8px 16px',
-                background: 'rgba(56, 189, 248, 0.1)',
-                color: '#38bdf8',
-                border: '1px solid rgba(56, 189, 248, 0.25)',
+                background: 'rgba(245, 158, 11, 0.1)',
+                color: '#fbbf24',
+                border: '1px solid rgba(245, 158, 11, 0.25)',
                 fontWeight: '600',
                 fontSize: '13.5px',
                 borderRadius: '8px',

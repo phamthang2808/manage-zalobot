@@ -860,42 +860,69 @@ function App() {
 
   const toastElement = toast && (
     <div className="custom-toast-popup" style={{
-      background: 'linear-gradient(135deg, rgba(23, 19, 55, 0.96), rgba(10, 8, 29, 0.98))',
-      border: `1px solid ${toast.type === 'success' ? 'rgba(52, 211, 153, 0.6)' : (toast.type === 'error' ? 'rgba(248, 113, 113, 0.6)' : 'rgba(139, 92, 246, 0.6)')}`
+      background: toast.type === 'success'
+        ? 'linear-gradient(135deg, rgba(6, 28, 20, 0.97), rgba(4, 22, 16, 0.99))'
+        : toast.type === 'error'
+        ? 'linear-gradient(135deg, rgba(28, 6, 6, 0.97), rgba(22, 4, 4, 0.99))'
+        : 'linear-gradient(135deg, rgba(17, 14, 4, 0.97), rgba(12, 10, 3, 0.99))',
+      border: `1px solid ${toast.type === 'success' ? 'rgba(52, 211, 153, 0.35)' : (toast.type === 'error' ? 'rgba(248, 113, 113, 0.35)' : 'rgba(251, 191, 36, 0.35)')}`,
+      borderLeft: `4px solid ${toast.type === 'success' ? '#34d399' : (toast.type === 'error' ? '#f87171' : '#fbbf24')}`,
+      borderRadius: '14px',
+      boxShadow: toast.type === 'success'
+        ? '0 20px 40px -8px rgba(0,0,0,0.7), 0 0 30px rgba(52,211,153,0.08)'
+        : toast.type === 'error'
+        ? '0 20px 40px -8px rgba(0,0,0,0.7), 0 0 30px rgba(248,113,113,0.08)'
+        : '0 20px 40px -8px rgba(0,0,0,0.7), 0 0 30px rgba(251,191,36,0.08)'
     }}>
-      {/* Premium SVG Icon */}
+      {/* Icon Badge */}
       <div style={{
-        width: '36px',
-        height: '36px',
+        width: '40px',
+        height: '40px',
+        minWidth: '40px',
         borderRadius: '50%',
-        background: toast.type === 'success' ? 'rgba(52, 211, 153, 0.15)' : (toast.type === 'error' ? 'rgba(248, 113, 113, 0.15)' : 'rgba(139, 92, 246, 0.15)'),
-        border: `1px solid ${toast.type === 'success' ? 'rgba(52, 211, 153, 0.4)' : (toast.type === 'error' ? 'rgba(248, 113, 113, 0.4)' : 'rgba(139, 92, 246, 0.4)')}`,
+        background: toast.type === 'success'
+          ? 'rgba(52, 211, 153, 0.15)'
+          : toast.type === 'error'
+          ? 'rgba(248, 113, 113, 0.15)'
+          : 'rgba(251, 191, 36, 0.15)',
+        border: `1.5px solid ${toast.type === 'success' ? 'rgba(52, 211, 153, 0.5)' : (toast.type === 'error' ? 'rgba(248, 113, 113, 0.5)' : 'rgba(251, 191, 36, 0.5)')}`,
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        flexShrink: 0
+        flexShrink: 0,
+        boxShadow: toast.type === 'success'
+          ? '0 0 12px rgba(52,211,153,0.25)'
+          : toast.type === 'error'
+          ? '0 0 12px rgba(248,113,113,0.25)'
+          : '0 0 12px rgba(251,191,36,0.25)'
       }}>
         {toast.type === 'success' ? (
-          <svg style={{ width: '18px', height: '18px', color: '#34d399' }} fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <svg style={{ width: '18px', height: '18px', color: '#34d399' }} fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5"></path>
           </svg>
         ) : toast.type === 'error' ? (
-          <svg style={{ width: '18px', height: '18px', color: '#f87171' }} fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12"></path>
+          <svg style={{ width: '18px', height: '18px', color: '#f87171' }} fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z"></path>
           </svg>
         ) : (
-          <svg style={{ width: '18px', height: '18px', color: '#a78bfa' }} fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <svg style={{ width: '18px', height: '18px', color: '#fbbf24' }} fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 111.085 1.085l-1.086 1.086L10.5 13.5H12.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
           </svg>
         )}
       </div>
 
       {/* Content */}
-      <div style={{ flex: 1, textAlign: 'left', paddingRight: '10px' }}>
-        <div style={{ fontSize: '14.5px', fontWeight: '700', color: '#fff', marginBottom: '4px' }}>
-          {toast.type === 'success' ? 'Thành công!' : (toast.type === 'error' ? 'Có lỗi xảy ra!' : 'Thông báo')}
+      <div style={{ flex: 1, textAlign: 'left' }}>
+        <div style={{
+          fontSize: '14px',
+          fontWeight: '700',
+          color: toast.type === 'success' ? '#6ee7b7' : (toast.type === 'error' ? '#fca5a5' : '#fde68a'),
+          marginBottom: '3px',
+          letterSpacing: '0.1px'
+        }}>
+          {toast.type === 'success' ? '✓  Thành công' : (toast.type === 'error' ? '⚠  Có lỗi xảy ra' : 'ℹ  Thông báo')}
         </div>
-        <div style={{ fontSize: '13px', color: '#cbd5e1', lineHeight: '1.4' }}>
+        <div style={{ fontSize: '13px', color: '#94a3b8', lineHeight: '1.45' }}>
           {toast.message}
         </div>
       </div>
@@ -904,24 +931,31 @@ function App() {
       <button
         onClick={() => setToast(null)}
         style={{
-          background: 'transparent',
-          border: 'none',
-          color: '#94a3b8',
-          fontSize: '18px',
+          background: 'rgba(255,255,255,0.05)',
+          border: '1px solid rgba(255,255,255,0.08)',
+          color: '#64748b',
+          fontSize: '14px',
           cursor: 'pointer',
-          padding: '2px',
-          lineHeight: 1
+          padding: '4px 7px',
+          lineHeight: 1,
+          borderRadius: '6px',
+          alignSelf: 'flex-start',
+          transition: 'all 0.2s',
+          flexShrink: 0
         }}
+        onMouseEnter={e => { e.currentTarget.style.background='rgba(255,255,255,0.1)'; e.currentTarget.style.color='#e2e8f0'; }}
+        onMouseLeave={e => { e.currentTarget.style.background='rgba(255,255,255,0.05)'; e.currentTarget.style.color='#64748b'; }}
       >
-        &times;
+        ✕
       </button>
-      {/* Progress Bar (Viền chạy chạy dưới đáy tự tắt sau 4s) */}
+      {/* Progress Bar */}
       <div style={{
         position: 'absolute',
         bottom: 0,
         left: 0,
-        height: '3px',
-        background: toast.type === 'success' ? 'linear-gradient(90deg, #34d399, #10b981)' : (toast.type === 'error' ? 'linear-gradient(90deg, #f87171, #ef4444)' : 'linear-gradient(90deg, #a78bfa, #38bdf8)'),
+        height: '2px',
+        borderRadius: '0 0 14px 14px',
+        background: toast.type === 'success' ? 'linear-gradient(90deg, #34d399, #10b981)' : (toast.type === 'error' ? 'linear-gradient(90deg, #f87171, #ef4444)' : 'linear-gradient(90deg, #fbbf24, #d97706)'),
         animation: 'toastProgress 4s linear forwards'
       }} />
     </div>
@@ -2923,7 +2957,7 @@ function App() {
       <aside className={`sidebar${sidebarOpen ? ' open' : ''}`}>
         <div className="sidebar-header">
           <div className="sidebar-logo">
-            <img src="/logo.jpg" alt="Logo" style={{ width: '32px', height: '32px', borderRadius: '50%', objectFit: 'cover' }} />
+            <img src="/logo.jpg" alt="Logo" style={{ width: '34px', height: '34px', borderRadius: '50%', objectFit: 'cover', border: '2px solid rgba(251,191,36,0.4)' }} />
             <span>28Symues Admin</span>
           </div>
         </div>
@@ -2936,67 +2970,96 @@ function App() {
               color: '#fbbf24', 
               fontWeight: '600', 
               borderLeft: '3px solid #fbbf24', 
-              marginBottom: '8px' 
+              marginBottom: '4px',
+              fontSize: '14px'
             }}
           >
-            <i className="fa-solid fa-house" style={{ marginRight: '8px' }}></i> Về Trang Chủ
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style={{ flexShrink: 0 }}><path d="M11.47 3.841a.75.75 0 0 1 1.06 0l8.69 8.69a.75.75 0 1 0 1.06-1.061l-8.689-8.69a2.25 2.25 0 0 0-3.182 0l-8.69 8.69a.75.75 0 1 0 1.061 1.06l8.69-8.689Z"/><path d="m12 5.432 8.159 8.159c.03.03.06.058.091.086v6.198c0 1.035-.84 1.875-1.875 1.875H15a.75.75 0 0 1-.75-.75v-4.5a.75.75 0 0 0-.75-.75h-3a.75.75 0 0 0-.75.75V21a.75.75 0 0 1-.75.75H5.625a1.875 1.875 0 0 1-1.875-1.875v-6.198a.465.465 0 0 0 .091-.086L12 5.43Z"/></svg>
+            Về Trang Chủ
           </li>
           <li 
             className={`menu-item ${activeTab === 'dashboard' ? 'active' : ''}`}
             onClick={() => { setActiveTab('dashboard'); sessionStorage.setItem('adminTab','dashboard'); sessionStorage.setItem('adminView','admin'); setSidebarOpen(false); }}
           >
-            📊 Tổng quan
+            <wa-icon name="arrow-up-right-dots" variant="light" style={{ fontSize: '17px', flexShrink: 0 }}></wa-icon>
+            Tổng quan
           </li>
           <li 
             className={`menu-item ${activeTab === 'users' ? 'active' : ''}`}
             onClick={() => { setActiveTab('users'); sessionStorage.setItem('adminTab','users'); sessionStorage.setItem('adminView','admin'); setSidebarOpen(false); }}
           >
-            👥 Thành viên
+            <wa-icon name="user" variant="regular" style={{ fontSize: '17px', flexShrink: 0 }}></wa-icon>
+            Thành viên
           </li>
           <li 
             className={`menu-item ${activeTab === 'orders' ? 'active' : ''}`}
             onClick={() => { setActiveTab('orders'); sessionStorage.setItem('adminTab','orders'); sessionStorage.setItem('adminView','admin'); setSidebarOpen(false); }}
           >
-            🛒 Đơn hàng
+            <wa-icon name="cart-arrow-down" variant="regular" style={{ fontSize: '17px', flexShrink: 0 }}></wa-icon>
+            Đơn hàng
           </li>
           <li 
             className={`menu-item ${activeTab === 'payouts' ? 'active' : ''}`}
             onClick={() => { setActiveTab('payouts'); sessionStorage.setItem('adminTab','payouts'); sessionStorage.setItem('adminView','admin'); setSidebarOpen(false); }}
+            style={{ display: 'flex', alignItems: 'center' }}
           >
-            💳 Rút tiền {stats.pendingPayoutsCount > 0 && (
+            <wa-icon name="credit-card" style={{ fontSize: '17px', flexShrink: 0 }}></wa-icon>
+            <span style={{ flex: 1 }}>Rút tiền</span>
+            {stats.pendingPayoutsCount > 0 && (
               <span style={{
                 background: '#ef4444',
                 color: '#fff',
-                fontSize: '11px',
-                padding: '2px 6px',
-                borderRadius: '50%',
+                fontSize: '10px',
+                padding: '2px 7px',
+                borderRadius: '20px',
                 fontWeight: 'bold',
-                marginLeft: 'auto'
+                lineHeight: '1.4'
               }}>{stats.pendingPayoutsCount}</span>
             )}
           </li>
         </ul>
 
-        {/* Sidebar Footer with Logged In User Info and Logout */}
-        <div className="sidebar-footer" style={{ marginTop: 'auto', padding: '16px', borderTop: '1px solid rgba(255,255,255,0.08)' }}>
-          <div style={{ display: 'flex', alignItems: 'center', marginBottom: '12px', gap: '8px' }}>
+        {/* Sidebar Footer */}
+        <div className="sidebar-footer" style={{ padding: '12px 16px 16px', borderTop: '1px solid rgba(255,255,255,0.06)' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '12px', padding: '10px 12px', background: 'rgba(255,255,255,0.04)', borderRadius: '10px', border: '1px solid rgba(255,255,255,0.06)' }}>
             {user?.avatarUrl ? (
               <img 
                 src={user.avatarUrl} 
                 alt="Avatar" 
                 referrerPolicy="no-referrer"
-                style={{ width: '32px', height: '32px', borderRadius: '50%' }} 
+                style={{ width: '34px', height: '34px', borderRadius: '50%', border: '2px solid rgba(251,191,36,0.4)', flexShrink: 0 }} 
               />
             ) : (
-              <div className="avatar" style={{ margin: 0, width: '32px', height: '32px', fontSize: '12px' }}>{(user?.fullName || 'PT').substring(0, 2).toUpperCase()}</div>
+              <div className="avatar" style={{ margin: 0, width: '34px', height: '34px', fontSize: '12px', flexShrink: 0 }}>{(user?.fullName || 'PT').substring(0, 2).toUpperCase()}</div>
             )}
-            <div style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-              <div style={{ fontSize: '13px', fontWeight: 'bold', color: '#fff' }}>{user?.fullName}</div>
-              <div style={{ fontSize: '11px', color: '#94a3b8' }}>{user?.role}</div>
+            <div style={{ overflow: 'hidden', flex: 1, minWidth: 0 }}>
+              <div style={{ fontSize: '13px', fontWeight: '700', color: '#fff', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{user?.fullName}</div>
+              <div style={{ fontSize: '10px', color: '#fbbf24', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.5px' }}>{user?.role}</div>
             </div>
           </div>
-          <button className="btn btn-danger" onClick={handleLogout} style={{ width: '100%', fontSize: '13px', padding: '8px', background: '#ef4444', color: '#fff', border: 'none', borderRadius: '6px', cursor: 'pointer' }}>
-            🚪 Đăng xuất
+          <button 
+            onClick={handleLogout} 
+            style={{ 
+              width: '100%', 
+              fontSize: '13px', 
+              padding: '9px', 
+              background: 'rgba(239,68,68,0.1)', 
+              color: '#f87171', 
+              border: '1px solid rgba(239,68,68,0.25)', 
+              borderRadius: '8px', 
+              cursor: 'pointer',
+              fontWeight: '600',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '6px',
+              transition: 'all 0.2s'
+            }}
+            onMouseEnter={e => { e.currentTarget.style.background='rgba(239,68,68,0.2)'; e.currentTarget.style.borderColor='rgba(239,68,68,0.5)'; }}
+            onMouseLeave={e => { e.currentTarget.style.background='rgba(239,68,68,0.1)'; e.currentTarget.style.borderColor='rgba(239,68,68,0.25)'; }}
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+            Đăng xuất
           </button>
         </div>
       </aside>
@@ -3088,24 +3151,39 @@ function App() {
                 <div>
                   <div className="stats-grid">
                     <div className="stat-card">
+                      <div className="stat-icon">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                      </div>
                       <span className="stat-label">Tổng thành viên</span>
                       <span className="stat-val">{stats.totalMembers}</span>
                     </div>
                     <div className="stat-card success">
+                      <div className="stat-icon success">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+                      </div>
                       <span className="stat-label">Tổng đơn hàng</span>
                       <span className="stat-val">{stats.totalOrders}</span>
                     </div>
                     <div className="stat-card">
-                      <span className="stat-label">Doanh thu hoa hồng Shopee</span>
+                      <div className="stat-icon info">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                      </div>
+                      <span className="stat-label">Doanh thu hoa hồng</span>
                       <span className="stat-val">{formatMoney(stats.totalCommission)}</span>
                     </div>
                     <div className="stat-card warning">
+                      <div className="stat-icon warning">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                      </div>
                       <span className="stat-label">Chờ duyệt rút tiền</span>
-                      <span className="stat-val" style={{ color: stats.pendingPayoutsCount > 0 ? 'var(--color-warning)' : 'inherit' }}>
+                      <span className="stat-val" style={{ color: stats.pendingPayoutsCount > 0 ? '#fbbf24' : 'inherit' }}>
                         {stats.pendingPayoutsCount}
                       </span>
                     </div>
                     <div className="stat-card">
+                      <div className="stat-icon">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+                      </div>
                       <span className="stat-label">Đã thanh toán (Thực tế)</span>
                       <span className="stat-val">{formatMoney(stats.totalWithdrawn)}</span>
                     </div>

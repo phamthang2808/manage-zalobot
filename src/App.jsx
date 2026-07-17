@@ -2583,7 +2583,13 @@ function App() {
                         e.currentTarget.style.boxShadow = '0 4px 15px rgba(245, 158, 11, 0.15)';
                       }}
                     >
-                      <wa-icon name="users-gear" variant="regular" style={{ fontSize: '15px' }}></wa-icon>
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: '6px', flexShrink: 0 }}>
+                        <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+                        <circle cx="9" cy="7" r="4" />
+                        <path d="M19 8a3 3 0 0 1 0 6" />
+                        <circle cx="18" cy="18" r="2.5" />
+                        <path d="M18 14.5v1M18 20.5v1M14.5 18h1M20.5 18h1" />
+                      </svg>
                       Trang Quản Trị
                     </button>
                   )}
@@ -2645,7 +2651,13 @@ function App() {
                       e.currentTarget.style.boxShadow = '0 4px 15px rgba(245, 158, 11, 0.15)';
                     }}
                   >
-                    <wa-icon name="users-gear" variant="regular" style={{ fontSize: '15px' }}></wa-icon>
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: '6px', flexShrink: 0 }}>
+                      <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+                      <circle cx="9" cy="7" r="4" />
+                      <path d="M19 8a3 3 0 0 1 0 6" />
+                      <circle cx="18" cy="18" r="2.5" />
+                      <path d="M18 14.5v1M18 20.5v1M14.5 18h1M20.5 18h1" />
+                    </svg>
                     Trang Quản Trị
                   </button>
                 )}
@@ -2680,7 +2692,17 @@ function App() {
 
         {/* Hero Section */}
         <section id="home" className="hero-section">
-          <div className="hero-badge"><i className="fa-thin fa-robot" style={{ marginRight: '8px', fontSize: '18px', verticalAlign: 'middle' }}></i> HỆ THỐNG AUTOMATION AFFILIATE</div>
+          <div className="hero-badge">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" style={{ color: '#fbbf24', flexShrink: 0 }}>
+              <rect x="3" y="11" width="18" height="10" rx="2" />
+              <circle cx="12" cy="5" r="2" />
+              <path d="M12 7v4" />
+              <line x1="8" y1="16" x2="8.01" y2="16" strokeWidth="3" />
+              <line x1="16" y1="16" x2="16.01" y2="16" strokeWidth="3" />
+              <path d="M9 16h6" />
+            </svg>
+            HỆ THỐNG AUTOMATION AFFILIATE
+          </div>
           <h1 className="hero-title">Tự Động Hóa Shopee Affiliate<br />Với 28Symues</h1>
           <p className="hero-subtitle">
             Biến mọi liên kết mua sắm trong nhóm chat Zalo của bạn thành nguồn thu nhập thụ động chỉ trong vài giây. Tiện lợi, tự động và hoàn toàn minh bạch.

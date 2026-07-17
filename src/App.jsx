@@ -2554,8 +2554,37 @@ function App() {
                     <span className="user-widget-name">{user?.fullName}</span>
                   </div>
                   {isAdmin && (
-                    <button className="btn btn-glow" onClick={() => { setView('admin'); sessionStorage.setItem('adminView','admin'); setMobileMenuOpen(false); }}>
-                      ⚙️ Trang Quản Trị
+                    <button 
+                      onClick={() => { setView('admin'); sessionStorage.setItem('adminView','admin'); setMobileMenuOpen(false); }}
+                      style={{
+                        background: 'linear-gradient(135deg, rgba(245, 158, 11, 0.25), rgba(217, 119, 6, 0.15))',
+                        border: '1px solid rgba(251, 191, 36, 0.45)',
+                        color: '#ffffff',
+                        fontSize: '14.5px',
+                        fontWeight: '700',
+                        padding: '8px 18px',
+                        borderRadius: '20px',
+                        cursor: 'pointer',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: '6px',
+                        boxShadow: '0 4px 15px rgba(245, 158, 11, 0.15)',
+                        transition: 'all 0.25s ease'
+                      }}
+                      onMouseEnter={e => {
+                        e.currentTarget.style.background = 'linear-gradient(135deg, #fbbf24, #d97706)';
+                        e.currentTarget.style.color = '#0b0f17';
+                        e.currentTarget.style.boxShadow = '0 6px 20px rgba(245, 158, 11, 0.4)';
+                      }}
+                      onMouseLeave={e => {
+                        e.currentTarget.style.background = 'linear-gradient(135deg, rgba(245, 158, 11, 0.25), rgba(217, 119, 6, 0.15))';
+                        e.currentTarget.style.color = '#ffffff';
+                        e.currentTarget.style.boxShadow = '0 4px 15px rgba(245, 158, 11, 0.15)';
+                      }}
+                    >
+                      <wa-icon name="users-gear" variant="regular" style={{ fontSize: '15px' }}></wa-icon>
+                      Trang Quản Trị
                     </button>
                   )}
                   <button className="btn" onClick={() => { handleLogout(); setMobileMenuOpen(false); }} style={{ border: '1px solid rgba(255,255,255,0.1)' }}>
@@ -2587,8 +2616,37 @@ function App() {
                 </div>
                 
                 {isAdmin && (
-                  <button className="btn btn-glow" onClick={() => { setView('admin'); sessionStorage.setItem('adminView','admin'); }}>
-                    ⚙️ Trang Quản Trị
+                  <button 
+                    onClick={() => { setView('admin'); sessionStorage.setItem('adminView','admin'); }}
+                    style={{
+                      background: 'linear-gradient(135deg, rgba(245, 158, 11, 0.25), rgba(217, 119, 6, 0.15))',
+                      border: '1px solid rgba(251, 191, 36, 0.45)',
+                      color: '#ffffff',
+                      fontSize: '14.5px',
+                      fontWeight: '700',
+                      padding: '8px 18px',
+                      borderRadius: '20px',
+                      cursor: 'pointer',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '6px',
+                      boxShadow: '0 4px 15px rgba(245, 158, 11, 0.15)',
+                      transition: 'all 0.25s ease'
+                    }}
+                    onMouseEnter={e => {
+                      e.currentTarget.style.background = 'linear-gradient(135deg, #fbbf24, #d97706)';
+                      e.currentTarget.style.color = '#0b0f17';
+                      e.currentTarget.style.boxShadow = '0 6px 20px rgba(245, 158, 11, 0.4)';
+                    }}
+                    onMouseLeave={e => {
+                      e.currentTarget.style.background = 'linear-gradient(135deg, rgba(245, 158, 11, 0.25), rgba(217, 119, 6, 0.15))';
+                      e.currentTarget.style.color = '#ffffff';
+                      e.currentTarget.style.boxShadow = '0 4px 15px rgba(245, 158, 11, 0.15)';
+                    }}
+                  >
+                    <wa-icon name="users-gear" variant="regular" style={{ fontSize: '15px' }}></wa-icon>
+                    Trang Quản Trị
                   </button>
                 )}
                 

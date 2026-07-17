@@ -694,9 +694,7 @@ tr:hover td {
 }
 
 .landing-logo span {
-  background: linear-gradient(135deg, #ffffff 40%, #fbbf24 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+  color: #ffffff;
 }
 
 .landing-nav {
@@ -833,7 +831,7 @@ tr:hover td {
 
 /* Feature grid section */
 .features-section {
-  padding: 80px 40px;
+  padding: 120px 40px 80px;
   max-width: 1200px;
   margin: 0 auto;
   position: relative;
@@ -1065,7 +1063,7 @@ tr:hover td {
 .steps-section,
 .pricing-section,
 .hero-section {
-  scroll-margin-top: 100px;
+  scroll-margin-top: 120px;
 }
 
 /* Landing page button overrides */

@@ -1036,9 +1036,7 @@ function App() {
             gap: 8px;
           }
           .lookup-logo span {
-            background: linear-gradient(135deg, #FB923C, #F97316);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            color: #fff;
           }
           .lookup-logo img {
             border: 1px solid rgba(255, 255, 255, 0.15);
@@ -1501,7 +1499,7 @@ function App() {
         <header className="lookup-header">
           <div className="lookup-logo">
             <img src="/logo.jpg" alt="Logo" style={{ width: '32px', height: '32px', borderRadius: '50%', objectFit: 'cover' }} />
-            <span>28Symues Affiliate</span>
+            <span>28Symues <span style={{ color: '#fbbf24' }}>Affiliate</span></span>
           </div>
           <button 
             className="lookup-admin-link" 
@@ -1993,13 +1991,13 @@ function App() {
       <div className="login-page-split">
         <style dangerouslySetInnerHTML={{__html: `
           .login-page-split {
-            height: 100vh;
+            min-height: 100vh;
             width: 100%;
             background: #0b0f17;
             display: flex;
             flex-direction: column;
             position: relative;
-            overflow: hidden;
+            overflow-y: auto;
             box-sizing: border-box;
             color: #e2e8f0;
           }
@@ -2053,9 +2051,7 @@ function App() {
             font-family: var(--font-heading);
             font-size: 20px;
             font-weight: 800;
-            background: linear-gradient(135deg, #ffffff 40%, #fbbf24 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            color: #fff;
             letter-spacing: 0.5px;
           }
           .login-split-nav {
@@ -2304,21 +2300,54 @@ function App() {
           }
 
           @media (max-width: 992px) {
+            .login-page-split {
+              height: auto;
+              min-height: 100vh;
+              overflow-y: visible;
+              display: flex;
+              flex-direction: column;
+            }
+            .login-split-header {
+              padding: 15px 20px;
+              height: auto;
+            }
+            .login-split-logo span {
+              font-size: 18px;
+            }
             .login-split-content {
               flex-direction: column;
-              padding: 40px 24px;
-              gap: 40px;
+              padding: 20px 20px 60px;
+              gap: 30px;
+              justify-content: center;
+              flex: 1;
             }
             .login-split-left {
               text-align: center;
               max-width: 100%;
             }
             .login-split-left h1 {
-              font-size: 32px;
+              font-size: 28px;
+              margin-bottom: 12px;
+            }
+            .login-split-left p {
+              font-size: 14px;
             }
             .login-split-right {
               justify-content: center;
               width: 100%;
+            }
+            .login-split-card {
+              padding: 24px 20px;
+              width: 100%;
+              max-width: 100%;
+            }
+          }
+          @media (max-width: 480px) {
+            .login-split-left h1 {
+              font-size: 24px;
+            }
+            .login-split-card h2 {
+              font-size: 22px;
             }
           }
         `}} />
@@ -2327,7 +2356,7 @@ function App() {
         <header className="login-split-header">
           <div className="login-split-logo">
             <img src="/logo.jpg" alt="Logo" />
-            <span>28Symues Affiliate</span>
+            <span>28Symues <span style={{ color: '#fbbf24' }}>Affiliate</span></span>
           </div>
           <div className="login-split-nav">
             <button 
@@ -2346,7 +2375,7 @@ function App() {
         <div className="login-split-content">
           <div className="login-split-left">
             <div className="badge">
-              <i className="fa-thin fa-robot" style={{ fontSize: '14px' }}></i> 28Symues Affiliate
+              <i className="fa-thin fa-robot" style={{ fontSize: '14px' }}></i> 28Symues <span style={{ color: '#fbbf24' }}>Affiliate</span>
             </div>
             <h1>Đăng nhập tài khoản</h1>
             <p>
@@ -2504,7 +2533,7 @@ function App() {
         <header className="landing-header">
           <div className="landing-logo">
             <img src="/logo.jpg" alt="Logo" style={{ width: '32px', height: '32px', borderRadius: '50%', objectFit: 'cover' }} />
-            <span>28Symues Affiliate</span>
+            <span>28Symues <span style={{ color: '#fbbf24' }}>Affiliate</span></span>
           </div>
           <nav className={`landing-nav${mobileMenuOpen ? ' open' : ''}`}>
             <a href="#home" onClick={() => setMobileMenuOpen(false)}>Trang chủ</a>

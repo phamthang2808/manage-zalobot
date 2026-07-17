@@ -860,19 +860,12 @@ function App() {
 
   const toastElement = toast && (
     <div className="custom-toast-popup" style={{
-      background: toast.type === 'success'
-        ? 'linear-gradient(135deg, rgba(6, 28, 20, 0.97), rgba(4, 22, 16, 0.99))'
-        : toast.type === 'error'
-        ? 'linear-gradient(135deg, rgba(28, 6, 6, 0.97), rgba(22, 4, 4, 0.99))'
-        : 'linear-gradient(135deg, rgba(17, 14, 4, 0.97), rgba(12, 10, 3, 0.99))',
-      border: `1px solid ${toast.type === 'success' ? 'rgba(52, 211, 153, 0.35)' : (toast.type === 'error' ? 'rgba(248, 113, 113, 0.35)' : 'rgba(251, 191, 36, 0.35)')}`,
-      borderLeft: `4px solid ${toast.type === 'success' ? '#34d399' : (toast.type === 'error' ? '#f87171' : '#fbbf24')}`,
+      background: 'linear-gradient(135deg, rgba(17, 14, 4, 0.97), rgba(26, 20, 5, 0.99))',
+      border: '1px solid rgba(251, 191, 36, 0.3)',
+      borderLeft: '4px solid #fbbf24',
       borderRadius: '14px',
-      boxShadow: toast.type === 'success'
-        ? '0 20px 40px -8px rgba(0,0,0,0.7), 0 0 30px rgba(52,211,153,0.08)'
-        : toast.type === 'error'
-        ? '0 20px 40px -8px rgba(0,0,0,0.7), 0 0 30px rgba(248,113,113,0.08)'
-        : '0 20px 40px -8px rgba(0,0,0,0.7), 0 0 30px rgba(251,191,36,0.08)'
+      boxShadow: '0 20px 50px -8px rgba(0,0,0,0.8), 0 0 35px rgba(245,158,11,0.12)',
+      top: '72px'
     }}>
       {/* Icon Badge */}
       <div style={{
@@ -880,28 +873,20 @@ function App() {
         height: '40px',
         minWidth: '40px',
         borderRadius: '50%',
-        background: toast.type === 'success'
-          ? 'rgba(52, 211, 153, 0.15)'
-          : toast.type === 'error'
-          ? 'rgba(248, 113, 113, 0.15)'
-          : 'rgba(251, 191, 36, 0.15)',
-        border: `1.5px solid ${toast.type === 'success' ? 'rgba(52, 211, 153, 0.5)' : (toast.type === 'error' ? 'rgba(248, 113, 113, 0.5)' : 'rgba(251, 191, 36, 0.5)')}`,
+        background: 'rgba(245, 158, 11, 0.15)',
+        border: '1.5px solid rgba(251, 191, 36, 0.45)',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
         flexShrink: 0,
-        boxShadow: toast.type === 'success'
-          ? '0 0 12px rgba(52,211,153,0.25)'
-          : toast.type === 'error'
-          ? '0 0 12px rgba(248,113,113,0.25)'
-          : '0 0 12px rgba(251,191,36,0.25)'
+        boxShadow: '0 0 14px rgba(245,158,11,0.2)'
       }}>
         {toast.type === 'success' ? (
-          <svg style={{ width: '18px', height: '18px', color: '#34d399' }} fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+          <svg style={{ width: '18px', height: '18px', color: '#fbbf24' }} fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5"></path>
           </svg>
         ) : toast.type === 'error' ? (
-          <svg style={{ width: '18px', height: '18px', color: '#f87171' }} fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+          <svg style={{ width: '18px', height: '18px', color: '#fbbf24' }} fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z"></path>
           </svg>
         ) : (
@@ -916,13 +901,13 @@ function App() {
         <div style={{
           fontSize: '14px',
           fontWeight: '700',
-          color: toast.type === 'success' ? '#6ee7b7' : (toast.type === 'error' ? '#fca5a5' : '#fde68a'),
+          color: '#fbbf24',
           marginBottom: '3px',
           letterSpacing: '0.1px'
         }}>
           {toast.type === 'success' ? '✓  Thành công' : (toast.type === 'error' ? '⚠  Có lỗi xảy ra' : 'ℹ  Thông báo')}
         </div>
-        <div style={{ fontSize: '13px', color: '#94a3b8', lineHeight: '1.45' }}>
+        <div style={{ fontSize: '13px', color: '#a8946a', lineHeight: '1.45' }}>
           {toast.message}
         </div>
       </div>
@@ -931,9 +916,9 @@ function App() {
       <button
         onClick={() => setToast(null)}
         style={{
-          background: 'rgba(255,255,255,0.05)',
-          border: '1px solid rgba(255,255,255,0.08)',
-          color: '#64748b',
+          background: 'rgba(245,158,11,0.08)',
+          border: '1px solid rgba(245,158,11,0.15)',
+          color: '#92764a',
           fontSize: '14px',
           cursor: 'pointer',
           padding: '4px 7px',
@@ -943,8 +928,8 @@ function App() {
           transition: 'all 0.2s',
           flexShrink: 0
         }}
-        onMouseEnter={e => { e.currentTarget.style.background='rgba(255,255,255,0.1)'; e.currentTarget.style.color='#e2e8f0'; }}
-        onMouseLeave={e => { e.currentTarget.style.background='rgba(255,255,255,0.05)'; e.currentTarget.style.color='#64748b'; }}
+        onMouseEnter={e => { e.currentTarget.style.background='rgba(245,158,11,0.18)'; e.currentTarget.style.color='#fbbf24'; }}
+        onMouseLeave={e => { e.currentTarget.style.background='rgba(245,158,11,0.08)'; e.currentTarget.style.color='#92764a'; }}
       >
         ✕
       </button>
@@ -955,7 +940,7 @@ function App() {
         left: 0,
         height: '2px',
         borderRadius: '0 0 14px 14px',
-        background: toast.type === 'success' ? 'linear-gradient(90deg, #34d399, #10b981)' : (toast.type === 'error' ? 'linear-gradient(90deg, #f87171, #ef4444)' : 'linear-gradient(90deg, #fbbf24, #d97706)'),
+        background: 'linear-gradient(90deg, #fbbf24, #d97706)',
         animation: 'toastProgress 4s linear forwards'
       }} />
     </div>
@@ -2981,21 +2966,34 @@ function App() {
             className={`menu-item ${activeTab === 'dashboard' ? 'active' : ''}`}
             onClick={() => { setActiveTab('dashboard'); sessionStorage.setItem('adminTab','dashboard'); sessionStorage.setItem('adminView','admin'); setSidebarOpen(false); }}
           >
-            <wa-icon name="arrow-up-right-dots" variant="light" style={{ fontSize: '17px', flexShrink: 0 }}></wa-icon>
+            {/* icon: arrow-up-right-dots / chart trending */}
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
+              <polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/>
+              <polyline points="16 7 22 7 22 13"/>
+            </svg>
             Tổng quan
           </li>
           <li 
             className={`menu-item ${activeTab === 'users' ? 'active' : ''}`}
             onClick={() => { setActiveTab('users'); sessionStorage.setItem('adminTab','users'); sessionStorage.setItem('adminView','admin'); setSidebarOpen(false); }}
           >
-            <wa-icon name="user" variant="regular" style={{ fontSize: '17px', flexShrink: 0 }}></wa-icon>
+            {/* icon: user */}
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+              <circle cx="12" cy="7" r="4"/>
+            </svg>
             Thành viên
           </li>
           <li 
             className={`menu-item ${activeTab === 'orders' ? 'active' : ''}`}
             onClick={() => { setActiveTab('orders'); sessionStorage.setItem('adminTab','orders'); sessionStorage.setItem('adminView','admin'); setSidebarOpen(false); }}
           >
-            <wa-icon name="cart-arrow-down" variant="regular" style={{ fontSize: '17px', flexShrink: 0 }}></wa-icon>
+            {/* icon: cart-arrow-down */}
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
+              <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
+              <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+              <polyline points="14 10 12 14 10 10"/>
+            </svg>
             Đơn hàng
           </li>
           <li 
@@ -3003,7 +3001,11 @@ function App() {
             onClick={() => { setActiveTab('payouts'); sessionStorage.setItem('adminTab','payouts'); sessionStorage.setItem('adminView','admin'); setSidebarOpen(false); }}
             style={{ display: 'flex', alignItems: 'center' }}
           >
-            <wa-icon name="credit-card" style={{ fontSize: '17px', flexShrink: 0 }}></wa-icon>
+            {/* icon: credit-card */}
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
+              <rect x="1" y="4" width="22" height="16" rx="2" ry="2"/>
+              <line x1="1" y1="10" x2="23" y2="10"/>
+            </svg>
             <span style={{ flex: 1 }}>Rút tiền</span>
             {stats.pendingPayoutsCount > 0 && (
               <span style={{
@@ -3042,21 +3044,22 @@ function App() {
             style={{ 
               width: '100%', 
               fontSize: '13px', 
-              padding: '9px', 
-              background: 'rgba(239,68,68,0.1)', 
-              color: '#f87171', 
-              border: '1px solid rgba(239,68,68,0.25)', 
+              padding: '10px', 
+              background: 'linear-gradient(135deg, rgba(245,158,11,0.15), rgba(217,119,6,0.1))', 
+              color: '#fbbf24', 
+              border: '1px solid rgba(245,158,11,0.3)', 
               borderRadius: '8px', 
               cursor: 'pointer',
               fontWeight: '600',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              gap: '6px',
-              transition: 'all 0.2s'
+              gap: '7px',
+              transition: 'all 0.2s',
+              letterSpacing: '0.2px'
             }}
-            onMouseEnter={e => { e.currentTarget.style.background='rgba(239,68,68,0.2)'; e.currentTarget.style.borderColor='rgba(239,68,68,0.5)'; }}
-            onMouseLeave={e => { e.currentTarget.style.background='rgba(239,68,68,0.1)'; e.currentTarget.style.borderColor='rgba(239,68,68,0.25)'; }}
+            onMouseEnter={e => { e.currentTarget.style.background='linear-gradient(135deg, rgba(245,158,11,0.25), rgba(217,119,6,0.2))'; e.currentTarget.style.borderColor='rgba(245,158,11,0.55)'; e.currentTarget.style.boxShadow='0 4px 15px rgba(245,158,11,0.15)'; }}
+            onMouseLeave={e => { e.currentTarget.style.background='linear-gradient(135deg, rgba(245,158,11,0.15), rgba(217,119,6,0.1))'; e.currentTarget.style.borderColor='rgba(245,158,11,0.3)'; e.currentTarget.style.boxShadow='none'; }}
           >
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
             Đăng xuất

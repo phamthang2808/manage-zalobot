@@ -3494,9 +3494,7 @@ function App() {
                           <th style={{ width: '140px' }}>Tên sản phẩm</th>
                           <th style={{ width: '100px' }}>Sub_id (Zalo)</th>
                           <th style={{ width: '100px' }}>Thành viên</th>
-                          <th style={{ width: '85px', textAlign: 'right' }}>HH Gốc</th>
-                          <th style={{ width: '85px', textAlign: 'right' }}>Sau thuế</th>
-                          <th style={{ width: '85px', textAlign: 'right' }}>Thực nhận</th>
+                          <th style={{ width: '130px', textAlign: 'right' }}>Tích lũy hoa hồng</th>
                           <th style={{ width: '120px' }}>Thời gian</th>
                           <th style={{ width: '95px', textAlign: 'center' }}>Trạng thái</th>
                         </tr>
@@ -3504,7 +3502,7 @@ function App() {
                       <tbody>
                         {filteredOrders.length === 0 ? (
                           <tr>
-                            <td colSpan="9" style={{ textAlign: 'center', color: 'var(--text-muted)' }}>
+                            <td colSpan="7" style={{ textAlign: 'center', color: 'var(--text-muted)' }}>
                               Không tìm thấy đơn hàng nào
                             </td>
                           </tr>
@@ -3529,14 +3527,10 @@ function App() {
                                     {orderUser ? orderUser.zaloName : <code style={{ color: 'var(--color-danger)', fontSize: '11px' }}>{o.zaloId || 'UNKNOWN'}</code>}
                                   </span>
                                 </td>
-                                <td style={{ color: 'var(--text-muted)', fontWeight: '500', textAlign: 'right' }}>
-                                  {formatMoney(o.commission)}
-                                </td>
-                                <td style={{ color: 'var(--color-warning)', fontWeight: '600', textAlign: 'right' }}>
-                                  {formatMoney(afterTax)}
-                                </td>
-                                <td style={{ color: 'var(--color-success)', fontWeight: '700', textAlign: 'right' }}>
-                                  {formatMoney(afterDeduction)}
+                                <td style={{ textAlign: 'right' }}>
+                                  <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>Gốc: {formatMoney(o.commission)}</div>
+                                  <div style={{ fontSize: '11.5px', color: 'var(--color-warning)', marginTop: '2px' }}>Thuế: {formatMoney(afterTax)}</div>
+                                  <div style={{ fontSize: '11.5px', color: 'var(--color-success)', marginTop: '2px', fontWeight: '600' }}>Khách: {formatMoney(afterDeduction)}</div>
                                 </td>
                                 <td>
                                   <div style={{ fontSize: '12px' }} title={`Đặt mua: ${formatDateTime(o.purchaseTime)}`}>Đặt: {formatDateTime(o.purchaseTime)}</div>

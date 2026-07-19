@@ -2812,7 +2812,7 @@ function App() {
             }}>
               <div>
                 <h3 style={{ fontSize: '22px', color: '#fff', marginBottom: '8px', fontWeight: '700' }}>Zalo Bot Affiliate</h3>
-                <p style={{ color: 'rgba(255, 255, 255, 0.5)', fontSize: '14px', marginBottom: '24px' }}>Bản tiêu chuẩn chuyển đổi link cơ bản</p>
+                <p style={{ color: 'rgba(255, 255, 255, 0.5)', fontSize: '14px', marginBottom: '24px' }}>Tự động chuyển đổi link mua sắm cơ bản trong nhóm chat</p>
                 
                 <div style={{ marginBottom: '32px' }}>
                   <span style={{ fontSize: '42px', fontWeight: '800', color: '#fff', fontFamily: 'var(--font-heading)' }}>199.000đ</span>
@@ -2821,29 +2821,29 @@ function App() {
                 
                 <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 32px 0', textAlign: 'left', display: 'flex', flexDirection: 'column', gap: '16px' }}>
                   <li style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', color: 'rgba(255, 255, 255, 0.8)', fontSize: '14px' }}>
-                    <span style={{ color: '#34d399', fontWeight: 'bold' }}>✓</span> Tự động nhận diện và chuyển đổi link Shopee, Lazada, TikTok Shop
+                    <span style={{ color: '#34d399', fontWeight: 'bold' }}>✓</span> Tự động đổi link nhận hoa hồng: Khách gửi link Shopee, Lazada... bot tự đổi thành link của sếp ngay lập tức.
                   </li>
                   <li style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', color: 'rgba(255, 255, 255, 0.8)', fontSize: '14px' }}>
-                    <span style={{ color: '#34d399', fontWeight: 'bold' }}>✓</span> Gắn mã SubID theo Zalo ID người gửi
+                    <span style={{ color: '#34d399', fontWeight: 'bold' }}>✓</span> Tự nhận biết người gửi: Ghi nhận chính xác ai gửi link để sếp tính doanh số cho họ.
                   </li>
                   <li style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', color: 'rgba(255, 255, 255, 0.8)', fontSize: '14px' }}>
-                    <span style={{ color: '#34d399', fontWeight: 'bold' }}>✓</span> Chatbot phản hồi tự động trong nhóm chat 24/7
+                    <span style={{ color: '#34d399', fontWeight: 'bold' }}>✓</span> Hoạt động liên tục 24/7: Tự trả lời tin nhắn trong nhóm chat bất kể ngày đêm, sếp không cần trực máy.
                   </li>
                   <li style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', color: 'rgba(255, 255, 255, 0.8)', fontSize: '14px' }}>
-                    <span style={{ color: '#34d399', fontWeight: 'bold' }}>✓</span> Cấu hình mẫu tin nhắn phản hồi cơ bản
+                    <span style={{ color: '#34d399', fontWeight: 'bold' }}>✓</span> Tin nhắn phản hồi lịch sự: Mẫu tin nhắn ngắn gọn, rõ ràng, kích thích người mua bấm link.
                   </li>
                 </ul>
               </div>
               
               <button 
-                className="btn" 
+                className="btn btn-glow" 
                 onClick={() => {
-                  showToast("Để đăng ký và sở hữu Bot, vui lòng liên hệ Zalo: 0888728256 (Phạm Thắng)!", 'info');
-                  window.open("https://zalo.me/0888728256", "_blank");
+                  showToast("Đang kết nối tới Zalo Phạm Thắng...", 'info');
+                  window.open("http://zaloapp.com/qr/p/fd2gcjcjfuof", "_blank");
                 }}
-                style={{ width: '100%', padding: '14px', borderRadius: '12px', fontSize: '15px', border: '1px solid rgba(255,255,255,0.1)', cursor: 'pointer', background: 'transparent', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                style={{ width: '100%', padding: '14px', borderRadius: '12px', fontSize: '15px', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
               >
-                Liên Hệ Ngay
+                Mua Ngay
               </button>
             </div>
 
@@ -2883,7 +2883,7 @@ function App() {
               </div>
               <div>
                 <h3 style={{ fontSize: '22px', color: '#fff', marginBottom: '8px', fontWeight: '700', marginTop: '10px' }}>Zalo Bot Affiliate Pro</h3>
-                <p style={{ color: 'rgba(255, 255, 255, 0.5)', fontSize: '14px', marginBottom: '24px' }}>Như bản thương mại, có thêm Web quản lý đối soát riêng</p>
+                <p style={{ color: 'rgba(255, 255, 255, 0.5)', fontSize: '14px', marginBottom: '24px' }}>Có trang quản trị riêng cho sếp và trang tự tra cứu cho khách</p>
                 
                 <div style={{ marginBottom: '32px' }}>
                   <span style={{ fontSize: '42px', fontWeight: '800', color: '#fff', fontFamily: 'var(--font-heading)' }}>299.000đ</span>
@@ -2892,19 +2892,19 @@ function App() {
                 
                 <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 32px 0', textAlign: 'left', display: 'flex', flexDirection: 'column', gap: '16px' }}>
                   <li style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', color: 'rgba(255, 255, 255, 0.8)', fontSize: '14px' }}>
-                    <span style={{ color: '#34d399', fontWeight: 'bold' }}>✓</span> Tự động chuyển đổi link Shopee, Lazada, TikTok Shop
+                    <span style={{ color: '#34d399', fontWeight: 'bold' }}>✓</span> Tự động đổi link mua sắm Shopee, Lazada, TikTok Shop mượt mà.
                   </li>
                   <li style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', color: 'rgba(255, 255, 255, 0.8)', fontSize: '14px' }}>
-                    <span style={{ color: '#34d399', fontWeight: 'bold' }}>✓</span> Tương tác phản hồi tự động bằng AI GPT-4o
+                    <span style={{ color: '#34d399', fontWeight: 'bold' }}>✓</span> Trang quản trị doanh thu riêng: Theo dõi toàn bộ đơn hàng và quản lý cực kỳ nhàn hạ.
                   </li>
                   <li style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', color: 'rgba(255, 255, 255, 0.8)', fontSize: '14px' }}>
-                    <span style={{ color: '#34d399', fontWeight: 'bold' }}>✓</span> **Có giao diện Web quản lý & đối soát hoa hồng riêng**
+                    <span style={{ color: '#34d399', fontWeight: 'bold' }}>✓</span> Khách tự tra cứu trên Web: Thành viên có thể tự vào xem đơn và hoa hồng mình tích lũy.
                   </li>
                   <li style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', color: 'rgba(255, 255, 255, 0.8)', fontSize: '14px' }}>
-                    <span style={{ color: '#34d399', fontWeight: 'bold' }}>✓</span> Lọc trùng đơn hàng, tự động dịch SubID không dấu sang tên Zalo gốc
+                    <span style={{ color: '#34d399', fontWeight: 'bold' }}>✓</span> Chạy cùng lúc nhiều nhóm: Bot hoạt động trên nhiều nhóm chat và gom số liệu về một nơi.
                   </li>
                   <li style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', color: 'rgba(255, 255, 255, 0.8)', fontSize: '14px' }}>
-                    <span style={{ color: '#34d399', fontWeight: 'bold' }}>✓</span> Đánh dấu thanh toán và thống kê hoa hồng real-time
+                    <span style={{ color: '#34d399', fontWeight: 'bold' }}>✓</span> Báo cáo hoa hồng chính xác: Tự tính tiền chuẩn sau thuế và lọc bỏ các đơn trùng lặp.
                   </li>
                 </ul>
               </div>
@@ -2912,12 +2912,12 @@ function App() {
               <button 
                 className="btn btn-glow" 
                 onClick={() => {
-                  showToast("Để đăng ký và sở hữu Bot, vui lòng liên hệ Zalo: 0888728256 (Phạm Thắng)!", 'info');
-                  window.open("https://zalo.me/0888728256", "_blank");
+                  showToast("Đang kết nối tới Zalo Phạm Thắng...", 'info');
+                  window.open("http://zaloapp.com/qr/p/fd2gcjcjfuof", "_blank");
                 }}
                 style={{ width: '100%', padding: '14px', borderRadius: '12px', fontSize: '15px', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
               >
-                🚀 Mua Ngay
+                Mua Ngay
               </button>
             </div>
 
@@ -2940,7 +2940,7 @@ function App() {
             }}>
               <div>
                 <h3 style={{ fontSize: '22px', color: '#fff', marginBottom: '8px', fontWeight: '700' }}>Zalo Bot Affiliate Pro Max</h3>
-                <p style={{ color: 'rgba(255, 255, 255, 0.5)', fontSize: '14px', marginBottom: '24px' }}>Bản cao cấp đầy đủ tính năng, hiệu năng tối ưu nhất</p>
+                <p style={{ color: 'rgba(255, 255, 255, 0.5)', fontSize: '14px', marginBottom: '24px' }}>Hệ thống ví tiền tự động và rút tiền qua tin nhắn chat</p>
                 
                 <div style={{ marginBottom: '32px' }}>
                   <span style={{ fontSize: '42px', fontWeight: '800', color: '#fff', fontFamily: 'var(--font-heading)' }}>499.000đ</span>
@@ -2949,32 +2949,32 @@ function App() {
                 
                 <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 32px 0', textAlign: 'left', display: 'flex', flexDirection: 'column', gap: '16px' }}>
                   <li style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', color: 'rgba(255, 255, 255, 0.8)', fontSize: '14px' }}>
-                    <span style={{ color: '#34d399', fontWeight: 'bold' }}>✓</span> Đầy đủ tính năng của bản Pro
+                    <span style={{ color: '#34d399', fontWeight: 'bold' }}>✓</span> Đầy đủ toàn bộ tính năng cao cấp của bản Pro.
                   </li>
                   <li style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', color: 'rgba(255, 255, 255, 0.8)', fontSize: '14px' }}>
-                    <span style={{ color: '#34d399', fontWeight: 'bold' }}>✓</span> Tương thích 100% với hệ thống Zalo Bot chính thức
+                    <span style={{ color: '#34d399', fontWeight: 'bold' }}>✓</span> Ví tích lũy tiền tự động: Tự động cộng dồn tiền hoa hồng sau khi đơn hàng thành công.
                   </li>
                   <li style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', color: 'rgba(255, 255, 255, 0.8)', fontSize: '14px' }}>
-                    <span style={{ color: '#34d399', fontWeight: 'bold' }}>✓</span> Hạ tầng riêng biệt, tốc độ phản hồi nhanh chóng
+                    <span style={{ color: '#34d399', fontWeight: 'bold' }}>✓</span> Rút tiền nhanh bằng tin nhắn: Khách tự gõ lệnh `/rut-tien` trong nhóm để yêu cầu thanh toán.
                   </li>
                   <li style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', color: 'rgba(255, 255, 255, 0.8)', fontSize: '14px' }}>
-                    <span style={{ color: '#34d399', fontWeight: 'bold' }}>✓</span> Hệ thống ví thành viên, rút tiền tự động qua câu lệnh chat
+                    <span style={{ color: '#34d399', fontWeight: 'bold' }}>✓</span> Đường truyền riêng siêu tốc: Chạy trên máy chủ VPS riêng, phản hồi ngay lập tức không trễ lag.
                   </li>
                   <li style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', color: 'rgba(255, 255, 255, 0.8)', fontSize: '14px' }}>
-                    <span style={{ color: '#34d399', fontWeight: 'bold' }}>✓</span> Support ưu tiên, hỗ trợ kỹ thuật trực tiếp 24/7
+                    <span style={{ color: '#34d399', fontWeight: 'bold' }}>✓</span> Hỗ trợ kỹ thuật ưu tiên 24/7: Xử lý nhanh chóng mọi yêu cầu và sự cố phát sinh.
                   </li>
                 </ul>
               </div>
               
               <button 
-                className="btn" 
+                className="btn btn-glow" 
                 onClick={() => {
-                  showToast("Để đăng ký và sở hữu Bot, vui lòng liên hệ Zalo: 0888728256 (Phạm Thắng)!", 'info');
-                  window.open("https://zalo.me/0888728256", "_blank");
+                  showToast("Đang kết nối tới Zalo Phạm Thắng...", 'info');
+                  window.open("http://zaloapp.com/qr/p/fd2gcjcjfuof", "_blank");
                 }}
-                style={{ width: '100%', padding: '14px', borderRadius: '12px', fontSize: '15px', border: '1px solid rgba(255,255,255,0.1)', cursor: 'pointer', background: 'transparent', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                style={{ width: '100%', padding: '14px', borderRadius: '12px', fontSize: '15px', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
               >
-                Liên Hệ Ngay
+                Mua Ngay
               </button>
             </div>
 

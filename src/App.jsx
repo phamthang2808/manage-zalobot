@@ -2482,9 +2482,9 @@ function App() {
 
               <div className="modal-google-container" style={{ 
                 position: 'relative', 
-                width: `${calculatedWidth}px`, 
-                minHeight: '40px', 
-                margin: '0 auto' 
+                width: '100%', 
+                minHeight: '42px', 
+                margin: '0 auto 12px auto' 
               }}>
                 {isMobile ? (
                   <button 

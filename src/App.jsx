@@ -965,7 +965,7 @@ function App() {
           .lookup-page-container {
             min-height: 100vh;
             width: 100%;
-            background: #0b0f17;
+            background: transparent;
             color: #e2e8f0;
             font-family: 'Inter', system-ui, sans-serif;
             padding: 16px;
@@ -1993,7 +1993,7 @@ function App() {
           .login-page-split {
             min-height: 100vh;
             width: 100%;
-            background: #0b0f17;
+            background: transparent;
             display: flex;
             flex-direction: column;
             position: relative;

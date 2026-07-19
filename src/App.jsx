@@ -1787,7 +1787,10 @@ function App() {
                 searchedOrders.map((o) => (
                   <div key={o.id} className="order-card-item">
                     <div className="order-card-header">
-                      <span>📅 {formatDateTime(o.purchaseTime)}</span>
+                      <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+                        <i className="fa-regular fa-calendar" style={{ color: '#94a3b8', fontSize: '13px' }}></i>
+                        <span>{formatDateTime(o.purchaseTime)}</span>
+                      </span>
                       <span>Mã đơn: <span className="order-id-badge">{o.orderId}</span></span>
                     </div>
                     <div className="order-card-title" title={o.productName}>

@@ -1584,11 +1584,14 @@ function App() {
                 {/* 0. Bank Info Card */}
                 <div className="lookup-card" style={{ marginBottom: '24px' }}>
                   <h3 className="stats-section-title" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', margin: 0 }}>
-                    <span>🏦 Thông Tin Ngân Hàng Nhận Tiền</span>
+                    <span style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <wa-icon name="building-columns" variant="regular" style={{ fontSize: '18px' }}></wa-icon>
+                      Thông Tin Ngân Hàng Nhận Tiền
+                    </span>
                     {!isEditingBank && (
                       <button 
                         className="lookup-admin-link" 
-                        style={{ fontSize: '12px', padding: '4px 10px', background: 'rgba(245, 158, 11, 0.1)', color: '#fbbf24', border: '1px solid rgba(245, 158, 11, 0.25)' }}
+                        style={{ fontSize: '12px', padding: '4px 10px', background: 'rgba(245, 158, 11, 0.1)', color: '#fbbf24', border: '1px solid rgba(245, 158, 11, 0.25)', display: 'flex', alignItems: 'center', gap: '6px' }}
                         onClick={() => {
                           setEditBankName(lookupResult.bankName || '');
                           setEditAccountNumber(lookupResult.accountNumber || '');
@@ -1596,7 +1599,8 @@ function App() {
                           setIsEditingBank(true);
                         }}
                       >
-                        ✏️ {lookupResult.bankName ? 'Sửa' : 'Cài đặt'}
+                        <wa-icon name="pen-to-square" variant="regular" style={{ fontSize: '14px' }}></wa-icon>
+                        <span>{lookupResult.bankName ? 'Sửa' : 'Cài đặt'}</span>
                       </button>
                     )}
                   </h3>

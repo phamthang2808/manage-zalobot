@@ -2836,7 +2836,7 @@ function App() {
               </div>
               
               <a 
-                href="https://zaloapp.com/qr/p/fd2gcjcjfuof"
+                href="http://zaloapp.com/qr/p/fd2gcjcjfuof"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="btn btn-glow-active" 
@@ -2912,7 +2912,7 @@ function App() {
               </div>
               
               <a 
-                href="https://zaloapp.com/qr/p/fd2gcjcjfuof"
+                href="http://zaloapp.com/qr/p/fd2gcjcjfuof"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="btn btn-glow-active" 
@@ -2971,7 +2971,7 @@ function App() {
               </div>
               
               <a 
-                href="https://zaloapp.com/qr/p/fd2gcjcjfuof"
+                href="http://zaloapp.com/qr/p/fd2gcjcjfuof"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="btn btn-glow-active" 

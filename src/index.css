@@ -2103,12 +2103,14 @@ tr:hover td {
 .footer-contact-item a {
   color: #fbbf24;
   text-decoration: none;
-  font-weight: 500;
-  transition: filter 0.3s ease;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  cursor: pointer;
 }
 
 .footer-contact-item a:hover {
-  filter: brightness(1.2);
+  color: #f59e0b;
+  text-decoration: underline;
 }
 
 .footer-bottom {

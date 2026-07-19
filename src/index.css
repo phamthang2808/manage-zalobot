@@ -1964,3 +1964,22 @@ tr:hover td {
 .pricing-card:hover::before {
   opacity: 1;
 }
+
+/* Gold glowing button for pricing cards */
+.btn-glow-active {
+  background: rgba(255, 255, 255, 0.06) !important;
+  color: rgba(255, 255, 255, 0.8) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  font-weight: 600 !important;
+  box-shadow: none !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+.btn-glow-active:hover {
+  background: linear-gradient(135deg, #fbbf24, #d97706) !important;
+  color: #0b0f17 !important;
+  border-color: transparent !important;
+  font-weight: 700 !important;
+  transform: translateY(-2px) scale(1.02) !important;
+  box-shadow: 0 8px 25px rgba(251, 191, 36, 0.6), 0 0 15px rgba(251, 191, 36, 0.4) !important;
+}

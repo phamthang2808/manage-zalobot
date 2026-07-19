@@ -2835,16 +2835,18 @@ function App() {
                 </ul>
               </div>
               
-              <button 
-                className="btn btn-glow" 
+              <a 
+                href="https://zaloapp.com/qr/p/fd2gcjcjfuof"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn btn-glow-active" 
                 onClick={() => {
                   showToast("Đang kết nối tới Zalo Phạm Thắng...", 'info');
-                  window.open("http://zaloapp.com/qr/p/fd2gcjcjfuof", "_blank");
                 }}
-                style={{ width: '100%', padding: '14px', borderRadius: '12px', fontSize: '15px', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                style={{ width: '100%', padding: '14px', borderRadius: '12px', fontSize: '15px', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', textDecoration: 'none', boxSizing: 'border-box' }}
               >
                 Mua Ngay
-              </button>
+              </a>
             </div>
 
             {/* Gói Pro - Phổ biến nhất */}
@@ -2909,16 +2911,18 @@ function App() {
                 </ul>
               </div>
               
-              <button 
-                className="btn btn-glow" 
+              <a 
+                href="https://zaloapp.com/qr/p/fd2gcjcjfuof"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn btn-glow-active" 
                 onClick={() => {
                   showToast("Đang kết nối tới Zalo Phạm Thắng...", 'info');
-                  window.open("http://zaloapp.com/qr/p/fd2gcjcjfuof", "_blank");
                 }}
-                style={{ width: '100%', padding: '14px', borderRadius: '12px', fontSize: '15px', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                style={{ width: '100%', padding: '14px', borderRadius: '12px', fontSize: '15px', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', textDecoration: 'none', boxSizing: 'border-box' }}
               >
                 Mua Ngay
-              </button>
+              </a>
             </div>
 
             {/* Gói Pro Max */}
@@ -2966,16 +2970,18 @@ function App() {
                 </ul>
               </div>
               
-              <button 
-                className="btn btn-glow" 
+              <a 
+                href="https://zaloapp.com/qr/p/fd2gcjcjfuof"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn btn-glow-active" 
                 onClick={() => {
                   showToast("Đang kết nối tới Zalo Phạm Thắng...", 'info');
-                  window.open("http://zaloapp.com/qr/p/fd2gcjcjfuof", "_blank");
                 }}
-                style={{ width: '100%', padding: '14px', borderRadius: '12px', fontSize: '15px', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                style={{ width: '100%', padding: '14px', borderRadius: '12px', fontSize: '15px', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', textDecoration: 'none', boxSizing: 'border-box' }}
               >
                 Mua Ngay
-              </button>
+              </a>
             </div>
 
           </div>

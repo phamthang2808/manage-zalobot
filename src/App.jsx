@@ -3490,19 +3490,18 @@ function App() {
                     <table style={{ tableLayout: 'fixed', width: '100%' }}>
                       <thead>
                         <tr>
-                          <th style={{ width: '130px' }}>Mã đơn hàng</th>
-                          <th style={{ width: '140px' }}>Tên sản phẩm</th>
-                          <th style={{ width: '100px' }}>Sub_id (Zalo)</th>
-                          <th style={{ width: '100px' }}>Thành viên</th>
-                          <th style={{ width: '130px', textAlign: 'right' }}>Tích lũy hoa hồng</th>
-                          <th style={{ width: '120px' }}>Thời gian</th>
-                          <th style={{ width: '95px', textAlign: 'center' }}>Trạng thái</th>
+                          <th style={{ width: '135px' }}>Mã đơn hàng</th>
+                          <th style={{ width: '240px' }}>Tên sản phẩm</th>
+                          <th style={{ width: '160px' }}>Thành viên / Zalo ID</th>
+                          <th style={{ width: '140px', textAlign: 'right' }}>Tích lũy hoa hồng</th>
+                          <th style={{ width: '145px' }}>Thời gian</th>
+                          <th style={{ width: '100px', textAlign: 'center' }}>Trạng thái</th>
                         </tr>
                       </thead>
                       <tbody>
                         {filteredOrders.length === 0 ? (
                           <tr>
-                            <td colSpan="7" style={{ textAlign: 'center', color: 'var(--text-muted)' }}>
+                            <td colSpan="6" style={{ textAlign: 'center', color: 'var(--text-muted)' }}>
                               Không tìm thấy đơn hàng nào
                             </td>
                           </tr>
@@ -3520,12 +3519,12 @@ function App() {
                                   {o.productName}
                                 </td>
                                 <td style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                                  <code style={{ fontSize: '11.5px', color: 'var(--color-primary)' }} title={o.subId}>{o.subId || '-'}</code>
-                                </td>
-                                <td style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                                  <span style={{ fontSize: '13px' }} title={orderUser ? orderUser.zaloName : (o.zaloId || 'UNKNOWN')}>
+                                  <div style={{ fontWeight: '600', fontSize: '13.5px' }} title={orderUser ? orderUser.zaloName : (o.zaloId || 'UNKNOWN')}>
                                     {orderUser ? orderUser.zaloName : <code style={{ color: 'var(--color-danger)', fontSize: '11px' }}>{o.zaloId || 'UNKNOWN'}</code>}
-                                  </span>
+                                  </div>
+                                  <div style={{ marginTop: '4px' }}>
+                                    <code style={{ fontSize: '11.5px', color: 'var(--color-primary)' }} title={o.subId}>{o.subId || '-'}</code>
+                                  </div>
                                 </td>
                                 <td style={{ textAlign: 'right' }}>
                                   <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>Gốc: {formatMoney(o.commission)}</div>

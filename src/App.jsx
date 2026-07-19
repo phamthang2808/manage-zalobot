@@ -1585,7 +1585,7 @@ function App() {
                 <div className="lookup-card" style={{ marginBottom: '24px' }}>
                   <h3 className="stats-section-title" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', margin: 0 }}>
                     <span style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                      <wa-icon name="building-columns" variant="regular" style={{ fontSize: '18px' }}></wa-icon>
+                      <i className="fa-regular fa-building-columns" style={{ fontSize: '18px' }}></i>
                       Thông Tin Ngân Hàng Nhận Tiền
                     </span>
                     {!isEditingBank && (
@@ -1599,7 +1599,7 @@ function App() {
                           setIsEditingBank(true);
                         }}
                       >
-                        <wa-icon name="pen-to-square" variant="regular" style={{ fontSize: '14px' }}></wa-icon>
+                        <i className="fa-regular fa-pen-to-square" style={{ fontSize: '14px' }}></i>
                         <span>{lookupResult.bankName ? 'Sửa' : 'Cài đặt'}</span>
                       </button>
                     )}

@@ -2161,4 +2161,9 @@ tr:hover td {
     text-align: center;
     align-items: center;
   }
+  body {
+    background-size: contain !important;
+    background-position: top center !important;
+    background-attachment: scroll !important;
+  }
 }

@@ -61,6 +61,11 @@ function App() {
     }
   }, [view]);
 
+  // Scroll to top on view changes
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [view]);
+
   // Public Lookup Actions States
   const [isEditingBank, setIsEditingBank] = useState(false);
   const [editBankName, setEditBankName] = useState('');

@@ -2162,8 +2162,8 @@ tr:hover td {
     align-items: center;
   }
   body {
-    background-size: contain !important;
-    background-position: top center !important;
-    background-attachment: scroll !important;
+    background-size: 1600px auto !important;
+    background-position: center top !important;
+    background-attachment: fixed !important;
   }
 }

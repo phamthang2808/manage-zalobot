@@ -3038,7 +3038,49 @@ function App() {
 
         {/* Footer */}
         <footer className="landing-footer">
-          <p>© 2026 28Symues Affiliate. Phát triển bằng sự tương tác thông minh và an toàn.</p>
+          <div className="footer-container">
+            <div className="footer-info">
+              <div className="footer-logo">
+                <img src="/logo.jpg" alt="Logo" />
+                <span>28Symues Affiliate</span>
+              </div>
+              <p className="footer-slogan">
+                Hệ thống Zalo Bot chuyên nghiệp hỗ trợ tăng doanh số affiliate tự động 24/7 trên Shopee, Lazada và TikTok Shop.
+              </p>
+            </div>
+            
+            <div className="footer-links">
+              <h4>Liên Kết Nhanh</h4>
+              <ul>
+                <li><a href="#features">Tính Năng</a></li>
+                <li><a href="#steps">Cách Hoạt Động</a></li>
+                <li><a href="#pricing">Bảng Giá</a></li>
+                <li><a href="http://zaloapp.com/qr/p/fd2gcjcjfuof" target="_blank" rel="noopener noreferrer">Hỗ Trợ Kỹ Thuật</a></li>
+              </ul>
+            </div>
+            
+            <div className="footer-contact">
+              <h4>Liên Hệ Đăng Ký</h4>
+              <div className="footer-contact-list">
+                <div className="footer-contact-item">
+                  <span style={{ color: '#fbbf24' }}>💬</span>
+                  <span>Zalo Admin: <a href="http://zaloapp.com/qr/p/fd2gcjcjfuof" target="_blank" rel="noopener noreferrer">Phạm Thắng</a></span>
+                </div>
+                <div className="footer-contact-item">
+                  <span style={{ color: '#fbbf24' }}>🌐</span>
+                  <span>Cộng đồng hỗ trợ & hướng dẫn kiếm tiền</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div className="footer-bottom">
+            <p>© 2026 28Symues Affiliate. All rights reserved.</p>
+            <div className="footer-bottom-links">
+              <a href="#privacy">Chính Sách Bảo Mật</a>
+              <a href="#terms">Điều Khoản Sử Dụng</a>
+            </div>
+          </div>
         </footer>
 
 

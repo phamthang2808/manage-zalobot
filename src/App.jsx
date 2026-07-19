@@ -66,6 +66,17 @@ function App() {
     window.scrollTo(0, 0);
   }, [view]);
 
+  // Dynamic SEO document title per view
+  useEffect(() => {
+    const titles = {
+      home: '28Symues Affiliate - Tự Động Hóa Hoàn Tiền Shopee Qua Zalo',
+      lookup: 'Tra Cứu Đơn Hàng Shopee | 28Symues Affiliate',
+      login: 'Đăng Nhập | 28Symues Affiliate',
+      dashboard: 'Dashboard Quản Trị | 28Symues Affiliate'
+    };
+    document.title = titles[view] || titles.home;
+  }, [view]);
+
   // Public Lookup Actions States
   const [isEditingBank, setIsEditingBank] = useState(false);
   const [editBankName, setEditBankName] = useState('');

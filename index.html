@@ -10,17 +10,95 @@
         const urlParams = new URLSearchParams(window.location.search);
         const tiktokProductId = urlParams.get('open_tiktok_product');
         if (tiktokProductId) {
-          // Ép ứng dụng TikTok mở trực tiếp trang sản phẩm (snssdk1180://ec/pdp?product_id=...)
           const appSchemeUrl = "snssdk1180://ec/pdp?product_id=" + tiktokProductId;
           const fallbackUrl = "https://www.tiktok.com/view/product/" + tiktokProductId + "?utm_campaign=client_share&utm_medium=ios&utm_source=copy";
           
-          // Thử mở app bằng cách thay đổi window.location
-          window.location.href = appSchemeUrl;
+          // Kiểm tra nếu là thiết bị di động (Mobile)
+          const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
           
-          // Sau 1.5 giây nếu app không mở (do máy chưa cài, hoặc trình duyệt chặn), tự động redirect sang web chính thức của TikTok
-          setTimeout(function() {
+          if (!isMobile) {
+            // Trên Desktop/Laptop: Chuyển hướng trực tiếp luôn
             window.location.href = fallbackUrl;
-          }, 1500);
+          } else {
+            // Trên điện thoại (bypass Zalo/Facebook): Đợi DOM load rồi chèn giao diện nút bấm tương tác
+            document.addEventListener("DOMContentLoaded", function() {
+              const rootDiv = document.getElementById("root");
+              if (rootDiv) {
+                rootDiv.innerHTML = `
+                  <div style="
+                    display: flex; 
+                    flex-direction: column; 
+                    align-items: center; 
+                    justify-content: center; 
+                    height: 100vh; 
+                    background-color: #0b0f17; 
+                    color: #ffffff; 
+                    font-family: 'Outfit', sans-serif;
+                    padding: 20px;
+                    box-sizing: border-box;
+                    text-align: center;
+                  ">
+                    <div style="
+                      width: 80px; 
+                      height: 80px; 
+                      background: linear-gradient(135deg, #ff0050, #00f2fe); 
+                      border-radius: 20px; 
+                      display: flex; 
+                      align-items: center; 
+                      justify-content: center;
+                      margin-bottom: 24px;
+                      box-shadow: 0 10px 25px rgba(0, 242, 254, 0.3);
+                      animation: pulse 2s infinite alternate;
+                    ">
+                      <i class="fa-brands fa-tiktok" style="font-size: 40px; color: #000000;"></i>
+                    </div>
+                    <h2 style="font-size: 22px; font-weight: 700; margin-bottom: 12px; background: linear-gradient(to right, #ffffff, #a5b4fc); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Đang chuyển hướng sang TikTok</h2>
+                    <p style="font-size: 14px; color: #9ca3af; max-width: 280px; margin-bottom: 32px; line-height: 1.6;">Ứng dụng TikTok sẽ được mở để xem sản phẩm và áp dụng mã giảm giá tốt nhất.</p>
+                    
+                    <a id="btn-open-tiktok" href="${appSchemeUrl}" style="
+                      display: flex;
+                      align-items: center;
+                      justify-content: center;
+                      gap: 10px;
+                      width: 100%;
+                      max-width: 280px;
+                      padding: 16px 24px;
+                      background: linear-gradient(90deg, #ff0050, #00f2fe);
+                      color: #000000;
+                      text-decoration: none;
+                      font-weight: 700;
+                      font-size: 16px;
+                      border-radius: 12px;
+                      box-shadow: 0 4px 15px rgba(255, 0, 80, 0.4);
+                      transition: all 0.2s ease;
+                    ">
+                      <span>Mở Ứng Dụng TikTok</span>
+                      <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                    </a>
+                    
+                    <a href="${fallbackUrl}" style="margin-top: 20px; font-size: 13px; color: #6b7280; text-decoration: underline;">Xem phiên bản Web</a>
+                  </div>
+                  <style>
+                    @keyframes pulse {
+                      0% { transform: scale(1); }
+                      100% { transform: scale(1.05); }
+                    }
+                  </style>
+                `;
+
+                // Tự động kích hoạt thử mở app 1 lần ngay khi load xong
+                window.location.href = appSchemeUrl;
+
+                // Thêm sự kiện click để nhảy fallback nếu bấm nút mà không mở được app
+                const btn = document.getElementById("btn-open-tiktok");
+                btn.addEventListener("click", function() {
+                  setTimeout(function() {
+                    window.location.href = fallbackUrl;
+                  }, 1200);
+                });
+              }
+            });
+          }
         }
       })();
     </script>

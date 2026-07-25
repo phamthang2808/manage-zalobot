@@ -207,8 +207,22 @@ function App() {
     }
   };
 
-  // Check active session on startup
+  // Check active session on startup & handle open_tiktok_product redirect
   useEffect(() => {
+    // Check if redirecting to TikTok Shop product (Bypass Zalo Browser)
+    const params = new URLSearchParams(window.location.search);
+    const openTiktokProduct = params.get('open_tiktok_product');
+    if (openTiktokProduct) {
+      try {
+        const decodedUrl = decodeURIComponent(openTiktokProduct);
+        console.log(">>> [TikTok Bypass] Redirecting user to decoded URL:", decodedUrl);
+        window.location.href = decodedUrl;
+        return;
+      } catch (e) {
+        console.error(">>> [TikTok Bypass] Error decoding product URL:", e);
+      }
+    }
+
     // Clear legacy tokens from localStorage to prevent token exposure
     localStorage.removeItem('admin_token');
     localStorage.removeItem('accessToken');

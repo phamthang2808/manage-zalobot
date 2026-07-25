@@ -4,6 +4,27 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
+    <!-- TikTok Deep-Link Handler -->
+    <script>
+      (function() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const tiktokProductId = urlParams.get('open_tiktok_product');
+        if (tiktokProductId) {
+          // Ép ứng dụng TikTok mở trực tiếp trang sản phẩm (snssdk1180://ec/pdp?product_id=...)
+          const appSchemeUrl = "snssdk1180://ec/pdp?product_id=" + tiktokProductId;
+          const fallbackUrl = "https://www.tiktok.com/view/product/" + tiktokProductId + "?utm_campaign=client_share&utm_medium=ios&utm_source=copy";
+          
+          // Thử mở app bằng cách thay đổi window.location
+          window.location.href = appSchemeUrl;
+          
+          // Sau 1.5 giây nếu app không mở (do máy chưa cài, hoặc trình duyệt chặn), tự động redirect sang web chính thức của TikTok
+          setTimeout(function() {
+            window.location.href = fallbackUrl;
+          }, 1500);
+        }
+      })();
+    </script>
+
     <!-- Primary SEO Meta Tags -->
     <title>28Symues Affiliate - Tự Động Hóa Hoàn Tiền Shopee Qua Zalo</title>
     <meta name="description" content="Hệ thống Zalo Bot tự động chuyển đổi link Shopee Affiliate, theo dõi đơn hàng, thống kê hoa hồng và rút tiền hoàn tiền tự động. Tiện lợi, minh bạch, hoàn toàn tự động." />

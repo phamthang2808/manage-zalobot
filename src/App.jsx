@@ -2925,7 +2925,7 @@ function App() {
                 <p style={{ color: 'rgba(255, 255, 255, 0.5)', fontSize: '14px', marginBottom: '24px' }}>Có trang quản trị riêng cho sếp và trang tự tra cứu cho khách</p>
                 
                 <div style={{ marginBottom: '32px' }}>
-                  <span style={{ fontSize: '42px', fontWeight: '800', color: '#fff', fontFamily: 'var(--font-heading)' }}>299.000đ</span>
+                  <span style={{ fontSize: '42px', fontWeight: '800', color: '#fff', fontFamily: 'var(--font-heading)' }}>399.000đ</span>
                   <span style={{ color: 'rgba(255, 255, 255, 0.6)', fontSize: '15px' }}> / tháng</span>
                 </div>
                 
@@ -2984,7 +2984,7 @@ function App() {
                 <p style={{ color: 'rgba(255, 255, 255, 0.5)', fontSize: '14px', marginBottom: '24px' }}>Hệ thống ví tiền tự động và rút tiền qua tin nhắn chat</p>
                 
                 <div style={{ marginBottom: '32px' }}>
-                  <span style={{ fontSize: '42px', fontWeight: '800', color: '#fff', fontFamily: 'var(--font-heading)' }}>499.000đ</span>
+                  <span style={{ fontSize: '42px', fontWeight: '800', color: '#fff', fontFamily: 'var(--font-heading)' }}>599.000đ</span>
                   <span style={{ color: 'rgba(255, 255, 255, 0.6)', fontSize: '15px' }}> / tháng</span>
                 </div>
                 
@@ -3495,7 +3495,7 @@ function App() {
                                 </td>
                                 <td style={{ textAlign: 'right' }}>
                                   <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>Gốc: {formatMoney(u.wallet?.completedCommission)}</div>
-                                  <div style={{ fontSize: '11.5px', color: 'var(--color-warning)', marginTop: '2px' }}>Thuế: {formatMoney((u.wallet?.completedCommission || 0) * 0.9)}</div>
+                                  <div style={{ fontSize: '11.5px', color: 'var(--color-warning)', marginTop: '2px' }}>Sau thuế: {formatMoney((u.wallet?.completedCommission || 0) * 0.9)}</div>
                                   <div style={{ fontSize: '11.5px', color: 'var(--color-success)', marginTop: '2px', fontWeight: '600' }}>Khách: {formatMoney((u.wallet?.completedCommission || 0) * 0.9 * 0.8)}</div>
                                 </td>
                                 <td style={{ color: 'var(--color-success)', fontWeight: '700', textAlign: 'right' }}>
@@ -3613,7 +3613,7 @@ function App() {
                                 </td>
                                 <td style={{ textAlign: 'right' }}>
                                   <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>Gốc: {formatMoney(o.commission)}</div>
-                                  <div style={{ fontSize: '11.5px', color: 'var(--color-warning)', marginTop: '2px' }}>Thuế: {formatMoney(afterTax)}</div>
+                                  <div style={{ fontSize: '11.5px', color: 'var(--color-warning)', marginTop: '2px' }}>Sau thuế: {formatMoney(afterTax)}</div>
                                   <div style={{ fontSize: '11.5px', color: 'var(--color-success)', marginTop: '2px', fontWeight: '600' }}>Khách: {formatMoney(afterDeduction)}</div>
                                 </td>
                                 <td>

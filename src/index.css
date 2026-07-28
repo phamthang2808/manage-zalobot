@@ -2167,3 +2167,144 @@ tr:hover td {
     background-attachment: fixed !important;
   }
 }
+
+/* ==========================================================================
+   LIGHT THEME OVERRIDES FOR LANDING PAGE
+   ========================================================================== */
+.landing-page {
+  background: #f8fafc !important; /* light slate background */
+  color: #1e293b !important; /* dark slate text */
+}
+
+/* Animated gradient orbs for light theme */
+.landing-page::before {
+  background: radial-gradient(circle, rgba(245, 158, 11, 0.08) 0%, rgba(251, 191, 36, 0.03) 40%, transparent 70%) !important;
+}
+
+.landing-page::after {
+  background: radial-gradient(circle, rgba(245, 158, 11, 0.06) 0%, rgba(251, 191, 36, 0.02) 40%, transparent 70%) !important;
+}
+
+/* Typography & Titles */
+.landing-page h1,
+.landing-page h2,
+.landing-page h3,
+.landing-page h4,
+.landing-page .section-title,
+.landing-page .feature-title,
+.landing-page .step-title,
+.landing-page .pricing-card h3,
+.landing-page .instruction-step h3,
+.landing-page .pricing-card span {
+  color: #0f172a !important; /* Slate 900 */
+}
+
+.landing-page p,
+.landing-page .hero-subtitle,
+.landing-page .section-subtitle,
+.landing-page .feature-desc,
+.landing-page .step-desc,
+.landing-page .pricing-card p {
+  color: #475569 !important; /* Slate 600 */
+}
+
+.landing-page .hero-title {
+  background: linear-gradient(135deg, #0f172a 40%, #d97706 100%) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+}
+
+/* Header & Logo */
+.landing-page .landing-header {
+  background: rgba(255, 255, 255, 0.8) !important;
+  border-bottom: 1px solid rgba(15, 23, 42, 0.08) !important;
+  backdrop-filter: blur(20px) !important;
+  -webkit-backdrop-filter: blur(20px) !important;
+}
+
+.landing-page .landing-logo span {
+  color: #0f172a !important;
+}
+
+.landing-page .landing-nav a {
+  color: #475569 !important;
+}
+
+.landing-page .landing-nav a:hover {
+  color: #d97706 !important;
+}
+
+.landing-page .landing-nav a::after {
+  background: linear-gradient(90deg, #f97316, #ec4899) !important;
+}
+
+/* Feature cards */
+.landing-page .feature-card {
+  background: #ffffff !important;
+  border: 1px solid #e2e8f0 !important;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03) !important;
+}
+
+.landing-page .feature-card::before {
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.3), rgba(251, 191, 36, 0.1)) !important;
+}
+
+.landing-page .feature-card:hover {
+  background: #ffffff !important;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.02) !important;
+}
+
+.landing-page .feature-desc {
+  color: #475569 !important;
+}
+
+/* Steps / Instruction Section */
+.landing-page .instruction-step .step-num {
+  box-shadow: 0 4px 10px rgba(245, 158, 11, 0.2) !important;
+}
+
+/* Pricing Cards */
+.landing-page .pricing-card {
+  background: #ffffff !important;
+  border: 1px solid #e2e8f0 !important;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.03), 0 4px 6px -2px rgba(0, 0, 0, 0.02) !important;
+}
+
+/* The Pro plan card highlight */
+.landing-page .pricing-card:nth-child(2) {
+  border: 2px solid #f59e0b !important; /* Orange/Amber border for highlights */
+  box-shadow: 0 20px 25px -5px rgba(245, 158, 11, 0.15), 0 10px 10px -5px rgba(245, 158, 11, 0.04) !important;
+}
+
+.landing-page .pricing-card span:nth-child(2) {
+  color: #64748b !important; /* "/ tháng" text slate-500 */
+}
+
+.landing-page .pricing-card ul li {
+  color: #334155 !important;
+}
+
+/* Footer override */
+.landing-page .landing-footer {
+  background: #f1f5f9 !important;
+  border-top: 1px solid #e2e8f0 !important;
+  color: #64748b !important;
+}
+
+.landing-page .landing-footer a,
+.landing-page .landing-footer .footer-bottom-links a {
+  color: #475569 !important;
+}
+
+.landing-page .landing-footer a:hover,
+.landing-page .landing-footer .footer-bottom-links a:hover {
+  color: #0f172a !important;
+}
+
+.landing-page .landing-footer .footer-logo span {
+  color: #0f172a !important;
+}
+
+.landing-page .hamburger span {
+  background-color: #0f172a !important;
+}

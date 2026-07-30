@@ -2788,11 +2788,11 @@ function App() {
                 <div className="zalo-chat-body">
                   <div className="chat-date-divider">Hôm nay</div>
 
-                  {/* Customer Message (Gia Trung) */}
+                  {/* Customer Message (Phạm Thắng) */}
                   <div className="zalo-msg-item">
-                    <div className="zalo-msg-avatar" style={{ background: '#0068ff', color: '#ffffff' }}>GT</div>
+                    <div className="zalo-msg-avatar" style={{ background: '#0068ff', color: '#ffffff' }}>PT</div>
                     <div className="zalo-msg-content">
-                      <div className="zalo-msg-sender">Gia Trung</div>
+                      <div className="zalo-msg-sender">Phạm Thắng</div>
                       <div className="zalo-msg-bubble">
                         <div style={{ wordBreak: 'break-all' }}>https://shopee.vn/product/363419620/16124463327?d_id=3416e</div>
                         <div className="zalo-link-preview-card">
@@ -2816,11 +2816,11 @@ function App() {
                       <div className="zalo-msg-sender">Meomeo <span className="bot-tag">BOT</span></div>
                       <div className="zalo-msg-bubble bot">
                         <div className="zalo-quote-box">
-                          <div className="zalo-quote-sender">Gia Trung</div>
+                          <div className="zalo-quote-sender">Phạm Thắng</div>
                           <div className="zalo-quote-text">[Link] https://shopee.vn/product/363419620/16124463327?d_id=3416e</div>
                         </div>
                         <div style={{ whiteSpace: 'pre-line' }}>
-                          Hi @Gia Trung, link của bạn đây ạ:<br />
+                          Hi @Phạm Thắng, link của bạn đây ạ:<br />
                           📦 <strong>Dây Mạng CAT5e Bấm Sẵn 2 Đầu 5m 10m 20m 25m 30m 40m 50m - dây cáp mạng lan chính hãng</strong><br />
                           💵 Giá tham khảo: đ22.000<br />
                           🔗 Link: <span style={{ color: 'var(--brand-600)', textDecoration: 'underline', wordBreak: 'break-all' }}>https://s.shopee.vn/an_redir?origin_link=https%3A%2F%2Fshopee.vn%2Fproduct%2F363419620%2F16124463327</span><br />

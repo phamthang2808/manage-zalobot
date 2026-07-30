@@ -869,7 +869,9 @@ tr:hover td {
 .landing-page,
 .landing-container {
   min-height: 100vh;
-  background: #f8fafc;
+  background: url("/ChatGPT Image 16_03_45 30 thg 7, 2026.png") no-repeat center center;
+  background-size: cover;
+  background-attachment: fixed;
   color: #1e293b;
   display: flex;
   flex-direction: column;

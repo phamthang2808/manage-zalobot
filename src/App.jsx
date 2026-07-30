@@ -2727,31 +2727,100 @@ function App() {
 
         {/* Hero Section */}
         <section id="home" className="hero-section">
-          <div className="hero-badge">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" style={{ color: '#f97316', flexShrink: 0 }}>
-              <rect x="3" y="11" width="18" height="10" rx="2" />
-              <circle cx="12" cy="5" r="2" />
-              <path d="M12 7v4" />
-              <line x1="8" y1="16" x2="8.01" y2="16" strokeWidth="3" />
-              <line x1="16" y1="16" x2="16.01" y2="16" strokeWidth="3" />
-              <path d="M9 16h6" />
-            </svg>
-            HỆ THỐNG AUTOMATION AFFILIATE
-          </div>
-          <h1 className="hero-title">Tự Động Hóa Shopee Affiliate<br />Với 28Symues</h1>
-          <p className="hero-subtitle">
-            Biến mọi liên kết mua sắm trong nhóm chat Zalo của bạn thành nguồn thu nhập thụ động chỉ trong vài giây. Tiện lợi, tự động và hoàn toàn minh bạch.
-          </p>
-          <div className="hero-buttons">
-            <a href="#steps" className="btn btn-hero-1">
-              Bắt đầu ngay
-            </a>
-            <button onClick={() => { setView('lookup'); window.history.pushState({}, '', '/?view=lookup'); }} className="btn btn-hero-2">
-              <i className="fa-thin fa-magnifying-glass"></i> Tra cứu đơn hàng
-            </button>
-            <a href="#features" className="btn btn-hero-3">
-              Tìm hiểu tính năng
-            </a>
+          <div className="hero-grid-split">
+            <div className="hero-content-left">
+              <div className="hero-badge">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" style={{ color: '#ea580c', flexShrink: 0 }}>
+                  <rect x="3" y="11" width="18" height="10" rx="2" />
+                  <circle cx="12" cy="5" r="2" />
+                  <path d="M12 7v4" />
+                  <line x1="8" y1="16" x2="8.01" y2="16" strokeWidth="3" />
+                  <line x1="16" y1="16" x2="16.01" y2="16" strokeWidth="3" />
+                  <path d="M9 16h6" />
+                </svg>
+                HỆ THỐNG AUTOMATION AFFILIATE
+              </div>
+              <h1 className="hero-title">Tự Động Hóa Shopee Affiliate<br />Với 28Symues</h1>
+              <p className="hero-subtitle">
+                Biến mọi liên kết mua sắm trong nhóm chat Zalo của bạn thành nguồn thu nhập thụ động chỉ trong vài giây. Tiện lợi, tự động và hoàn toàn minh bạch.
+              </p>
+              <div className="hero-buttons">
+                <a href="#steps" className="btn btn-hero-1">
+                  Bắt đầu ngay
+                </a>
+                <button onClick={() => { setView('lookup'); window.history.pushState({}, '', '/?view=lookup'); }} className="btn btn-hero-2">
+                  <i className="fa-thin fa-magnifying-glass"></i> Tra cứu đơn hàng
+                </button>
+                <a href="#features" className="btn btn-hero-3">
+                  Tìm hiểu tính năng
+                </a>
+              </div>
+            </div>
+
+            {/* Live Interactive Zalo Bot Chat Mockup */}
+            <div className="hero-mockup-right">
+              {/* Floating Badges */}
+              <div className="floating-badge badge-top-right">
+                <span className="badge-icon">⚡</span>
+                <span className="badge-text">Tốc độ &lt; 0.5s</span>
+              </div>
+              <div className="floating-badge badge-mid-left">
+                <span className="badge-icon">💰</span>
+                <span className="badge-text">+18.500đ Vừa ghi nhận</span>
+              </div>
+              <div className="floating-badge badge-bot-right">
+                <span className="badge-icon">🤖</span>
+                <span className="badge-text">AI GPT-4o Tự Động</span>
+              </div>
+
+              {/* iPhone / Zalo App Mockup */}
+              <div className="zalo-phone-mockup">
+                <div className="zalo-phone-header">
+                  <div className="zalo-avatar">
+                    <img src="/logo.jpg" alt="Bot Logo" />
+                    <span className="online-dot"></span>
+                  </div>
+                  <div className="zalo-header-info">
+                    <div className="zalo-group-name">Nhiệt Huyết Săn Sale 🚀</div>
+                    <div className="zalo-group-sub">850 thành viên • Bot đang hoạt động</div>
+                  </div>
+                </div>
+
+                <div className="zalo-chat-body">
+                  <div className="chat-date-divider">Hôm nay</div>
+
+                  {/* Customer Message */}
+                  <div className="chat-msg customer-msg">
+                    <div className="msg-sender">Nguyễn Mai (Thành viên)</div>
+                    <div className="msg-bubble">
+                      Sếp ơi check giúp em link váy này trên Shopee với nè!
+                      <div className="msg-link-preview">shopee.vn/dam-du-tiec-sang-trong-i.1284920</div>
+                    </div>
+                    <div className="msg-time">08:32 AM</div>
+                  </div>
+
+                  {/* Bot Reply Message */}
+                  <div className="chat-msg bot-msg">
+                    <div className="msg-sender bot-sender">
+                      <span>28Symues Bot</span>
+                      <span className="bot-tag">BOT</span>
+                    </div>
+                    <div className="msg-bubble bot-bubble">
+                      Dạ link mua sắm săn sale có gắn hoa hồng cho chị Mai đây ạ 👇
+                      <div className="converted-link-card">
+                        <div className="link-title">Đầm Dự Tiệc Dáng Xòe Sang Trọng</div>
+                        <div className="link-url">https://s.shopee.vn/aff_829103</div>
+                        <div className="link-meta">
+                          <span className="subid-tag">SubID: Mai_Zalo98</span>
+                          <span className="cashback-tag">+18.500đ Hoa hồng</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="msg-time">08:32 AM</div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </section>
 

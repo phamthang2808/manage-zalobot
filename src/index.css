@@ -984,7 +984,7 @@ tr:hover td {
   color: #ffffff !important;
 }
 
-/* 3 Hero Buttons with unique bold colors */
+/* 3 Hero Buttons with unique bold colors & shimmer effect */
 .btn-hero-1,
 .btn-hero-2,
 .btn-hero-3 {
@@ -996,8 +996,8 @@ tr:hover td {
   justify-content: center;
   gap: 8px;
   text-align: center;
-  padding: 12px 30px !important;
-  border-radius: 8px !important;
+  padding: 12px 28px !important;
+  border-radius: 10px !important;
   text-decoration: none !important;
   cursor: pointer;
 }
@@ -1005,14 +1005,33 @@ tr:hover td {
 .btn-hero-1 {
   background: linear-gradient(135deg, #f97316, #ea580c);
   color: #ffffff !important;
-  font-weight: 800 !important;
+  font-weight: 600 !important;
   border: 1.5px solid #ea580c !important;
   box-shadow: 0 6px 20px rgba(249, 115, 22, 0.35);
+  position: relative;
+  overflow: hidden;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+.btn-hero-1::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -60%;
+  width: 50%;
+  height: 200%;
+  background: rgba(255, 255, 255, 0.35);
+  transform: rotate(25deg);
+  animation: shimmerSweep 4s ease-in-out infinite;
+}
+
+@keyframes shimmerSweep {
+  0% { left: -60%; }
+  30%, 100% { left: 140%; }
+}
+
 .btn-hero-1:hover {
-  transform: translateY(-3px) scale(1.03);
+  transform: translateY(-3px) scale(1.02);
   background: linear-gradient(135deg, #ea580c, #c2410c);
   box-shadow: 0 10px 30px rgba(249, 115, 22, 0.5);
 }
@@ -1020,14 +1039,14 @@ tr:hover td {
 .btn-hero-2 {
   background: #ffffff;
   color: #ea580c !important;
-  font-weight: 800 !important;
+  font-weight: 600 !important;
   border: 1.5px solid #ea580c !important;
   box-shadow: 0 4px 15px rgba(234, 88, 12, 0.12);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .btn-hero-2:hover {
-  transform: translateY(-3px) scale(1.03);
+  transform: translateY(-3px) scale(1.02);
   background: #fff7ed;
   border-color: #c2410c !important;
   box-shadow: 0 10px 30px rgba(234, 88, 12, 0.25);
@@ -1036,16 +1055,297 @@ tr:hover td {
 .btn-hero-3 {
   background: #f1f5f9;
   color: #0f172a !important;
-  font-weight: 700 !important;
+  font-weight: 600 !important;
   border: 1.5px solid #cbd5e1 !important;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .btn-hero-3:hover {
-  transform: translateY(-3px) scale(1.03);
+  transform: translateY(-3px) scale(1.02);
   background: #e2e8f0;
   border-color: #94a3b8 !important;
   color: #0f172a !important;
+}
+
+/* Zalo Phone Mockup & Floating Badges */
+.hero-mockup-right {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+.zalo-phone-mockup {
+  width: 100%;
+  max-width: 360px;
+  background: #ffffff;
+  border: 1.5px solid #cbd5e1;
+  border-radius: 28px;
+  box-shadow: 0 20px 50px -10px rgba(0, 0, 0, 0.1), 0 0 30px rgba(249, 115, 22, 0.12);
+  overflow: hidden;
+  animation: floatSlow 6s ease-in-out infinite;
+  transition: transform 0.3s ease;
+}
+
+.zalo-phone-mockup:hover {
+  transform: translateY(-6px) scale(1.01);
+  box-shadow: 0 25px 60px -10px rgba(249, 115, 22, 0.2);
+}
+
+@keyframes floatSlow {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+.zalo-phone-header {
+  background: linear-gradient(135deg, #0068ff, #0052cc);
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: #ffffff;
+}
+
+.zalo-avatar {
+  position: relative;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 2px solid #ffffff;
+  flex-shrink: 0;
+}
+
+.zalo-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.online-dot {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 10px;
+  height: 10px;
+  background: #10b981;
+  border: 2px solid #ffffff;
+  border-radius: 50%;
+}
+
+.zalo-header-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.zalo-group-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: #ffffff;
+}
+
+.zalo-group-sub {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.85);
+  font-weight: 400;
+}
+
+.zalo-chat-body {
+  background: #eef3f9;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-height: 280px;
+  font-size: 13px;
+  text-align: left;
+}
+
+.chat-date-divider {
+  align-self: center;
+  background: rgba(0, 0, 0, 0.06);
+  color: #64748b;
+  font-size: 10.5px;
+  padding: 2px 10px;
+  border-radius: 10px;
+  font-weight: 500;
+}
+
+.chat-msg {
+  display: flex;
+  flex-direction: column;
+  max-width: 90%;
+  animation: chatPopIn 0.5s ease-out forwards;
+}
+
+@keyframes chatPopIn {
+  0% { opacity: 0; transform: translateY(12px) scale(0.95); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.customer-msg {
+  align-self: flex-start;
+}
+
+.bot-msg {
+  align-self: flex-end;
+}
+
+.msg-sender {
+  font-size: 11px;
+  color: #64748b;
+  font-weight: 500;
+  margin-bottom: 3px;
+}
+
+.bot-sender {
+  color: #ea580c;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  justify-content: flex-end;
+}
+
+.bot-tag {
+  background: #ea580c;
+  color: #ffffff;
+  font-size: 9px;
+  font-weight: 600;
+  padding: 1px 5px;
+  border-radius: 4px;
+}
+
+.msg-bubble {
+  background: #ffffff;
+  padding: 10px 12px;
+  border-radius: 14px;
+  border-top-left-radius: 2px;
+  color: #1e293b;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+  line-height: 1.4;
+  font-weight: 400;
+}
+
+.bot-bubble {
+  background: #ffffff;
+  border-radius: 14px;
+  border-top-right-radius: 2px;
+  border: 1.5px solid #fed7aa;
+}
+
+.msg-link-preview {
+  margin-top: 6px;
+  font-size: 11px;
+  color: #0284c7;
+  text-decoration: underline;
+  word-break: break-all;
+}
+
+.converted-link-card {
+  margin-top: 8px;
+  background: #fff7ed;
+  border: 1px solid #fdba74;
+  border-radius: 10px;
+  padding: 8px 10px;
+}
+
+.link-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: #0f172a;
+  margin-bottom: 2px;
+}
+
+.link-url {
+  font-size: 11px;
+  color: #ea580c;
+  font-weight: 500;
+  word-break: break-all;
+}
+
+.link-meta {
+  margin-top: 6px;
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.subid-tag {
+  background: #e2e8f0;
+  color: #334155;
+  font-size: 10px;
+  font-weight: 500;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.cashback-tag {
+  background: #d1fae5;
+  color: #047857;
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.msg-time {
+  font-size: 9.5px;
+  color: #94a3b8;
+  margin-top: 2px;
+}
+
+.customer-msg .msg-time { align-self: flex-start; }
+.bot-msg .msg-time { align-self: flex-end; }
+
+/* Floating Badges */
+.floating-badge {
+  position: absolute;
+  background: #ffffff;
+  border: 1.5px solid #cbd5e1;
+  border-radius: 20px;
+  padding: 8px 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+  z-index: 5;
+  backdrop-filter: blur(10px);
+  animation: floatSlow 5s ease-in-out infinite;
+}
+
+.badge-top-right {
+  top: -12px;
+  right: -10px;
+  animation-delay: 0s;
+}
+
+.badge-mid-left {
+  top: 45%;
+  left: -20px;
+  animation-delay: 1.5s;
+}
+
+.badge-bot-right {
+  bottom: -15px;
+  right: 10px;
+  animation-delay: 3s;
+}
+
+@media (max-width: 480px) {
+  .floating-badge {
+    display: none;
+  }
+}
+
+.badge-icon {
+  font-size: 14px;
+}
+
+.badge-text {
+  font-size: 12px;
+  font-weight: 600;
+  color: #0f172a;
 }
 
 /* Ensure smooth scrolling & proper spacing under sticky header */

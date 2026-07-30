@@ -910,10 +910,10 @@ function App() {
         alignItems: 'center',
         justifyContent: 'center',
         flexShrink: 0,
-        boxShadow: '0 0 14px rgba(255, 119, 0,0.15)'
+        boxShadow: '0 0 14px rgba(249,115,22,0.15)'
       }}>
         {toast.type === 'success' ? (
-          <svg style={{ width: '18px', height: '18px', color: '#FF5500' }} fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+          <svg style={{ width: '18px', height: '18px', color: '#ea580c' }} fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5"></path>
           </svg>
         ) : toast.type === 'error' ? (
@@ -921,7 +921,7 @@ function App() {
             <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z"></path>
           </svg>
         ) : (
-          <svg style={{ width: '18px', height: '18px', color: '#FF5500' }} fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+          <svg style={{ width: '18px', height: '18px', color: '#ea580c' }} fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 111.085 1.085l-1.086 1.086L10.5 13.5H12.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
           </svg>
         )}
@@ -959,7 +959,7 @@ function App() {
           transition: 'all 0.2s',
           flexShrink: 0
         }}
-        onMouseEnter={e => { e.currentTarget.style.background='#fff7ed'; e.currentTarget.style.color='#FF5500'; }}
+        onMouseEnter={e => { e.currentTarget.style.background='#fff7ed'; e.currentTarget.style.color='#ea580c'; }}
         onMouseLeave={e => { e.currentTarget.style.background='#f1f5f9'; e.currentTarget.style.color='#64748b'; }}
       >
         ✕
@@ -1014,7 +1014,7 @@ function App() {
             left: -10%;
             width: 700px;
             height: 700px;
-            background: radial-gradient(circle, rgba(255, 119, 0, 0.1) 0%, rgba(255, 85, 0, 0.03) 40%, transparent 70%);
+            background: radial-gradient(circle, rgba(249, 115, 22, 0.1) 0%, rgba(234, 88, 12, 0.03) 40%, transparent 70%);
             z-index: 1;
             pointer-events: none;
             animation: lookupFloatOrb1 8s ease-in-out infinite;
@@ -1026,7 +1026,7 @@ function App() {
             right: -10%;
             width: 600px;
             height: 600px;
-            background: radial-gradient(circle, rgba(255, 119, 0, 0.08) 0%, rgba(255, 85, 0, 0.02) 40%, transparent 70%);
+            background: radial-gradient(circle, rgba(249, 115, 22, 0.08) 0%, rgba(234, 88, 12, 0.02) 40%, transparent 70%);
             z-index: 1;
             pointer-events: none;
             animation: lookupFloatOrb2 10s ease-in-out infinite;
@@ -1142,9 +1142,9 @@ function App() {
             transition: all 0.2s ease;
           }
           .lookup-tab.active {
-            background: linear-gradient(90deg, #FFAA00 0%, #FF5500 100%);
+            background: linear-gradient(135deg, #f97316, #ea580c);
             color: #ffffff;
-            box-shadow: 0 4px 14px rgba(255, 119, 0, 0.35);
+            box-shadow: 0 4px 14px rgba(249, 115, 22, 0.35);
           }
           .lookup-input-group {
             margin-bottom: 16px;
@@ -1189,7 +1189,7 @@ function App() {
           .lookup-input:focus {
             border-color: #ea580c;
             background: #ffffff;
-            box-shadow: 0 0 12px rgba(255, 119, 0, 0.25);
+            box-shadow: 0 0 12px rgba(249, 115, 22, 0.25);
           }
           .lookup-date-grid {
             display: grid;
@@ -1216,7 +1216,7 @@ function App() {
             width: 100%;
             max-width: 100% !important;
             box-sizing: border-box !important;
-            background: linear-gradient(90deg, #FFAA00 0%, #FF5500 100%);
+            background: linear-gradient(135deg, #f97316, #ea580c);
             background-size: 200% auto;
             color: #ffffff;
             font-size: 15px;
@@ -1230,11 +1230,11 @@ function App() {
             align-items: center;
             justify-content: center;
             gap: 8px;
-            box-shadow: 0 4px 15px rgba(255, 119, 0, 0.35);
+            box-shadow: 0 4px 15px rgba(249, 115, 22, 0.35);
           }
           .lookup-btn:hover {
             background-position: right center;
-            box-shadow: 0 6px 20px rgba(255, 119, 0, 0.5);
+            box-shadow: 0 6px 20px rgba(249, 115, 22, 0.5);
             transform: translateY(-1px);
           }
           .lookup-btn:disabled {
@@ -1468,14 +1468,14 @@ function App() {
             width: 260px;
             border-radius: 16px;
             overflow: hidden;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.08), 0 0 20px rgba(255, 119, 0, 0.15);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.08), 0 0 20px rgba(249, 115, 22, 0.15);
             border: 2px solid #fed7aa;
             animation: banner-float 4s ease-in-out infinite;
             transition: transform 0.3s ease, box-shadow 0.3s ease;
           }
           .lookup-banner-img-wrap:hover {
             transform: scale(1.03) translateY(-4px);
-            box-shadow: 0 12px 40px rgba(0,0,0,0.12), 0 0 30px rgba(255, 119, 0, 0.3);
+            box-shadow: 0 12px 40px rgba(0,0,0,0.12), 0 0 30px rgba(249, 115, 22, 0.3);
           }
           .lookup-banner-img-wrap img {
             width: 100%;
@@ -1538,7 +1538,7 @@ function App() {
         <header className="lookup-header">
           <div className="lookup-logo">
             <img src="/logo.jpg" alt="Logo" style={{ width: '32px', height: '32px', borderRadius: '50%', objectFit: 'cover' }} />
-            <span>28Symues <span style={{ color: '#FF8800' }}>Affiliate</span></span>
+            <span>28Symues <span style={{ color: '#f97316' }}>Affiliate</span></span>
           </div>
           <button 
             className="lookup-admin-link" 
@@ -1618,7 +1618,7 @@ function App() {
                 {/* 0. Bank Info Card                     {!isEditingBank && (
                       <button 
                         className="lookup-admin-link" 
-                        style={{ fontSize: '12px', padding: '4px 10px', background: '#fff7ed', color: '#FF5500', border: '1px solid #fed7aa', display: 'flex', alignItems: 'center', gap: '6px' }}
+                        style={{ fontSize: '12px', padding: '4px 10px', background: '#fff7ed', color: '#ea580c', border: '1px solid #fed7aa', display: 'flex', alignItems: 'center', gap: '6px' }}
                         onClick={() => {
                           setEditBankName(lookupResult.bankName || '');
                           setEditAccountNumber(lookupResult.accountNumber || '');
@@ -1693,7 +1693,7 @@ function App() {
                 {/* 1. Wallet Stats */}
                 <div className="stats-container">
                   <h3 className="stats-section-title">
-                    💰 Thống Kê Hoa Hồng của: <span style={{ color: '#FF5500' }}>{lookupResult.zaloName}</span>
+                    💰 Thống Kê Hoa Hồng của: <span style={{ color: '#ea580c' }}>{lookupResult.zaloName}</span>
                   </h3>
                   <div className="stats-cards-grid">
                     <div className="stat-card-item total">
@@ -1712,8 +1712,8 @@ function App() {
                     </div>
                     <div className="stat-card-item withdrawable">
                       <span className="stat-card-label">Có thể rút ngay (Khả dụng)</span>
-                      <span style={{ fontSize: '11px', color: '#FF5500', marginBottom: '4px' }}>Sau 3 ngày • Đã trừ thuế & chia 8-2</span>
-                      <span className="stat-card-value" style={{ color: '#FF5500' }}>{formatMoney(lookupResult.wallet.withdrawableCommission)}</span>
+                      <span style={{ fontSize: '11px', color: '#ea580c', marginBottom: '4px' }}>Sau 3 ngày • Đã trừ thuế & chia 8-2</span>
+                      <span className="stat-card-value" style={{ color: '#ea580c' }}>{formatMoney(lookupResult.wallet.withdrawableCommission)}</span>
                     </div>
                     <div className="stat-card-item received">
                       <span className="stat-card-label">Đã nhận (Đã thanh toán)</span>
@@ -1753,7 +1753,7 @@ function App() {
                           />
                           <button 
                             className="lookup-admin-link"
-                            style={{ position: 'absolute', right: '8px', fontSize: '11px', padding: '4px 8px', background: '#fff7ed', color: '#FF5500', borderColor: '#fed7aa' }}
+                            style={{ position: 'absolute', right: '8px', fontSize: '11px', padding: '4px 8px', background: '#fff7ed', color: '#ea580c', borderColor: '#fed7aa' }}
                             onClick={() => setPayoutAmount(new Intl.NumberFormat('vi-VN').format(lookupResult.wallet.withdrawableCommission))}
                           >
                             Rút hết
@@ -1828,7 +1828,7 @@ function App() {
                         background: o.status === 'Hoàn thành' ? '#ecfdf5' : 
                                     o.status === 'Hủy' ? '#fef2f2' : '#fff7ed',
                         color: o.status === 'Hoàn thành' ? '#059669' : 
-                               o.status === 'Hủy' ? '#dc2626' : '#FF5500',
+                               o.status === 'Hủy' ? '#dc2626' : '#ea580c',
                         border: `1px solid ${o.status === 'Hoàn thành' ? '#a7f3d0' : 
                                               o.status === 'Hủy' ? '#fca5a5' : '#fed7aa'}`
                       }}>
@@ -1878,7 +1878,7 @@ function App() {
                 borderRadius: '50%',
                 background: '#fff7ed',
                 border: '1px solid #fed7aa',
-                boxShadow: '0 0 25px rgba(255, 119, 0, 0.2)',
+                boxShadow: '0 0 25px rgba(249, 115, 22, 0.2)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
@@ -1892,7 +1892,7 @@ function App() {
                 Xác Thực Bảo Mật OTP
               </h3>
               <p style={{ fontSize: '13.5px', color: '#475569', lineHeight: '1.5', marginBottom: '16px', padding: '0 8px' }}>
-                Mã xác thực 6 số vừa được gửi đến <span style={{ color: '#FF5500', fontWeight: '600' }}>tin nhắn riêng Zalo</span> của bạn.
+                Mã xác thực 6 số vừa được gửi đến <span style={{ color: '#ea580c', fontWeight: '600' }}>tin nhắn riêng Zalo</span> của bạn.
               </p>
 
               {/* Alert Info Box */}
@@ -1902,7 +1902,7 @@ function App() {
                 borderRadius: '12px',
                 padding: '10px 12px',
                 fontSize: '12.5px',
-                color: '#E03300',
+                color: '#c2410c',
                 marginBottom: '22px',
                 lineHeight: '1.4',
                 textAlign: 'left',
@@ -1931,7 +1931,7 @@ function App() {
                     borderRadius: '14px',
                     border: '1.5.px solid #f97316',
                     background: '#f8fafc',
-                    color: '#FF5500',
+                    color: '#ea580c',
                     outline: 'none',
                     boxShadow: 'inset 0 2px 5px rgba(0,0,0,0.05)'
                   }}
@@ -1961,7 +1961,7 @@ function App() {
                     if (otpActionType === 'PAYOUT') handleRequestPayout(otpCode);
                   }}
                   disabled={bankSaveLoading || payoutSaveLoading}
-                  style={{ flex: 1.4, padding: '13px', borderRadius: '12px', fontSize: '14.5px', background: 'linear-gradient(90deg, #FFAA00 0%, #FF5500 100%)', color: '#ffffff', border: 'none', cursor: 'pointer', fontWeight: 'bold', boxShadow: '0 6px 20px rgba(255, 119, 0, 0.35)', transition: 'all 0.2s' }}
+                  style={{ flex: 1.4, padding: '13px', borderRadius: '12px', fontSize: '14.5px', background: 'linear-gradient(135deg, #f97316, #ea580c)', color: '#ffffff', border: 'none', cursor: 'pointer', fontWeight: 'bold', boxShadow: '0 6px 20px rgba(249, 115, 22, 0.35)', transition: 'all 0.2s' }}
                 >
                   {(bankSaveLoading || payoutSaveLoading) ? 'Đang kiểm tra...' : 'Xác nhận ngay'}
                 </button>
@@ -2047,7 +2047,7 @@ function App() {
             left: -10%;
             width: 500px;
             height: 500px;
-            background: radial-gradient(circle, rgba(255, 119, 0, 0.1) 0%, rgba(255, 85, 0, 0.03) 40%, transparent 70%);
+            background: radial-gradient(circle, rgba(249, 115, 22, 0.1) 0%, rgba(234, 88, 12, 0.03) 40%, transparent 70%);
             z-index: 1;
             pointer-events: none;
             animation: floatOrb1 12s ease-in-out infinite;
@@ -2059,7 +2059,7 @@ function App() {
             right: -10%;
             width: 500px;
             height: 500px;
-            background: radial-gradient(circle, rgba(255, 119, 0, 0.08) 0%, rgba(255, 85, 0, 0.02) 40%, transparent 70%);
+            background: radial-gradient(circle, rgba(249, 115, 22, 0.08) 0%, rgba(234, 88, 12, 0.02) 40%, transparent 70%);
             z-index: 1;
             pointer-events: none;
             animation: floatOrb2 15s ease-in-out infinite;
@@ -2083,7 +2083,7 @@ function App() {
             width: 36px;
             height: 36px;
             border-radius: 50%;
-            border: 1px solid rgba(255, 119, 0, 0.35);
+            border: 1px solid rgba(249, 115, 22, 0.35);
             object-fit: cover;
           }
           .login-split-logo span {
@@ -2231,7 +2231,7 @@ function App() {
             outline: none;
             border-color: #f97316;
             background: #ffffff;
-            box-shadow: 0 0 16px rgba(255, 119, 0, 0.2);
+            box-shadow: 0 0 16px rgba(249, 115, 22, 0.2);
           }
           
           /* Simulated Cloudflare Turnstile CSS */
@@ -2396,7 +2396,7 @@ function App() {
         <header className="login-split-header">
           <div className="login-split-logo">
             <img src="/logo.jpg" alt="Logo" />
-            <span>28Symues <span style={{ color: '#FF8800' }}>Affiliate</span></span>
+            <span>28Symues <span style={{ color: '#f97316' }}>Affiliate</span></span>
           </div>
           <div className="login-split-nav">
             <button 
@@ -2415,7 +2415,7 @@ function App() {
         <div className="login-split-content">
           <div className="login-split-left">
             <div className="badge">
-              <i className="fa-thin fa-robot" style={{ fontSize: '14px' }}></i> 28Symues <span style={{ color: '#FF5500' }}>Affiliate</span>
+              <i className="fa-thin fa-robot" style={{ fontSize: '14px' }}></i> 28Symues <span style={{ color: '#ea580c' }}>Affiliate</span>
             </div>
             <h1>Đăng nhập tài khoản</h1>
             <p>
@@ -2468,7 +2468,7 @@ function App() {
                     style={{ marginTop: '3px', cursor: 'pointer' }}
                   />
                   <label htmlFor="accept-terms" style={{ cursor: 'pointer', lineHeight: '1.4' }}>
-                    Tôi đồng ý với <a href="#" onClick={(e) => e.preventDefault()} style={{ color: '#FF5500', textDecoration: 'underline' }}>Điều khoản dịch vụ</a> và <a href="#" onClick={(e) => e.preventDefault()} style={{ color: '#FF5500', textDecoration: 'underline' }}>Chính sách bảo mật</a>.
+                    Tôi đồng ý với <a href="#" onClick={(e) => e.preventDefault()} style={{ color: '#ea580c', textDecoration: 'underline' }}>Điều khoản dịch vụ</a> và <a href="#" onClick={(e) => e.preventDefault()} style={{ color: '#ea580c', textDecoration: 'underline' }}>Chính sách bảo mật</a>.
                   </label>
                 </div>
 
@@ -2536,9 +2536,9 @@ function App() {
                   }}
                   onMouseEnter={e => {
                     e.currentTarget.style.background = '#fff7ed';
-                    e.currentTarget.style.borderColor = '#FF8800';
-                    e.currentTarget.style.color = '#FF5500';
-                    e.currentTarget.style.boxShadow = '0 4px 14px rgba(255, 119, 0, 0.2)';
+                    e.currentTarget.style.borderColor = '#f97316';
+                    e.currentTarget.style.color = '#ea580c';
+                    e.currentTarget.style.boxShadow = '0 4px 14px rgba(249, 115, 22, 0.2)';
                   }}
                   onMouseLeave={e => {
                     e.currentTarget.style.background = '#ffffff';
@@ -2569,14 +2569,14 @@ function App() {
         <header className="landing-header">
           <div className="landing-logo">
             <img src="/logo.jpg" alt="Logo" style={{ width: '32px', height: '32px', borderRadius: '50%', objectFit: 'cover' }} />
-            <span>28Symues <span style={{ color: '#FF8800' }}>Affiliate</span></span>
+            <span>28Symues <span style={{ color: '#f97316' }}>Affiliate</span></span>
           </div>
           <nav className={`landing-nav${mobileMenuOpen ? ' open' : ''}`}>
             <a href="#home" onClick={() => setMobileMenuOpen(false)}>Trang chủ</a>
             <a href="#features" onClick={() => setMobileMenuOpen(false)}>Tính năng</a>
             <a href="#steps" onClick={() => setMobileMenuOpen(false)}>Hướng dẫn</a>
             <a href="#pricing" onClick={() => setMobileMenuOpen(false)}>Bảng giá</a>
-            <a href="#" onClick={(e) => { e.preventDefault(); setView('lookup'); window.history.pushState({}, '', '/?view=lookup'); setMobileMenuOpen(false); }} style={{ color: '#FF5500', fontWeight: '700' }}><i className="fa-thin fa-magnifying-glass" style={{ marginRight: '6px' }}></i>Tra cứu đơn hàng</a>
+            <a href="#" onClick={(e) => { e.preventDefault(); setView('lookup'); window.history.pushState({}, '', '/?view=lookup'); setMobileMenuOpen(false); }} style={{ color: '#ea580c', fontWeight: '700' }}><i className="fa-thin fa-magnifying-glass" style={{ marginRight: '6px' }}></i>Tra cứu đơn hàng</a>
             {/* Mobile-only actions inside nav */}
             <div className="mobile-nav-actions">
               {token ? (
@@ -2593,8 +2593,8 @@ function App() {
                     <button 
                       onClick={() => { setView('admin'); sessionStorage.setItem('adminView','admin'); setMobileMenuOpen(false); }}
                       style={{
-                        background: 'linear-gradient(90deg, rgba(255,170,0,0.25) 0%, rgba(255,85,0,0.15) 100%)',
-                        border: '1px solid rgba(255, 119, 0, 0.45)',
+                        background: 'linear-gradient(135deg, rgba(249, 115, 22, 0.25), rgba(234, 88, 12, 0.15))',
+                        border: '1px solid rgba(249, 115, 22, 0.45)',
                         color: '#ffffff',
                         fontSize: '14.5px',
                         fontWeight: '700',
@@ -2605,18 +2605,18 @@ function App() {
                         alignItems: 'center',
                         justifyContent: 'center',
                         gap: '6px',
-                        boxShadow: '0 4px 15px rgba(255, 119, 0, 0.15)',
+                        boxShadow: '0 4px 15px rgba(249, 115, 22, 0.15)',
                         transition: 'all 0.25s ease'
                       }}
                       onMouseEnter={e => {
-                        e.currentTarget.style.background = 'linear-gradient(90deg, #FFAA00 0%, #FF5500 100%)';
+                        e.currentTarget.style.background = 'linear-gradient(135deg, #f97316, #ea580c)';
                         e.currentTarget.style.color = '#ffffff';
-                        e.currentTarget.style.boxShadow = '0 6px 20px rgba(255, 119, 0, 0.4)';
+                        e.currentTarget.style.boxShadow = '0 6px 20px rgba(249, 115, 22, 0.4)';
                       }}
                       onMouseLeave={e => {
-                        e.currentTarget.style.background = 'linear-gradient(90deg, rgba(255,170,0,0.25) 0%, rgba(255,85,0,0.15) 100%)';
+                        e.currentTarget.style.background = 'linear-gradient(135deg, rgba(249, 115, 22, 0.25), rgba(234, 88, 12, 0.15))';
                         e.currentTarget.style.color = '#ffffff';
-                        e.currentTarget.style.boxShadow = '0 4px 15px rgba(255, 119, 0, 0.15)';
+                        e.currentTarget.style.boxShadow = '0 4px 15px rgba(249, 115, 22, 0.15)';
                       }}
                     >
                       <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: '6px', flexShrink: 0 }}>
@@ -2661,7 +2661,7 @@ function App() {
                   <button 
                     onClick={() => { setView('admin'); sessionStorage.setItem('adminView','admin'); }}
                     style={{
-                      background: 'linear-gradient(90deg, #FFAA00 0%, #FF5500 100%)',
+                      background: 'linear-gradient(135deg, #f97316, #ea580c)',
                       border: '1px solid #ea580c',
                       color: '#ffffff',
                       fontSize: '14.5px',
@@ -2673,18 +2673,18 @@ function App() {
                       alignItems: 'center',
                       justifyContent: 'center',
                       gap: '6px',
-                      boxShadow: '0 4px 15px rgba(255, 119, 0, 0.3)',
+                      boxShadow: '0 4px 15px rgba(249, 115, 22, 0.3)',
                       transition: 'all 0.25s ease'
                     }}
                     onMouseEnter={e => {
-                      e.currentTarget.style.background = 'linear-gradient(90deg, #FF8800 0%, #FF3300 100%)';
+                      e.currentTarget.style.background = 'linear-gradient(135deg, #ea580c, #c2410c)';
                       e.currentTarget.style.color = '#ffffff';
-                      e.currentTarget.style.boxShadow = '0 6px 20px rgba(255, 119, 0, 0.45)';
+                      e.currentTarget.style.boxShadow = '0 6px 20px rgba(249, 115, 22, 0.45)';
                     }}
                     onMouseLeave={e => {
-                      e.currentTarget.style.background = 'linear-gradient(90deg, #FFAA00 0%, #FF5500 100%)';
+                      e.currentTarget.style.background = 'linear-gradient(135deg, #f97316, #ea580c)';
                       e.currentTarget.style.color = '#ffffff';
-                      e.currentTarget.style.boxShadow = '0 4px 15px rgba(255, 119, 0, 0.3)';
+                      e.currentTarget.style.boxShadow = '0 4px 15px rgba(249, 115, 22, 0.3)';
                     }}
                   >
                     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: '6px', flexShrink: 0 }}>
@@ -2731,7 +2731,7 @@ function App() {
           <div className="hero-grid-split">
             <div className="hero-content-left">
               <div className="hero-badge">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" style={{ color: '#FF5500', flexShrink: 0 }}>
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" style={{ color: '#ea580c', flexShrink: 0 }}>
                   <rect x="3" y="11" width="18" height="10" rx="2" />
                   <circle cx="12" cy="5" r="2" />
                   <path d="M12 7v4" />
@@ -2963,7 +2963,7 @@ function App() {
               width: '100%',
               maxWidth: '360px',
               backdropFilter: 'blur(10px)',
-              boxShadow: '0 20px 40px -15px rgba(255, 119, 0, 0.15)',
+              boxShadow: '0 20px 40px -15px rgba(249, 115, 22, 0.15)',
               position: 'relative',
               overflow: 'hidden',
               display: 'flex',
@@ -2977,7 +2977,7 @@ function App() {
                 position: 'absolute',
                 top: '0',
                 right: '0',
-                background: 'linear-gradient(90deg, #FFAA00 0%, #FF5500 100%)',
+                background: 'linear-gradient(135deg, #f97316, #ea580c)',
                 color: '#ffffff',
                 padding: '6px 20px',
                 borderBottomLeftRadius: '16px',
@@ -3110,7 +3110,7 @@ function App() {
               width: '280px',
               borderRadius: '16px',
               overflow: 'hidden',
-              boxShadow: '0 12px 40px rgba(0,0,0,0.1), 0 0 30px rgba(255, 119, 0, 0.2)',
+              boxShadow: '0 12px 40px rgba(0,0,0,0.1), 0 0 30px rgba(249, 115, 22, 0.2)',
               border: '2px solid #fed7aa',
               transition: 'transform 0.3s ease'
             }}>
@@ -3168,11 +3168,11 @@ function App() {
               <h4>Liên Hệ Đăng Ký</h4>
               <div className="footer-contact-list">
                 <div className="footer-contact-item">
-                  <span style={{ color: '#FF8800' }}>💬</span>
+                  <span style={{ color: '#f97316' }}>💬</span>
                   <span>Zalo Admin: <a href="http://zaloapp.com/qr/p/fd2gcjcjfuof" target="_blank" rel="noopener noreferrer">Phạm Thắng</a></span>
                 </div>
                 <div className="footer-contact-item">
-                  <span style={{ color: '#FF8800' }}>🌐</span>
+                  <span style={{ color: '#f97316' }}>🌐</span>
                   <span>Cộng đồng hỗ trợ & hướng dẫn kiếm tiền</span>
                 </div>
               </div>
@@ -3214,7 +3214,7 @@ function App() {
             onClick={() => { setView('home'); sessionStorage.removeItem('adminView'); setSidebarOpen(false); }}
             style={{ 
               background: '#fff7ed', 
-              color: '#FF5500', 
+              color: '#ea580c', 
               fontWeight: '600', 
               borderLeft: '3px solid #f97316', 
               marginBottom: '4px',
@@ -3298,7 +3298,7 @@ function App() {
             )}
             <div style={{ overflow: 'hidden', flex: 1, minWidth: 0 }}>
               <div style={{ fontSize: '13px', fontWeight: '700', color: '#0f172a', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{user?.fullName}</div>
-              <div style={{ fontSize: '10px', color: '#FF5500', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.5px' }}>{user?.role}</div>
+              <div style={{ fontSize: '10px', color: '#ea580c', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.5px' }}>{user?.role}</div>
             </div>
           </div>
           <button 
@@ -3308,7 +3308,7 @@ function App() {
               fontSize: '13px', 
               padding: '10px', 
               background: '#fff7ed', 
-              color: '#FF5500', 
+              color: '#ea580c', 
               border: '1px solid #fed7aa', 
               borderRadius: '8px', 
               cursor: 'pointer',
@@ -3374,7 +3374,7 @@ function App() {
                 gap: '8px', 
                 padding: '8px 16px',
                 background: '#fff7ed',
-                color: '#FF5500',
+                color: '#ea580c',
                 border: '1px solid #fed7aa',
                 fontWeight: '600',
                 fontSize: '13.5px',
@@ -3441,7 +3441,7 @@ function App() {
                         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
                       </div>
                       <span className="stat-label">Chờ duyệt rút tiền</span>
-                      <span className="stat-val" style={{ color: stats.pendingPayoutsCount > 0 ? '#FF5500' : 'inherit' }}>
+                      <span className="stat-val" style={{ color: stats.pendingPayoutsCount > 0 ? '#ea580c' : 'inherit' }}>
                         {stats.pendingPayoutsCount}
                       </span>
                     </div>

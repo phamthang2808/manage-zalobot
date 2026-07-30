@@ -2788,35 +2788,50 @@ function App() {
                 <div className="zalo-chat-body">
                   <div className="chat-date-divider">Hôm nay</div>
 
-                  {/* Customer Message */}
-                  <div className="chat-msg customer-msg">
-                    <div className="msg-sender">Nguyễn Mai (Thành viên)</div>
-                    <div className="msg-bubble">
-                      Sếp ơi check giúp em link váy này trên Shopee với nè!
-                      <div className="msg-link-preview">shopee.vn/dam-du-tiec-sang-trong-i.1284920</div>
-                    </div>
-                    <div className="msg-time">08:32 AM</div>
-                  </div>
-
-                  {/* Bot Reply Message */}
-                  <div className="chat-msg bot-msg">
-                    <div className="msg-sender bot-sender">
-                      <span>28Symues Bot</span>
-                      <span className="bot-tag">BOT</span>
-                    </div>
-                    <div className="msg-bubble bot-bubble">
-                      Dạ link mua sắm săn sale có gắn hoa hồng cho chị Mai đây ạ 👇
-                      <div className="converted-link-card">
-                        <div className="link-title">Đầm Dự Tiệc Dáng Xòe Sang Trọng</div>
-                        <div className="link-url">https://s.shopee.vn/aff_829103</div>
-                        <div className="link-meta">
-                          <span className="subid-tag">SubID: Mai_Zalo98</span>
-                          <span className="cashback-tag">+18.500đ Hoa hồng</span>
+                  {/* Customer Message (Gia Trung) */}
+                  <div className="zalo-msg-item">
+                    <div className="zalo-msg-avatar" style={{ background: '#0068ff', color: '#ffffff' }}>GT</div>
+                    <div className="zalo-msg-content">
+                      <div className="zalo-msg-sender">Gia Trung</div>
+                      <div className="zalo-msg-bubble">
+                        <div style={{ wordBreak: 'break-all' }}>https://shopee.vn/product/363419620/16124463327?d_id=3416e</div>
+                        <div className="zalo-link-preview-card">
+                          <div className="zalo-link-preview-info">
+                            <div className="zalo-link-preview-title">Dây Mạng CAT5e Bấm Sẵn 2 Đầu 5m 10m 20m 25m 30m...</div>
+                            <div className="zalo-link-preview-desc">Mua Dây Mạng CAT5e Bấm Sẵn 2 Đầu 5m 10m 20m 25m 30m 40m 50m - dây cáp mạng lan chính hãng giá tốt...</div>
+                            <div className="zalo-link-preview-site">shopee.vn</div>
+                          </div>
                         </div>
                       </div>
+                      <div className="zalo-msg-time">12:21</div>
                     </div>
-                    <div className="msg-time">08:32 AM</div>
                   </div>
+
+                  {/* Bot Reply Message (Meomeo) */}
+                  <div className="zalo-msg-item">
+                    <div className="zalo-msg-avatar bot">
+                      <img src="/logo.jpg" alt="Bot Avatar" />
+                    </div>
+                    <div className="zalo-msg-content">
+                      <div className="zalo-msg-sender">Meomeo <span className="bot-tag">BOT</span></div>
+                      <div className="zalo-msg-bubble bot">
+                        <div className="zalo-quote-box">
+                          <div className="zalo-quote-sender">Gia Trung</div>
+                          <div className="zalo-quote-text">[Link] https://shopee.vn/product/363419620/16124463327?d_id=3416e</div>
+                        </div>
+                        <div style={{ whiteSpace: 'pre-line' }}>
+                          Hi @Gia Trung, link của bạn đây ạ:<br />
+                          📦 <strong>Dây Mạng CAT5e Bấm Sẵn 2 Đầu 5m 10m 20m 25m 30m 40m 50m - dây cáp mạng lan chính hãng</strong><br />
+                          💵 Giá tham khảo: đ22.000<br />
+                          🔗 Link: <span style={{ color: 'var(--brand-600)', textDecoration: 'underline', wordBreak: 'break-all' }}>https://s.shopee.vn/an_redir?origin_link=https%3A%2F%2Fshopee.vn%2Fproduct%2F363419620%2F16124463327</span><br />
+                          💵 Tổng hoa hồng: 3.5% (đ770) [Shopee: 3.5% (đ770)]<br />
+                          ⚠️ <strong>Lưu ý:</strong> Click xong mua ngay trong ngày (nên bấm link lần 2 trước khi đặt hàng để tăng tỉ lệ chuyển đổi), không xem Video/Live, xóa giỏ trước khi click.
+                        </div>
+                      </div>
+                      <div className="zalo-msg-time">12:21</div>
+                    </div>
+                  </div>
+
                 </div>
               </div>
             </div>

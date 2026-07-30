@@ -750,10 +750,10 @@ function App() {
     setPayouts([]);
   };
 
-  // Format currency
+  // Format currency — chuẩn "1.250.000 ₫" theo spec fe.md
   const formatMoney = (val) => {
-    if (val === undefined || val === null || isNaN(val)) return '0đ';
-    return Math.round(val).toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.') + 'đ';
+    if (val === undefined || val === null || isNaN(val)) return '0 ₫';
+    return Math.round(val).toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.') + ' ₫';
   };
 
   // Format DateTime string
@@ -891,26 +891,25 @@ function App() {
 
   const toastElement = toast && (
     <div className="custom-toast-popup" style={{
-      background: '#ffffff',
-      border: '1px solid #e2e8f0',
-      borderLeft: '4px solid #f97316',
-      borderRadius: '14px',
-      boxShadow: '0 10px 30px -5px rgba(0,0,0,0.1)',
+      background: 'var(--white)',
+      border: '1px solid var(--gray-200)',
+      borderLeft: '4px solid var(--brand-500)',
+      borderRadius: 'var(--radius-lg)',
+      boxShadow: 'var(--shadow-lg)',
       top: '72px'
     }}>
       {/* Icon Badge */}
       <div style={{
-        width: '40px',
-        height: '40px',
-        minWidth: '40px',
+        width: '38px',
+        height: '38px',
+        minWidth: '38px',
         borderRadius: '50%',
-        background: '#fff7ed',
-        border: '1.5px solid #fed7aa',
+        background: 'var(--brand-50)',
+        border: '1px solid var(--brand-200)',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        flexShrink: 0,
-        boxShadow: '0 0 14px rgba(249,115,22,0.15)'
+        flexShrink: 0
       }}>
         {toast.type === 'success' ? (
           <svg style={{ width: '18px', height: '18px', color: '#ea580c' }} fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
@@ -930,15 +929,14 @@ function App() {
       {/* Content */}
       <div style={{ flex: 1, textAlign: 'left' }}>
         <div style={{
-          fontSize: '14px',
-          fontWeight: '700',
-          color: '#0f172a',
-          marginBottom: '3px',
-          letterSpacing: '0.1px'
+          fontSize: 'var(--text-sm)',
+          fontWeight: '600',
+          color: 'var(--navy-900)',
+          marginBottom: '2px'
         }}>
-          {toast.type === 'success' ? '✓  Thành công' : (toast.type === 'error' ? '⚠  Có lỗi xảy ra' : 'ℹ  Thông báo')}
+          {toast.type === 'success' ? 'Thành công' : (toast.type === 'error' ? 'Có lỗi xảy ra' : 'Thông báo')}
         </div>
-        <div style={{ fontSize: '13px', color: '#475569', lineHeight: '1.45' }}>
+        <div style={{ fontSize: 'var(--text-xs)', color: 'var(--navy-700)', lineHeight: '1.5' }}>
           {toast.message}
         </div>
       </div>
@@ -971,7 +969,7 @@ function App() {
         left: 0,
         height: '2px',
         borderRadius: '0 0 14px 14px',
-        background: 'linear-gradient(90deg, #f97316, #ea580c)',
+        background: 'var(--brand-500)',
         animation: 'toastProgress 4s linear forwards'
       }} />
     </div>
@@ -3204,22 +3202,14 @@ function App() {
       <aside className={`sidebar${sidebarOpen ? ' open' : ''}`}>
         <div className="sidebar-header">
           <div className="sidebar-logo">
-            <img src="/logo.jpg" alt="Logo" style={{ width: '34px', height: '34px', borderRadius: '50%', objectFit: 'cover', border: '2px solid #fed7aa' }} />
-            <span>28Symues Admin</span>
+            <img src="/logo.jpg" alt="Logo" style={{ width: '32px', height: '32px', borderRadius: '50%', objectFit: 'cover', border: '1.5px solid var(--brand-200)' }} />
+            <span>28Symues</span>
           </div>
         </div>
         <ul className="sidebar-menu">
           <li 
             className="menu-item"
             onClick={() => { setView('home'); sessionStorage.removeItem('adminView'); setSidebarOpen(false); }}
-            style={{ 
-              background: '#fff7ed', 
-              color: '#ea580c', 
-              fontWeight: '600', 
-              borderLeft: '3px solid #f97316', 
-              marginBottom: '4px',
-              fontSize: '14px'
-            }}
           >
             <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style={{ flexShrink: 0 }}><path d="M11.47 3.841a.75.75 0 0 1 1.06 0l8.69 8.69a.75.75 0 1 0 1.06-1.061l-8.689-8.69a2.25 2.25 0 0 0-3.182 0l-8.69 8.69a.75.75 0 1 0 1.061 1.06l8.69-8.689Z"/><path d="m12 5.432 8.159 8.159c.03.03.06.058.091.086v6.198c0 1.035-.84 1.875-1.875 1.875H15a.75.75 0 0 1-.75-.75v-4.5a.75.75 0 0 0-.75-.75h-3a.75.75 0 0 0-.75.75V21a.75.75 0 0 1-.75.75H5.625a1.875 1.875 0 0 1-1.875-1.875v-6.198a.465.465 0 0 0 .091-.086L12 5.43Z"/></svg>
             Về Trang Chủ
@@ -3271,12 +3261,12 @@ function App() {
             <span style={{ flex: 1 }}>Rút tiền</span>
             {stats.pendingPayoutsCount > 0 && (
               <span style={{
-                background: '#ef4444',
-                color: '#fff',
+                background: 'var(--error-500)',
+                color: 'white',
                 fontSize: '10px',
                 padding: '2px 7px',
                 borderRadius: '20px',
-                fontWeight: 'bold',
+                fontWeight: '700',
                 lineHeight: '1.4'
               }}>{stats.pendingPayoutsCount}</span>
             )}
@@ -3284,44 +3274,27 @@ function App() {
         </ul>
 
         {/* Sidebar Footer */}
-        <div className="sidebar-footer" style={{ padding: '12px 16px 16px', borderTop: '1px solid #e2e8f0' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '12px', padding: '10px 12px', background: '#f8fafc', borderRadius: '10px', border: '1px solid #e2e8f0' }}>
+        <div className="sidebar-footer">
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '10px', padding: '8px 10px', background: 'var(--gray-50)', borderRadius: 'var(--radius-md)', border: '1px solid var(--gray-200)' }}>
             {user?.avatarUrl ? (
               <img 
                 src={user.avatarUrl} 
                 alt="Avatar" 
                 referrerPolicy="no-referrer"
-                style={{ width: '34px', height: '34px', borderRadius: '50%', border: '2px solid #fed7aa', flexShrink: 0 }} 
+                style={{ width: '32px', height: '32px', borderRadius: '50%', border: '1px solid var(--brand-200)', flexShrink: 0 }} 
               />
             ) : (
-              <div className="avatar" style={{ margin: 0, width: '34px', height: '34px', fontSize: '12px', flexShrink: 0 }}>{(user?.fullName || 'PT').substring(0, 2).toUpperCase()}</div>
+              <div className="avatar" style={{ margin: 0 }}>{(user?.fullName || 'PT').substring(0, 2).toUpperCase()}</div>
             )}
             <div style={{ overflow: 'hidden', flex: 1, minWidth: 0 }}>
-              <div style={{ fontSize: '13px', fontWeight: '700', color: '#0f172a', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{user?.fullName}</div>
-              <div style={{ fontSize: '10px', color: '#ea580c', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.5px' }}>{user?.role}</div>
+              <div style={{ fontSize: 'var(--text-sm)', fontWeight: '600', color: 'var(--navy-900)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{user?.fullName}</div>
+              <div style={{ fontSize: 'var(--text-xs)', color: 'var(--brand-600)', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.5px' }}>{user?.role}</div>
             </div>
           </div>
           <button 
             onClick={handleLogout} 
-            style={{ 
-              width: '100%', 
-              fontSize: '13px', 
-              padding: '10px', 
-              background: '#fff7ed', 
-              color: '#ea580c', 
-              border: '1px solid #fed7aa', 
-              borderRadius: '8px', 
-              cursor: 'pointer',
-              fontWeight: '600',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: '7px',
-              transition: 'all 0.2s',
-              letterSpacing: '0.2px'
-            }}
-            onMouseEnter={e => { e.currentTarget.style.background='#ffedd5'; e.currentTarget.style.borderColor='#fdba74'; }}
-            onMouseLeave={e => { e.currentTarget.style.background='#fff7ed'; e.currentTarget.style.borderColor='#fed7aa'; }}
+            className="btn btn-outline"
+            style={{ width: '100%', fontSize: 'var(--text-sm)', justifyContent: 'center', gap: '7px' }}
           >
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
             Đăng xuất
@@ -3367,17 +3340,11 @@ function App() {
                 }
                 fetchData(token, user);
               }} 
+              className="btn btn-outline"
               style={{ 
-                marginLeft: '12px', 
-                display: 'inline-flex', 
-                alignItems: 'center', 
-                gap: '8px', 
-                padding: '8px 16px',
-                background: '#fff7ed',
-                color: '#ea580c',
-                border: '1px solid #fed7aa',
+                marginLeft: '8px',
+                fontSize: 'var(--text-sm)',
                 fontWeight: '600',
-                fontSize: '13.5px',
                 borderRadius: '8px',
                 transition: 'all 0.2s ease'
               }}
@@ -3393,13 +3360,14 @@ function App() {
         <section className="content-body">
           {error && (
             <div style={{
-              background: 'rgba(248, 113, 113, 0.1)',
-              border: '1px solid var(--color-danger)',
-              color: 'var(--color-danger)',
-              padding: '16px',
-              borderRadius: '12px',
-              marginBottom: '24px',
-              fontWeight: '500'
+              background: 'var(--error-50)',
+              border: '1px solid var(--error-500)',
+              color: 'var(--error-700)',
+              padding: '14px 16px',
+              borderRadius: 'var(--radius-md)',
+              marginBottom: '20px',
+              fontWeight: '500',
+              fontSize: 'var(--text-sm)'
             }}>
               ⚠️ Lỗi: {error}. Vui lòng kiểm tra backend server đang chạy ở cổng 8080!
             </div>
@@ -3441,7 +3409,7 @@ function App() {
                         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
                       </div>
                       <span className="stat-label">Chờ duyệt rút tiền</span>
-                      <span className="stat-val" style={{ color: stats.pendingPayoutsCount > 0 ? '#ea580c' : 'inherit' }}>
+                      <span className="stat-val" style={{ color: stats.pendingPayoutsCount > 0 ? 'var(--brand-500)' : 'inherit' }}>
                         {stats.pendingPayoutsCount}
                       </span>
                     </div>
@@ -3489,7 +3457,7 @@ function App() {
                                   <td>{user ? user.zaloName : p.zaloId}</td>
                                   <td>{bankAndAcc.bankName || 'Chưa cấu hình'}</td>
                                   <td><code>{bankAndAcc.accountNumber || 'Chưa cấu hình'}</code></td>
-                                  <td style={{ color: 'var(--color-primary)', fontWeight: 'bold' }}>{formatMoney(p.amount)}</td>
+                                  <td style={{ color: 'var(--brand-600)', fontWeight: '700' }}>{formatMoney(p.amount)}</td>
                                   <td>{formatDateTime(p.createdAt)}</td>
                                   <td>
                                     <button 
@@ -3595,7 +3563,7 @@ function App() {
               {activeTab === 'orders' && (
                 <div className="data-card">
                   {/* Upload file import */}
-                  <div style={{ padding: '16px 0 20px', borderBottom: '1px solid rgba(255,255,255,0.06)', marginBottom: '20px' }}>
+                  <div style={{ padding: '16px 0 20px', borderBottom: '1px solid var(--gray-200)', marginBottom: '20px' }}>
                     <h3 style={{ marginBottom: '12px', fontSize: '15px' }}>📥 Import báo cáo đối soát Shopee (CSV/Excel)</h3>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
                       <input
@@ -3618,11 +3586,11 @@ function App() {
                       <div style={{
                         marginTop: '10px',
                         padding: '10px 14px',
-                        borderRadius: '8px',
-                        fontSize: '13px',
-                        background: importResult.success ? 'rgba(74, 222, 128, 0.1)' : 'rgba(248, 113, 113, 0.1)',
-                        border: `1px solid ${importResult.success ? 'var(--color-success)' : 'var(--color-danger)'}`,
-                        color: importResult.success ? 'var(--color-success)' : 'var(--color-danger)'
+                        borderRadius: 'var(--radius-md)',
+                        fontSize: 'var(--text-sm)',
+                        background: importResult.success ? 'var(--success-50)' : 'var(--error-50)',
+                        border: `1px solid ${importResult.success ? 'var(--success-500)' : 'var(--error-500)'}`,
+                        color: importResult.success ? 'var(--success-700)' : 'var(--error-700)'
                       }}>
                         {importResult.success ? '✅ ' : '❌ '}{importResult.message}
                       </div>
@@ -3666,7 +3634,7 @@ function App() {
                             return (
                               <tr key={o.id}>
                                 <td>
-                                  <code style={{ fontWeight: 'bold', fontSize: '12.5px', color: '#fff' }}>{o.orderId}</code>
+                                  <code style={{ fontWeight: '600', fontSize: 'var(--text-xs)', color: 'var(--navy-800)', background: 'var(--gray-100)', padding: '2px 6px', borderRadius: '4px' }}>{o.orderId}</code>
                                 </td>
                                 <td title={o.productName} style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                                   {o.productName}
@@ -3799,19 +3767,19 @@ function App() {
             </header>
             <div className="modal-body">
               <div className="member-detail-grid">
-                <div className="detail-item" style={{ padding: '20px', background: 'rgba(255,255,255,0.03)', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.05)' }}>
+                <div className="detail-item">
                   <div className="detail-label" style={{ fontSize: '12px', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '8px', color: 'var(--text-muted)' }}>Tên thành viên</div>
                   <div className="detail-value" style={{ color: 'var(--color-primary)', fontSize: '22px', fontWeight: '700' }}>{selectedUser.zaloName || 'Vô danh'}</div>
                 </div>
-                <div className="detail-item" style={{ padding: '20px', background: 'rgba(255,255,255,0.03)', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.05)' }}>
+                <div className="detail-item">
                   <div className="detail-label" style={{ fontSize: '12px', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '8px', color: 'var(--text-muted)' }}>Zalo ID</div>
-                  <div className="detail-value" style={{ fontSize: '16px', wordBreak: 'break-all', fontFamily: 'monospace', color: '#fff' }}>{selectedUser.zaloId}</div>
+                  <div className="detail-value" style={{ fontSize: '16px', wordBreak: 'break-all', fontFamily: 'monospace', color: 'var(--navy-800)' }}>{selectedUser.zaloId}</div>
                 </div>
-                <div className="detail-item" style={{ padding: '20px', background: 'rgba(255,255,255,0.03)', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.05)' }}>
+                <div className="detail-item">
                   <div className="detail-label" style={{ fontSize: '12px', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '8px', color: 'var(--text-muted)' }}>Ngân hàng nhận tiền</div>
-                  <div className="detail-value" style={{ fontSize: '20px', fontWeight: '600', color: '#fff' }}>{getBankAndAccount(selectedUser).bankName || '⚠️ Chưa cập nhật'}</div>
+                  <div className="detail-value" style={{ fontSize: '20px', fontWeight: '600', color: 'var(--navy-800)' }}>{getBankAndAccount(selectedUser).bankName || '⚠️ Chưa cập nhật'}</div>
                 </div>
-                <div className="detail-item" style={{ padding: '20px', background: 'rgba(255,255,255,0.03)', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.05)' }}>
+                <div className="detail-item">
                   <div className="detail-label" style={{ fontSize: '12px', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '8px', color: 'var(--text-muted)' }}>Số tài khoản</div>
                   <div className="detail-value"><code style={{ fontSize: '20px', letterSpacing: '2px', fontWeight: '700', color: 'var(--color-success)' }}>{getBankAndAccount(selectedUser).accountNumber || '⚠️ Chưa cập nhật'}</code></div>
                 </div>

@@ -2726,6 +2726,12 @@ function App() {
 
         {/* Hero Section */}
         <section id="home" className="hero-section">
+          {/* Floating Coins & Stars near the edges */}
+          <div className="floating-coin coin-edge-1">🪙</div>
+          <div className="floating-coin coin-edge-2">🪙</div>
+          <div className="floating-star star-edge-1">⭐</div>
+          <div className="floating-star star-edge-2">✨</div>
+
           <div className="hero-grid-split">
             <div className="hero-content-left">
               <div className="hero-badge">
@@ -2758,6 +2764,12 @@ function App() {
 
             {/* Live Interactive Zalo Bot Chat Mockup */}
             <div className="hero-mockup-right">
+              {/* Only one main mascot cat should attract attention with a subtle glow */}
+              <div className="hero-main-mascot-container">
+                <div className="hero-mascot-glow"></div>
+                <img src="/logo.jpg" className="hero-main-mascot" alt="Mascot Cat" />
+              </div>
+
               {/* Floating Badges */}
               <div className="floating-badge badge-top-right">
                 <span className="badge-icon">⚡</span>

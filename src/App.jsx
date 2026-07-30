@@ -58,6 +58,36 @@ function App() {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
+  // Intersection Observer for scroll reveal animations on landing page
+  useEffect(() => {
+    if (view !== 'home') return;
+
+    const timer = setTimeout(() => {
+      const revealCallback = (entries, observer) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('reveal-visible');
+            observer.unobserve(entry.target);
+          }
+        });
+      };
+
+      const revealObserver = new IntersectionObserver(revealCallback, {
+        threshold: 0.05,
+        rootMargin: '0px 0px -50px 0px'
+      });
+
+      const elementsToReveal = document.querySelectorAll('.reveal');
+      elementsToReveal.forEach(el => revealObserver.observe(el));
+
+      return () => {
+        revealObserver.disconnect();
+      };
+    }, 150);
+
+    return () => clearTimeout(timer);
+  }, [view]);
+
   const isAdmin = user?.role === 'ADMIN' || user?.role === 'SUPER_ADMIN' || user?.isAdmin || false;
 
   useEffect(() => {
@@ -994,7 +1024,8 @@ function App() {
           .lookup-page-container {
             min-height: 100vh;
             width: 100%;
-            background: #f8fafc;
+            /* Shopee-inspired soft orange gradient */
+            background: linear-gradient(135deg, #FFFDF9 0%, #FFF5E8 35%, #FFE7C2 70%, #FFD79A 100%);
             color: #1e293b;
             font-family: 'Inter', system-ui, sans-serif;
             padding: 16px;
@@ -1002,40 +1033,19 @@ function App() {
             flex-direction: column;
             align-items: center;
             position: relative;
-            overflow: hidden;
+            overflow-x: hidden;
           }
-          /* Animated gradient orbs */
+          /* Background illustration as a secondary, low-opacity layer */
           .lookup-page-container::before {
             content: '';
             position: absolute;
-            top: -15%;
-            left: -10%;
-            width: 700px;
-            height: 700px;
-            background: radial-gradient(circle, rgba(249, 115, 22, 0.1) 0%, rgba(234, 88, 12, 0.03) 40%, transparent 70%);
-            z-index: 1;
+            inset: 0;
+            background: url("/ChatGPT Image 16_03_45 30 thg 7, 2026.png") no-repeat center center;
+            background-size: cover;
+            background-attachment: fixed;
+            opacity: 0.10; /* Reduced opacity to be secondary */
             pointer-events: none;
-            animation: lookupFloatOrb1 8s ease-in-out infinite;
-          }
-          .lookup-page-container::after {
-            content: '';
-            position: absolute;
-            bottom: -20%;
-            right: -10%;
-            width: 600px;
-            height: 600px;
-            background: radial-gradient(circle, rgba(249, 115, 22, 0.08) 0%, rgba(234, 88, 12, 0.02) 40%, transparent 70%);
-            z-index: 1;
-            pointer-events: none;
-            animation: lookupFloatOrb2 10s ease-in-out infinite;
-          }
-          @keyframes lookupFloatOrb1 {
-            0%, 100% { transform: translate(0, 0) scale(1); }
-            50% { transform: translate(40px, 30px) scale(1.1); }
-          }
-          @keyframes lookupFloatOrb2 {
-            0%, 100% { transform: translate(0, 0) scale(1); }
-            50% { transform: translate(-30px, -40px) scale(1.05); }
+            z-index: 0;
           }
           /* Ensure universal border-box box-sizing inside lookup card so all edges align perfectly */
           .lookup-card, .lookup-card * {
@@ -2030,7 +2040,8 @@ function App() {
           .login-page-split {
             min-height: 100vh;
             width: 100%;
-            background: #f8fafc;
+            /* Shopee-inspired soft orange gradient */
+            background: linear-gradient(135deg, #FFFDF9 0%, #FFF5E8 35%, #FFE7C2 70%, #FFD79A 100%);
             display: flex;
             flex-direction: column;
             position: relative;
@@ -2038,29 +2049,17 @@ function App() {
             box-sizing: border-box;
             color: #1e293b;
           }
+          /* Background illustration as a secondary, low-opacity layer */
           .login-page-split::before {
             content: '';
             position: absolute;
-            top: -10%;
-            left: -10%;
-            width: 500px;
-            height: 500px;
-            background: radial-gradient(circle, rgba(249, 115, 22, 0.1) 0%, rgba(234, 88, 12, 0.03) 40%, transparent 70%);
-            z-index: 1;
+            inset: 0;
+            background: url("/ChatGPT Image 16_03_45 30 thg 7, 2026.png") no-repeat center center;
+            background-size: cover;
+            background-attachment: fixed;
+            opacity: 0.10; /* Reduced opacity to be secondary */
             pointer-events: none;
-            animation: floatOrb1 12s ease-in-out infinite;
-          }
-          .login-page-split::after {
-            content: '';
-            position: absolute;
-            bottom: -10%;
-            right: -10%;
-            width: 500px;
-            height: 500px;
-            background: radial-gradient(circle, rgba(249, 115, 22, 0.08) 0%, rgba(234, 88, 12, 0.02) 40%, transparent 70%);
-            z-index: 1;
-            pointer-events: none;
-            animation: floatOrb2 15s ease-in-out infinite;
+            z-index: 0;
           }
           .login-split-header {
             height: 70px;
@@ -2770,19 +2769,6 @@ function App() {
                 <img src="/logo.jpg" className="hero-main-mascot" alt="Mascot Cat" />
               </div>
 
-              {/* Floating Badges */}
-              <div className="floating-badge badge-top-right">
-                <span className="badge-icon">⚡</span>
-                <span className="badge-text">Tốc độ &lt; 0.5s</span>
-              </div>
-              <div className="floating-badge badge-mid-left">
-                <span className="badge-icon">💰</span>
-                <span className="badge-text">+18.500đ Vừa ghi nhận</span>
-              </div>
-              <div className="floating-badge badge-bot-right">
-                <span className="badge-icon">🤖</span>
-                <span className="badge-text">AI GPT-4o Tự Động</span>
-              </div>
 
               {/* iPhone / Zalo App Mockup */}
               <div className="zalo-phone-mockup">
@@ -2851,32 +2837,39 @@ function App() {
         </section>
 
         {/* Features Section */}
-        <section id="features" className="features-section">
+        <section id="features" className="features-section reveal">
           <h2 className="section-title">Tính Năng Nổi Bật</h2>
           <p className="section-subtitle">Mọi thứ bạn cần để vận hành hệ thống săn sale hoa hồng tự động</p>
           <div className="features-grid">
-            <div className="feature-card">
+            <div className="feature-card reveal reveal-delay-1">
               <div className="feature-icon"><i className="fa-regular fa-link"></i></div>
               <h3 className="feature-title">Chuyển Đổi Link Tự Động</h3>
               <p className="feature-desc">
                 Tự động nhận diện link Shopee, Lazada, TikTok Shop và chuyển đổi thành link affiliate có gắn Zalo ID của người gửi làm sub_id.
               </p>
             </div>
-            <div className="feature-card success">
+            <div className="feature-card success reveal reveal-delay-2">
               <div className="feature-icon"><i className="fa-brands fa-bots"></i></div>
               <h3 className="feature-title">Tương Tác Bằng AI</h3>
               <p className="feature-desc">
                 Sử dụng mô hình AI GPT-4o để tự động soạn thảo lời phản hồi vui nhộn, hấp dẫn, nâng cao tỷ lệ nhấn click mua sản phẩm.
               </p>
             </div>
-            <div className="feature-card warning">
+            <div className="feature-card warning reveal reveal-delay-3">
               <div className="feature-icon"><i className="fa-regular fa-chart-area"></i></div>
               <h3 className="feature-title">Thống Kê Chi Tiết</h3>
               <p className="feature-desc">
                 Theo dõi đầy đủ lịch sử đơn hàng đã mua, phần trăm hoa hồng tạm tính và doanh số rút tiền của từng thành viên trong hệ thống.
               </p>
             </div>
-            <div className="feature-card">
+            <div className="feature-card info reveal reveal-delay-1">
+              <div className="feature-icon"><i className="fa-regular fa-bolt" style={{ color: '#ea580c' }}></i></div>
+              <h3 className="feature-title">Tốc Độ Xử Lý &lt; 0.5s</h3>
+              <p className="feature-desc">
+                Đường truyền siêu tốc, bot phản hồi ngay lập tức dưới 0.5 giây. Tự động trả link ngay sau khi thành viên gửi sản phẩm.
+              </p>
+            </div>
+            <div className="feature-card reveal reveal-delay-2">
               <div className="feature-icon"><i className="fa-brands fa-cc-apple-pay"></i></div>
               <h3 className="feature-title">Rút Tiền Tự Động</h3>
               <p className="feature-desc">
@@ -2887,21 +2880,21 @@ function App() {
         </section>
 
         {/* Steps Section */}
-        <section id="steps" className="instructions-section" style={{ borderTop: '1px solid #e2e8f0', borderBottom: '1px solid #e2e8f0' }}>
+        <section id="steps" className="instructions-section reveal" style={{ borderTop: '1px solid #e2e8f0', borderBottom: '1px solid #e2e8f0' }}>
           <h2 className="section-title">3 Bước Bắt Đầu Đơn Giản</h2>
           <p className="section-subtitle">Chỉ mất 5 phút để thiết lập và khởi chạy chatbot trong nhóm của bạn</p>
           <div className="instructions-grid">
-            <div className="instruction-step">
+            <div className="instruction-step reveal reveal-delay-1">
               <div className="step-num">1</div>
               <h3 className="step-title">Quét QR Kết Nối</h3>
               <p className="step-desc">Quét mã QR Zalo từ client bot để kết nối tài khoản phụ làm bot săn sale tự động.</p>
             </div>
-            <div className="instruction-step">
+            <div className="instruction-step reveal reveal-delay-2">
               <div className="step-num">2</div>
               <h3 className="step-title">Thêm Vào Nhóm Chat</h3>
               <p className="step-desc">Thêm Bot vào nhóm săn sale của bạn. Bot sẽ tự động chào và lắng nghe các link sản phẩm.</p>
             </div>
-            <div className="instruction-step">
+            <div className="instruction-step reveal reveal-delay-3">
               <div className="step-num">3</div>
               <h3 className="step-title">Mua Sắm & Nhận Tiền</h3>
               <p className="step-desc">Mọi đơn hàng thành công sẽ được đối soát và cộng dồn ví hoa hồng, rút nhanh qua lệnh chat.</p>
@@ -2910,7 +2903,7 @@ function App() {
         </section>
 
         {/* Pricing Section */}
-        <section id="pricing" className="pricing-section" style={{ padding: '80px 20px', textAlign: 'center', position: 'relative', zIndex: 10 }}>
+        <section id="pricing" className="pricing-section reveal" style={{ padding: '80px 20px', textAlign: 'center', position: 'relative', zIndex: 10 }}>
           <h2 className="section-title" style={{ fontSize: '36px', fontWeight: '800', color: '#0f172a', marginBottom: '12px' }}>Bảng Giá Dịch Vụ</h2>
           <p className="section-subtitle" style={{ color: '#475569', fontSize: '16px', marginBottom: '48px' }}>Chi phí tối ưu, hiệu quả tối đa cho nhóm Zalo săn sale của bạn</p>
           
@@ -2924,7 +2917,7 @@ function App() {
           }}>
             
             {/* Gói Thường */}
-            <div className="pricing-card" style={{
+            <div className="pricing-card reveal reveal-delay-1" style={{
               background: '#ffffff',
               border: '1px solid #e2e8f0',
               borderRadius: '24px',
@@ -2979,8 +2972,8 @@ function App() {
               </a>
             </div>
 
-            {/* Gói Pro - Phổ biến nhất */}
-            <div className="pricing-card" style={{
+             {/* Gói Pro - Phổ biến nhất */}
+            <div className="pricing-card reveal reveal-delay-2" style={{
               background: '#ffffff',
               border: '2px solid #f97316',
               borderRadius: '24px',
@@ -3056,7 +3049,7 @@ function App() {
             </div>
 
             {/* Gói Pro Max */}
-            <div className="pricing-card" style={{
+            <div className="pricing-card reveal reveal-delay-3" style={{
               background: '#ffffff',
               border: '1px solid #e2e8f0',
               borderRadius: '24px',

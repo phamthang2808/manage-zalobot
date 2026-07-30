@@ -1073,13 +1073,13 @@ function App() {
           }
           .lookup-admin-link {
             font-size: 13px;
-            color: #475569;
+            color: #0f172a;
             text-decoration: none;
             background: #ffffff;
             padding: 6px 14px;
             border-radius: 20px;
-            border: 1px solid #cbd5e1;
-            font-weight: 600;
+            border: 1.5px solid #94a3b8;
+            font-weight: 700;
             transition: all 0.2s ease;
           }
           .lookup-admin-link:hover {
@@ -1092,18 +1092,18 @@ function App() {
             max-width: 600px;
             box-sizing: border-box !important;
             background: #ffffff;
-            border: 1px solid #e2e8f0;
+            border: 1.5px solid #cbd5e1;
             backdrop-filter: blur(16px);
             -webkit-backdrop-filter: blur(16px);
             border-radius: 16px;
             padding: 24px;
-            box-shadow: 0 10px 30px -5px rgba(0,0,0,0.06);
+            box-shadow: 0 10px 30px -5px rgba(0,0,0,0.08);
             margin-bottom: 24px;
             overflow: hidden;
           }
           .lookup-title {
             font-size: 22px;
-            font-weight: 700;
+            font-weight: 800;
             text-align: center;
             color: #0f172a;
             margin-bottom: 8px;
@@ -1113,15 +1113,16 @@ function App() {
             gap: 8px;
           }
           .lookup-subtitle {
-            font-size: 13px;
-            color: #64748b;
+            font-size: 13.5px;
+            color: #334155;
+            font-weight: 600;
             text-align: center;
             margin-bottom: 24px;
           }
           .lookup-tabs {
             display: flex;
-            background: #f1f5f9;
-            border: 1px solid #e2e8f0;
+            background: #e2e8f0;
+            border: 1.5px solid #cbd5e1;
             padding: 4px;
             border-radius: 8px;
             margin-bottom: 16px;
@@ -1130,13 +1131,13 @@ function App() {
             flex: 1;
             text-align: center;
             padding: 10px;
-            font-size: 13px;
-            font-weight: 600;
+            font-size: 13.5px;
+            font-weight: 700;
             border-radius: 6px;
             cursor: pointer;
             background: transparent;
             border: none;
-            color: #64748b;
+            color: #475569;
             transition: all 0.2s ease;
           }
           .lookup-tab.active {
@@ -1152,9 +1153,9 @@ function App() {
           }
           .lookup-label {
             display: block;
-            font-size: 11px;
-            font-weight: 600;
-            color: #475569;
+            font-size: 12px;
+            font-weight: 700;
+            color: #1e293b;
             margin-bottom: 6px;
             text-transform: uppercase;
             letter-spacing: 0.5px;
@@ -1164,12 +1165,13 @@ function App() {
             min-width: 100% !important;
             max-width: 100% !important;
             box-sizing: border-box !important;
-            background: #f8fafc;
-            border: 1px solid #cbd5e1;
+            background: #ffffff;
+            border: 1.5px solid #94a3b8;
             border-radius: 8px;
             padding: 12px 14px;
             color: #0f172a;
             font-size: 15px;
+            font-weight: 600;
             outline: none;
             transition: all 0.2s ease;
             display: block !important;
@@ -1184,9 +1186,9 @@ function App() {
             display: block !important;
           }
           .lookup-input:focus {
-            border-color: #f97316;
+            border-color: #ea580c;
             background: #ffffff;
-            box-shadow: 0 0 12px rgba(249, 115, 22, 0.2);
+            box-shadow: 0 0 12px rgba(249, 115, 22, 0.25);
           }
           .lookup-date-grid {
             display: grid;
@@ -1217,7 +1219,7 @@ function App() {
             background-size: 200% auto;
             color: #ffffff;
             font-size: 15px;
-            font-weight: 700;
+            font-weight: 800;
             border: none;
             border-radius: 8px;
             padding: 14px;
@@ -1247,12 +1249,13 @@ function App() {
             flex-wrap: wrap;
             align-items: center;
             gap: 8px;
-            font-size: 12px;
-            color: #64748b;
+            font-size: 12.5px;
+            color: #334155;
+            font-weight: 600;
           }
           .recent-tag {
-            background: #f1f5f9;
-            border: 1px solid #cbd5e1;
+            background: #ffffff;
+            border: 1.5px solid #cbd5e1;
             border-radius: 12px;
             padding: 4px 10px;
             cursor: pointer;
@@ -1260,28 +1263,30 @@ function App() {
             align-items: center;
             gap: 6px;
             transition: all 0.2s ease;
-            color: #334155;
+            color: #0f172a;
+            font-weight: 700;
           }
           .recent-tag:hover {
-            border-color: #f97316;
+            border-color: #ea580c;
             background: #fff7ed;
             color: #ea580c;
           }
           .recent-close {
             font-size: 12px;
-            color: #ef4444;
+            color: #dc2626;
             font-weight: bold;
           }
           .lookup-error {
             width: 100%;
             max-width: 600px;
             background: #fef2f2;
-            border: 1px solid #fca5a5;
-            color: #b91c1c;
+            border: 1.5px solid #f87171;
+            color: #991b1b;
             padding: 12px 16px;
             border-radius: 8px;
             margin-bottom: 20px;
             font-size: 14px;
+            font-weight: 700;
           }
           .stats-container {
             width: 100%;
@@ -1289,8 +1294,8 @@ function App() {
             margin-bottom: 24px;
           }
           .stats-section-title {
-            font-size: 16px;
-            font-weight: 700;
+            font-size: 17px;
+            font-weight: 800;
             margin-bottom: 12px;
             color: #0f172a;
             display: flex;
@@ -1308,45 +1313,46 @@ function App() {
           .stat-card-item {
             border-radius: 12px;
             padding: 16px;
-            border: 1px solid #e2e8f0;
+            border: 1.5px solid #cbd5e1;
             display: flex;
             flex-direction: column;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.04);
           }
           .stat-card-item.total {
-            background: linear-gradient(135deg, #fff7ed 0%, #ffffff 100%);
-            border-color: #ffedd5;
+            background: linear-gradient(135deg, #ffedd5 0%, #ffffff 100%);
+            border-color: #fdba74;
           }
           .stat-card-item.pending {
             background: linear-gradient(135deg, #fef3c7 0%, #ffffff 100%);
-            border-color: #fde68a;
+            border-color: #fcd34d;
           }
           .stat-card-item.completed {
-            background: linear-gradient(135deg, #ecfdf5 0%, #ffffff 100%);
-            border-color: #a7f3d0;
+            background: linear-gradient(135deg, #d1fae5 0%, #ffffff 100%);
+            border-color: #6ee7b7;
           }
           .stat-card-item.withdrawable {
-            background: linear-gradient(135deg, #fff7ed 0%, #ffffff 100%);
-            border-color: #fed7aa;
+            background: linear-gradient(135deg, #ffedd5 0%, #ffffff 100%);
+            border-color: #fdba74;
           }
           .stat-card-item.received {
-            background: linear-gradient(135deg, #f0fdf4 0%, #ffffff 100%);
-            border-color: #bbf7d0;
+            background: linear-gradient(135deg, #dcfce7 0%, #ffffff 100%);
+            border-color: #86efac;
           }
           .stat-card-label {
-            font-size: 11px;
+            font-size: 11.5px;
             text-transform: uppercase;
-            color: #64748b;
+            color: #334155;
             margin-bottom: 4px;
-            font-weight: 600;
+            font-weight: 700;
+            letter-spacing: 0.5px;
           }
           .stat-card-value {
-            font-size: 22px;
-            font-weight: 800;
+            font-size: 24px;
+            font-weight: 900;
             color: #0f172a;
           }
           .stat-card-value.primary {
-            color: #ea580c;
+            color: #c2410c;
           }
           .orders-container {
             width: 100%;
@@ -1354,28 +1360,30 @@ function App() {
           }
           .order-card-item {
             background: #ffffff;
-            border: 1px solid #e2e8f0;
+            border: 1.5px solid #cbd5e1;
             border-radius: 12px;
             padding: 16px;
             margin-bottom: 12px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.03);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.04);
           }
           .order-card-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 8px;
-            font-size: 12px;
-            color: #64748b;
+            font-size: 12.5px;
+            color: #334155;
+            font-weight: 600;
           }
           .order-id-badge {
             font-family: monospace;
-            font-weight: 700;
-            color: #f97316;
+            font-weight: 800;
+            color: #c2410c;
+            font-size: 13px;
           }
           .order-card-title {
-            font-size: 14px;
-            font-weight: 600;
+            font-size: 14.5px;
+            font-weight: 700;
             color: #0f172a;
             margin-bottom: 10px;
             line-height: 1.4;
@@ -1389,38 +1397,39 @@ function App() {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-top: 1px dashed #e2e8f0;
+            border-top: 1px dashed #cbd5e1;
             padding-top: 10px;
           }
           .order-commission-label {
-            font-size: 12px;
-            color: #64748b;
+            font-size: 12.5px;
+            color: #334155;
+            font-weight: 600;
           }
           .order-commission-val {
-            font-size: 15px;
-            font-weight: 700;
-            color: #10b981;
+            font-size: 16px;
+            font-weight: 800;
+            color: #047857;
           }
           .order-status-badge {
-            font-size: 11px;
-            padding: 3px 8px;
+            font-size: 11.5px;
+            padding: 4px 10px;
             border-radius: 20px;
-            font-weight: 700;
+            font-weight: 800;
           }
           .order-status-badge.completed {
-            background: rgba(16, 185, 129, 0.15);
-            color: #10b981;
-            border: 1px solid rgba(16, 185, 129, 0.3);
+            background: #d1fae5;
+            color: #047857;
+            border: 1px solid #6ee7b7;
           }
           .order-status-badge.pending {
-            background: #fff7ed;
-            color: #ea580c;
-            border: 1px solid #fed7aa;
+            background: #ffedd5;
+            color: #c2410c;
+            border: 1px solid #fdba74;
           }
           .order-status-badge.cancelled {
-            background: #fef2f2;
-            color: #ef4444;
-            border: 1px solid #fecaca;
+            background: #fee2e2;
+            color: #b91c1c;
+            border: 1px solid #fca5a5;
           }
           .lookup-spinner {
             width: 20px;
@@ -2501,42 +2510,50 @@ function App() {
               <div className="modal-google-container" style={{ 
                 position: 'relative', 
                 width: '100%', 
-                minHeight: '42px', 
+                minHeight: '44px', 
                 margin: '0 auto 12px auto' 
               }}>
-                {isMobile ? (
-                  <button 
-                    className="btn-google-custom" 
-                    onClick={handleGoogleLoginMobile}
-                    style={{
-                      width: '100%',
-                      height: '42px',
-                      background: '#ffffff',
-                      color: '#1f2937',
-                      border: '1px solid #d1d5db',
-                      borderRadius: '24px',
-                      fontSize: '14.5px',
-                      fontWeight: '600',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      gap: '12px',
-                      boxShadow: '0 2px 6px rgba(0,0,0,0.15)',
-                      cursor: 'pointer',
-                      transition: 'all 0.2s ease'
-                    }}
-                  >
-                    <svg width="20" height="20" viewBox="0 0 48 48">
-                      <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
-                      <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
-                      <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.28-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24s.92 7.54 2.56 10.78l7.97-6.19z"/>
-                      <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
-                    </svg>
-                    Đăng nhập bằng Google
-                  </button>
-                ) : (
-                  <div id="googleBtnModal" style={{ display: 'flex', justifyContent: 'center' }}></div>
-                )}
+                <button 
+                  className="btn-google-custom" 
+                  onClick={handleGoogleLoginMobile}
+                  style={{
+                    width: '100%',
+                    height: '44px',
+                    background: '#ffffff',
+                    color: '#0f172a',
+                    border: '1.5px solid #cbd5e1',
+                    borderRadius: '12px',
+                    fontSize: '15px',
+                    fontWeight: '700',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '12px',
+                    boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
+                    cursor: 'pointer',
+                    transition: 'all 0.25s ease'
+                  }}
+                  onMouseEnter={e => {
+                    e.currentTarget.style.background = '#fff7ed';
+                    e.currentTarget.style.borderColor = '#f97316';
+                    e.currentTarget.style.color = '#ea580c';
+                    e.currentTarget.style.boxShadow = '0 4px 14px rgba(249, 115, 22, 0.2)';
+                  }}
+                  onMouseLeave={e => {
+                    e.currentTarget.style.background = '#ffffff';
+                    e.currentTarget.style.borderColor = '#cbd5e1';
+                    e.currentTarget.style.color = '#0f172a';
+                    e.currentTarget.style.boxShadow = '0 2px 8px rgba(0,0,0,0.06)';
+                  }}
+                >
+                  <svg width="20" height="20" viewBox="0 0 48 48">
+                    <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
+                    <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
+                    <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.28-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24s.92 7.54 2.56 10.78l7.97-6.19z"/>
+                    <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
+                  </svg>
+                  Đăng nhập bằng Google
+                </button>
               </div>
             </div>
           </div>
@@ -2945,14 +2962,14 @@ function App() {
 
             {/* Gói Pro Max */}
             <div className="pricing-card" style={{
-              background: 'rgba(255, 255, 255, 0.02)',
-              border: '1px solid rgba(255, 255, 255, 0.05)',
+              background: '#ffffff',
+              border: '1px solid #e2e8f0',
               borderRadius: '24px',
               padding: '40px 32px',
               width: '100%',
               maxWidth: '360px',
               backdropFilter: 'blur(10px)',
-              boxShadow: '0 10px 30px -10px rgba(0, 0, 0, 0.3)',
+              boxShadow: '0 10px 30px -10px rgba(0, 0, 0, 0.05)',
               position: 'relative',
               overflow: 'hidden',
               display: 'flex',
@@ -2961,29 +2978,29 @@ function App() {
               transition: 'all 0.3s ease'
             }}>
               <div>
-                <h3 style={{ fontSize: '22px', color: '#fff', marginBottom: '8px', fontWeight: '700' }}>Zalo Bot Affiliate Pro Max</h3>
-                <p style={{ color: 'rgba(255, 255, 255, 0.5)', fontSize: '14px', marginBottom: '24px' }}>Hệ thống ví tiền tự động và rút tiền qua tin nhắn chat</p>
+                <h3 style={{ fontSize: '22px', color: '#0f172a', marginBottom: '8px', fontWeight: '700' }}>Zalo Bot Affiliate Pro Max</h3>
+                <p style={{ color: '#64748b', fontSize: '14px', marginBottom: '24px' }}>Hệ thống ví tiền tự động và rút tiền qua tin nhắn chat</p>
                 
                 <div style={{ marginBottom: '32px' }}>
-                  <span style={{ fontSize: '42px', fontWeight: '800', color: '#fff', fontFamily: 'var(--font-heading)' }}>599.000đ</span>
-                  <span style={{ color: 'rgba(255, 255, 255, 0.6)', fontSize: '15px' }}> / tháng</span>
+                  <span style={{ fontSize: '42px', fontWeight: '800', color: '#0f172a', fontFamily: 'var(--font-heading)' }}>599.000đ</span>
+                  <span style={{ color: '#64748b', fontSize: '15px' }}> / tháng</span>
                 </div>
                 
                 <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 32px 0', textAlign: 'left', display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                  <li style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', color: 'rgba(255, 255, 255, 0.8)', fontSize: '14px' }}>
-                    <span style={{ color: '#34d399', fontWeight: 'bold' }}>✓</span> Đầy đủ toàn bộ tính năng cao cấp của bản Pro.
+                  <li style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', color: '#334155', fontSize: '14px' }}>
+                    <span style={{ color: '#10b981', fontWeight: 'bold' }}>✓</span> Đầy đủ toàn bộ tính năng cao cấp của bản Pro.
                   </li>
-                  <li style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', color: 'rgba(255, 255, 255, 0.8)', fontSize: '14px' }}>
-                    <span style={{ color: '#34d399', fontWeight: 'bold' }}>✓</span> Ví tích lũy tiền tự động: Tự động cộng dồn tiền hoa hồng sau khi đơn hàng thành công.
+                  <li style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', color: '#334155', fontSize: '14px' }}>
+                    <span style={{ color: '#10b981', fontWeight: 'bold' }}>✓</span> Ví tích lũy tiền tự động: Tự động cộng dồn tiền hoa hồng sau khi đơn hàng thành công.
                   </li>
-                  <li style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', color: 'rgba(255, 255, 255, 0.8)', fontSize: '14px' }}>
-                    <span style={{ color: '#34d399', fontWeight: 'bold' }}>✓</span> Rút tiền nhanh bằng tin nhắn: Khách tự gõ lệnh `/rut-tien` trong nhóm để yêu cầu thanh toán.
+                  <li style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', color: '#334155', fontSize: '14px' }}>
+                    <span style={{ color: '#10b981', fontWeight: 'bold' }}>✓</span> Rút tiền nhanh bằng tin nhắn: Khách tự gõ lệnh `/rut-tien` trong nhóm để yêu cầu thanh toán.
                   </li>
-                  <li style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', color: 'rgba(255, 255, 255, 0.8)', fontSize: '14px' }}>
-                    <span style={{ color: '#34d399', fontWeight: 'bold' }}>✓</span> Đường truyền riêng siêu tốc: Chạy trên máy chủ VPS riêng, phản hồi ngay lập tức không trễ lag.
+                  <li style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', color: '#334155', fontSize: '14px' }}>
+                    <span style={{ color: '#10b981', fontWeight: 'bold' }}>✓</span> Đường truyền riêng siêu tốc: Chạy trên máy chủ VPS riêng, phản hồi ngay lập tức không trễ lag.
                   </li>
-                  <li style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', color: 'rgba(255, 255, 255, 0.8)', fontSize: '14px' }}>
-                    <span style={{ color: '#34d399', fontWeight: 'bold' }}>✓</span> Hỗ trợ kỹ thuật ưu tiên 24/7: Xử lý nhanh chóng mọi yêu cầu và sự cố phát sinh.
+                  <li style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', color: '#334155', fontSize: '14px' }}>
+                    <span style={{ color: '#10b981', fontWeight: 'bold' }}>✓</span> Hỗ trợ kỹ thuật ưu tiên 24/7: Xử lý nhanh chóng mọi yêu cầu và sự cố phát sinh.
                   </li>
                 </ul>
               </div>
@@ -3015,7 +3032,7 @@ function App() {
             position: 'relative',
             zIndex: 2
           }}>
-            <h3 style={{ fontSize: '18px', color: '#fff', marginBottom: '16px', fontWeight: '700', textShadow: '0 2px 4px rgba(0,0,0,0.5)', textAlign: 'center', padding: '0 16px', lineHeight: '1.4' }}>
+            <h3 style={{ fontSize: '18px', color: '#0f172a', marginBottom: '16px', fontWeight: '800', textAlign: 'center', padding: '0 16px', lineHeight: '1.4' }}>
               🌟 Quét QR Tham Gia Nhóm Zalo Nhận Hoàn Tiền Ngay
             </h3>
             <div style={{

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+﻿import { useEffect, useState } from 'react';
 
 const API_URL_ROOT = import.meta.env.PROD ? "" : (import.meta.env.VITE_API_URL || 'http://localhost:8080');
 const API_BASE = `${API_URL_ROOT}/api/admin`;
@@ -50,6 +50,15 @@ function App() {
   const [lookupLocalFilter, setLookupLocalFilter] = useState('');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [cfStatus, setCfStatus] = useState('verifying');
+  const [windowWidth, setWindowWidth] = useState(() => typeof window !== 'undefined' ? window.innerWidth : 1200);
+
+  useEffect(() => {
+    const handleResize = () => setWindowWidth(window.innerWidth);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  const isAdmin = user?.role === 'ADMIN' || user?.role === 'SUPER_ADMIN' || user?.isAdmin || false;
 
   useEffect(() => {
     if (view === 'login') {
@@ -139,14 +148,6 @@ function App() {
 
   // Modal State
   const [selectedUser, setSelectedUser] = useState(null);
-
-  const [windowWidth, setWindowWidth] = useState(() => typeof window !== 'undefined' ? window.innerWidth : 375);
-  useEffect(() => {
-    if (typeof window === 'undefined') return;
-    const handleResize = () => setWindowWidth(window.innerWidth);
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
 
   // Fetch all data
   const fetchData = async (currentToken, currentUser) => {
@@ -890,11 +891,11 @@ function App() {
 
   const toastElement = toast && (
     <div className="custom-toast-popup" style={{
-      background: 'linear-gradient(135deg, rgba(17, 14, 4, 0.97), rgba(26, 20, 5, 0.99))',
-      border: '1px solid rgba(251, 191, 36, 0.3)',
-      borderLeft: '4px solid #fbbf24',
+      background: '#ffffff',
+      border: '1px solid #e2e8f0',
+      borderLeft: '4px solid #f97316',
       borderRadius: '14px',
-      boxShadow: '0 20px 50px -8px rgba(0,0,0,0.8), 0 0 35px rgba(245,158,11,0.12)',
+      boxShadow: '0 10px 30px -5px rgba(0,0,0,0.1)',
       top: '72px'
     }}>
       {/* Icon Badge */}
@@ -903,24 +904,24 @@ function App() {
         height: '40px',
         minWidth: '40px',
         borderRadius: '50%',
-        background: 'rgba(245, 158, 11, 0.15)',
-        border: '1.5px solid rgba(251, 191, 36, 0.45)',
+        background: '#fff7ed',
+        border: '1.5px solid #fed7aa',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
         flexShrink: 0,
-        boxShadow: '0 0 14px rgba(245,158,11,0.2)'
+        boxShadow: '0 0 14px rgba(255, 119, 0,0.15)'
       }}>
         {toast.type === 'success' ? (
-          <svg style={{ width: '18px', height: '18px', color: '#fbbf24' }} fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+          <svg style={{ width: '18px', height: '18px', color: '#FF5500' }} fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5"></path>
           </svg>
         ) : toast.type === 'error' ? (
-          <svg style={{ width: '18px', height: '18px', color: '#fbbf24' }} fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+          <svg style={{ width: '18px', height: '18px', color: '#ef4444' }} fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z"></path>
           </svg>
         ) : (
-          <svg style={{ width: '18px', height: '18px', color: '#fbbf24' }} fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+          <svg style={{ width: '18px', height: '18px', color: '#FF5500' }} fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 111.085 1.085l-1.086 1.086L10.5 13.5H12.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
           </svg>
         )}
@@ -931,13 +932,13 @@ function App() {
         <div style={{
           fontSize: '14px',
           fontWeight: '700',
-          color: '#fbbf24',
+          color: '#0f172a',
           marginBottom: '3px',
           letterSpacing: '0.1px'
         }}>
           {toast.type === 'success' ? '✓  Thành công' : (toast.type === 'error' ? '⚠  Có lỗi xảy ra' : 'ℹ  Thông báo')}
         </div>
-        <div style={{ fontSize: '13px', color: '#a8946a', lineHeight: '1.45' }}>
+        <div style={{ fontSize: '13px', color: '#475569', lineHeight: '1.45' }}>
           {toast.message}
         </div>
       </div>
@@ -946,9 +947,9 @@ function App() {
       <button
         onClick={() => setToast(null)}
         style={{
-          background: 'rgba(245,158,11,0.08)',
-          border: '1px solid rgba(245,158,11,0.15)',
-          color: '#92764a',
+          background: '#f1f5f9',
+          border: '1px solid #cbd5e1',
+          color: '#64748b',
           fontSize: '14px',
           cursor: 'pointer',
           padding: '4px 7px',
@@ -958,8 +959,8 @@ function App() {
           transition: 'all 0.2s',
           flexShrink: 0
         }}
-        onMouseEnter={e => { e.currentTarget.style.background='rgba(245,158,11,0.18)'; e.currentTarget.style.color='#fbbf24'; }}
-        onMouseLeave={e => { e.currentTarget.style.background='rgba(245,158,11,0.08)'; e.currentTarget.style.color='#92764a'; }}
+        onMouseEnter={e => { e.currentTarget.style.background='#fff7ed'; e.currentTarget.style.color='#FF5500'; }}
+        onMouseLeave={e => { e.currentTarget.style.background='#f1f5f9'; e.currentTarget.style.color='#64748b'; }}
       >
         ✕
       </button>
@@ -970,7 +971,7 @@ function App() {
         left: 0,
         height: '2px',
         borderRadius: '0 0 14px 14px',
-        background: 'linear-gradient(90deg, #fbbf24, #d97706)',
+        background: 'linear-gradient(90deg, #f97316, #ea580c)',
         animation: 'toastProgress 4s linear forwards'
       }} />
     </div>
@@ -995,8 +996,8 @@ function App() {
           .lookup-page-container {
             min-height: 100vh;
             width: 100%;
-            background: transparent;
-            color: #e2e8f0;
+            background: #f8fafc;
+            color: #1e293b;
             font-family: 'Inter', system-ui, sans-serif;
             padding: 16px;
             display: flex;
@@ -1013,7 +1014,7 @@ function App() {
             left: -10%;
             width: 700px;
             height: 700px;
-            background: radial-gradient(circle, rgba(245, 158, 11, 0.12) 0%, rgba(251, 191, 36, 0.05) 40%, transparent 70%);
+            background: radial-gradient(circle, rgba(255, 119, 0, 0.1) 0%, rgba(255, 85, 0, 0.03) 40%, transparent 70%);
             z-index: 1;
             pointer-events: none;
             animation: lookupFloatOrb1 8s ease-in-out infinite;
@@ -1025,7 +1026,7 @@ function App() {
             right: -10%;
             width: 600px;
             height: 600px;
-            background: radial-gradient(circle, rgba(245, 158, 11, 0.08) 0%, rgba(251, 191, 36, 0.04) 40%, transparent 70%);
+            background: radial-gradient(circle, rgba(255, 119, 0, 0.08) 0%, rgba(255, 85, 0, 0.02) 40%, transparent 70%);
             z-index: 1;
             pointer-events: none;
             animation: lookupFloatOrb2 10s ease-in-out infinite;
@@ -1055,56 +1056,57 @@ function App() {
             align-items: center;
             margin-bottom: 24px;
             padding-bottom: 12px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            border-bottom: 1px solid #e2e8f0;
           }
           .lookup-logo {
             font-size: 18px;
             font-weight: 800;
-            color: #fff;
+            color: #0f172a;
             display: flex;
             align-items: center;
             gap: 8px;
           }
           .lookup-logo span {
-            color: #fff;
+            color: #0f172a;
           }
           .lookup-logo img {
-            border: 1px solid rgba(255, 255, 255, 0.15);
+            border: 1px solid #e2e8f0;
           }
           .lookup-admin-link {
             font-size: 13px;
-            color: #9ca3af;
+            color: #0f172a;
             text-decoration: none;
-            background: rgba(255, 255, 255, 0.05);
-            padding: 6px 12px;
+            background: #ffffff;
+            padding: 6px 14px;
             border-radius: 20px;
-            border: 1px solid rgba(255, 255, 255, 0.08);
+            border: 1.5px solid #94a3b8;
+            font-weight: 700;
             transition: all 0.2s ease;
           }
           .lookup-admin-link:hover {
-            background: rgba(255, 255, 255, 0.1);
-            color: #fff;
-            border-color: #fbbf24;
+            background: #fff7ed;
+            color: #ea580c;
+            border-color: #f97316;
           }
           .lookup-card {
             width: 100%;
             max-width: 600px;
             box-sizing: border-box !important;
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.08);
+            background: #ffffff;
+            border: 1.5px solid #cbd5e1;
             backdrop-filter: blur(16px);
             -webkit-backdrop-filter: blur(16px);
             border-radius: 16px;
             padding: 24px;
-            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.5);
+            box-shadow: 0 10px 30px -5px rgba(0,0,0,0.08);
             margin-bottom: 24px;
             overflow: hidden;
           }
           .lookup-title {
             font-size: 22px;
-            font-weight: 700;
+            font-weight: 800;
             text-align: center;
-            color: #fff;
+            color: #0f172a;
             margin-bottom: 8px;
             display: flex;
             align-items: center;
@@ -1112,15 +1114,16 @@ function App() {
             gap: 8px;
           }
           .lookup-subtitle {
-            font-size: 13px;
-            color: #a8a29e;
+            font-size: 13.5px;
+            color: #334155;
+            font-weight: 600;
             text-align: center;
             margin-bottom: 24px;
           }
           .lookup-tabs {
             display: flex;
-            background: rgba(255, 255, 255, 0.04);
-            border: 1px solid rgba(255, 255, 255, 0.06);
+            background: #e2e8f0;
+            border: 1.5px solid #cbd5e1;
             padding: 4px;
             border-radius: 8px;
             margin-bottom: 16px;
@@ -1129,19 +1132,19 @@ function App() {
             flex: 1;
             text-align: center;
             padding: 10px;
-            font-size: 13px;
-            font-weight: 600;
+            font-size: 13.5px;
+            font-weight: 700;
             border-radius: 6px;
             cursor: pointer;
             background: transparent;
             border: none;
-            color: #94a3b8;
+            color: #475569;
             transition: all 0.2s ease;
           }
           .lookup-tab.active {
-            background: linear-gradient(135deg, #fbbf24, #d97706);
-            color: #0b0f17;
-            box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+            background: linear-gradient(90deg, #FFAA00 0%, #FF5500 100%);
+            color: #ffffff;
+            box-shadow: 0 4px 14px rgba(255, 119, 0, 0.35);
           }
           .lookup-input-group {
             margin-bottom: 16px;
@@ -1151,9 +1154,9 @@ function App() {
           }
           .lookup-label {
             display: block;
-            font-size: 11px;
-            font-weight: 600;
-            color: #d6d3d1;
+            font-size: 12px;
+            font-weight: 700;
+            color: #1e293b;
             margin-bottom: 6px;
             text-transform: uppercase;
             letter-spacing: 0.5px;
@@ -1163,12 +1166,13 @@ function App() {
             min-width: 100% !important;
             max-width: 100% !important;
             box-sizing: border-box !important;
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.08);
+            background: #ffffff;
+            border: 1.5px solid #94a3b8;
             border-radius: 8px;
             padding: 12px 14px;
-            color: #fff;
+            color: #0f172a;
             font-size: 15px;
+            font-weight: 600;
             outline: none;
             transition: all 0.2s ease;
             display: block !important;
@@ -1183,9 +1187,9 @@ function App() {
             display: block !important;
           }
           .lookup-input:focus {
-            border-color: #fbbf24;
-            background: rgba(255, 255, 255, 0.05);
-            box-shadow: 0 0 12px rgba(245, 158, 11, 0.15);
+            border-color: #ea580c;
+            background: #ffffff;
+            box-shadow: 0 0 12px rgba(255, 119, 0, 0.25);
           }
           .lookup-date-grid {
             display: grid;
@@ -1212,11 +1216,11 @@ function App() {
             width: 100%;
             max-width: 100% !important;
             box-sizing: border-box !important;
-            background: linear-gradient(135deg, #fbbf24, #d97706);
+            background: linear-gradient(90deg, #FFAA00 0%, #FF5500 100%);
             background-size: 200% auto;
-            color: #0b0f17;
+            color: #ffffff;
             font-size: 15px;
-            font-weight: 700;
+            font-weight: 800;
             border: none;
             border-radius: 8px;
             padding: 14px;
@@ -1226,16 +1230,16 @@ function App() {
             align-items: center;
             justify-content: center;
             gap: 8px;
-            box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3);
+            box-shadow: 0 4px 15px rgba(255, 119, 0, 0.35);
           }
           .lookup-btn:hover {
             background-position: right center;
-            box-shadow: 0 6px 20px rgba(245, 158, 11, 0.5), 0 0 12px rgba(245, 158, 11, 0.2);
+            box-shadow: 0 6px 20px rgba(255, 119, 0, 0.5);
             transform: translateY(-1px);
           }
           .lookup-btn:disabled {
-            background: #475569;
-            color: #94a3b8;
+            background: #94a3b8;
+            color: #ffffff;
             cursor: not-allowed;
             box-shadow: none;
             transform: none;
@@ -1246,12 +1250,13 @@ function App() {
             flex-wrap: wrap;
             align-items: center;
             gap: 8px;
-            font-size: 12px;
-            color: #a8a29e;
+            font-size: 12.5px;
+            color: #334155;
+            font-weight: 600;
           }
           .recent-tag {
-            background: rgba(255, 255, 255, 0.04);
-            border: 1px solid rgba(255, 255, 255, 0.08);
+            background: #ffffff;
+            border: 1.5px solid #cbd5e1;
             border-radius: 12px;
             padding: 4px 10px;
             cursor: pointer;
@@ -1259,28 +1264,30 @@ function App() {
             align-items: center;
             gap: 6px;
             transition: all 0.2s ease;
-            color: #d6d3d1;
+            color: #0f172a;
+            font-weight: 700;
           }
           .recent-tag:hover {
-            border-color: #fbbf24;
-            background: rgba(255, 255, 255, 0.08);
-            color: #fff;
+            border-color: #ea580c;
+            background: #fff7ed;
+            color: #ea580c;
           }
           .recent-close {
             font-size: 12px;
-            color: #ef4444;
+            color: #dc2626;
             font-weight: bold;
           }
           .lookup-error {
             width: 100%;
             max-width: 600px;
-            background: rgba(239, 68, 68, 0.1);
-            border: 1px solid #ef4444;
-            color: #fca5a5;
+            background: #fef2f2;
+            border: 1.5px solid #f87171;
+            color: #991b1b;
             padding: 12px 16px;
             border-radius: 8px;
             margin-bottom: 20px;
             font-size: 14px;
+            font-weight: 700;
           }
           .stats-container {
             width: 100%;
@@ -1288,10 +1295,10 @@ function App() {
             margin-bottom: 24px;
           }
           .stats-section-title {
-            font-size: 16px;
-            font-weight: 700;
+            font-size: 17px;
+            font-weight: 800;
             margin-bottom: 12px;
-            color: #fff;
+            color: #0f172a;
             display: flex;
             align-items: center;
             gap: 8px;
@@ -1307,77 +1314,78 @@ function App() {
           .stat-card-item {
             border-radius: 12px;
             padding: 16px;
-            border: 1px solid rgba(255,255,255,0.06);
+            border: 1.5px solid #cbd5e1;
             display: flex;
             flex-direction: column;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.04);
           }
           .stat-card-item.total {
-            background: linear-gradient(135deg, #7c2d12 0%, #1c1917 100%);
-            border-color: #ea580c;
+            background: linear-gradient(135deg, #ffedd5 0%, #ffffff 100%);
+            border-color: #fdba74;
           }
           .stat-card-item.pending {
-            background: linear-gradient(135deg, #78350f 0%, #1c1917 100%);
-            border-color: #d97706;
+            background: linear-gradient(135deg, #fef3c7 0%, #ffffff 100%);
+            border-color: #fcd34d;
           }
           .stat-card-item.completed {
-            background: linear-gradient(135deg, #064e3b 0%, #1c1917 100%);
-            border-color: #059669;
+            background: linear-gradient(135deg, #d1fae5 0%, #ffffff 100%);
+            border-color: #6ee7b7;
           }
           .stat-card-item.withdrawable {
-            background: linear-gradient(135deg, #0b1120 0%, #1c1917 100%);
-            border-color: #fbbf24;
+            background: linear-gradient(135deg, #ffedd5 0%, #ffffff 100%);
+            border-color: #fdba74;
           }
           .stat-card-item.received {
-            background: linear-gradient(135deg, #1e1008 0%, #1c1917 100%);
-            border-color: #d97706;
+            background: linear-gradient(135deg, #dcfce7 0%, #ffffff 100%);
+            border-color: #86efac;
           }
           .stat-card-label {
-            font-size: 11px;
+            font-size: 11.5px;
             text-transform: uppercase;
-            color: #a8a29e;
+            color: #334155;
             margin-bottom: 4px;
-            font-weight: 600;
+            font-weight: 700;
+            letter-spacing: 0.5px;
           }
           .stat-card-value {
-            font-size: 22px;
-            font-weight: 800;
-            color: #fff;
+            font-size: 24px;
+            font-weight: 900;
+            color: #0f172a;
           }
           .stat-card-value.primary {
-            color: #fdba74;
+            color: #c2410c;
           }
           .orders-container {
             width: 100%;
             max-width: 600px;
           }
           .order-card-item {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255,255,255,0.06);
+            background: #ffffff;
+            border: 1.5px solid #cbd5e1;
             border-radius: 12px;
             padding: 16px;
             margin-bottom: 12px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.04);
           }
           .order-card-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 8px;
-            font-size: 12px;
-            color: #a8a29e;
+            font-size: 12.5px;
+            color: #334155;
+            font-weight: 600;
           }
           .order-id-badge {
             font-family: monospace;
-            font-weight: 700;
-            color: #f97316;
+            font-weight: 800;
+            color: #c2410c;
+            font-size: 13px;
           }
           .order-card-title {
-            font-size: 14px;
-            font-weight: 600;
-            color: #fff;
+            font-size: 14.5px;
+            font-weight: 700;
+            color: #0f172a;
             margin-bottom: 10px;
             line-height: 1.4;
             overflow: hidden;
@@ -1390,38 +1398,39 @@ function App() {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-top: 1px dashed rgba(255,255,255,0.08);
+            border-top: 1px dashed #cbd5e1;
             padding-top: 10px;
           }
           .order-commission-label {
-            font-size: 12px;
-            color: #a8a29e;
+            font-size: 12.5px;
+            color: #334155;
+            font-weight: 600;
           }
           .order-commission-val {
-            font-size: 15px;
-            font-weight: 700;
-            color: #10b981;
+            font-size: 16px;
+            font-weight: 800;
+            color: #047857;
           }
           .order-status-badge {
-            font-size: 11px;
-            padding: 3px 8px;
+            font-size: 11.5px;
+            padding: 4px 10px;
             border-radius: 20px;
-            font-weight: 700;
+            font-weight: 800;
           }
           .order-status-badge.completed {
-            background: rgba(16, 185, 129, 0.15);
-            color: #10b981;
-            border: 1px solid rgba(16, 185, 129, 0.3);
+            background: #d1fae5;
+            color: #047857;
+            border: 1px solid #6ee7b7;
           }
           .order-status-badge.pending {
-            background: rgba(245, 158, 11, 0.15);
-            color: #f59e0b;
-            border: 1px solid rgba(245, 158, 11, 0.3);
+            background: #ffedd5;
+            color: #c2410c;
+            border: 1px solid #fdba74;
           }
           .order-status-badge.cancelled {
-            background: rgba(239, 68, 68, 0.15);
-            color: #ef4444;
-            border: 1px solid rgba(239, 68, 68, 0.3);
+            background: #fee2e2;
+            color: #b91c1c;
+            border: 1px solid #fca5a5;
           }
           .lookup-spinner {
             width: 20px;
@@ -1446,7 +1455,7 @@ function App() {
           }
           .lookup-banner-section h4 {
             font-size: 13px;
-            color: #94a3b8;
+            color: #64748b;
             margin: 0 0 12px;
             text-transform: uppercase;
             letter-spacing: 1px;
@@ -1459,14 +1468,14 @@ function App() {
             width: 260px;
             border-radius: 16px;
             overflow: hidden;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.5), 0 0 20px rgba(245, 158, 11, 0.15);
-            border: 2px solid rgba(245, 158, 11, 0.25);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.08), 0 0 20px rgba(255, 119, 0, 0.15);
+            border: 2px solid #fed7aa;
             animation: banner-float 4s ease-in-out infinite;
             transition: transform 0.3s ease, box-shadow 0.3s ease;
           }
           .lookup-banner-img-wrap:hover {
             transform: scale(1.03) translateY(-4px);
-            box-shadow: 0 12px 40px rgba(0,0,0,0.6), 0 0 30px rgba(245, 158, 11, 0.3);
+            box-shadow: 0 12px 40px rgba(0,0,0,0.12), 0 0 30px rgba(255, 119, 0, 0.3);
           }
           .lookup-banner-img-wrap img {
             width: 100%;
@@ -1529,7 +1538,7 @@ function App() {
         <header className="lookup-header">
           <div className="lookup-logo">
             <img src="/logo.jpg" alt="Logo" style={{ width: '32px', height: '32px', borderRadius: '50%', objectFit: 'cover' }} />
-            <span>28Symues <span style={{ color: '#fbbf24' }}>Affiliate</span></span>
+            <span>28Symues <span style={{ color: '#FF8800' }}>Affiliate</span></span>
           </div>
           <button 
             className="lookup-admin-link" 
@@ -1606,17 +1615,10 @@ function App() {
           <>
             {lookupSearchType !== 'ORDER_ID' && (
               <>
-                {/* 0. Bank Info Card */}
-                <div className="lookup-card" style={{ marginBottom: '24px' }}>
-                  <h3 className="stats-section-title" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', margin: 0 }}>
-                    <span style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                      <i className="fa-regular fa-building-columns" style={{ fontSize: '18px' }}></i>
-                      Thông Tin Ngân Hàng Nhận Tiền
-                    </span>
-                    {!isEditingBank && (
+                {/* 0. Bank Info Card                     {!isEditingBank && (
                       <button 
                         className="lookup-admin-link" 
-                        style={{ fontSize: '12px', padding: '4px 10px', background: 'rgba(245, 158, 11, 0.1)', color: '#fbbf24', border: '1px solid rgba(245, 158, 11, 0.25)', display: 'flex', alignItems: 'center', gap: '6px' }}
+                        style={{ fontSize: '12px', padding: '4px 10px', background: '#fff7ed', color: '#FF5500', border: '1px solid #fed7aa', display: 'flex', alignItems: 'center', gap: '6px' }}
                         onClick={() => {
                           setEditBankName(lookupResult.bankName || '');
                           setEditAccountNumber(lookupResult.accountNumber || '');
@@ -1654,11 +1656,11 @@ function App() {
                           />
                         </div>
                       </div>
-                      {bankSaveError && <div style={{ color: '#f87171', fontSize: '12px' }}>⚠️ {bankSaveError}</div>}
+                      {bankSaveError && <div style={{ color: '#ef4444', fontSize: '12px' }}>⚠️ {bankSaveError}</div>}
                       <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end', marginTop: '4px' }}>
                         <button 
                           className="lookup-admin-link" 
-                          style={{ padding: '6px 14px', background: 'rgba(255, 255, 255, 0.05)', color: '#9ca3af' }}
+                          style={{ padding: '6px 14px', background: '#f1f5f9', color: '#64748b' }}
                           onClick={() => setIsEditingBank(false)}
                           disabled={bankSaveLoading}
                         >
@@ -1675,14 +1677,14 @@ function App() {
                       </div>
                     </div>
                   ) : (
-                    <div style={{ marginTop: '16px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', background: 'rgba(255, 255, 255, 0.02)', padding: '12px 16px', borderRadius: '8px', border: '1px solid rgba(255, 255, 255, 0.04)' }}>
+                    <div style={{ marginTop: '16px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', background: '#f8fafc', padding: '12px 16px', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
                       <div>
-                        <span className="lookup-label" style={{ fontSize: '10px', color: '#94a3b8' }}>Ngân Hàng</span>
-                        <strong style={{ fontSize: '15px', color: '#fff' }}>{lookupResult.bankName || 'Chưa thiết lập'}</strong>
+                        <span className="lookup-label" style={{ fontSize: '10px', color: '#64748b' }}>Ngân Hàng</span>
+                        <strong style={{ fontSize: '15px', color: '#0f172a' }}>{lookupResult.bankName || 'Chưa thiết lập'}</strong>
                       </div>
                       <div>
-                        <span className="lookup-label" style={{ fontSize: '10px', color: '#94a3b8' }}>Số Tài Khoản</span>
-                        <strong style={{ fontSize: '15px', color: '#fff' }}>{lookupResult.accountNumber || 'Chưa thiết lập'}</strong>
+                        <span className="lookup-label" style={{ fontSize: '10px', color: '#64748b' }}>Số Tài Khoản</span>
+                        <strong style={{ fontSize: '15px', color: '#0f172a' }}>{lookupResult.accountNumber || 'Chưa thiết lập'}</strong>
                       </div>
                     </div>
                   )}
@@ -1691,7 +1693,7 @@ function App() {
                 {/* 1. Wallet Stats */}
                 <div className="stats-container">
                   <h3 className="stats-section-title">
-                    💰 Thống Kê Hoa Hồng của: <span style={{ color: '#fbbf24' }}>{lookupResult.zaloName}</span>
+                    💰 Thống Kê Hoa Hồng của: <span style={{ color: '#FF5500' }}>{lookupResult.zaloName}</span>
                   </h3>
                   <div className="stats-cards-grid">
                     <div className="stat-card-item total">
@@ -1700,23 +1702,23 @@ function App() {
                     </div>
                     <div className="stat-card-item pending">
                       <span className="stat-card-label">Đang chờ xử lý</span>
-                      <span style={{ fontSize: '11px', color: '#94a3b8', marginBottom: '4px' }}>Đang vận chuyển hoặc chưa xác nhận</span>
+                      <span style={{ fontSize: '11px', color: '#64748b', marginBottom: '4px' }}>Đang vận chuyển hoặc chưa xác nhận</span>
                       <span className="stat-card-value">{formatMoney(lookupResult.wallet.pendingCommission)}</span>
                     </div>
                     <div className="stat-card-item completed">
                       <span className="stat-card-label">Đã hoàn thành</span>
-                      <span style={{ fontSize: '11px', color: '#94a3b8', marginBottom: '4px' }}>Đã ấn giao hàng thành công</span>
+                      <span style={{ fontSize: '11px', color: '#64748b', marginBottom: '4px' }}>Đã ấn giao hàng thành công</span>
                       <span className="stat-card-value">{formatMoney(lookupResult.wallet.completedCommission)}</span>
                     </div>
                     <div className="stat-card-item withdrawable">
                       <span className="stat-card-label">Có thể rút ngay (Khả dụng)</span>
-                      <span style={{ fontSize: '11px', color: '#fbbf24', marginBottom: '4px' }}>Sau 3 ngày • Đã trừ thuế & chia 8-2</span>
-                      <span className="stat-card-value" style={{ color: '#fbbf24' }}>{formatMoney(lookupResult.wallet.withdrawableCommission)}</span>
+                      <span style={{ fontSize: '11px', color: '#FF5500', marginBottom: '4px' }}>Sau 3 ngày • Đã trừ thuế & chia 8-2</span>
+                      <span className="stat-card-value" style={{ color: '#FF5500' }}>{formatMoney(lookupResult.wallet.withdrawableCommission)}</span>
                     </div>
                     <div className="stat-card-item received">
                       <span className="stat-card-label">Đã nhận (Đã thanh toán)</span>
-                      <span style={{ fontSize: '11px', color: '#94a3b8', marginBottom: '4px' }}>Tổng tiền đã rút về tài khoản</span>
-                      <span className="stat-card-value" style={{ color: '#d97706' }}>{formatMoney(lookupResult.wallet.receivedCommission)}</span>
+                      <span style={{ fontSize: '11px', color: '#64748b', marginBottom: '4px' }}>Tổng tiền đã rút về tài khoản</span>
+                      <span className="stat-card-value" style={{ color: '#16a34a' }}>{formatMoney(lookupResult.wallet.receivedCommission)}</span>
                     </div>
                   </div>
                 </div>
@@ -1726,7 +1728,7 @@ function App() {
                   <h3 className="stats-section-title" style={{ margin: 0, marginBottom: '12px' }}>
                     <span>💸 Rút Tiền Hoa Hồng Khả Dụng</span>
                   </h3>
-                  <p style={{ fontSize: '12.5px', color: '#a8a29e', margin: '0 0 16px 0', lineHeight: '1.4' }}>
+                  <p style={{ fontSize: '12.5px', color: '#64748b', margin: '0 0 16px 0', lineHeight: '1.4' }}>
                     Tiền hoa hồng của đơn "Hoàn thành" sau 3 ngày sẽ tự động chuyển xuống ví khả dụng để rút (đã trừ thuế Shopee và chia 8-2). Lệnh rút tiền sau khi gửi sẽ được duyệt thủ công bởi Trưởng nhóm Phạm Thắng.
                   </p>
 
@@ -1751,7 +1753,7 @@ function App() {
                           />
                           <button 
                             className="lookup-admin-link"
-                            style={{ position: 'absolute', right: '8px', fontSize: '11px', padding: '4px 8px', background: 'rgba(245, 158, 11, 0.1)', color: '#fbbf24', borderColor: 'rgba(245, 158, 11, 0.2)' }}
+                            style={{ position: 'absolute', right: '8px', fontSize: '11px', padding: '4px 8px', background: '#fff7ed', color: '#FF5500', borderColor: '#fed7aa' }}
                             onClick={() => setPayoutAmount(new Intl.NumberFormat('vi-VN').format(lookupResult.wallet.withdrawableCommission))}
                           >
                             Rút hết
@@ -1759,7 +1761,7 @@ function App() {
                         </div>
                       </div>
                       
-                      {payoutSaveError && <div style={{ color: '#f87171', fontSize: '12px' }}>⚠️ {payoutSaveError}</div>}
+                      {payoutSaveError && <div style={{ color: '#ef4444', fontSize: '12px' }}>⚠️ {payoutSaveError}</div>}
                       
                       <button 
                         className="lookup-btn" 
@@ -1778,7 +1780,7 @@ function App() {
                       </button>
                     </div>
                   ) : (
-                    <div style={{ padding: '16px', background: 'rgba(239, 68, 68, 0.05)', border: '1px dashed rgba(239, 68, 68, 0.2)', borderRadius: '8px', textAlign: 'center', color: '#fca5a5', fontSize: '13px' }}>
+                    <div style={{ padding: '16px', background: '#fef2f2', border: '1px dashed #fca5a5', borderRadius: '8px', textAlign: 'center', color: '#b91c1c', fontSize: '13px' }}>
                       🔒 Số dư khả dụng của sếp hiện đang là 0đ. Chưa thể rút tiền lúc này.
                     </div>
                   )}
@@ -1789,7 +1791,7 @@ function App() {
             {/* 2. Orders Cards List */}
             <div className="orders-container">
               <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '10px', marginBottom: '16px', width: '100%' }}>
-                <h3 className="stats-section-title" style={{ marginBottom: 0, width: '100%', fontSize: '16px', fontWeight: '700', color: '#fff' }}>
+                <h3 className="stats-section-title" style={{ marginBottom: 0, width: '100%', fontSize: '16px', fontWeight: '700', color: '#0f172a' }}>
                   {lookupSearchType === 'ORDER_ID' ? '🛒 Kết Quả Tra Cứu Đơn Hàng' : `🛒 Đơn hàng đã mua (${searchedOrders.length})`}
                 </h3>
                 {lookupSearchType !== 'ORDER_ID' && (
@@ -1805,7 +1807,7 @@ function App() {
               </div>
 
               {searchedOrders.length === 0 ? (
-                <div className="lookup-card" style={{ padding: '24px', textAlign: 'center', color: '#a8a29e' }}>
+                <div className="lookup-card" style={{ padding: '24px', textAlign: 'center', color: '#64748b' }}>
                   📭 Không tìm thấy đơn hàng nào khớp điều kiện lọc.
                 </div>
               ) : (
@@ -1813,7 +1815,7 @@ function App() {
                   <div key={o.id} className="order-card-item">
                     <div className="order-card-header">
                       <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
-                        <i className="fa-regular fa-calendar" style={{ color: '#94a3b8', fontSize: '13px' }}></i>
+                        <i className="fa-regular fa-calendar" style={{ color: '#64748b', fontSize: '13px' }}></i>
                         <span>{formatDateTime(o.purchaseTime)}</span>
                       </span>
                       <span>Mã đơn: <span className="order-id-badge">{o.orderId}</span></span>
@@ -1823,12 +1825,12 @@ function App() {
                     </div>
                     <div className="order-card-commission-row">
                       <span className="order-status-badge completed" style={{ 
-                        background: o.status === 'Hoàn thành' ? 'rgba(16, 185, 129, 0.15)' : 
-                                    o.status === 'Hủy' ? 'rgba(239, 68, 68, 0.15)' : 'rgba(245, 158, 11, 0.15)',
-                        color: o.status === 'Hoàn thành' ? '#10b981' : 
-                               o.status === 'Hủy' ? '#ef4444' : '#f59e0b',
-                        border: `1px solid ${o.status === 'Hoàn thành' ? 'rgba(16, 185, 129, 0.3)' : 
-                                              o.status === 'Hủy' ? 'rgba(239, 68, 68, 0.3)' : 'rgba(245, 158, 11, 0.3)'}`
+                        background: o.status === 'Hoàn thành' ? '#ecfdf5' : 
+                                    o.status === 'Hủy' ? '#fef2f2' : '#fff7ed',
+                        color: o.status === 'Hoàn thành' ? '#059669' : 
+                               o.status === 'Hủy' ? '#dc2626' : '#FF5500',
+                        border: `1px solid ${o.status === 'Hoàn thành' ? '#a7f3d0' : 
+                                              o.status === 'Hủy' ? '#fca5a5' : '#fed7aa'}`
                       }}>
                         {o.status}
                       </span>
@@ -1849,7 +1851,7 @@ function App() {
           <div style={{
             position: 'fixed',
             inset: 0,
-            background: 'rgba(0, 0, 0, 0.8)',
+            background: 'rgba(15, 23, 42, 0.65)',
             backdropFilter: 'blur(12px)',
             display: 'flex',
             alignItems: 'center',
@@ -1861,10 +1863,10 @@ function App() {
               width: '100%',
               maxWidth: '400px',
               textAlign: 'center',
-              border: '1px solid rgba(245, 158, 11, 0.35)',
+              border: '1px solid #e2e8f0',
               borderRadius: '24px',
-              boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.85), 0 0 45px rgba(245, 158, 11, 0.15)',
-              background: 'linear-gradient(145deg, #0d1117, #0b0f17)',
+              boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.15)',
+              background: '#ffffff',
               padding: '32px 24px',
               position: 'relative',
               overflow: 'hidden'
@@ -1874,9 +1876,9 @@ function App() {
                 width: '76px',
                 height: '76px',
                 borderRadius: '50%',
-                background: 'linear-gradient(135deg, rgba(245, 158, 11, 0.2), rgba(251, 191, 36, 0.1))',
-                border: '1px solid rgba(245, 158, 11, 0.4)',
-                boxShadow: '0 0 25px rgba(245, 158, 11, 0.25)',
+                background: '#fff7ed',
+                border: '1px solid #fed7aa',
+                boxShadow: '0 0 25px rgba(255, 119, 0, 0.2)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
@@ -1886,21 +1888,21 @@ function App() {
                 🔒
               </div>
 
-              <h3 style={{ fontSize: '20px', fontWeight: '800', color: '#ffffff', marginBottom: '8px', letterSpacing: '-0.3px' }}>
+              <h3 style={{ fontSize: '20px', fontWeight: '800', color: '#0f172a', marginBottom: '8px', letterSpacing: '-0.3px' }}>
                 Xác Thực Bảo Mật OTP
               </h3>
-              <p style={{ fontSize: '13.5px', color: '#cbd5e1', lineHeight: '1.5', marginBottom: '16px', padding: '0 8px' }}>
-                Mã xác thực 6 số vừa được gửi đến <span style={{ color: '#fbbf24', fontWeight: '600' }}>tin nhắn riêng Zalo</span> của bạn.
+              <p style={{ fontSize: '13.5px', color: '#475569', lineHeight: '1.5', marginBottom: '16px', padding: '0 8px' }}>
+                Mã xác thực 6 số vừa được gửi đến <span style={{ color: '#FF5500', fontWeight: '600' }}>tin nhắn riêng Zalo</span> của bạn.
               </p>
 
-              {/* Alert Info Box thay cho văn bản có emoji dễ lỗi */}
+              {/* Alert Info Box */}
               <div style={{
-                background: 'rgba(245, 158, 11, 0.08)',
-                border: '1px solid rgba(245, 158, 11, 0.22)',
+                background: '#fff7ed',
+                border: '1px solid #fed7aa',
                 borderRadius: '12px',
                 padding: '10px 12px',
                 fontSize: '12.5px',
-                color: '#fde68a',
+                color: '#E03300',
                 marginBottom: '22px',
                 lineHeight: '1.4',
                 textAlign: 'left',
@@ -1927,17 +1929,17 @@ function App() {
                     letterSpacing: '8px',
                     fontWeight: '800',
                     borderRadius: '14px',
-                    border: '1.5px solid rgba(245, 158, 11, 0.45)',
-                    background: 'rgba(0, 0, 0, 0.5)',
-                    color: '#fbbf24',
+                    border: '1.5.px solid #f97316',
+                    background: '#f8fafc',
+                    color: '#FF5500',
                     outline: 'none',
-                    boxShadow: 'inset 0 2px 5px rgba(0,0,0,0.5)'
+                    boxShadow: 'inset 0 2px 5px rgba(0,0,0,0.05)'
                   }}
                 />
               </div>
 
               {otpError && (
-                <div style={{ color: '#f87171', fontSize: '13px', marginBottom: '18px', background: 'rgba(239, 68, 68, 0.12)', border: '1px solid rgba(239, 68, 68, 0.3)', padding: '10px', borderRadius: '10px', fontWeight: '500' }}>
+                <div style={{ color: '#dc2626', fontSize: '13px', marginBottom: '18px', background: '#fef2f2', border: '1px solid #fca5a5', padding: '10px', borderRadius: '10px', fontWeight: '500' }}>
                   ⚠️ {otpError}
                 </div>
               )}
@@ -1945,7 +1947,7 @@ function App() {
               <div style={{ display: 'flex', gap: '12px', marginBottom: '22px' }}>
                 <button
                   onClick={() => setOtpModalOpen(false)}
-                  style={{ flex: 1, padding: '13px', borderRadius: '12px', background: 'rgba(255, 255, 255, 0.06)', color: '#cbd5e1', border: '1px solid rgba(255, 255, 255, 0.12)', cursor: 'pointer', fontWeight: '600', fontSize: '14px', transition: 'all 0.2s' }}
+                  style={{ flex: 1, padding: '13px', borderRadius: '12px', background: '#f1f5f9', color: '#475569', border: '1px solid #cbd5e1', cursor: 'pointer', fontWeight: '600', fontSize: '14px', transition: 'all 0.2s' }}
                 >
                   Hủy bỏ
                 </button>
@@ -1959,7 +1961,7 @@ function App() {
                     if (otpActionType === 'PAYOUT') handleRequestPayout(otpCode);
                   }}
                   disabled={bankSaveLoading || payoutSaveLoading}
-                  style={{ flex: 1.4, padding: '13px', borderRadius: '12px', fontSize: '14.5px', background: 'linear-gradient(135deg, #fbbf24, #d97706)', color: '#0b0f17', border: 'none', cursor: 'pointer', fontWeight: 'bold', boxShadow: '0 6px 20px rgba(245, 158, 11, 0.4)', transition: 'all 0.2s' }}
+                  style={{ flex: 1.4, padding: '13px', borderRadius: '12px', fontSize: '14.5px', background: 'linear-gradient(90deg, #FFAA00 0%, #FF5500 100%)', color: '#ffffff', border: 'none', cursor: 'pointer', fontWeight: 'bold', boxShadow: '0 6px 20px rgba(255, 119, 0, 0.35)', transition: 'all 0.2s' }}
                 >
                   {(bankSaveLoading || payoutSaveLoading) ? 'Đang kiểm tra...' : 'Xác nhận ngay'}
                 </button>
@@ -2030,13 +2032,13 @@ function App() {
           .login-page-split {
             min-height: 100vh;
             width: 100%;
-            background: transparent;
+            background: #f8fafc;
             display: flex;
             flex-direction: column;
             position: relative;
             overflow-y: auto;
             box-sizing: border-box;
-            color: #e2e8f0;
+            color: #1e293b;
           }
           .login-page-split::before {
             content: '';
@@ -2045,7 +2047,7 @@ function App() {
             left: -10%;
             width: 500px;
             height: 500px;
-            background: radial-gradient(circle, rgba(245, 158, 11, 0.12) 0%, rgba(251, 191, 36, 0.05) 40%, transparent 70%);
+            background: radial-gradient(circle, rgba(255, 119, 0, 0.1) 0%, rgba(255, 85, 0, 0.03) 40%, transparent 70%);
             z-index: 1;
             pointer-events: none;
             animation: floatOrb1 12s ease-in-out infinite;
@@ -2057,7 +2059,7 @@ function App() {
             right: -10%;
             width: 500px;
             height: 500px;
-            background: radial-gradient(circle, rgba(245, 158, 11, 0.08) 0%, rgba(251, 191, 36, 0.03) 40%, transparent 70%);
+            background: radial-gradient(circle, rgba(255, 119, 0, 0.08) 0%, rgba(255, 85, 0, 0.02) 40%, transparent 70%);
             z-index: 1;
             pointer-events: none;
             animation: floatOrb2 15s ease-in-out infinite;
@@ -2081,14 +2083,14 @@ function App() {
             width: 36px;
             height: 36px;
             border-radius: 50%;
-            border: 1px solid rgba(245, 158, 11, 0.35);
+            border: 1px solid rgba(255, 119, 0, 0.35);
             object-fit: cover;
           }
           .login-split-logo span {
             font-family: var(--font-heading);
             font-size: 20px;
             font-weight: 800;
-            color: #fff;
+            color: #0f172a;
             letter-spacing: 0.5px;
           }
           .login-split-nav {
@@ -2097,19 +2099,19 @@ function App() {
             gap: 24px;
           }
           .login-split-nav a {
-            color: var(--text-muted);
+            color: #64748b;
             font-size: 14.5px;
             transition: color 0.2s;
             text-decoration: none;
             cursor: pointer;
           }
           .login-split-nav a:hover {
-            color: #fff;
+            color: #ea580c;
           }
           .login-split-nav .btn-back {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            color: #fff;
+            background: #ffffff;
+            border: 1px solid #cbd5e1;
+            color: #334155;
             padding: 8px 16px;
             border-radius: 20px;
             font-size: 13.5px;
@@ -2121,8 +2123,9 @@ function App() {
             transition: all 0.2s;
           }
           .login-split-nav .btn-back:hover {
-            background: rgba(255, 255, 255, 0.12);
-            border-color: rgba(255, 255, 255, 0.2);
+            background: #fff7ed;
+            border-color: #f97316;
+            color: #ea580c;
           }
           .login-split-content {
             flex: 1;
@@ -2145,10 +2148,10 @@ function App() {
             display: inline-flex;
             align-items: center;
             gap: 8px;
-            background: rgba(245, 158, 11, 0.15);
-            border: 1px solid rgba(245, 158, 11, 0.3);
-            color: #fbbf24;
-            padding: 6px 12px;
+            background: #fff7ed;
+            border: 1px solid #ffedd5;
+            color: #ea580c;
+            padding: 6px 14px;
             border-radius: 20px;
             font-size: 12px;
             font-weight: 700;
@@ -2159,13 +2162,13 @@ function App() {
             font-family: var(--font-heading);
             font-size: 40px;
             font-weight: 800;
-            color: #fff;
+            color: #0f172a;
             line-height: 1.3;
             margin: 0 0 20px;
           }
           .login-split-left p {
             font-size: 16px;
-            color: var(--text-muted);
+            color: #475569;
             line-height: 1.6;
             margin: 0;
           }
@@ -2176,29 +2179,29 @@ function App() {
             width: 100%;
           }
           .login-split-card {
-            background: rgba(11, 15, 23, 0.75);
+            background: #ffffff;
             backdrop-filter: blur(25px);
             -webkit-backdrop-filter: blur(25px);
-            border: 1px solid rgba(245, 158, 11, 0.25);
+            border: 1px solid #e2e8f0;
             border-radius: 24px;
             width: 100%;
             max-width: 440px;
-            padding: 24px 32px;
-            box-shadow: 0 25px 60px -10px rgba(0, 0, 0, 0.8), 0 0 50px rgba(245, 158, 11, 0.1);
+            padding: 28px 32px;
+            box-shadow: 0 20px 50px -10px rgba(0, 0, 0, 0.08);
             box-sizing: border-box;
           }
           .login-split-card h2 {
             font-family: var(--font-heading);
             font-size: 28px;
             font-weight: 800;
-            color: #fff;
+            color: #0f172a;
             margin: 0 0 8px;
             text-align: left;
           }
           .login-split-card .subtitle {
             font-size: 13.5px;
-            color: var(--text-muted);
-            margin-bottom: 12px;
+            color: #64748b;
+            margin-bottom: 16px;
             text-align: left;
           }
           .form-label {
@@ -2206,7 +2209,7 @@ function App() {
             text-align: left;
             font-size: 13px;
             font-weight: 600;
-            color: #ccc;
+            color: #334155;
             margin-bottom: 8px;
           }
           .form-input-wrapper {
@@ -2216,26 +2219,26 @@ function App() {
           .form-input {
             width: 100%;
             padding: 13px 16px;
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.08);
+            background: #f8fafc;
+            border: 1px solid #cbd5e1;
             border-radius: 12px;
-            color: #fff;
+            color: #0f172a;
             font-size: 14.5px;
             transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
             box-sizing: border-box;
           }
           .form-input:focus {
             outline: none;
-            border-color: #fbbf24;
-            background: rgba(255, 255, 255, 0.06);
-            box-shadow: 0 0 20px rgba(245, 158, 11, 0.25);
+            border-color: #f97316;
+            background: #ffffff;
+            box-shadow: 0 0 16px rgba(255, 119, 0, 0.2);
           }
           
           /* Simulated Cloudflare Turnstile CSS */
           .cf-turnstile-sim {
-            background: #1b1b1b;
-            border: 1px solid #2e2e2e;
-            border-radius: 4px;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
             padding: 10px 14px;
             display: flex;
             align-items: center;
@@ -2243,7 +2246,7 @@ function App() {
             min-height: 58px;
             margin: 16px 0 20px;
             box-sizing: border-box;
-            color: #fff;
+            color: #1e293b;
             user-select: none;
           }
           .cf-verifying {
@@ -2252,14 +2255,14 @@ function App() {
             gap: 10px;
             width: 100%;
             font-size: 13px;
-            color: #bbb;
+            color: #64748b;
             text-align: left;
           }
           .cf-spinner {
             width: 20px;
             height: 20px;
-            border: 2px solid rgba(255,255,255,0.1);
-            border-top-color: #f38020;
+            border: 2px solid rgba(0,0,0,0.1);
+            border-top-color: #f97316;
             border-radius: 50%;
             animation: cfSpin 0.8s linear infinite;
             flex-shrink: 0;
@@ -2291,8 +2294,8 @@ function App() {
           }
           .cf-success-left span {
             font-size: 14px;
-            font-weight: 500;
-            color: #e2e8f0;
+            font-weight: 600;
+            color: #1e293b;
           }
           .cf-success-right {
             display: flex;
@@ -2309,7 +2312,7 @@ function App() {
             font-size: 7px;
             font-weight: 800;
             letter-spacing: 0.8px;
-            color: #bbb;
+            color: #64748b;
           }
           .cf-links {
             display: flex;
@@ -2318,21 +2321,21 @@ function App() {
           }
           .cf-links a {
             font-size: 8px;
-            color: #888;
+            color: #94a3b8;
             text-decoration: underline;
           }
           .cf-links a:hover {
-            color: #ccc;
+            color: #475569;
           }
 
           .login-split-footer {
             text-align: center;
             margin-top: 24px;
             font-size: 13.5px;
-            color: var(--text-muted);
+            color: #64748b;
           }
           .login-split-footer a {
-            color: #fbbf24;
+            color: #ea580c;
             text-decoration: underline;
           }
 
@@ -2393,7 +2396,7 @@ function App() {
         <header className="login-split-header">
           <div className="login-split-logo">
             <img src="/logo.jpg" alt="Logo" />
-            <span>28Symues <span style={{ color: '#fbbf24' }}>Affiliate</span></span>
+            <span>28Symues <span style={{ color: '#FF8800' }}>Affiliate</span></span>
           </div>
           <div className="login-split-nav">
             <button 
@@ -2412,7 +2415,7 @@ function App() {
         <div className="login-split-content">
           <div className="login-split-left">
             <div className="badge">
-              <i className="fa-thin fa-robot" style={{ fontSize: '14px' }}></i> 28Symues <span style={{ color: '#fbbf24' }}>Affiliate</span>
+              <i className="fa-thin fa-robot" style={{ fontSize: '14px' }}></i> 28Symues <span style={{ color: '#FF5500' }}>Affiliate</span>
             </div>
             <h1>Đăng nhập tài khoản</h1>
             <p>
@@ -2457,7 +2460,7 @@ function App() {
                 </div>
 
                 {/* Terms Acceptance checkbox */}
-                <div className="terms-checkbox-wrapper" style={{ display: 'flex', alignItems: 'flex-start', gap: '8px', textAlign: 'left', margin: '16px 0 10px', fontSize: '13px', color: 'var(--text-muted)' }}>
+                <div className="terms-checkbox-wrapper" style={{ display: 'flex', alignItems: 'flex-start', gap: '8px', textAlign: 'left', margin: '16px 0 10px', fontSize: '13px', color: '#64748b' }}>
                   <input 
                     type="checkbox" 
                     id="accept-terms" 
@@ -2465,7 +2468,7 @@ function App() {
                     style={{ marginTop: '3px', cursor: 'pointer' }}
                   />
                   <label htmlFor="accept-terms" style={{ cursor: 'pointer', lineHeight: '1.4' }}>
-                    Tôi đồng ý với <a href="#" onClick={(e) => e.preventDefault()} style={{ color: '#fbbf24', textDecoration: 'underline' }}>Điều khoản dịch vụ</a> và <a href="#" onClick={(e) => e.preventDefault()} style={{ color: '#fbbf24', textDecoration: 'underline' }}>Chính sách bảo mật</a>.
+                    Tôi đồng ý với <a href="#" onClick={(e) => e.preventDefault()} style={{ color: '#FF5500', textDecoration: 'underline' }}>Điều khoản dịch vụ</a> và <a href="#" onClick={(e) => e.preventDefault()} style={{ color: '#FF5500', textDecoration: 'underline' }}>Chính sách bảo mật</a>.
                   </label>
                 </div>
 
@@ -2508,48 +2511,50 @@ function App() {
               <div className="modal-google-container" style={{ 
                 position: 'relative', 
                 width: '100%', 
-                minHeight: '42px', 
+                minHeight: '44px', 
                 margin: '0 auto 12px auto' 
               }}>
-                {isMobile ? (
-                  <button 
-                    className="btn-google-custom" 
-                    onClick={handleGoogleLoginMobile}
-                    style={{
-                      width: '100%',
-                      height: '42px',
-                      background: '#ffffff',
-                      color: '#1f2937',
-                      border: '1px solid #d1d5db',
-                      borderRadius: '24px',
-                      fontSize: '14.5px',
-                      fontWeight: '600',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      gap: '12px',
-                      boxShadow: '0 2px 6px rgba(0,0,0,0.15)',
-                      cursor: 'pointer',
-                      transition: 'all 0.2s ease'
-                    }}
-                  >
-                    <svg width="20" height="20" viewBox="0 0 48 48">
-                      <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
-                      <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
-                      <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>
-                      <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
-                    </svg>
-                    <span>Đăng nhập bằng Google</span>
-                  </button>
-                ) : (
-                  <div id="google-signin-btn" style={{
+                <button 
+                  className="btn-google-custom" 
+                  onClick={handleGoogleLoginMobile}
+                  style={{
                     width: '100%',
-                    height: '42px',
+                    height: '44px',
+                    background: '#ffffff',
+                    color: '#0f172a',
+                    border: '1.5px solid #cbd5e1',
+                    borderRadius: '12px',
+                    fontSize: '15px',
+                    fontWeight: '700',
                     display: 'flex',
+                    alignItems: 'center',
                     justifyContent: 'center',
-                    cursor: 'pointer'
-                  }}></div>
-                )}
+                    gap: '12px',
+                    boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
+                    cursor: 'pointer',
+                    transition: 'all 0.25s ease'
+                  }}
+                  onMouseEnter={e => {
+                    e.currentTarget.style.background = '#fff7ed';
+                    e.currentTarget.style.borderColor = '#FF8800';
+                    e.currentTarget.style.color = '#FF5500';
+                    e.currentTarget.style.boxShadow = '0 4px 14px rgba(255, 119, 0, 0.2)';
+                  }}
+                  onMouseLeave={e => {
+                    e.currentTarget.style.background = '#ffffff';
+                    e.currentTarget.style.borderColor = '#cbd5e1';
+                    e.currentTarget.style.color = '#0f172a';
+                    e.currentTarget.style.boxShadow = '0 2px 8px rgba(0,0,0,0.06)';
+                  }}
+                >
+                  <svg width="20" height="20" viewBox="0 0 48 48">
+                    <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
+                    <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
+                    <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.28-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24s.92 7.54 2.56 10.78l7.97-6.19z"/>
+                    <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
+                  </svg>
+                  Đăng nhập bằng Google
+                </button>
               </div>
             </div>
           </div>
@@ -2559,25 +2564,19 @@ function App() {
   }
 
   if (view === 'home') {
-    const isAdmin = user && (user.role === 'ADMIN' || user.role === 'SUPER_ADMIN');
-    
     return (
-      <div className="landing-page">
-        {/* Custom Toast Notification Top-Right */}
-        {toastElement}
-
-        {/* Header / Navbar */}
+      <div className="landing-container">
         <header className="landing-header">
           <div className="landing-logo">
             <img src="/logo.jpg" alt="Logo" style={{ width: '32px', height: '32px', borderRadius: '50%', objectFit: 'cover' }} />
-            <span>28Symues <span style={{ color: '#fbbf24' }}>Affiliate</span></span>
+            <span>28Symues <span style={{ color: '#FF8800' }}>Affiliate</span></span>
           </div>
           <nav className={`landing-nav${mobileMenuOpen ? ' open' : ''}`}>
             <a href="#home" onClick={() => setMobileMenuOpen(false)}>Trang chủ</a>
             <a href="#features" onClick={() => setMobileMenuOpen(false)}>Tính năng</a>
             <a href="#steps" onClick={() => setMobileMenuOpen(false)}>Hướng dẫn</a>
             <a href="#pricing" onClick={() => setMobileMenuOpen(false)}>Bảng giá</a>
-            <a href="#" onClick={(e) => { e.preventDefault(); setView('lookup'); window.history.pushState({}, '', '/?view=lookup'); setMobileMenuOpen(false); }} style={{ color: '#fbbf24', fontWeight: '700' }}><i className="fa-thin fa-magnifying-glass" style={{ marginRight: '6px' }}></i>Tra cứu đơn hàng</a>
+            <a href="#" onClick={(e) => { e.preventDefault(); setView('lookup'); window.history.pushState({}, '', '/?view=lookup'); setMobileMenuOpen(false); }} style={{ color: '#FF5500', fontWeight: '700' }}><i className="fa-thin fa-magnifying-glass" style={{ marginRight: '6px' }}></i>Tra cứu đơn hàng</a>
             {/* Mobile-only actions inside nav */}
             <div className="mobile-nav-actions">
               {token ? (
@@ -2594,8 +2593,8 @@ function App() {
                     <button 
                       onClick={() => { setView('admin'); sessionStorage.setItem('adminView','admin'); setMobileMenuOpen(false); }}
                       style={{
-                        background: 'linear-gradient(135deg, rgba(245, 158, 11, 0.25), rgba(217, 119, 6, 0.15))',
-                        border: '1px solid rgba(251, 191, 36, 0.45)',
+                        background: 'linear-gradient(90deg, rgba(255,170,0,0.25) 0%, rgba(255,85,0,0.15) 100%)',
+                        border: '1px solid rgba(255, 119, 0, 0.45)',
                         color: '#ffffff',
                         fontSize: '14.5px',
                         fontWeight: '700',
@@ -2606,18 +2605,18 @@ function App() {
                         alignItems: 'center',
                         justifyContent: 'center',
                         gap: '6px',
-                        boxShadow: '0 4px 15px rgba(245, 158, 11, 0.15)',
+                        boxShadow: '0 4px 15px rgba(255, 119, 0, 0.15)',
                         transition: 'all 0.25s ease'
                       }}
                       onMouseEnter={e => {
-                        e.currentTarget.style.background = 'linear-gradient(135deg, #fbbf24, #d97706)';
-                        e.currentTarget.style.color = '#0b0f17';
-                        e.currentTarget.style.boxShadow = '0 6px 20px rgba(245, 158, 11, 0.4)';
+                        e.currentTarget.style.background = 'linear-gradient(90deg, #FFAA00 0%, #FF5500 100%)';
+                        e.currentTarget.style.color = '#ffffff';
+                        e.currentTarget.style.boxShadow = '0 6px 20px rgba(255, 119, 0, 0.4)';
                       }}
                       onMouseLeave={e => {
-                        e.currentTarget.style.background = 'linear-gradient(135deg, rgba(245, 158, 11, 0.25), rgba(217, 119, 6, 0.15))';
+                        e.currentTarget.style.background = 'linear-gradient(90deg, rgba(255,170,0,0.25) 0%, rgba(255,85,0,0.15) 100%)';
                         e.currentTarget.style.color = '#ffffff';
-                        e.currentTarget.style.boxShadow = '0 4px 15px rgba(245, 158, 11, 0.15)';
+                        e.currentTarget.style.boxShadow = '0 4px 15px rgba(255, 119, 0, 0.15)';
                       }}
                     >
                       <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: '6px', flexShrink: 0 }}>
@@ -2630,7 +2629,7 @@ function App() {
                       Trang Quản Trị
                     </button>
                   )}
-                  <button className="btn" onClick={() => { handleLogout(); setMobileMenuOpen(false); }} style={{ border: '1px solid rgba(255,255,255,0.1)' }}>
+                  <button className="btn" onClick={() => { handleLogout(); setMobileMenuOpen(false); }} style={{ border: '1px solid #cbd5e1' }}>
                     Đăng xuất
                   </button>
                 </>
@@ -2662,8 +2661,8 @@ function App() {
                   <button 
                     onClick={() => { setView('admin'); sessionStorage.setItem('adminView','admin'); }}
                     style={{
-                      background: 'linear-gradient(135deg, rgba(245, 158, 11, 0.25), rgba(217, 119, 6, 0.15))',
-                      border: '1px solid rgba(251, 191, 36, 0.45)',
+                      background: 'linear-gradient(90deg, #FFAA00 0%, #FF5500 100%)',
+                      border: '1px solid #ea580c',
                       color: '#ffffff',
                       fontSize: '14.5px',
                       fontWeight: '700',
@@ -2674,18 +2673,18 @@ function App() {
                       alignItems: 'center',
                       justifyContent: 'center',
                       gap: '6px',
-                      boxShadow: '0 4px 15px rgba(245, 158, 11, 0.15)',
+                      boxShadow: '0 4px 15px rgba(255, 119, 0, 0.3)',
                       transition: 'all 0.25s ease'
                     }}
                     onMouseEnter={e => {
-                      e.currentTarget.style.background = 'linear-gradient(135deg, #fbbf24, #d97706)';
-                      e.currentTarget.style.color = '#0b0f17';
-                      e.currentTarget.style.boxShadow = '0 6px 20px rgba(245, 158, 11, 0.4)';
+                      e.currentTarget.style.background = 'linear-gradient(90deg, #FF8800 0%, #FF3300 100%)';
+                      e.currentTarget.style.color = '#ffffff';
+                      e.currentTarget.style.boxShadow = '0 6px 20px rgba(255, 119, 0, 0.45)';
                     }}
                     onMouseLeave={e => {
-                      e.currentTarget.style.background = 'linear-gradient(135deg, rgba(245, 158, 11, 0.25), rgba(217, 119, 6, 0.15))';
+                      e.currentTarget.style.background = 'linear-gradient(90deg, #FFAA00 0%, #FF5500 100%)';
                       e.currentTarget.style.color = '#ffffff';
-                      e.currentTarget.style.boxShadow = '0 4px 15px rgba(245, 158, 11, 0.15)';
+                      e.currentTarget.style.boxShadow = '0 4px 15px rgba(255, 119, 0, 0.3)';
                     }}
                   >
                     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: '6px', flexShrink: 0 }}>
@@ -2699,7 +2698,7 @@ function App() {
                   </button>
                 )}
                 
-                <button className="btn" onClick={handleLogout} style={{ border: '1px solid rgba(255,255,255,0.1)' }}>
+                <button className="btn" onClick={handleLogout} style={{ border: '1px solid #cbd5e1' }}>
                   Đăng xuất
                 </button>
               </div>
@@ -2729,31 +2728,100 @@ function App() {
 
         {/* Hero Section */}
         <section id="home" className="hero-section">
-          <div className="hero-badge">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" style={{ color: '#fbbf24', flexShrink: 0 }}>
-              <rect x="3" y="11" width="18" height="10" rx="2" />
-              <circle cx="12" cy="5" r="2" />
-              <path d="M12 7v4" />
-              <line x1="8" y1="16" x2="8.01" y2="16" strokeWidth="3" />
-              <line x1="16" y1="16" x2="16.01" y2="16" strokeWidth="3" />
-              <path d="M9 16h6" />
-            </svg>
-            HỆ THỐNG AUTOMATION AFFILIATE
-          </div>
-          <h1 className="hero-title">Tự Động Hóa Shopee Affiliate<br />Với 28Symues</h1>
-          <p className="hero-subtitle">
-            Biến mọi liên kết mua sắm trong nhóm chat Zalo của bạn thành nguồn thu nhập thụ động chỉ trong vài giây. Tiện lợi, tự động và hoàn toàn minh bạch.
-          </p>
-          <div className="hero-buttons">
-            <a href="#steps" className="btn btn-hero-1">
-              Bắt đầu ngay
-            </a>
-            <button onClick={() => { setView('lookup'); window.history.pushState({}, '', '/?view=lookup'); }} className="btn btn-hero-2">
-              <i className="fa-thin fa-magnifying-glass"></i> Tra cứu đơn hàng
-            </button>
-            <a href="#features" className="btn btn-hero-3">
-              Tìm hiểu tính năng
-            </a>
+          <div className="hero-grid-split">
+            <div className="hero-content-left">
+              <div className="hero-badge">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" style={{ color: '#FF5500', flexShrink: 0 }}>
+                  <rect x="3" y="11" width="18" height="10" rx="2" />
+                  <circle cx="12" cy="5" r="2" />
+                  <path d="M12 7v4" />
+                  <line x1="8" y1="16" x2="8.01" y2="16" strokeWidth="3" />
+                  <line x1="16" y1="16" x2="16.01" y2="16" strokeWidth="3" />
+                  <path d="M9 16h6" />
+                </svg>
+                HỆ THỐNG AUTOMATION AFFILIATE
+              </div>
+              <h1 className="hero-title">Tự Động Hóa Shopee Affiliate<br />Với 28Symues</h1>
+              <p className="hero-subtitle">
+                Biến mọi liên kết mua sắm trong nhóm chat Zalo của bạn thành nguồn thu nhập thụ động chỉ trong vài giây. Tiện lợi, tự động và hoàn toàn minh bạch.
+              </p>
+              <div className="hero-buttons">
+                <a href="#steps" className="btn btn-hero-1">
+                  Bắt đầu ngay
+                </a>
+                <button onClick={() => { setView('lookup'); window.history.pushState({}, '', '/?view=lookup'); }} className="btn btn-hero-2">
+                  <i className="fa-thin fa-magnifying-glass"></i> Tra cứu đơn hàng
+                </button>
+                <a href="#features" className="btn btn-hero-3">
+                  Tìm hiểu tính năng
+                </a>
+              </div>
+            </div>
+
+            {/* Live Interactive Zalo Bot Chat Mockup */}
+            <div className="hero-mockup-right">
+              {/* Floating Badges */}
+              <div className="floating-badge badge-top-right">
+                <span className="badge-icon">⚡</span>
+                <span className="badge-text">Tốc độ &lt; 0.5s</span>
+              </div>
+              <div className="floating-badge badge-mid-left">
+                <span className="badge-icon">💰</span>
+                <span className="badge-text">+18.500đ Vừa ghi nhận</span>
+              </div>
+              <div className="floating-badge badge-bot-right">
+                <span className="badge-icon">🤖</span>
+                <span className="badge-text">AI GPT-4o Tự Động</span>
+              </div>
+
+              {/* iPhone / Zalo App Mockup */}
+              <div className="zalo-phone-mockup">
+                <div className="zalo-phone-header">
+                  <div className="zalo-avatar">
+                    <img src="/logo.jpg" alt="Bot Logo" />
+                    <span className="online-dot"></span>
+                  </div>
+                  <div className="zalo-header-info">
+                    <div className="zalo-group-name">Nhiệt Huyết Săn Sale 🚀</div>
+                    <div className="zalo-group-sub">850 thành viên • Bot đang hoạt động</div>
+                  </div>
+                </div>
+
+                <div className="zalo-chat-body">
+                  <div className="chat-date-divider">Hôm nay</div>
+
+                  {/* Customer Message */}
+                  <div className="chat-msg customer-msg">
+                    <div className="msg-sender">Nguyễn Mai (Thành viên)</div>
+                    <div className="msg-bubble">
+                      Sếp ơi check giúp em link váy này trên Shopee với nè!
+                      <div className="msg-link-preview">shopee.vn/dam-du-tiec-sang-trong-i.1284920</div>
+                    </div>
+                    <div className="msg-time">08:32 AM</div>
+                  </div>
+
+                  {/* Bot Reply Message */}
+                  <div className="chat-msg bot-msg">
+                    <div className="msg-sender bot-sender">
+                      <span>28Symues Bot</span>
+                      <span className="bot-tag">BOT</span>
+                    </div>
+                    <div className="msg-bubble bot-bubble">
+                      Dạ link mua sắm săn sale có gắn hoa hồng cho chị Mai đây ạ 👇
+                      <div className="converted-link-card">
+                        <div className="link-title">Đầm Dự Tiệc Dáng Xòe Sang Trọng</div>
+                        <div className="link-url">https://s.shopee.vn/aff_829103</div>
+                        <div className="link-meta">
+                          <span className="subid-tag">SubID: Mai_Zalo98</span>
+                          <span className="cashback-tag">+18.500đ Hoa hồng</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="msg-time">08:32 AM</div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </section>
 
@@ -2794,7 +2862,7 @@ function App() {
         </section>
 
         {/* Steps Section */}
-        <section id="steps" className="instructions-section" style={{ borderTop: '1px solid rgba(255,255,255,0.06)', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
+        <section id="steps" className="instructions-section" style={{ borderTop: '1px solid #e2e8f0', borderBottom: '1px solid #e2e8f0' }}>
           <h2 className="section-title">3 Bước Bắt Đầu Đơn Giản</h2>
           <p className="section-subtitle">Chỉ mất 5 phút để thiết lập và khởi chạy chatbot trong nhóm của bạn</p>
           <div className="instructions-grid">
@@ -2818,8 +2886,8 @@ function App() {
 
         {/* Pricing Section */}
         <section id="pricing" className="pricing-section" style={{ padding: '80px 20px', textAlign: 'center', position: 'relative', zIndex: 10 }}>
-          <h2 className="section-title" style={{ fontSize: '36px', fontWeight: '800', color: '#fff', marginBottom: '12px' }}>Bảng Giá Dịch Vụ</h2>
-          <p className="section-subtitle" style={{ color: 'rgba(255, 255, 255, 0.6)', fontSize: '16px', marginBottom: '48px' }}>Chi phí tối ưu, hiệu quả tối đa cho nhóm Zalo săn sale của bạn</p>
+          <h2 className="section-title" style={{ fontSize: '36px', fontWeight: '800', color: '#0f172a', marginBottom: '12px' }}>Bảng Giá Dịch Vụ</h2>
+          <p className="section-subtitle" style={{ color: '#475569', fontSize: '16px', marginBottom: '48px' }}>Chi phí tối ưu, hiệu quả tối đa cho nhóm Zalo săn sale của bạn</p>
           
           <div style={{
             display: 'flex',
@@ -2832,14 +2900,14 @@ function App() {
             
             {/* Gói Thường */}
             <div className="pricing-card" style={{
-              background: 'rgba(255, 255, 255, 0.02)',
-              border: '1px solid rgba(255, 255, 255, 0.05)',
+              background: '#ffffff',
+              border: '1px solid #e2e8f0',
               borderRadius: '24px',
               padding: '40px 32px',
               width: '100%',
               maxWidth: '360px',
               backdropFilter: 'blur(10px)',
-              boxShadow: '0 10px 30px -10px rgba(0, 0, 0, 0.3)',
+              boxShadow: '0 10px 30px -10px rgba(0, 0, 0, 0.05)',
               position: 'relative',
               overflow: 'hidden',
               display: 'flex',
@@ -2848,26 +2916,26 @@ function App() {
               transition: 'all 0.3s ease'
             }}>
               <div>
-                <h3 style={{ fontSize: '22px', color: '#fff', marginBottom: '8px', fontWeight: '700' }}>Zalo Bot Affiliate</h3>
-                <p style={{ color: 'rgba(255, 255, 255, 0.5)', fontSize: '14px', marginBottom: '24px' }}>Tự động chuyển đổi link mua sắm cơ bản trong nhóm chat</p>
+                <h3 style={{ fontSize: '22px', color: '#0f172a', marginBottom: '8px', fontWeight: '700' }}>Zalo Bot Affiliate</h3>
+                <p style={{ color: '#64748b', fontSize: '14px', marginBottom: '24px' }}>Tự động chuyển đổi link mua sắm cơ bản trong nhóm chat</p>
                 
                 <div style={{ marginBottom: '32px' }}>
-                  <span style={{ fontSize: '42px', fontWeight: '800', color: '#fff', fontFamily: 'var(--font-heading)' }}>199.000đ</span>
-                  <span style={{ color: 'rgba(255, 255, 255, 0.6)', fontSize: '15px' }}> / tháng</span>
+                  <span style={{ fontSize: '42px', fontWeight: '800', color: '#0f172a', fontFamily: 'var(--font-heading)' }}>199.000đ</span>
+                  <span style={{ color: '#64748b', fontSize: '15px' }}> / tháng</span>
                 </div>
                 
                 <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 32px 0', textAlign: 'left', display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                  <li style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', color: 'rgba(255, 255, 255, 0.8)', fontSize: '14px' }}>
-                    <span style={{ color: '#34d399', fontWeight: 'bold' }}>✓</span> Tự động đổi link nhận hoa hồng: Khách gửi link Shopee, Lazada... bot tự đổi thành link của sếp ngay lập tức.
+                  <li style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', color: '#334155', fontSize: '14px' }}>
+                    <span style={{ color: '#10b981', fontWeight: 'bold' }}>✓</span> Tự động đổi link nhận hoa hồng: Khách gửi link Shopee, Lazada... bot tự đổi thành link của sếp ngay lập tức.
                   </li>
-                  <li style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', color: 'rgba(255, 255, 255, 0.8)', fontSize: '14px' }}>
-                    <span style={{ color: '#34d399', fontWeight: 'bold' }}>✓</span> Tự nhận biết người gửi: Ghi nhận chính xác ai gửi link để sếp tính doanh số cho họ.
+                  <li style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', color: '#334155', fontSize: '14px' }}>
+                    <span style={{ color: '#10b981', fontWeight: 'bold' }}>✓</span> Tự nhận biết người gửi: Ghi nhận chính xác ai gửi link để sếp tính doanh số cho họ.
                   </li>
-                  <li style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', color: 'rgba(255, 255, 255, 0.8)', fontSize: '14px' }}>
-                    <span style={{ color: '#34d399', fontWeight: 'bold' }}>✓</span> Hoạt động liên tục 24/7: Tự trả lời tin nhắn trong nhóm chat bất kể ngày đêm, sếp không cần trực máy.
+                  <li style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', color: '#334155', fontSize: '14px' }}>
+                    <span style={{ color: '#10b981', fontWeight: 'bold' }}>✓</span> Hoạt động liên tục 24/7: Tự trả lời tin nhắn trong nhóm chat bất kể ngày đêm, sếp không cần trực máy.
                   </li>
-                  <li style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', color: 'rgba(255, 255, 255, 0.8)', fontSize: '14px' }}>
-                    <span style={{ color: '#34d399', fontWeight: 'bold' }}>✓</span> Tin nhắn phản hồi lịch sự: Mẫu tin nhắn ngắn gọn, rõ ràng, kích thích người mua bấm link.
+                  <li style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', color: '#334155', fontSize: '14px' }}>
+                    <span style={{ color: '#10b981', fontWeight: 'bold' }}>✓</span> Tin nhắn phản hồi lịch sự: Mẫu tin nhắn ngắn gọn, rõ ràng, kích thích người mua bấm link.
                   </li>
                 </ul>
               </div>
@@ -2888,14 +2956,14 @@ function App() {
 
             {/* Gói Pro - Phổ biến nhất */}
             <div className="pricing-card" style={{
-              background: 'rgba(255, 255, 255, 0.04)',
-              border: '1px solid rgba(245, 158, 11, 0.4)',
+              background: '#ffffff',
+              border: '2px solid #f97316',
               borderRadius: '24px',
               padding: '40px 32px',
               width: '100%',
               maxWidth: '360px',
               backdropFilter: 'blur(10px)',
-              boxShadow: '0 20px 40px -15px rgba(245, 158, 11, 0.2)',
+              boxShadow: '0 20px 40px -15px rgba(255, 119, 0, 0.15)',
               position: 'relative',
               overflow: 'hidden',
               display: 'flex',
@@ -2909,8 +2977,8 @@ function App() {
                 position: 'absolute',
                 top: '0',
                 right: '0',
-                background: 'linear-gradient(135deg, #fbbf24, #d97706)',
-                color: '#0b0f17',
+                background: 'linear-gradient(90deg, #FFAA00 0%, #FF5500 100%)',
+                color: '#ffffff',
                 padding: '6px 20px',
                 borderBottomLeftRadius: '16px',
                 fontSize: '11px',
@@ -2921,29 +2989,29 @@ function App() {
                 Phổ Biến Nhất
               </div>
               <div>
-                <h3 style={{ fontSize: '22px', color: '#fff', marginBottom: '8px', fontWeight: '700', marginTop: '10px' }}>Zalo Bot Affiliate Pro</h3>
-                <p style={{ color: 'rgba(255, 255, 255, 0.5)', fontSize: '14px', marginBottom: '24px' }}>Có trang quản trị riêng cho sếp và trang tự tra cứu cho khách</p>
+                <h3 style={{ fontSize: '22px', color: '#0f172a', marginBottom: '8px', fontWeight: '700', marginTop: '10px' }}>Zalo Bot Affiliate Pro</h3>
+                <p style={{ color: '#64748b', fontSize: '14px', marginBottom: '24px' }}>Có trang quản trị riêng cho sếp và trang tự tra cứu cho khách</p>
                 
                 <div style={{ marginBottom: '32px' }}>
-                  <span style={{ fontSize: '42px', fontWeight: '800', color: '#fff', fontFamily: 'var(--font-heading)' }}>399.000đ</span>
-                  <span style={{ color: 'rgba(255, 255, 255, 0.6)', fontSize: '15px' }}> / tháng</span>
+                  <span style={{ fontSize: '42px', fontWeight: '800', color: '#0f172a', fontFamily: 'var(--font-heading)' }}>399.000đ</span>
+                  <span style={{ color: '#64748b', fontSize: '15px' }}> / tháng</span>
                 </div>
                 
                 <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 32px 0', textAlign: 'left', display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                  <li style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', color: 'rgba(255, 255, 255, 0.8)', fontSize: '14px' }}>
-                    <span style={{ color: '#34d399', fontWeight: 'bold' }}>✓</span> Tự động đổi link mua sắm Shopee, Lazada, TikTok Shop mượt mà.
+                  <li style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', color: '#334155', fontSize: '14px' }}>
+                    <span style={{ color: '#10b981', fontWeight: 'bold' }}>✓</span> Tự động đổi link mua sắm Shopee, Lazada, TikTok Shop mượt mà.
                   </li>
-                  <li style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', color: 'rgba(255, 255, 255, 0.8)', fontSize: '14px' }}>
-                    <span style={{ color: '#34d399', fontWeight: 'bold' }}>✓</span> Trang quản trị doanh thu riêng: Theo dõi toàn bộ đơn hàng và quản lý cực kỳ nhàn hạ.
+                  <li style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', color: '#334155', fontSize: '14px' }}>
+                    <span style={{ color: '#10b981', fontWeight: 'bold' }}>✓</span> Trang quản trị doanh thu riêng: Theo dõi toàn bộ đơn hàng và quản lý cực kỳ nhàn hạ.
                   </li>
-                  <li style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', color: 'rgba(255, 255, 255, 0.8)', fontSize: '14px' }}>
-                    <span style={{ color: '#34d399', fontWeight: 'bold' }}>✓</span> Khách tự tra cứu trên Web: Thành viên có thể tự vào xem đơn và hoa hồng mình tích lũy.
+                  <li style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', color: '#334155', fontSize: '14px' }}>
+                    <span style={{ color: '#10b981', fontWeight: 'bold' }}>✓</span> Khách tự tra cứu trên Web: Thành viên có thể tự vào xem đơn và hoa hồng mình tích lũy.
                   </li>
-                  <li style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', color: 'rgba(255, 255, 255, 0.8)', fontSize: '14px' }}>
-                    <span style={{ color: '#34d399', fontWeight: 'bold' }}>✓</span> Chạy cùng lúc nhiều nhóm: Bot hoạt động trên nhiều nhóm chat và gom số liệu về một nơi.
+                  <li style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', color: '#334155', fontSize: '14px' }}>
+                    <span style={{ color: '#10b981', fontWeight: 'bold' }}>✓</span> Chạy cùng lúc nhiều nhóm: Bot hoạt động trên nhiều nhóm chat và gom số liệu về một nơi.
                   </li>
-                  <li style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', color: 'rgba(255, 255, 255, 0.8)', fontSize: '14px' }}>
-                    <span style={{ color: '#34d399', fontWeight: 'bold' }}>✓</span> Báo cáo hoa hồng chính xác: Tự tính tiền chuẩn sau thuế và lọc bỏ các đơn trùng lặp.
+                  <li style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', color: '#334155', fontSize: '14px' }}>
+                    <span style={{ color: '#10b981', fontWeight: 'bold' }}>✓</span> Báo cáo hoa hồng chính xác: Tự tính tiền chuẩn sau thuế và lọc bỏ các đơn trùng lặp.
                   </li>
                 </ul>
               </div>
@@ -2964,14 +3032,14 @@ function App() {
 
             {/* Gói Pro Max */}
             <div className="pricing-card" style={{
-              background: 'rgba(255, 255, 255, 0.02)',
-              border: '1px solid rgba(255, 255, 255, 0.05)',
+              background: '#ffffff',
+              border: '1px solid #e2e8f0',
               borderRadius: '24px',
               padding: '40px 32px',
               width: '100%',
               maxWidth: '360px',
               backdropFilter: 'blur(10px)',
-              boxShadow: '0 10px 30px -10px rgba(0, 0, 0, 0.3)',
+              boxShadow: '0 10px 30px -10px rgba(0, 0, 0, 0.05)',
               position: 'relative',
               overflow: 'hidden',
               display: 'flex',
@@ -2980,29 +3048,29 @@ function App() {
               transition: 'all 0.3s ease'
             }}>
               <div>
-                <h3 style={{ fontSize: '22px', color: '#fff', marginBottom: '8px', fontWeight: '700' }}>Zalo Bot Affiliate Pro Max</h3>
-                <p style={{ color: 'rgba(255, 255, 255, 0.5)', fontSize: '14px', marginBottom: '24px' }}>Hệ thống ví tiền tự động và rút tiền qua tin nhắn chat</p>
+                <h3 style={{ fontSize: '22px', color: '#0f172a', marginBottom: '8px', fontWeight: '700' }}>Zalo Bot Affiliate Pro Max</h3>
+                <p style={{ color: '#64748b', fontSize: '14px', marginBottom: '24px' }}>Hệ thống ví tiền tự động và rút tiền qua tin nhắn chat</p>
                 
                 <div style={{ marginBottom: '32px' }}>
-                  <span style={{ fontSize: '42px', fontWeight: '800', color: '#fff', fontFamily: 'var(--font-heading)' }}>599.000đ</span>
-                  <span style={{ color: 'rgba(255, 255, 255, 0.6)', fontSize: '15px' }}> / tháng</span>
+                  <span style={{ fontSize: '42px', fontWeight: '800', color: '#0f172a', fontFamily: 'var(--font-heading)' }}>599.000đ</span>
+                  <span style={{ color: '#64748b', fontSize: '15px' }}> / tháng</span>
                 </div>
                 
                 <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 32px 0', textAlign: 'left', display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                  <li style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', color: 'rgba(255, 255, 255, 0.8)', fontSize: '14px' }}>
-                    <span style={{ color: '#34d399', fontWeight: 'bold' }}>✓</span> Đầy đủ toàn bộ tính năng cao cấp của bản Pro.
+                  <li style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', color: '#334155', fontSize: '14px' }}>
+                    <span style={{ color: '#10b981', fontWeight: 'bold' }}>✓</span> Đầy đủ toàn bộ tính năng cao cấp của bản Pro.
                   </li>
-                  <li style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', color: 'rgba(255, 255, 255, 0.8)', fontSize: '14px' }}>
-                    <span style={{ color: '#34d399', fontWeight: 'bold' }}>✓</span> Ví tích lũy tiền tự động: Tự động cộng dồn tiền hoa hồng sau khi đơn hàng thành công.
+                  <li style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', color: '#334155', fontSize: '14px' }}>
+                    <span style={{ color: '#10b981', fontWeight: 'bold' }}>✓</span> Ví tích lũy tiền tự động: Tự động cộng dồn tiền hoa hồng sau khi đơn hàng thành công.
                   </li>
-                  <li style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', color: 'rgba(255, 255, 255, 0.8)', fontSize: '14px' }}>
-                    <span style={{ color: '#34d399', fontWeight: 'bold' }}>✓</span> Rút tiền nhanh bằng tin nhắn: Khách tự gõ lệnh `/rut-tien` trong nhóm để yêu cầu thanh toán.
+                  <li style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', color: '#334155', fontSize: '14px' }}>
+                    <span style={{ color: '#10b981', fontWeight: 'bold' }}>✓</span> Rút tiền nhanh bằng tin nhắn: Khách tự gõ lệnh `/rut-tien` trong nhóm để yêu cầu thanh toán.
                   </li>
-                  <li style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', color: 'rgba(255, 255, 255, 0.8)', fontSize: '14px' }}>
-                    <span style={{ color: '#34d399', fontWeight: 'bold' }}>✓</span> Đường truyền riêng siêu tốc: Chạy trên máy chủ VPS riêng, phản hồi ngay lập tức không trễ lag.
+                  <li style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', color: '#334155', fontSize: '14px' }}>
+                    <span style={{ color: '#10b981', fontWeight: 'bold' }}>✓</span> Đường truyền riêng siêu tốc: Chạy trên máy chủ VPS riêng, phản hồi ngay lập tức không trễ lag.
                   </li>
-                  <li style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', color: 'rgba(255, 255, 255, 0.8)', fontSize: '14px' }}>
-                    <span style={{ color: '#34d399', fontWeight: 'bold' }}>✓</span> Hỗ trợ kỹ thuật ưu tiên 24/7: Xử lý nhanh chóng mọi yêu cầu và sự cố phát sinh.
+                  <li style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', color: '#334155', fontSize: '14px' }}>
+                    <span style={{ color: '#10b981', fontWeight: 'bold' }}>✓</span> Hỗ trợ kỹ thuật ưu tiên 24/7: Xử lý nhanh chóng mọi yêu cầu và sự cố phát sinh.
                   </li>
                 </ul>
               </div>
@@ -3034,7 +3102,7 @@ function App() {
             position: 'relative',
             zIndex: 2
           }}>
-            <h3 style={{ fontSize: '18px', color: '#fff', marginBottom: '16px', fontWeight: '700', textShadow: '0 2px 4px rgba(0,0,0,0.5)', textAlign: 'center', padding: '0 16px', lineHeight: '1.4' }}>
+            <h3 style={{ fontSize: '18px', color: '#0f172a', marginBottom: '16px', fontWeight: '800', textAlign: 'center', padding: '0 16px', lineHeight: '1.4' }}>
               🌟 Quét QR Tham Gia Nhóm Zalo Nhận Hoàn Tiền Ngay
             </h3>
             <div style={{
@@ -3042,8 +3110,8 @@ function App() {
               width: '280px',
               borderRadius: '16px',
               overflow: 'hidden',
-              boxShadow: '0 12px 40px rgba(0,0,0,0.6), 0 0 30px rgba(245, 158, 11, 0.2)',
-              border: '2px solid rgba(245, 158, 11, 0.3)',
+              boxShadow: '0 12px 40px rgba(0,0,0,0.1), 0 0 30px rgba(255, 119, 0, 0.2)',
+              border: '2px solid #fed7aa',
               transition: 'transform 0.3s ease'
             }}>
               <button
@@ -3100,11 +3168,11 @@ function App() {
               <h4>Liên Hệ Đăng Ký</h4>
               <div className="footer-contact-list">
                 <div className="footer-contact-item">
-                  <span style={{ color: '#fbbf24' }}>💬</span>
+                  <span style={{ color: '#FF8800' }}>💬</span>
                   <span>Zalo Admin: <a href="http://zaloapp.com/qr/p/fd2gcjcjfuof" target="_blank" rel="noopener noreferrer">Phạm Thắng</a></span>
                 </div>
                 <div className="footer-contact-item">
-                  <span style={{ color: '#fbbf24' }}>🌐</span>
+                  <span style={{ color: '#FF8800' }}>🌐</span>
                   <span>Cộng đồng hỗ trợ & hướng dẫn kiếm tiền</span>
                 </div>
               </div>
@@ -3136,7 +3204,7 @@ function App() {
       <aside className={`sidebar${sidebarOpen ? ' open' : ''}`}>
         <div className="sidebar-header">
           <div className="sidebar-logo">
-            <img src="/logo.jpg" alt="Logo" style={{ width: '34px', height: '34px', borderRadius: '50%', objectFit: 'cover', border: '2px solid rgba(251,191,36,0.4)' }} />
+            <img src="/logo.jpg" alt="Logo" style={{ width: '34px', height: '34px', borderRadius: '50%', objectFit: 'cover', border: '2px solid #fed7aa' }} />
             <span>28Symues Admin</span>
           </div>
         </div>
@@ -3145,10 +3213,10 @@ function App() {
             className="menu-item"
             onClick={() => { setView('home'); sessionStorage.removeItem('adminView'); setSidebarOpen(false); }}
             style={{ 
-              background: 'rgba(245, 158, 11, 0.08)', 
-              color: '#fbbf24', 
+              background: '#fff7ed', 
+              color: '#FF5500', 
               fontWeight: '600', 
-              borderLeft: '3px solid #fbbf24', 
+              borderLeft: '3px solid #f97316', 
               marginBottom: '4px',
               fontSize: '14px'
             }}
@@ -3216,21 +3284,21 @@ function App() {
         </ul>
 
         {/* Sidebar Footer */}
-        <div className="sidebar-footer" style={{ padding: '12px 16px 16px', borderTop: '1px solid rgba(255,255,255,0.06)' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '12px', padding: '10px 12px', background: 'rgba(255,255,255,0.04)', borderRadius: '10px', border: '1px solid rgba(255,255,255,0.06)' }}>
+        <div className="sidebar-footer" style={{ padding: '12px 16px 16px', borderTop: '1px solid #e2e8f0' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '12px', padding: '10px 12px', background: '#f8fafc', borderRadius: '10px', border: '1px solid #e2e8f0' }}>
             {user?.avatarUrl ? (
               <img 
                 src={user.avatarUrl} 
                 alt="Avatar" 
                 referrerPolicy="no-referrer"
-                style={{ width: '34px', height: '34px', borderRadius: '50%', border: '2px solid rgba(251,191,36,0.4)', flexShrink: 0 }} 
+                style={{ width: '34px', height: '34px', borderRadius: '50%', border: '2px solid #fed7aa', flexShrink: 0 }} 
               />
             ) : (
               <div className="avatar" style={{ margin: 0, width: '34px', height: '34px', fontSize: '12px', flexShrink: 0 }}>{(user?.fullName || 'PT').substring(0, 2).toUpperCase()}</div>
             )}
             <div style={{ overflow: 'hidden', flex: 1, minWidth: 0 }}>
-              <div style={{ fontSize: '13px', fontWeight: '700', color: '#fff', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{user?.fullName}</div>
-              <div style={{ fontSize: '10px', color: '#fbbf24', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.5px' }}>{user?.role}</div>
+              <div style={{ fontSize: '13px', fontWeight: '700', color: '#0f172a', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{user?.fullName}</div>
+              <div style={{ fontSize: '10px', color: '#FF5500', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.5px' }}>{user?.role}</div>
             </div>
           </div>
           <button 
@@ -3239,9 +3307,9 @@ function App() {
               width: '100%', 
               fontSize: '13px', 
               padding: '10px', 
-              background: 'linear-gradient(135deg, rgba(245,158,11,0.15), rgba(217,119,6,0.1))', 
-              color: '#fbbf24', 
-              border: '1px solid rgba(245,158,11,0.3)', 
+              background: '#fff7ed', 
+              color: '#FF5500', 
+              border: '1px solid #fed7aa', 
               borderRadius: '8px', 
               cursor: 'pointer',
               fontWeight: '600',
@@ -3252,8 +3320,8 @@ function App() {
               transition: 'all 0.2s',
               letterSpacing: '0.2px'
             }}
-            onMouseEnter={e => { e.currentTarget.style.background='linear-gradient(135deg, rgba(245,158,11,0.25), rgba(217,119,6,0.2))'; e.currentTarget.style.borderColor='rgba(245,158,11,0.55)'; e.currentTarget.style.boxShadow='0 4px 15px rgba(245,158,11,0.15)'; }}
-            onMouseLeave={e => { e.currentTarget.style.background='linear-gradient(135deg, rgba(245,158,11,0.15), rgba(217,119,6,0.1))'; e.currentTarget.style.borderColor='rgba(245,158,11,0.3)'; e.currentTarget.style.boxShadow='none'; }}
+            onMouseEnter={e => { e.currentTarget.style.background='#ffedd5'; e.currentTarget.style.borderColor='#fdba74'; }}
+            onMouseLeave={e => { e.currentTarget.style.background='#fff7ed'; e.currentTarget.style.borderColor='#fed7aa'; }}
           >
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
             Đăng xuất
@@ -3280,7 +3348,7 @@ function App() {
                 src={user.avatarUrl} 
                 alt="Avatar" 
                 referrerPolicy="no-referrer"
-                style={{ width: '32px', height: '32px', borderRadius: '50%', border: '1px solid rgba(255,255,255,0.1)' }} 
+                style={{ width: '32px', height: '32px', borderRadius: '50%', border: '1px solid #cbd5e1' }} 
               />
             ) : (
               <div className="avatar">{(user?.fullName || 'PT').substring(0, 2).toUpperCase()}</div>
@@ -3305,9 +3373,9 @@ function App() {
                 alignItems: 'center', 
                 gap: '8px', 
                 padding: '8px 16px',
-                background: 'rgba(245, 158, 11, 0.1)',
-                color: '#fbbf24',
-                border: '1px solid rgba(245, 158, 11, 0.25)',
+                background: '#fff7ed',
+                color: '#FF5500',
+                border: '1px solid #fed7aa',
                 fontWeight: '600',
                 fontSize: '13.5px',
                 borderRadius: '8px',
@@ -3373,7 +3441,7 @@ function App() {
                         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
                       </div>
                       <span className="stat-label">Chờ duyệt rút tiền</span>
-                      <span className="stat-val" style={{ color: stats.pendingPayoutsCount > 0 ? '#fbbf24' : 'inherit' }}>
+                      <span className="stat-val" style={{ color: stats.pendingPayoutsCount > 0 ? '#FF5500' : 'inherit' }}>
                         {stats.pendingPayoutsCount}
                       </span>
                     </div>

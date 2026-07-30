@@ -50,6 +50,15 @@ function App() {
   const [lookupLocalFilter, setLookupLocalFilter] = useState('');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [cfStatus, setCfStatus] = useState('verifying');
+  const [windowWidth, setWindowWidth] = useState(() => typeof window !== 'undefined' ? window.innerWidth : 1200);
+
+  useEffect(() => {
+    const handleResize = () => setWindowWidth(window.innerWidth);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  const isAdmin = user?.role === 'ADMIN' || user?.role === 'SUPER_ADMIN' || user?.isAdmin || false;
 
   useEffect(() => {
     if (view === 'login') {
@@ -139,14 +148,6 @@ function App() {
 
   // Modal State
   const [selectedUser, setSelectedUser] = useState(null);
-
-  const [windowWidth, setWindowWidth] = useState(() => typeof window !== 'undefined' ? window.innerWidth : 375);
-  useEffect(() => {
-    if (typeof window === 'undefined') return;
-    const handleResize = () => setWindowWidth(window.innerWidth);
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
 
   // Fetch all data
   const fetchData = async (currentToken, currentUser) => {

@@ -613,14 +613,15 @@ tr:hover td {
 /* ==========================================
    LANDING PAGE (TRANG CHỦ) STYLING
    ========================================== */
-.landing-page {
+.landing-page,
+.landing-container {
   min-height: 100vh;
-  background: transparent;
-  color: #e2e8f0;
+  background: #f8fafc;
+  color: #1e293b;
   display: flex;
   flex-direction: column;
   position: relative;
-  overflow: hidden;
+  overflow-x: hidden;
 }
 
 /* Animated gradient orbs */

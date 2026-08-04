@@ -218,6 +218,19 @@ function App() {
 
   const [toast, setToast] = useState(null);
 
+  const handleLogout = () => {
+    setUser(null);
+    setToken('');
+    sessionStorage.removeItem('adminUser');
+    sessionStorage.removeItem('adminToken');
+    sessionStorage.removeItem('adminView');
+    sessionStorage.removeItem('adminTab');
+    localStorage.removeItem('admin_token');
+    localStorage.removeItem('accessToken');
+    localStorage.removeItem('refreshToken');
+    setView('home');
+  };
+
   const showToast = (message, type = 'success') => {
 
     setToast({ message, type, id: Date.now() });

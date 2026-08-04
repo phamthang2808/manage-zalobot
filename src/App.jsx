@@ -607,7 +607,7 @@ function App() {
 
   // Auto-run lookup if search params are present in the URL on load
   useEffect(() => {
-    const renderMobileBottomNav = () => {
+    function renderMobileBottomNav() {
     const isNavAdminMode = view === 'admin';
 
     if (isNavAdminMode) {
@@ -930,13 +930,13 @@ function App() {
   };
 
   // Format currency
-  const formatMoney = (val) => {
+  function formatMoney(val) {
     if (val === undefined || val === null || isNaN(val)) return '0đ';
     return Math.round(val).toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.') + 'đ';
   };
 
   // Format DateTime string
-  const formatDateTime = (dateStr) => {
+  function formatDateTime(dateStr) {
     if (!dateStr) return '-';
     try {
       const d = new Date(dateStr);

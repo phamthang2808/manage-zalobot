@@ -2191,6 +2191,7 @@ function App() {
             </div>
           </div>
         )}
+      {renderMobileBottomNav()}
       </div>
     );
   }

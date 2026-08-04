@@ -1,64 +1,7 @@
-import { useEffect, useState } from 'react';
+﻿import { useEffect, useState } from 'react';
 
 const API_URL_ROOT = import.meta.env.PROD ? "" : (import.meta.env.VITE_API_URL || 'http://localhost:8080');
 const API_BASE = `${API_URL_ROOT}/api/admin`;
-
-const guidesData = [
-  {
-    id: 1,
-    title: "1. Quét QR kết nối Bot Client",
-    icon: "fa-qrcode",
-    desc: "Cách quét mã QR kết nối tài khoản phụ làm chatbot săn sale tự động.",
-    steps: [
-      "Vào trang quản trị (Admin Dashboard) của hệ thống.",
-      "Tại mục cấu hình client bot, bấm nút 'Tạo mã QR kết nối'.",
-      "Mở ứng dụng Zalo trên điện thoại phụ (tài khoản dùng làm bot).",
-      "Sử dụng trình quét mã QR của Zalo quét mã hiển thị trên màn hình máy tính.",
-      "Xác nhận đăng nhập trên Zalo điện thoại. Trạng thái của client bot sẽ chuyển sang 'Đang hoạt động'."
-    ],
-    note: "Sau khi quét mã, tài khoản đó sẽ đóng vai trò lắng nghe và tự động đổi link trong nhóm của bạn."
-  },
-  {
-    id: 2,
-    title: "2. Thêm Bot vào nhóm chat Zalo",
-    icon: "fa-users-medical",
-    desc: "Cách đưa chatbot vào nhóm săn sale của bạn để kích hoạt tự động.",
-    steps: [
-      "Tạo một nhóm chat Zalo mới dành riêng cho săn sale, hoặc chọn nhóm có sẵn của bạn.",
-      "Thêm tài khoản Zalo của bot client (tài khoản đã quét QR ở Bước 1) vào nhóm.",
-      "Gửi tin nhắn chào mừng hoặc bất kỳ tin nhắn nào trong nhóm chat.",
-      "Bot sẽ tự động gửi tin nhắn chào mừng nhóm và bắt đầu lắng nghe các đường link mua sắm được gửi vào."
-    ],
-    note: "Hãy đảm bảo tài khoản bot có quyền gửi tin nhắn trong nhóm để nó hoạt động bình thường."
-  },
-  {
-    id: 3,
-    title: "3. Cú pháp chat rút tiền & kiểm tra ví",
-    icon: "fa-comments-dollar",
-    desc: "Các lệnh chat Zalo dành cho thành viên kiểm tra số dư và yêu cầu rút tiền.",
-    steps: [
-      "Kiểm tra ví hoa hồng: Thành viên nhắn lệnh `/vi` trong nhóm, bot sẽ phản hồi số dư tích lũy hiện tại.",
-      "Cài đặt ngân hàng nhận tiền: Nhắn lệnh `/nganhang [Tên ngân hàng] [Số tài khoản]` (ví dụ: `/nganhang Techcombank 1902837...`).",
-      "Yêu cầu rút tiền: Nhắn lệnh `/rut-tien [số tiền]` (ví dụ: `/rut-tien 100000`).",
-      "Bot sẽ ghi nhận và tạo yêu cầu duyệt rút tiền gửi tới Trưởng nhóm Phạm Thắng để chuyển khoản thủ công."
-    ],
-    note: "Cú pháp này giúp thành viên thao tác nhanh chóng ngay trong ô chat mà không cần mở website."
-  },
-  {
-    id: 4,
-    title: "4. Cài đặt ngân hàng qua Cổng tra cứu",
-    icon: "fa-building-columns",
-    desc: "Cách thiết lập và thay đổi tài khoản ngân hàng nhận tiền qua Cổng tra cứu website.",
-    steps: [
-      "Truy cập vào Cổng tra cứu đơn hàng (chọn mục 'Tra cứu đơn hàng' ở thanh menu).",
-      "Nhập mã đơn hàng hoặc Zalo ID của sếp để mở Dashboard hoa hồng cá nhân.",
-      "Tìm mục 'Ngân hàng nhận tiền' và bấm nút 'Cài đặt' hoặc 'Sửa'.",
-      "Nhập Tên ngân hàng & Số tài khoản rồi bấm 'Lưu thông tin'.",
-      "Nhập mã OTP 6 số được gửi tự động qua tin nhắn Zalo chat riêng để xác nhận thay đổi an toàn."
-    ],
-    note: "Xác thực OTP qua tin nhắn Zalo giúp tránh việc người khác đổi trộm thông tin nhận tiền của bạn."
-  }
-];
 
 function App() {
   const [token, setToken] = useState(() => sessionStorage.getItem('adminToken') || '');
@@ -79,22 +22,11 @@ function App() {
   const [activeTab, setActiveTab] = useState(() => sessionStorage.getItem('adminTab') || 'dashboard');
   const [view, setView] = useState(() => {
     const path = window.location.pathname;
-    const search = window.location.search;
-    const hash = window.location.hash;
-    if (path.includes('/lookup') || path.includes('/tra-cuu') || search.includes('view=lookup') || hash.includes('lookup')) {
+    if (path.includes('/lookup') || path.includes('/tra-cuu') || window.location.search.includes('view=lookup') || window.location.hash.includes('lookup')) {
       return 'lookup';
     }
-    if (path.includes('/login') || search.includes('view=login') || hash.includes('login')) {
+    if (path.includes('/login') || window.location.search.includes('view=login') || window.location.hash.includes('login')) {
       return 'login';
-    }
-    if (search.includes('view=features') || hash.includes('features')) {
-      return 'features';
-    }
-    if (search.includes('view=guides') || hash.includes('guides')) {
-      return 'guides';
-    }
-    if (search.includes('view=pricing') || hash.includes('pricing')) {
-      return 'pricing';
     }
     return sessionStorage.getItem('adminView') || 'home';
   });
@@ -125,8 +57,6 @@ function App() {
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
-
-
 
   const isAdmin = user?.role === 'ADMIN' || user?.role === 'SUPER_ADMIN' || user?.isAdmin || false;
 
@@ -175,7 +105,6 @@ function App() {
   const [otpCountdown, setOtpCountdown] = useState(0);
   const [showBanner, setShowBanner] = useState(true);
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [activeGuideId, setActiveGuideId] = useState(null);
 
   // Custom Toast Notification State
   const [toast, setToast] = useState(null);
@@ -347,33 +276,6 @@ function App() {
     };
     checkSession();
   }, []);
-
-  // Scroll reveal IntersectionObserver to animate content on scroll
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      const revealElements = document.querySelectorAll('.reveal');
-      
-      const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add('active');
-            entry.target.classList.add('reveal-visible');
-          }
-        });
-      }, {
-        threshold: 0.05,
-        rootMargin: '0px 0px -40px 0px'
-      });
-      
-      revealElements.forEach(el => observer.observe(el));
-      
-      return () => {
-        observer.disconnect();
-      };
-    }, 200);
-
-    return () => clearTimeout(timer);
-  }, [view, activeGuideId]);
 
   // Handle Google Redirect login token on page load
   useEffect(() => {
@@ -848,10 +750,10 @@ function App() {
     setPayouts([]);
   };
 
-  // Format currency — chuẩn "1.250.000 ₫" theo spec fe.md
+  // Format currency
   const formatMoney = (val) => {
-    if (val === undefined || val === null || isNaN(val)) return '0 ₫';
-    return Math.round(val).toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.') + ' ₫';
+    if (val === undefined || val === null || isNaN(val)) return '0đ';
+    return Math.round(val).toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.') + 'đ';
   };
 
   // Format DateTime string
@@ -989,25 +891,26 @@ function App() {
 
   const toastElement = toast && (
     <div className="custom-toast-popup" style={{
-      background: 'var(--white)',
-      border: '1px solid var(--gray-200)',
-      borderLeft: '4px solid var(--brand-500)',
-      borderRadius: 'var(--radius-lg)',
-      boxShadow: 'var(--shadow-lg)',
+      background: '#ffffff',
+      border: '1px solid #e2e8f0',
+      borderLeft: '4px solid #f97316',
+      borderRadius: '14px',
+      boxShadow: '0 10px 30px -5px rgba(0,0,0,0.1)',
       top: '72px'
     }}>
       {/* Icon Badge */}
       <div style={{
-        width: '38px',
-        height: '38px',
-        minWidth: '38px',
+        width: '40px',
+        height: '40px',
+        minWidth: '40px',
         borderRadius: '50%',
-        background: 'var(--brand-50)',
-        border: '1px solid var(--brand-200)',
+        background: '#fff7ed',
+        border: '1.5px solid #fed7aa',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        flexShrink: 0
+        flexShrink: 0,
+        boxShadow: '0 0 14px rgba(249,115,22,0.15)'
       }}>
         {toast.type === 'success' ? (
           <svg style={{ width: '18px', height: '18px', color: '#ea580c' }} fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
@@ -1027,14 +930,15 @@ function App() {
       {/* Content */}
       <div style={{ flex: 1, textAlign: 'left' }}>
         <div style={{
-          fontSize: 'var(--text-sm)',
-          fontWeight: '600',
-          color: 'var(--navy-900)',
-          marginBottom: '2px'
+          fontSize: '14px',
+          fontWeight: '700',
+          color: '#0f172a',
+          marginBottom: '3px',
+          letterSpacing: '0.1px'
         }}>
-          {toast.type === 'success' ? 'Thành công' : (toast.type === 'error' ? 'Có lỗi xảy ra' : 'Thông báo')}
+          {toast.type === 'success' ? '✓  Thành công' : (toast.type === 'error' ? '⚠  Có lỗi xảy ra' : 'ℹ  Thông báo')}
         </div>
-        <div style={{ fontSize: 'var(--text-xs)', color: 'var(--navy-700)', lineHeight: '1.5' }}>
+        <div style={{ fontSize: '13px', color: '#475569', lineHeight: '1.45' }}>
           {toast.message}
         </div>
       </div>
@@ -1067,7 +971,7 @@ function App() {
         left: 0,
         height: '2px',
         borderRadius: '0 0 14px 14px',
-        background: 'var(--brand-500)',
+        background: 'linear-gradient(90deg, #f97316, #ea580c)',
         animation: 'toastProgress 4s linear forwards'
       }} />
     </div>
@@ -1092,8 +996,7 @@ function App() {
           .lookup-page-container {
             min-height: 100vh;
             width: 100%;
-            /* Shopee-inspired soft orange gradient */
-            background: linear-gradient(135deg, #FFFDF9 0%, #FFF5E8 35%, #FFE7C2 70%, #FFD79A 100%);
+            background: #f8fafc;
             color: #1e293b;
             font-family: 'Inter', system-ui, sans-serif;
             padding: 16px;
@@ -1101,19 +1004,40 @@ function App() {
             flex-direction: column;
             align-items: center;
             position: relative;
-            overflow-x: hidden;
+            overflow: hidden;
           }
-          /* Background illustration as a secondary, low-opacity layer */
+          /* Animated gradient orbs */
           .lookup-page-container::before {
             content: '';
             position: absolute;
-            inset: 0;
-            background: url("/ChatGPT Image 16_03_45 30 thg 7, 2026.png") no-repeat center center;
-            background-size: cover;
-            background-attachment: fixed;
-            opacity: 0.10; /* Reduced opacity to be secondary */
+            top: -15%;
+            left: -10%;
+            width: 700px;
+            height: 700px;
+            background: radial-gradient(circle, rgba(249, 115, 22, 0.1) 0%, rgba(234, 88, 12, 0.03) 40%, transparent 70%);
+            z-index: 1;
             pointer-events: none;
-            z-index: 0;
+            animation: lookupFloatOrb1 8s ease-in-out infinite;
+          }
+          .lookup-page-container::after {
+            content: '';
+            position: absolute;
+            bottom: -20%;
+            right: -10%;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(249, 115, 22, 0.08) 0%, rgba(234, 88, 12, 0.02) 40%, transparent 70%);
+            z-index: 1;
+            pointer-events: none;
+            animation: lookupFloatOrb2 10s ease-in-out infinite;
+          }
+          @keyframes lookupFloatOrb1 {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(40px, 30px) scale(1.1); }
+          }
+          @keyframes lookupFloatOrb2 {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(-30px, -40px) scale(1.05); }
           }
           /* Ensure universal border-box box-sizing inside lookup card so all edges align perfectly */
           .lookup-card, .lookup-card * {
@@ -1542,14 +1466,12 @@ function App() {
           .lookup-banner-img-wrap {
             position: relative;
             width: 260px;
-            max-width: 100%;
             border-radius: 16px;
             overflow: hidden;
             box-shadow: 0 8px 32px rgba(0,0,0,0.08), 0 0 20px rgba(249, 115, 22, 0.15);
             border: 2px solid #fed7aa;
             animation: banner-float 4s ease-in-out infinite;
             transition: transform 0.3s ease, box-shadow 0.3s ease;
-            box-sizing: border-box;
           }
           .lookup-banner-img-wrap:hover {
             transform: scale(1.03) translateY(-4px);
@@ -2110,8 +2032,7 @@ function App() {
           .login-page-split {
             min-height: 100vh;
             width: 100%;
-            /* Shopee-inspired soft orange gradient */
-            background: linear-gradient(135deg, #FFFDF9 0%, #FFF5E8 35%, #FFE7C2 70%, #FFD79A 100%);
+            background: #f8fafc;
             display: flex;
             flex-direction: column;
             position: relative;
@@ -2119,17 +2040,29 @@ function App() {
             box-sizing: border-box;
             color: #1e293b;
           }
-          /* Background illustration as a secondary, low-opacity layer */
           .login-page-split::before {
             content: '';
             position: absolute;
-            inset: 0;
-            background: url("/ChatGPT Image 16_03_45 30 thg 7, 2026.png") no-repeat center center;
-            background-size: cover;
-            background-attachment: fixed;
-            opacity: 0.10; /* Reduced opacity to be secondary */
+            top: -10%;
+            left: -10%;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(249, 115, 22, 0.1) 0%, rgba(234, 88, 12, 0.03) 40%, transparent 70%);
+            z-index: 1;
             pointer-events: none;
-            z-index: 0;
+            animation: floatOrb1 12s ease-in-out infinite;
+          }
+          .login-page-split::after {
+            content: '';
+            position: absolute;
+            bottom: -10%;
+            right: -10%;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(249, 115, 22, 0.08) 0%, rgba(234, 88, 12, 0.02) 40%, transparent 70%);
+            z-index: 1;
+            pointer-events: none;
+            animation: floatOrb2 15s ease-in-out infinite;
           }
           .login-split-header {
             height: 70px;
@@ -2630,8 +2563,7 @@ function App() {
     );
   }
 
-  const publicViews = ['home', 'features', 'guides', 'pricing'];
-  if (publicViews.includes(view)) {
+  if (view === 'home') {
     return (
       <div className="landing-container">
         <header className="landing-header">
@@ -2640,67 +2572,11 @@ function App() {
             <span>28Symues <span style={{ color: '#f97316' }}>Affiliate</span></span>
           </div>
           <nav className={`landing-nav${mobileMenuOpen ? ' open' : ''}`}>
-            <a 
-              href="#" 
-              className={view === 'home' ? 'active' : ''} 
-              onClick={(e) => { 
-                e.preventDefault(); 
-                setView('home'); 
-                window.history.pushState({}, '', '/'); 
-                setMobileMenuOpen(false); 
-              }}
-            >
-              Trang chủ
-            </a>
-            <a 
-              href="#" 
-              className={view === 'features' ? 'active' : ''} 
-              onClick={(e) => { 
-                e.preventDefault(); 
-                setView('features'); 
-                window.history.pushState({}, '', '/?view=features'); 
-                setMobileMenuOpen(false); 
-              }}
-            >
-              Tính năng
-            </a>
-            <a 
-              href="#" 
-              className={view === 'guides' ? 'active' : ''} 
-              onClick={(e) => { 
-                e.preventDefault(); 
-                setView('guides'); 
-                setActiveGuideId(null);
-                window.history.pushState({}, '', '/?view=guides'); 
-                setMobileMenuOpen(false); 
-              }}
-            >
-              Hướng dẫn
-            </a>
-            <a 
-              href="#" 
-              className={view === 'pricing' ? 'active' : ''} 
-              onClick={(e) => { 
-                e.preventDefault(); 
-                setView('pricing'); 
-                window.history.pushState({}, '', '/?view=pricing'); 
-                setMobileMenuOpen(false); 
-              }}
-            >
-              Bảng giá
-            </a>
-            <a 
-              href="#" 
-              onClick={(e) => { 
-                e.preventDefault(); 
-                setView('lookup'); 
-                window.history.pushState({}, '', '/?view=lookup'); 
-                setMobileMenuOpen(false); 
-              }} 
-              style={{ color: '#ea580c', fontWeight: '700' }}
-            >
-              <i className="fa-thin fa-magnifying-glass" style={{ marginRight: '6px' }}></i>Tra cứu đơn hàng
-            </a>
+            <a href="#home" onClick={() => setMobileMenuOpen(false)}>Trang chủ</a>
+            <a href="#features" onClick={() => setMobileMenuOpen(false)}>Tính năng</a>
+            <a href="#steps" onClick={() => setMobileMenuOpen(false)}>Hướng dẫn</a>
+            <a href="#pricing" onClick={() => setMobileMenuOpen(false)}>Bảng giá</a>
+            <a href="#" onClick={(e) => { e.preventDefault(); setView('lookup'); window.history.pushState({}, '', '/?view=lookup'); setMobileMenuOpen(false); }} style={{ color: '#ea580c', fontWeight: '700' }}><i className="fa-thin fa-magnifying-glass" style={{ marginRight: '6px' }}></i>Tra cứu đơn hàng</a>
             {/* Mobile-only actions inside nav */}
             <div className="mobile-nav-actions">
               {token ? (
@@ -2850,602 +2726,388 @@ function App() {
         {/* Mobile menu overlay */}
         {mobileMenuOpen && <div className="mobile-overlay" onClick={() => setMobileMenuOpen(false)}></div>}
 
-        {/* View Routing */}
-        
-        {/* 1. Home View */}
-        {view === 'home' && (
-          <section id="home" className="hero-section">
-            {/* Floating Coins & Stars near the edges */}
-            <div className="floating-coin coin-edge-1">🪙</div>
-            <div className="floating-coin coin-edge-2">🪙</div>
-            <div className="floating-star star-edge-1">⭐</div>
-            <div className="floating-star star-edge-2">✨</div>
+        {/* Hero Section */}
+        <section id="home" className="hero-section">
+          <div className="hero-grid-split">
+            <div className="hero-content-left">
+              <div className="hero-badge">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" style={{ color: '#ea580c', flexShrink: 0 }}>
+                  <rect x="3" y="11" width="18" height="10" rx="2" />
+                  <circle cx="12" cy="5" r="2" />
+                  <path d="M12 7v4" />
+                  <line x1="8" y1="16" x2="8.01" y2="16" strokeWidth="3" />
+                  <line x1="16" y1="16" x2="16.01" y2="16" strokeWidth="3" />
+                  <path d="M9 16h6" />
+                </svg>
+                HỆ THỐNG AUTOMATION AFFILIATE
+              </div>
+              <h1 className="hero-title">Tự Động Hóa Shopee Affiliate<br />Với 28Symues</h1>
+              <p className="hero-subtitle">
+                Biến mọi liên kết mua sắm trong nhóm chat Zalo của bạn thành nguồn thu nhập thụ động chỉ trong vài giây. Tiện lợi, tự động và hoàn toàn minh bạch.
+              </p>
+              <div className="hero-buttons">
+                <a href="#steps" className="btn btn-hero-1">
+                  Bắt đầu ngay
+                </a>
+                <button onClick={() => { setView('lookup'); window.history.pushState({}, '', '/?view=lookup'); }} className="btn btn-hero-2">
+                  <i className="fa-thin fa-magnifying-glass"></i> Tra cứu đơn hàng
+                </button>
+                <a href="#features" className="btn btn-hero-3">
+                  Tìm hiểu tính năng
+                </a>
+              </div>
+            </div>
 
-            <div className="hero-grid-split">
-              <div className="hero-content-left">
-                <div className="hero-badge">
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" style={{ color: '#ea580c', flexShrink: 0 }}>
-                    <rect x="3" y="11" width="18" height="10" rx="2" />
-                    <circle cx="12" cy="5" r="2" />
-                    <path d="M12 7v4" />
-                    <line x1="8" y1="16" x2="8.01" y2="16" strokeWidth="3" />
-                    <line x1="16" y1="16" x2="16.01" y2="16" strokeWidth="3" />
-                    <path d="M9 16h6" />
-                  </svg>
-                  HỆ THỐNG AUTOMATION AFFILIATE
-                </div>
-                <h1 className="hero-title">Tự Động Hóa Shopee Affiliate<br />Với 28Symues</h1>
-                <p className="hero-subtitle">
-                  Biến mọi liên kết mua sắm trong nhóm chat Zalo của bạn thành nguồn thu nhập thụ động chỉ trong vài giây. Tiện lợi, tự động và hoàn toàn minh bạch.
-                </p>
-                <div className="hero-buttons">
-                  <a 
-                    href="#" 
-                    onClick={(e) => {
-                      e.preventDefault();
-                      setView('guides');
-                      setActiveGuideId(null);
-                      window.history.pushState({}, '', '/?view=guides');
-                    }} 
-                    className="btn btn-hero-1"
-                  >
-                    Bắt đầu ngay
-                  </a>
-                  <button onClick={() => { setView('lookup'); window.history.pushState({}, '', '/?view=lookup'); }} className="btn btn-hero-2">
-                    <i className="fa-thin fa-magnifying-glass"></i> Tra cứu đơn hàng
-                  </button>
-                  <a 
-                    href="#" 
-                    onClick={(e) => {
-                      e.preventDefault();
-                      setView('features');
-                      window.history.pushState({}, '', '/?view=features');
-                    }} 
-                    className="btn btn-hero-3"
-                  >
-                    Tìm hiểu tính năng
-                  </a>
-                </div>
+            {/* Live Interactive Zalo Bot Chat Mockup */}
+            <div className="hero-mockup-right">
+              {/* Floating Badges */}
+              <div className="floating-badge badge-top-right">
+                <span className="badge-icon">⚡</span>
+                <span className="badge-text">Tốc độ &lt; 0.5s</span>
+              </div>
+              <div className="floating-badge badge-mid-left">
+                <span className="badge-icon">💰</span>
+                <span className="badge-text">+18.500đ Vừa ghi nhận</span>
+              </div>
+              <div className="floating-badge badge-bot-right">
+                <span className="badge-icon">🤖</span>
+                <span className="badge-text">AI GPT-4o Tự Động</span>
               </div>
 
-              {/* Live Interactive Zalo Bot Chat Mockup */}
-              <div className="hero-mockup-right">
-                {/* Only one main mascot cat should attract attention with a subtle glow */}
-                <div className="hero-main-mascot-container">
-                  <div className="hero-mascot-glow"></div>
-                  <img src="/logo.jpg" className="hero-main-mascot" alt="Mascot Cat" />
+              {/* iPhone / Zalo App Mockup */}
+              <div className="zalo-phone-mockup">
+                <div className="zalo-phone-header">
+                  <div className="zalo-avatar">
+                    <img src="/logo.jpg" alt="Bot Logo" />
+                    <span className="online-dot"></span>
+                  </div>
+                  <div className="zalo-header-info">
+                    <div className="zalo-group-name">Nhiệt Huyết Săn Sale 🚀</div>
+                    <div className="zalo-group-sub">850 thành viên • Bot đang hoạt động</div>
+                  </div>
                 </div>
 
-                {/* iPhone / Zalo App Mockup */}
-                <div className="zalo-phone-mockup">
-                  <div className="zalo-phone-header">
-                    <div className="zalo-avatar">
-                      <img src="/logo.jpg" alt="Bot Logo" />
-                      <span className="online-dot"></span>
+                <div className="zalo-chat-body">
+                  <div className="chat-date-divider">Hôm nay</div>
+
+                  {/* Customer Message */}
+                  <div className="chat-msg customer-msg">
+                    <div className="msg-sender">Nguyễn Mai (Thành viên)</div>
+                    <div className="msg-bubble">
+                      Sếp ơi check giúp em link váy này trên Shopee với nè!
+                      <div className="msg-link-preview">shopee.vn/dam-du-tiec-sang-trong-i.1284920</div>
                     </div>
-                    <div className="zalo-header-info">
-                      <div className="zalo-group-name">Nhiệt Huyết Săn Sale 🚀</div>
-                      <div className="zalo-group-sub">850 thành viên • Bot đang hoạt động</div>
-                    </div>
+                    <div className="msg-time">08:32 AM</div>
                   </div>
 
-                  <div className="zalo-chat-body">
-                    <div className="chat-date-divider">Hôm nay</div>
-
-                    {/* Customer Message */}
-                    <div className="zalo-msg-item">
-                      <div className="zalo-msg-avatar" style={{ background: '#0068ff', color: '#ffffff' }}>PT</div>
-                      <div className="zalo-msg-content">
-                        <div className="zalo-msg-sender">Phạm Thắng</div>
-                        <div className="zalo-msg-bubble">
-                          <div style={{ wordBreak: 'break-all' }}>https://shopee.vn/product/363419620/16124463327?d_id=3416e</div>
-                          <div className="zalo-link-preview-card">
-                            <div className="zalo-link-preview-info">
-                              <div className="zalo-link-preview-title">Dây Mạng CAT5e Bấm Sẵn 2 Đầu 5m 10m 20m 25m 30m...</div>
-                              <div className="zalo-link-preview-desc">Mua Dây Mạng CAT5e Bấm Sẵn 2 Đầu 5m 10m 20m 25m 30m 40m 50m - dây cáp mạng lan chính hãng giá tốt...</div>
-                              <div className="zalo-link-preview-site">shopee.vn</div>
-                            </div>
-                          </div>
+                  {/* Bot Reply Message */}
+                  <div className="chat-msg bot-msg">
+                    <div className="msg-sender bot-sender">
+                      <span>28Symues Bot</span>
+                      <span className="bot-tag">BOT</span>
+                    </div>
+                    <div className="msg-bubble bot-bubble">
+                      Dạ link mua sắm săn sale có gắn hoa hồng cho chị Mai đây ạ 👇
+                      <div className="converted-link-card">
+                        <div className="link-title">Đầm Dự Tiệc Dáng Xòe Sang Trọng</div>
+                        <div className="link-url">https://s.shopee.vn/aff_829103</div>
+                        <div className="link-meta">
+                          <span className="subid-tag">SubID: Mai_Zalo98</span>
+                          <span className="cashback-tag">+18.500đ Hoa hồng</span>
                         </div>
-                        <div className="zalo-msg-time">12:21</div>
                       </div>
                     </div>
-
-                    {/* Bot Reply Message */}
-                    <div className="zalo-msg-item">
-                      <div className="zalo-msg-avatar bot">
-                        <img src="/logo.jpg" alt="Bot Avatar" />
-                      </div>
-                      <div className="zalo-msg-content">
-                        <div className="zalo-msg-sender">Meomeo <span className="bot-tag">BOT</span></div>
-                        <div className="zalo-msg-bubble bot">
-                          <div className="zalo-quote-box">
-                            <div className="zalo-quote-sender">Phạm Thắng</div>
-                            <div className="zalo-quote-text">[Link] https://shopee.vn/product/363419620/16124463327?d_id=3416e</div>
-                          </div>
-                          <div style={{ whiteSpace: 'pre-line' }}>
-                            Hi @Phạm Thắng, link của bạn đây ạ:<br />
-                            📦 <strong>Dây Mạng CAT5e Bấm Sẵn 2 Đầu 5m 10m 20m 25m 30m 40m 50m - dây cáp mạng lan chính hãng</strong><br />
-                            💵 Giá tham khảo: đ22.000<br />
-                            🔗 Link: <span style={{ color: 'var(--brand-600)', textDecoration: 'underline', wordBreak: 'break-all' }}>https://s.shopee.vn/an_redir?origin_link=https%3A%2F%2Fshopee.vn%2Fproduct%2F363419620%2F16124463327</span><br />
-                            💵 Tổng hoa hồng: 3.5% (đ770) [Shopee: 3.5% (đ770)]<br />
-                            ⚠️ <strong>Lưu ý:</strong> Click xong mua ngay trong ngày (nên bấm link lần 2 trước khi đặt hàng để tăng tỉ lệ chuyển đổi), không xem Video/Live, xóa giỏ trước khi click.
-                          </div>
-                        </div>
-                        <div className="zalo-msg-time">12:21</div>
-                      </div>
-                    </div>
-
+                    <div className="msg-time">08:32 AM</div>
                   </div>
                 </div>
               </div>
             </div>
-          </section>
-        )}
+          </div>
+        </section>
 
-        {/* 2. Features View */}
-        {view === 'features' && (
-          <section id="features" className="features-section reveal" style={{ padding: '80px 20px', maxWidth: '1200px', margin: '0 auto 40px', position: 'relative', zIndex: 10 }}>
-            <h2 className="section-title" style={{ fontSize: '36px', fontWeight: '800', color: '#0f172a', marginBottom: '12px', textAlign: 'center' }}>Tính Năng Nổi Bật</h2>
-            <p className="section-subtitle" style={{ color: '#475569', fontSize: '16px', marginBottom: '48px', textAlign: 'center' }}>Mọi thứ bạn cần để vận hành hệ thống săn sale hoa hồng tự động</p>
-            <div className="features-grid">
-              <div className="feature-card reveal reveal-delay-1">
-                <div className="feature-icon"><i className="fa-regular fa-link"></i></div>
-                <h3 className="feature-title">Chuyển Đổi Link Tự Động</h3>
-                <p className="feature-desc">
-                  Tự động nhận diện link Shopee, Lazada, TikTok Shop và chuyển đổi thành link affiliate có gắn Zalo ID của người gửi làm sub_id.
-                </p>
-              </div>
-              <div className="feature-card success reveal reveal-delay-2">
-                <div className="feature-icon"><i className="fa-brands fa-bots"></i></div>
-                <h3 className="feature-title">Tương Tác Bằng AI</h3>
-                <p className="feature-desc">
-                  Sử dụng mô hình AI GPT-4o để tự động soạn thảo lời phản hồi vui nhộn, hấp dẫn, nâng cao tỷ lệ nhấn click mua sản phẩm.
-                </p>
-              </div>
-              <div className="feature-card warning reveal reveal-delay-3">
-                <div className="feature-icon"><i className="fa-regular fa-chart-area"></i></div>
-                <h3 className="feature-title">Thống Kê Chi Tiết</h3>
-                <p className="feature-desc">
-                  Theo dõi đầy đủ lịch sử đơn hàng đã mua, phần trăm hoa hồng tạm tính và doanh số rút tiền của từng thành viên trong hệ thống.
-                </p>
-              </div>
-              <div className="feature-card info reveal reveal-delay-1">
-                <div className="feature-icon"><i className="fa-regular fa-bolt" style={{ color: '#ea580c' }}></i></div>
-                <h3 className="feature-title">Tốc Độ Xử Lý &lt; 0.5s</h3>
-                <p className="feature-desc">
-                  Đường truyền siêu tốc, bot phản hồi ngay lập tức dưới 0.5 giây. Tự động trả link ngay sau khi thành viên gửi sản phẩm.
-                </p>
-              </div>
-              <div className="feature-card reveal reveal-delay-2">
-                <div className="feature-icon"><i className="fa-brands fa-cc-apple-pay"></i></div>
-                <h3 className="feature-title">Rút Tiền Tự Động</h3>
-                <p className="feature-desc">
-                  Thành viên yêu cầu rút tiền trực tiếp bằng cú pháp `/rut-tien` trong nhóm Zalo. Admin phê duyệt nhanh chóng trên Dashboard.
-                </p>
-              </div>
-              <div className="feature-card success reveal reveal-delay-3">
-                <div className="feature-icon"><i className="fa-regular fa-shield-halved"></i></div>
-                <h3 className="feature-title">Bảo Mật Xác Thực OTP</h3>
-                <p className="feature-desc">
-                  Gửi OTP tự động qua Zalo chat khi cài đặt tài khoản ngân hàng hoặc rút tiền, chống gian lận hoa hồng cực kỳ an toàn.
-                </p>
-              </div>
+        {/* Features Section */}
+        <section id="features" className="features-section">
+          <h2 className="section-title">Tính Năng Nổi Bật</h2>
+          <p className="section-subtitle">Mọi thứ bạn cần để vận hành hệ thống săn sale hoa hồng tự động</p>
+          <div className="features-grid">
+            <div className="feature-card">
+              <div className="feature-icon"><i className="fa-regular fa-link"></i></div>
+              <h3 className="feature-title">Chuyển Đổi Link Tự Động</h3>
+              <p className="feature-desc">
+                Tự động nhận diện link Shopee, Lazada, TikTok Shop và chuyển đổi thành link affiliate có gắn Zalo ID của người gửi làm sub_id.
+              </p>
             </div>
-          </section>
-        )}
+            <div className="feature-card success">
+              <div className="feature-icon"><i className="fa-brands fa-bots"></i></div>
+              <h3 className="feature-title">Tương Tác Bằng AI</h3>
+              <p className="feature-desc">
+                Sử dụng mô hình AI GPT-4o để tự động soạn thảo lời phản hồi vui nhộn, hấp dẫn, nâng cao tỷ lệ nhấn click mua sản phẩm.
+              </p>
+            </div>
+            <div className="feature-card warning">
+              <div className="feature-icon"><i className="fa-regular fa-chart-area"></i></div>
+              <h3 className="feature-title">Thống Kê Chi Tiết</h3>
+              <p className="feature-desc">
+                Theo dõi đầy đủ lịch sử đơn hàng đã mua, phần trăm hoa hồng tạm tính và doanh số rút tiền của từng thành viên trong hệ thống.
+              </p>
+            </div>
+            <div className="feature-card">
+              <div className="feature-icon"><i className="fa-brands fa-cc-apple-pay"></i></div>
+              <h3 className="feature-title">Rút Tiền Tự Động</h3>
+              <p className="feature-desc">
+                Thành viên yêu cầu rút tiền trực tiếp bằng cú pháp `/rut-tien` trong nhóm Zalo. Admin phê duyệt nhanh chóng trên Dashboard.
+              </p>
+            </div>
+          </div>
+        </section>
 
-        {/* 3. Guides View */}
-        {view === 'guides' && (
-          <section className="guides-section reveal" style={{ padding: '80px 20px', maxWidth: '100%', boxSizing: 'border-box', margin: '0 auto 60px', position: 'relative', zIndex: 10 }}>
-            {activeGuideId === null ? (
-              <div style={{ maxWidth: '1200px', margin: '0 auto', width: '100%' }}>
-                <h2 className="section-title" style={{ fontSize: '36px', fontWeight: '800', color: '#0f172a', marginBottom: '12px', textAlign: 'center' }}>
-                  Cổng Hướng Dẫn Sử Dụng
-                </h2>
-                <p className="section-subtitle" style={{ color: '#475569', fontSize: '16px', marginBottom: '48px', textAlign: 'center' }}>
-                  Chọn chủ đề bên dưới để xem hướng dẫn chi tiết cách cài đặt và sử dụng hệ thống
-                </p>
-                
-                <div style={{
-                  display: 'grid',
-                  gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))',
-                  gap: '24px',
-                  width: '100%'
-                }}>
-                  {guidesData.map(guide => (
-                    <div 
-                      key={guide.id}
-                      className="guide-card reveal"
-                      onClick={() => setActiveGuideId(guide.id)}
-                      style={{
-                        background: '#ffffff',
-                        border: '1px solid #e2e8f0',
-                        borderRadius: '24px',
-                        padding: '32px 24px',
-                        cursor: 'pointer',
-                        transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-                        boxShadow: '0 4px 20px -5px rgba(0, 0, 0, 0.05)',
-                        display: 'flex',
-                        flexDirection: 'column',
-                        alignItems: 'flex-start',
-                        gap: '16px',
-                        position: 'relative'
-                      }}
-                      onMouseEnter={e => {
-                        e.currentTarget.style.transform = 'translateY(-6px)';
-                        e.currentTarget.style.borderColor = '#fed7aa';
-                        e.currentTarget.style.boxShadow = '0 12px 30px -10px rgba(249, 115, 22, 0.15), 0 0 20px rgba(249, 115, 22, 0.05)';
-                      }}
-                      onMouseLeave={e => {
-                        e.currentTarget.style.transform = 'none';
-                        e.currentTarget.style.borderColor = '#e2e8f0';
-                        e.currentTarget.style.boxShadow = '0 4px 20px -5px rgba(0, 0, 0, 0.05)';
-                      }}
-                    >
-                      <div style={{
-                        width: '56px',
-                        height: '56px',
-                        borderRadius: '16px',
-                        background: '#fff7ed',
-                        border: '1px solid #ffedd5',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        fontSize: '24px',
-                        color: '#ea580c'
-                      }}>
-                        <i className={`fa-solid ${guide.icon}`}></i>
-                      </div>
-                      
-                      <div style={{ flex: 1 }}>
-                        <h3 style={{ fontSize: '18px', fontWeight: '700', color: '#0f172a', marginBottom: '8px', textAlign: 'left' }}>
-                          {guide.title}
-                        </h3>
-                        <p style={{ fontSize: '14px', color: '#64748b', lineHeight: '1.5', margin: 0, textAlign: 'left' }}>
-                          {guide.desc}
-                        </p>
-                      </div>
+        {/* Steps Section */}
+        <section id="steps" className="instructions-section" style={{ borderTop: '1px solid #e2e8f0', borderBottom: '1px solid #e2e8f0' }}>
+          <h2 className="section-title">3 Bước Bắt Đầu Đơn Giản</h2>
+          <p className="section-subtitle">Chỉ mất 5 phút để thiết lập và khởi chạy chatbot trong nhóm của bạn</p>
+          <div className="instructions-grid">
+            <div className="instruction-step">
+              <div className="step-num">1</div>
+              <h3 className="step-title">Quét QR Kết Nối</h3>
+              <p className="step-desc">Quét mã QR Zalo từ client bot để kết nối tài khoản phụ làm bot săn sale tự động.</p>
+            </div>
+            <div className="instruction-step">
+              <div className="step-num">2</div>
+              <h3 className="step-title">Thêm Vào Nhóm Chat</h3>
+              <p className="step-desc">Thêm Bot vào nhóm săn sale của bạn. Bot sẽ tự động chào và lắng nghe các link sản phẩm.</p>
+            </div>
+            <div className="instruction-step">
+              <div className="step-num">3</div>
+              <h3 className="step-title">Mua Sắm & Nhận Tiền</h3>
+              <p className="step-desc">Mọi đơn hàng thành công sẽ được đối soát và cộng dồn ví hoa hồng, rút nhanh qua lệnh chat.</p>
+            </div>
+          </div>
+        </section>
 
-                      <div style={{
-                        alignSelf: 'stretch',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'space-between',
-                        paddingTop: '16px',
-                        borderTop: '1px solid #f1f5f9',
-                        fontSize: '13.5px',
-                        fontWeight: '700',
-                        color: '#ea580c'
-                      }}>
-                        <span>Xem chi tiết</span>
-                        <i className="fa-solid fa-arrow-right-long" style={{ transition: 'transform 0.2s' }}></i>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            ) : (
-              // Guide Detail View
-              (() => {
-                const currentGuide = guidesData.find(g => g.id === activeGuideId);
-                return (
-                  <div className="reveal" style={{ maxWidth: '800px', margin: '0 auto', background: '#ffffff', borderRadius: '28px', border: '1px solid #e2e8f0', padding: windowWidth < 768 ? '24px 16px' : '40px', boxShadow: '0 20px 40px -15px rgba(0,0,0,0.05)' }}>
-                    {/* Back header */}
-                    <button 
-                      onClick={() => setActiveGuideId(null)}
-                      style={{
-                        background: 'none',
-                        border: 'none',
-                        color: '#64748b',
-                        fontSize: '14.5px',
-                        fontWeight: '600',
-                        cursor: 'pointer',
-                        display: 'inline-flex',
-                        alignItems: 'center',
-                        gap: '8px',
-                        marginBottom: '32px',
-                        padding: '6px 12px',
-                        borderRadius: '20px',
-                        transition: 'all 0.2s',
-                        border: '1px solid #e2e8f0'
-                      }}
-                      onMouseEnter={e => { e.currentTarget.style.background = '#f8fafc'; e.currentTarget.style.color = '#0f172a'; }}
-                      onMouseLeave={e => { e.currentTarget.style.background = 'none'; e.currentTarget.style.color = '#64748b'; }}
-                    >
-                      <i className="fa-solid fa-arrow-left"></i> Quay lại cổng hướng dẫn
-                    </button>
-
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '20px', marginBottom: '24px' }}>
-                      <div style={{
-                        width: '64px',
-                        height: '64px',
-                        borderRadius: '18px',
-                        background: '#fff7ed',
-                        border: '1px solid #ffedd5',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        fontSize: '28px',
-                        color: '#ea580c',
-                        flexShrink: 0
-                      }}>
-                        <i className={`fa-solid ${currentGuide.icon}`}></i>
-                      </div>
-                      <h2 style={{ fontSize: '24px', fontWeight: '800', color: '#0f172a', margin: 0, textAlign: 'left', lineHeight: '1.3' }}>
-                        {currentGuide.title}
-                      </h2>
-                    </div>
-
-                    <p style={{ fontSize: '15px', color: '#475569', lineHeight: '1.6', marginBottom: '36px', textAlign: 'left', borderBottom: '1px solid #f1f5f9', paddingBottom: '24px' }}>
-                      {currentGuide.desc}
-                    </p>
-
-                    {/* Steps list */}
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '24px', marginBottom: '32px' }}>
-                      {currentGuide.steps.map((step, idx) => (
-                        <div key={idx} style={{ display: 'flex', gap: '16px', alignItems: 'flex-start' }}>
-                          <div style={{
-                            width: '28px',
-                            height: '28px',
-                            borderRadius: '50%',
-                            background: '#ea580c',
-                            color: '#ffffff',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            fontWeight: '800',
-                            fontSize: '14px',
-                            flexShrink: 0,
-                            boxShadow: '0 4px 10px rgba(234, 88, 12, 0.25)'
-                          }}>
-                            {idx + 1}
-                          </div>
-                          <p style={{ fontSize: '15px', color: '#1e293b', lineHeight: '1.6', margin: 0, paddingTop: '2px', textAlign: 'left', fontWeight: '500' }}>
-                            {step}
-                          </p>
-                        </div>
-                      ))}
-                    </div>
-
-                    {/* Note Box */}
-                    {currentGuide.note && (
-                      <div style={{
-                        background: '#fff7ed',
-                        border: '1px solid #fed7aa',
-                        borderRadius: '16px',
-                        padding: '18px 20px',
-                        display: 'flex',
-                        gap: '12px',
-                        alignItems: 'flex-start',
-                        textAlign: 'left'
-                      }}>
-                        <span style={{ fontSize: '20px' }}>💡</span>
-                        <div style={{ fontSize: '14px', color: '#c2410c', lineHeight: '1.5' }}>
-                          <strong style={{ fontWeight: '700' }}>Lưu ý quan trọng:</strong> {currentGuide.note}
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                );
-              })()
-            )}
-          </section>
-        )}
-
-        {/* 4. Pricing View */}
-        {view === 'pricing' && (
-          <section id="pricing" className="pricing-section reveal" style={{ padding: '80px 20px', textAlign: 'center', position: 'relative', zIndex: 10 }}>
-            <h2 className="section-title" style={{ fontSize: '36px', fontWeight: '800', color: '#0f172a', marginBottom: '12px' }}>Bảng Giá Dịch Vụ</h2>
-            <p className="section-subtitle" style={{ color: '#475569', fontSize: '16px', marginBottom: '48px' }}>Chi phí tối ưu, hiệu quả tối đa cho nhóm Zalo săn sale của bạn</p>
+        {/* Pricing Section */}
+        <section id="pricing" className="pricing-section" style={{ padding: '80px 20px', textAlign: 'center', position: 'relative', zIndex: 10 }}>
+          <h2 className="section-title" style={{ fontSize: '36px', fontWeight: '800', color: '#0f172a', marginBottom: '12px' }}>Bảng Giá Dịch Vụ</h2>
+          <p className="section-subtitle" style={{ color: '#475569', fontSize: '16px', marginBottom: '48px' }}>Chi phí tối ưu, hiệu quả tối đa cho nhóm Zalo săn sale của bạn</p>
+          
+          <div style={{
+            display: 'flex',
+            flexWrap: 'wrap',
+            justifyContent: 'center',
+            gap: '24px',
+            maxWidth: '1200px',
+            margin: '0 auto'
+          }}>
             
-            <div style={{
+            {/* Gói Thường */}
+            <div className="pricing-card" style={{
+              background: '#ffffff',
+              border: '1px solid #e2e8f0',
+              borderRadius: '24px',
+              padding: '40px 32px',
+              width: '100%',
+              maxWidth: '360px',
+              backdropFilter: 'blur(10px)',
+              boxShadow: '0 10px 30px -10px rgba(0, 0, 0, 0.05)',
+              position: 'relative',
+              overflow: 'hidden',
               display: 'flex',
-              flexWrap: 'wrap',
-              justifyContent: 'center',
-              gap: '24px',
-              maxWidth: '1200px',
-              margin: '0 auto'
+              flexDirection: 'column',
+              justifyContent: 'space-between',
+              transition: 'all 0.3s ease'
             }}>
+              <div>
+                <h3 style={{ fontSize: '22px', color: '#0f172a', marginBottom: '8px', fontWeight: '700' }}>Zalo Bot Affiliate</h3>
+                <p style={{ color: '#64748b', fontSize: '14px', marginBottom: '24px' }}>Tự động chuyển đổi link mua sắm cơ bản trong nhóm chat</p>
+                
+                <div style={{ marginBottom: '32px' }}>
+                  <span style={{ fontSize: '42px', fontWeight: '800', color: '#0f172a', fontFamily: 'var(--font-heading)' }}>199.000đ</span>
+                  <span style={{ color: '#64748b', fontSize: '15px' }}> / tháng</span>
+                </div>
+                
+                <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 32px 0', textAlign: 'left', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                  <li style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', color: '#334155', fontSize: '14px' }}>
+                    <span style={{ color: '#10b981', fontWeight: 'bold' }}>✓</span> Tự động đổi link nhận hoa hồng: Khách gửi link Shopee, Lazada... bot tự đổi thành link của sếp ngay lập tức.
+                  </li>
+                  <li style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', color: '#334155', fontSize: '14px' }}>
+                    <span style={{ color: '#10b981', fontWeight: 'bold' }}>✓</span> Tự nhận biết người gửi: Ghi nhận chính xác ai gửi link để sếp tính doanh số cho họ.
+                  </li>
+                  <li style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', color: '#334155', fontSize: '14px' }}>
+                    <span style={{ color: '#10b981', fontWeight: 'bold' }}>✓</span> Hoạt động liên tục 24/7: Tự trả lời tin nhắn trong nhóm chat bất kể ngày đêm, sếp không cần trực máy.
+                  </li>
+                  <li style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', color: '#334155', fontSize: '14px' }}>
+                    <span style={{ color: '#10b981', fontWeight: 'bold' }}>✓</span> Tin nhắn phản hồi lịch sự: Mẫu tin nhắn ngắn gọn, rõ ràng, kích thích người mua bấm link.
+                  </li>
+                </ul>
+              </div>
               
-              {/* Gói Thường */}
-              <div className="pricing-card reveal reveal-delay-1" style={{
-                background: '#ffffff',
-                border: '1px solid #e2e8f0',
-                borderRadius: '24px',
-                padding: '40px 32px',
-                width: '100%',
-                maxWidth: '360px',
-                backdropFilter: 'blur(10px)',
-                boxShadow: '0 10px 30px -10px rgba(0, 0, 0, 0.05)',
-                position: 'relative',
-                overflow: 'hidden',
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'space-between',
-                transition: 'all 0.3s ease'
-              }}>
-                <div>
-                  <h3 style={{ fontSize: '22px', color: '#0f172a', marginBottom: '8px', fontWeight: '700' }}>Zalo Bot Affiliate</h3>
-                  <p style={{ color: '#64748b', fontSize: '14px', marginBottom: '24px' }}>Tự động chuyển đổi link mua sắm cơ bản trong nhóm chat</p>
-                  
-                  <div style={{ marginBottom: '32px' }}>
-                    <span style={{ fontSize: '42px', fontWeight: '800', color: '#0f172a', fontFamily: 'var(--font-heading)' }}>199.000đ</span>
-                    <span style={{ color: '#64748b', fontSize: '15px' }}> / tháng</span>
-                  </div>
-                  
-                  <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 32px 0', textAlign: 'left', display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                    <li style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', color: '#334155', fontSize: '14px' }}>
-                      <span style={{ color: '#10b981', fontWeight: 'bold' }}>✓</span> Tự động đổi link nhận hoa hồng: Khách gửi link Shopee, Lazada... bot tự đổi thành link của sếp ngay lập tức.
-                    </li>
-                    <li style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', color: '#334155', fontSize: '14px' }}>
-                      <span style={{ color: '#10b981', fontWeight: 'bold' }}>✓</span> Tự nhận biết người gửi: Ghi nhận chính xác ai gửi link để sếp tính doanh số cho họ.
-                    </li>
-                    <li style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', color: '#334155', fontSize: '14px' }}>
-                      <span style={{ color: '#10b981', fontWeight: 'bold' }}>✓</span> Hoạt động liên tục 24/7: Tự trả lời tin nhắn trong nhóm chat bất kể ngày đêm, sếp không cần trực máy.
-                    </li>
-                    <li style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', color: '#334155', fontSize: '14px' }}>
-                      <span style={{ color: '#10b981', fontWeight: 'bold' }}>✓</span> Tin nhắn phản hồi lịch sự: Mẫu tin nhắn ngắn gọn, rõ ràng, kích thích người mua bấm link.
-                    </li>
-                  </ul>
-                </div>
-                
-                <a 
-                  href="http://zaloapp.com/qr/p/fd2gcjcjfuof"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="btn btn-glow-active" 
-                  onClick={() => {
-                    showToast("Đang kết nối tới Zalo Phạm Thắng...", 'info');
-                  }}
-                  style={{ width: '100%', padding: '14px', borderRadius: '12px', fontSize: '15px', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', textDecoration: 'none', boxSizing: 'border-box' }}
-                >
-                  Mua Ngay
-                </a>
-              </div>
-
-              {/* Gói Pro */}
-              <div className="pricing-card reveal reveal-delay-2" style={{
-                background: 'linear-gradient(135deg, #ffffff 0%, #fffbf5 100%)',
-                border: '2px solid #f97316',
-                borderRadius: '24px',
-                padding: '40px 32px',
-                width: '100%',
-                maxWidth: '360px',
-                backdropFilter: 'blur(10px)',
-                boxShadow: '0 20px 40px -10px rgba(249, 115, 22, 0.12)',
-                position: 'relative',
-                overflow: 'hidden',
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'space-between',
-                transition: 'all 0.3s ease'
-              }}>
-                <div style={{ position: 'absolute', top: '16px', right: '-35px', background: '#f97316', color: '#ffffff', fontSize: '12px', fontWeight: '800', padding: '6px 40px', transform: 'rotate(45deg)', boxShadow: '0 2px 10px rgba(249, 115, 22, 0.3)' }}>
-                  PHỔ BIẾN
-                </div>
-                <div>
-                  <h3 style={{ fontSize: '22px', color: '#0f172a', marginBottom: '8px', fontWeight: '700' }}>Zalo Bot Affiliate Pro</h3>
-                  <p style={{ color: '#64748b', fontSize: '14px', marginBottom: '24px' }}>Nâng cao trải nghiệm tương tác với AI và tùy biến tin nhắn</p>
-                  
-                  <div style={{ marginBottom: '32px' }}>
-                    <span style={{ fontSize: '42px', fontWeight: '800', color: '#f97316', fontFamily: 'var(--font-heading)' }}>399.000đ</span>
-                    <span style={{ color: '#64748b', fontSize: '15px' }}> / tháng</span>
-                  </div>
-                  
-                  <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 32px 0', textAlign: 'left', display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                    <li style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', color: '#334155', fontSize: '14px' }}>
-                      <span style={{ color: '#10b981', fontWeight: 'bold' }}>✓</span> Đầy đủ tính năng của bản thường.
-                    </li>
-                    <li style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', color: '#334155', fontSize: '14px' }}>
-                      <span style={{ color: '#10b981', fontWeight: 'bold' }}>✓</span> Lời nhắn tự động soạn bằng AI: Tích hợp GPT-4o tạo tin nhắn ngẫu nhiên thu hút, không bị nhàm chán.
-                    </li>
-                    <li style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', color: '#334155', fontSize: '14px' }}>
-                      <span style={{ color: '#10b981', fontWeight: 'bold' }}>✓</span> Tự cấu hình tin nhắn phản hồi: Sếp thích viết mẫu tin nhắn thế nào tùy ý, đổi trong 30 giây.
-                    </li>
-                    <li style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', color: '#334155', fontSize: '14px' }}>
-                      <span style={{ color: '#10b981', fontWeight: 'bold' }}>✓</span> Hỗ trợ lọc tin nhắn spam: Tự bỏ qua các tin rác hoặc link lỗi để tránh làm phiền nhóm chat.
-                    </li>
-                  </ul>
-                </div>
-                
-                <a 
-                  href="http://zaloapp.com/qr/p/fd2gcjcjfuof"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="btn" 
-                  onClick={() => {
-                    showToast("Đang kết nối tới Zalo Phạm Thắng...", 'info');
-                  }}
-                  style={{ width: '100%', padding: '14px', borderRadius: '12px', fontSize: '15px', background: 'linear-gradient(135deg, #f97316, #ea580c)', color: '#ffffff', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', textDecoration: 'none', boxSizing: 'border-box', fontWeight: '800', boxShadow: '0 8px 25px rgba(249, 115, 22, 0.35)' }}
-                >
-                  Mua Ngay
-                </a>
-              </div>
-
-              {/* Gói Pro Max */}
-              <div className="pricing-card reveal reveal-delay-3" style={{
-                background: '#ffffff',
-                border: '1px solid #e2e8f0',
-                borderRadius: '24px',
-                padding: '40px 32px',
-                width: '100%',
-                maxWidth: '360px',
-                backdropFilter: 'blur(10px)',
-                boxShadow: '0 10px 30px -10px rgba(0, 0, 0, 0.05)',
-                position: 'relative',
-                overflow: 'hidden',
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'space-between',
-                transition: 'all 0.3s ease'
-              }}>
-                <div>
-                  <h3 style={{ fontSize: '22px', color: '#0f172a', marginBottom: '8px', fontWeight: '700' }}>Zalo Bot Affiliate Pro Max</h3>
-                  <p style={{ color: '#64748b', fontSize: '14px', marginBottom: '24px' }}>Hệ thống ví tiền tự động và rút tiền qua tin nhắn chat</p>
-                  
-                  <div style={{ marginBottom: '32px' }}>
-                    <span style={{ fontSize: '42px', fontWeight: '800', color: '#0f172a', fontFamily: 'var(--font-heading)' }}>599.000đ</span>
-                    <span style={{ color: '#64748b', fontSize: '15px' }}> / tháng</span>
-                  </div>
-                  
-                  <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 32px 0', textAlign: 'left', display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                    <li style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', color: '#334155', fontSize: '14px' }}>
-                      <span style={{ color: '#10b981', fontWeight: 'bold' }}>✓</span> Đầy đủ toàn bộ tính năng cao cấp của bản Pro.
-                    </li>
-                    <li style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', color: '#334155', fontSize: '14px' }}>
-                      <span style={{ color: '#10b981', fontWeight: 'bold' }}>✓</span> Ví tích lũy tiền tự động: Tự động cộng dồn tiền hoa hồng sau khi đơn hàng thành công.
-                    </li>
-                    <li style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', color: '#334155', fontSize: '14px' }}>
-                      <span style={{ color: '#10b981', fontWeight: 'bold' }}>✓</span> Rút tiền nhanh bằng tin nhắn: Khách tự gõ lệnh `/rut-tien` trong nhóm để yêu cầu thanh toán.
-                    </li>
-                    <li style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', color: '#334155', fontSize: '14px' }}>
-                      <span style={{ color: '#10b981', fontWeight: 'bold' }}>✓</span> Đường truyền riêng siêu tốc: Chạy trên máy chủ VPS riêng, phản hồi ngay lập tức không trễ lag.
-                    </li>
-                    <li style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', color: '#334155', fontSize: '14px' }}>
-                      <span style={{ color: '#10b981', fontWeight: 'bold' }}>✓</span> Hỗ trợ kỹ thuật ưu tiên 24/7: Xử lý nhanh chóng mọi yêu cầu và sự cố phát sinh.
-                    </li>
-                  </ul>
-                </div>
-                
-                <a 
-                  href="http://zaloapp.com/qr/p/fd2gcjcjfuof"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="btn btn-glow-active" 
-                  onClick={() => {
-                    showToast("Đang kết nối tới Zalo Phạm Thắng...", 'info');
-                  }}
-                  style={{ width: '100%', padding: '14px', borderRadius: '12px', fontSize: '15px', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', textDecoration: 'none', boxSizing: 'border-box' }}
-                >
-                  Mua Ngay
-                </a>
-              </div>
-
+              <a 
+                href="http://zaloapp.com/qr/p/fd2gcjcjfuof"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn btn-glow-active" 
+                onClick={() => {
+                  showToast("Đang kết nối tới Zalo Phạm Thắng...", 'info');
+                }}
+                style={{ width: '100%', padding: '14px', borderRadius: '12px', fontSize: '15px', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', textDecoration: 'none', boxSizing: 'border-box' }}
+              >
+                Mua Ngay
+              </a>
             </div>
-          </section>
-        )}
 
-        {/* QR Banner Section - Only on Trang Chủ & Bảng Giá */}
-        {showBanner && (view === 'home' || view === 'pricing') && (
+            {/* Gói Pro - Phổ biến nhất */}
+            <div className="pricing-card" style={{
+              background: '#ffffff',
+              border: '2px solid #f97316',
+              borderRadius: '24px',
+              padding: '40px 32px',
+              width: '100%',
+              maxWidth: '360px',
+              backdropFilter: 'blur(10px)',
+              boxShadow: '0 20px 40px -15px rgba(249, 115, 22, 0.15)',
+              position: 'relative',
+              overflow: 'hidden',
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'space-between',
+              transition: 'all 0.3s ease',
+              transform: windowWidth >= 768 ? 'scale(1.03)' : 'none',
+              zIndex: 2
+            }}>
+              <div style={{
+                position: 'absolute',
+                top: '0',
+                right: '0',
+                background: 'linear-gradient(135deg, #f97316, #ea580c)',
+                color: '#ffffff',
+                padding: '6px 20px',
+                borderBottomLeftRadius: '16px',
+                fontSize: '11px',
+                fontWeight: '700',
+                textTransform: 'uppercase',
+                letterSpacing: '0.5px'
+              }}>
+                Phổ Biến Nhất
+              </div>
+              <div>
+                <h3 style={{ fontSize: '22px', color: '#0f172a', marginBottom: '8px', fontWeight: '700', marginTop: '10px' }}>Zalo Bot Affiliate Pro</h3>
+                <p style={{ color: '#64748b', fontSize: '14px', marginBottom: '24px' }}>Có trang quản trị riêng cho sếp và trang tự tra cứu cho khách</p>
+                
+                <div style={{ marginBottom: '32px' }}>
+                  <span style={{ fontSize: '42px', fontWeight: '800', color: '#0f172a', fontFamily: 'var(--font-heading)' }}>399.000đ</span>
+                  <span style={{ color: '#64748b', fontSize: '15px' }}> / tháng</span>
+                </div>
+                
+                <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 32px 0', textAlign: 'left', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                  <li style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', color: '#334155', fontSize: '14px' }}>
+                    <span style={{ color: '#10b981', fontWeight: 'bold' }}>✓</span> Tự động đổi link mua sắm Shopee, Lazada, TikTok Shop mượt mà.
+                  </li>
+                  <li style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', color: '#334155', fontSize: '14px' }}>
+                    <span style={{ color: '#10b981', fontWeight: 'bold' }}>✓</span> Trang quản trị doanh thu riêng: Theo dõi toàn bộ đơn hàng và quản lý cực kỳ nhàn hạ.
+                  </li>
+                  <li style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', color: '#334155', fontSize: '14px' }}>
+                    <span style={{ color: '#10b981', fontWeight: 'bold' }}>✓</span> Khách tự tra cứu trên Web: Thành viên có thể tự vào xem đơn và hoa hồng mình tích lũy.
+                  </li>
+                  <li style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', color: '#334155', fontSize: '14px' }}>
+                    <span style={{ color: '#10b981', fontWeight: 'bold' }}>✓</span> Chạy cùng lúc nhiều nhóm: Bot hoạt động trên nhiều nhóm chat và gom số liệu về một nơi.
+                  </li>
+                  <li style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', color: '#334155', fontSize: '14px' }}>
+                    <span style={{ color: '#10b981', fontWeight: 'bold' }}>✓</span> Báo cáo hoa hồng chính xác: Tự tính tiền chuẩn sau thuế và lọc bỏ các đơn trùng lặp.
+                  </li>
+                </ul>
+              </div>
+              
+              <a 
+                href="http://zaloapp.com/qr/p/fd2gcjcjfuof"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn btn-glow-active" 
+                onClick={() => {
+                  showToast("Đang kết nối tới Zalo Phạm Thắng...", 'info');
+                }}
+                style={{ width: '100%', padding: '14px', borderRadius: '12px', fontSize: '15px', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', textDecoration: 'none', boxSizing: 'border-box' }}
+              >
+                Mua Ngay
+              </a>
+            </div>
+
+            {/* Gói Pro Max */}
+            <div className="pricing-card" style={{
+              background: '#ffffff',
+              border: '1px solid #e2e8f0',
+              borderRadius: '24px',
+              padding: '40px 32px',
+              width: '100%',
+              maxWidth: '360px',
+              backdropFilter: 'blur(10px)',
+              boxShadow: '0 10px 30px -10px rgba(0, 0, 0, 0.05)',
+              position: 'relative',
+              overflow: 'hidden',
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'space-between',
+              transition: 'all 0.3s ease'
+            }}>
+              <div>
+                <h3 style={{ fontSize: '22px', color: '#0f172a', marginBottom: '8px', fontWeight: '700' }}>Zalo Bot Affiliate Pro Max</h3>
+                <p style={{ color: '#64748b', fontSize: '14px', marginBottom: '24px' }}>Hệ thống ví tiền tự động và rút tiền qua tin nhắn chat</p>
+                
+                <div style={{ marginBottom: '32px' }}>
+                  <span style={{ fontSize: '42px', fontWeight: '800', color: '#0f172a', fontFamily: 'var(--font-heading)' }}>599.000đ</span>
+                  <span style={{ color: '#64748b', fontSize: '15px' }}> / tháng</span>
+                </div>
+                
+                <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 32px 0', textAlign: 'left', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                  <li style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', color: '#334155', fontSize: '14px' }}>
+                    <span style={{ color: '#10b981', fontWeight: 'bold' }}>✓</span> Đầy đủ toàn bộ tính năng cao cấp của bản Pro.
+                  </li>
+                  <li style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', color: '#334155', fontSize: '14px' }}>
+                    <span style={{ color: '#10b981', fontWeight: 'bold' }}>✓</span> Ví tích lũy tiền tự động: Tự động cộng dồn tiền hoa hồng sau khi đơn hàng thành công.
+                  </li>
+                  <li style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', color: '#334155', fontSize: '14px' }}>
+                    <span style={{ color: '#10b981', fontWeight: 'bold' }}>✓</span> Rút tiền nhanh bằng tin nhắn: Khách tự gõ lệnh `/rut-tien` trong nhóm để yêu cầu thanh toán.
+                  </li>
+                  <li style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', color: '#334155', fontSize: '14px' }}>
+                    <span style={{ color: '#10b981', fontWeight: 'bold' }}>✓</span> Đường truyền riêng siêu tốc: Chạy trên máy chủ VPS riêng, phản hồi ngay lập tức không trễ lag.
+                  </li>
+                  <li style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', color: '#334155', fontSize: '14px' }}>
+                    <span style={{ color: '#10b981', fontWeight: 'bold' }}>✓</span> Hỗ trợ kỹ thuật ưu tiên 24/7: Xử lý nhanh chóng mọi yêu cầu và sự cố phát sinh.
+                  </li>
+                </ul>
+              </div>
+              
+              <a 
+                href="http://zaloapp.com/qr/p/fd2gcjcjfuof"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn btn-glow-active" 
+                onClick={() => {
+                  showToast("Đang kết nối tới Zalo Phạm Thắng...", 'info');
+                }}
+                style={{ width: '100%', padding: '14px', borderRadius: '12px', fontSize: '15px', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', textDecoration: 'none', boxSizing: 'border-box' }}
+              >
+                Mua Ngay
+              </a>
+            </div>
+
+          </div>
+        </section>
+
+        {/* QR Banner Section trên Trang Chủ */}
+        {showBanner && (
           <section style={{
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
             margin: '40px 0 20px',
             position: 'relative',
-            zIndex: 2,
-            width: '100%',
-            boxSizing: 'border-box',
-            padding: '0 16px'
+            zIndex: 2
           }}>
-            <h3 style={{ fontSize: '18px', color: '#0f172a', marginBottom: '16px', fontWeight: '800', textAlign: 'center', lineHeight: '1.4' }}>
+            <h3 style={{ fontSize: '18px', color: '#0f172a', marginBottom: '16px', fontWeight: '800', textAlign: 'center', padding: '0 16px', lineHeight: '1.4' }}>
               🌟 Quét QR Tham Gia Nhóm Zalo Nhận Hoàn Tiền Ngay
             </h3>
             <div style={{
               position: 'relative',
               width: '280px',
-              maxWidth: '100%',
               borderRadius: '16px',
               overflow: 'hidden',
               boxShadow: '0 12px 40px rgba(0,0,0,0.1), 0 0 30px rgba(249, 115, 22, 0.2)',
@@ -3495,43 +3157,9 @@ function App() {
             <div className="footer-links">
               <h4>Liên Kết Nhanh</h4>
               <ul>
-                <li>
-                  <a 
-                    href="#" 
-                    onClick={(e) => { 
-                      e.preventDefault(); 
-                      setView('features'); 
-                      window.history.pushState({}, '', '/?view=features'); 
-                    }}
-                  >
-                    Tính Năng
-                  </a>
-                </li>
-                <li>
-                  <a 
-                    href="#" 
-                    onClick={(e) => { 
-                      e.preventDefault(); 
-                      setView('guides'); 
-                      setActiveGuideId(null);
-                      window.history.pushState({}, '', '/?view=guides'); 
-                    }}
-                  >
-                    Hướng Dẫn
-                  </a>
-                </li>
-                <li>
-                  <a 
-                    href="#" 
-                    onClick={(e) => { 
-                      e.preventDefault(); 
-                      setView('pricing'); 
-                      window.history.pushState({}, '', '/?view=pricing'); 
-                    }}
-                  >
-                    Bảng Giá
-                  </a>
-                </li>
+                <li><a href="#features">Tính Năng</a></li>
+                <li><a href="#steps">Cách Hoạt Động</a></li>
+                <li><a href="#pricing">Bảng Giá</a></li>
                 <li><a href="http://zaloapp.com/qr/p/fd2gcjcjfuof" target="_blank" rel="noopener noreferrer">Hỗ Trợ Kỹ Thuật</a></li>
               </ul>
             </div>
@@ -3576,14 +3204,22 @@ function App() {
       <aside className={`sidebar${sidebarOpen ? ' open' : ''}`}>
         <div className="sidebar-header">
           <div className="sidebar-logo">
-            <img src="/logo.jpg" alt="Logo" style={{ width: '32px', height: '32px', borderRadius: '50%', objectFit: 'cover', border: '1.5px solid var(--brand-200)' }} />
-            <span>28Symues</span>
+            <img src="/logo.jpg" alt="Logo" style={{ width: '34px', height: '34px', borderRadius: '50%', objectFit: 'cover', border: '2px solid #fed7aa' }} />
+            <span>28Symues Admin</span>
           </div>
         </div>
         <ul className="sidebar-menu">
           <li 
             className="menu-item"
             onClick={() => { setView('home'); sessionStorage.removeItem('adminView'); setSidebarOpen(false); }}
+            style={{ 
+              background: '#fff7ed', 
+              color: '#ea580c', 
+              fontWeight: '600', 
+              borderLeft: '3px solid #f97316', 
+              marginBottom: '4px',
+              fontSize: '14px'
+            }}
           >
             <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style={{ flexShrink: 0 }}><path d="M11.47 3.841a.75.75 0 0 1 1.06 0l8.69 8.69a.75.75 0 1 0 1.06-1.061l-8.689-8.69a2.25 2.25 0 0 0-3.182 0l-8.69 8.69a.75.75 0 1 0 1.061 1.06l8.69-8.689Z"/><path d="m12 5.432 8.159 8.159c.03.03.06.058.091.086v6.198c0 1.035-.84 1.875-1.875 1.875H15a.75.75 0 0 1-.75-.75v-4.5a.75.75 0 0 0-.75-.75h-3a.75.75 0 0 0-.75.75V21a.75.75 0 0 1-.75.75H5.625a1.875 1.875 0 0 1-1.875-1.875v-6.198a.465.465 0 0 0 .091-.086L12 5.43Z"/></svg>
             Về Trang Chủ
@@ -3635,12 +3271,12 @@ function App() {
             <span style={{ flex: 1 }}>Rút tiền</span>
             {stats.pendingPayoutsCount > 0 && (
               <span style={{
-                background: 'var(--error-500)',
-                color: 'white',
+                background: '#ef4444',
+                color: '#fff',
                 fontSize: '10px',
                 padding: '2px 7px',
                 borderRadius: '20px',
-                fontWeight: '700',
+                fontWeight: 'bold',
                 lineHeight: '1.4'
               }}>{stats.pendingPayoutsCount}</span>
             )}
@@ -3648,27 +3284,44 @@ function App() {
         </ul>
 
         {/* Sidebar Footer */}
-        <div className="sidebar-footer">
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '10px', padding: '8px 10px', background: 'var(--gray-50)', borderRadius: 'var(--radius-md)', border: '1px solid var(--gray-200)' }}>
+        <div className="sidebar-footer" style={{ padding: '12px 16px 16px', borderTop: '1px solid #e2e8f0' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '12px', padding: '10px 12px', background: '#f8fafc', borderRadius: '10px', border: '1px solid #e2e8f0' }}>
             {user?.avatarUrl ? (
               <img 
                 src={user.avatarUrl} 
                 alt="Avatar" 
                 referrerPolicy="no-referrer"
-                style={{ width: '32px', height: '32px', borderRadius: '50%', border: '1px solid var(--brand-200)', flexShrink: 0 }} 
+                style={{ width: '34px', height: '34px', borderRadius: '50%', border: '2px solid #fed7aa', flexShrink: 0 }} 
               />
             ) : (
-              <div className="avatar" style={{ margin: 0 }}>{(user?.fullName || 'PT').substring(0, 2).toUpperCase()}</div>
+              <div className="avatar" style={{ margin: 0, width: '34px', height: '34px', fontSize: '12px', flexShrink: 0 }}>{(user?.fullName || 'PT').substring(0, 2).toUpperCase()}</div>
             )}
             <div style={{ overflow: 'hidden', flex: 1, minWidth: 0 }}>
-              <div style={{ fontSize: 'var(--text-sm)', fontWeight: '600', color: 'var(--navy-900)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{user?.fullName}</div>
-              <div style={{ fontSize: 'var(--text-xs)', color: 'var(--brand-600)', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.5px' }}>{user?.role}</div>
+              <div style={{ fontSize: '13px', fontWeight: '700', color: '#0f172a', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{user?.fullName}</div>
+              <div style={{ fontSize: '10px', color: '#ea580c', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.5px' }}>{user?.role}</div>
             </div>
           </div>
           <button 
             onClick={handleLogout} 
-            className="btn btn-outline"
-            style={{ width: '100%', fontSize: 'var(--text-sm)', justifyContent: 'center', gap: '7px' }}
+            style={{ 
+              width: '100%', 
+              fontSize: '13px', 
+              padding: '10px', 
+              background: '#fff7ed', 
+              color: '#ea580c', 
+              border: '1px solid #fed7aa', 
+              borderRadius: '8px', 
+              cursor: 'pointer',
+              fontWeight: '600',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '7px',
+              transition: 'all 0.2s',
+              letterSpacing: '0.2px'
+            }}
+            onMouseEnter={e => { e.currentTarget.style.background='#ffedd5'; e.currentTarget.style.borderColor='#fdba74'; }}
+            onMouseLeave={e => { e.currentTarget.style.background='#fff7ed'; e.currentTarget.style.borderColor='#fed7aa'; }}
           >
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
             Đăng xuất
@@ -3714,11 +3367,17 @@ function App() {
                 }
                 fetchData(token, user);
               }} 
-              className="btn btn-outline"
               style={{ 
-                marginLeft: '8px',
-                fontSize: 'var(--text-sm)',
+                marginLeft: '12px', 
+                display: 'inline-flex', 
+                alignItems: 'center', 
+                gap: '8px', 
+                padding: '8px 16px',
+                background: '#fff7ed',
+                color: '#ea580c',
+                border: '1px solid #fed7aa',
                 fontWeight: '600',
+                fontSize: '13.5px',
                 borderRadius: '8px',
                 transition: 'all 0.2s ease'
               }}
@@ -3734,14 +3393,13 @@ function App() {
         <section className="content-body">
           {error && (
             <div style={{
-              background: 'var(--error-50)',
-              border: '1px solid var(--error-500)',
-              color: 'var(--error-700)',
-              padding: '14px 16px',
-              borderRadius: 'var(--radius-md)',
-              marginBottom: '20px',
-              fontWeight: '500',
-              fontSize: 'var(--text-sm)'
+              background: 'rgba(248, 113, 113, 0.1)',
+              border: '1px solid var(--color-danger)',
+              color: 'var(--color-danger)',
+              padding: '16px',
+              borderRadius: '12px',
+              marginBottom: '24px',
+              fontWeight: '500'
             }}>
               ⚠️ Lỗi: {error}. Vui lòng kiểm tra backend server đang chạy ở cổng 8080!
             </div>
@@ -3783,7 +3441,7 @@ function App() {
                         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
                       </div>
                       <span className="stat-label">Chờ duyệt rút tiền</span>
-                      <span className="stat-val" style={{ color: stats.pendingPayoutsCount > 0 ? 'var(--brand-500)' : 'inherit' }}>
+                      <span className="stat-val" style={{ color: stats.pendingPayoutsCount > 0 ? '#ea580c' : 'inherit' }}>
                         {stats.pendingPayoutsCount}
                       </span>
                     </div>
@@ -3831,7 +3489,7 @@ function App() {
                                   <td>{user ? user.zaloName : p.zaloId}</td>
                                   <td>{bankAndAcc.bankName || 'Chưa cấu hình'}</td>
                                   <td><code>{bankAndAcc.accountNumber || 'Chưa cấu hình'}</code></td>
-                                  <td style={{ color: 'var(--brand-600)', fontWeight: '700' }}>{formatMoney(p.amount)}</td>
+                                  <td style={{ color: 'var(--color-primary)', fontWeight: 'bold' }}>{formatMoney(p.amount)}</td>
                                   <td>{formatDateTime(p.createdAt)}</td>
                                   <td>
                                     <button 
@@ -3937,7 +3595,7 @@ function App() {
               {activeTab === 'orders' && (
                 <div className="data-card">
                   {/* Upload file import */}
-                  <div style={{ padding: '16px 0 20px', borderBottom: '1px solid var(--gray-200)', marginBottom: '20px' }}>
+                  <div style={{ padding: '16px 0 20px', borderBottom: '1px solid rgba(255,255,255,0.06)', marginBottom: '20px' }}>
                     <h3 style={{ marginBottom: '12px', fontSize: '15px' }}>📥 Import báo cáo đối soát Shopee (CSV/Excel)</h3>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
                       <input
@@ -3960,11 +3618,11 @@ function App() {
                       <div style={{
                         marginTop: '10px',
                         padding: '10px 14px',
-                        borderRadius: 'var(--radius-md)',
-                        fontSize: 'var(--text-sm)',
-                        background: importResult.success ? 'var(--success-50)' : 'var(--error-50)',
-                        border: `1px solid ${importResult.success ? 'var(--success-500)' : 'var(--error-500)'}`,
-                        color: importResult.success ? 'var(--success-700)' : 'var(--error-700)'
+                        borderRadius: '8px',
+                        fontSize: '13px',
+                        background: importResult.success ? 'rgba(74, 222, 128, 0.1)' : 'rgba(248, 113, 113, 0.1)',
+                        border: `1px solid ${importResult.success ? 'var(--color-success)' : 'var(--color-danger)'}`,
+                        color: importResult.success ? 'var(--color-success)' : 'var(--color-danger)'
                       }}>
                         {importResult.success ? '✅ ' : '❌ '}{importResult.message}
                       </div>
@@ -4008,7 +3666,7 @@ function App() {
                             return (
                               <tr key={o.id}>
                                 <td>
-                                  <code style={{ fontWeight: '600', fontSize: 'var(--text-xs)', color: 'var(--navy-800)', background: 'var(--gray-100)', padding: '2px 6px', borderRadius: '4px' }}>{o.orderId}</code>
+                                  <code style={{ fontWeight: 'bold', fontSize: '12.5px', color: '#fff' }}>{o.orderId}</code>
                                 </td>
                                 <td title={o.productName} style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                                   {o.productName}
@@ -4141,19 +3799,19 @@ function App() {
             </header>
             <div className="modal-body">
               <div className="member-detail-grid">
-                <div className="detail-item">
+                <div className="detail-item" style={{ padding: '20px', background: 'rgba(255,255,255,0.03)', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.05)' }}>
                   <div className="detail-label" style={{ fontSize: '12px', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '8px', color: 'var(--text-muted)' }}>Tên thành viên</div>
                   <div className="detail-value" style={{ color: 'var(--color-primary)', fontSize: '22px', fontWeight: '700' }}>{selectedUser.zaloName || 'Vô danh'}</div>
                 </div>
-                <div className="detail-item">
+                <div className="detail-item" style={{ padding: '20px', background: 'rgba(255,255,255,0.03)', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.05)' }}>
                   <div className="detail-label" style={{ fontSize: '12px', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '8px', color: 'var(--text-muted)' }}>Zalo ID</div>
-                  <div className="detail-value" style={{ fontSize: '16px', wordBreak: 'break-all', fontFamily: 'monospace', color: 'var(--navy-800)' }}>{selectedUser.zaloId}</div>
+                  <div className="detail-value" style={{ fontSize: '16px', wordBreak: 'break-all', fontFamily: 'monospace', color: '#fff' }}>{selectedUser.zaloId}</div>
                 </div>
-                <div className="detail-item">
+                <div className="detail-item" style={{ padding: '20px', background: 'rgba(255,255,255,0.03)', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.05)' }}>
                   <div className="detail-label" style={{ fontSize: '12px', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '8px', color: 'var(--text-muted)' }}>Ngân hàng nhận tiền</div>
-                  <div className="detail-value" style={{ fontSize: '20px', fontWeight: '600', color: 'var(--navy-800)' }}>{getBankAndAccount(selectedUser).bankName || '⚠️ Chưa cập nhật'}</div>
+                  <div className="detail-value" style={{ fontSize: '20px', fontWeight: '600', color: '#fff' }}>{getBankAndAccount(selectedUser).bankName || '⚠️ Chưa cập nhật'}</div>
                 </div>
-                <div className="detail-item">
+                <div className="detail-item" style={{ padding: '20px', background: 'rgba(255,255,255,0.03)', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.05)' }}>
                   <div className="detail-label" style={{ fontSize: '12px', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '8px', color: 'var(--text-muted)' }}>Số tài khoản</div>
                   <div className="detail-value"><code style={{ fontSize: '20px', letterSpacing: '2px', fontWeight: '700', color: 'var(--color-success)' }}>{getBankAndAccount(selectedUser).accountNumber || '⚠️ Chưa cập nhật'}</code></div>
                 </div>

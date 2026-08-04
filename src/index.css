@@ -3235,3 +3235,139 @@ tr:hover td {
   transition-delay: 0.3s;
 }
 
+/* ==========================================================================
+   MOBILE BOTTOM NAVIGATION BAR (Thanh menu cố định dưới cùng điện thoại)
+   ========================================================================== */
+.mobile-bottom-nav {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .mobile-bottom-nav {
+    display: flex;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 64px;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-top: 1px solid rgba(226, 232, 240, 0.9);
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.08);
+    z-index: 9999;
+    padding: 4px 4px calc(4px + env(safe-area-inset-bottom, 0px));
+    justify-content: space-around;
+    align-items: center;
+    box-sizing: border-box;
+  }
+
+  /* Thêm khoảng trống padding-bottom để menu cố định không che nội dung trang */
+  .lookup-page-container,
+  .login-page-split,
+  .landing-container,
+  .app-container,
+  .main-content {
+    padding-bottom: 76px !important;
+  }
+
+  .mobile-bottom-nav-item {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 6px 2px;
+    color: #64748b;
+    text-decoration: none;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    position: relative;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    font-family: inherit;
+    min-width: 0;
+  }
+
+  .mobile-bottom-nav-item .nav-icon-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 24px;
+    margin-bottom: 3px;
+    font-size: 18px;
+    transition: transform 0.2s ease, color 0.2s ease;
+  }
+
+  .mobile-bottom-nav-item .nav-label {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: -0.1px;
+    line-height: 1.1;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    max-width: 100%;
+  }
+
+  .mobile-bottom-nav-item.active {
+    color: #ea580c;
+  }
+
+  .mobile-bottom-nav-item.active .nav-icon-wrap {
+    transform: translateY(-2px) scale(1.12);
+    color: #ea580c;
+  }
+
+  .mobile-bottom-nav-item.active .nav-label {
+    font-weight: 700;
+    color: #ea580c;
+  }
+
+  .mobile-bottom-nav-item.active::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    width: 24px;
+    height: 3px;
+    background: linear-gradient(90deg, #f97316, #ea580c);
+    border-radius: 0 0 3px 3px;
+    box-shadow: 0 2px 8px rgba(249, 115, 22, 0.5);
+  }
+
+  .mobile-bottom-nav-item.admin-badge-btn {
+    color: #7c3aed;
+  }
+
+  .mobile-bottom-nav-item.admin-badge-btn.active {
+    color: #6d28d9;
+  }
+
+  .mobile-bottom-nav-item.admin-badge-btn.active::before {
+    background: linear-gradient(90deg, #8b5cf6, #6d28d9);
+    box-shadow: 0 2px 8px rgba(139, 92, 246, 0.5);
+  }
+
+  .mobile-nav-badge {
+    position: absolute;
+    top: -4px;
+    right: -2px;
+    background: #ef4444;
+    color: #ffffff;
+    font-size: 9px;
+    font-weight: 800;
+    padding: 1px 5px;
+    min-width: 15px;
+    height: 15px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1.5px solid #ffffff;
+    box-shadow: 0 2px 6px rgba(239, 68, 68, 0.35);
+  }
+}
+
+

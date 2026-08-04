@@ -1,4 +1,4 @@
-﻿import { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 const API_URL_ROOT = import.meta.env.PROD ? "" : (import.meta.env.VITE_API_URL || 'http://localhost:8080');
 const API_BASE = `${API_URL_ROOT}/api/admin`;
@@ -2011,8 +2011,198 @@ function App() {
           </div>
         )}
       </div>
+  const renderMobileBottomNav = () => {
+    const isNavAdminMode = view === 'admin';
+
+    if (isNavAdminMode) {
+      return (
+        <nav className="mobile-bottom-nav">
+          <button 
+            type="button"
+            className={`mobile-bottom-nav-item${activeTab === 'dashboard' ? ' active' : ''}`}
+            onClick={() => { setActiveTab('dashboard'); sessionStorage.setItem('adminTab','dashboard'); window.scrollTo(0,0); }}
+          >
+            <div className="nav-icon-wrap">
+              <i className="fa-solid fa-chart-pie"></i>
+            </div>
+            <span className="nav-label">Tổng quan</span>
+          </button>
+
+          <button 
+            type="button"
+            className={`mobile-bottom-nav-item${activeTab === 'users' ? ' active' : ''}`}
+            onClick={() => { setActiveTab('users'); sessionStorage.setItem('adminTab','users'); window.scrollTo(0,0); }}
+          >
+            <div className="nav-icon-wrap">
+              <i className="fa-solid fa-users"></i>
+            </div>
+            <span className="nav-label">Thành viên</span>
+          </button>
+
+          <button 
+            type="button"
+            className={`mobile-bottom-nav-item${activeTab === 'orders' ? ' active' : ''}`}
+            onClick={() => { setActiveTab('orders'); sessionStorage.setItem('adminTab','orders'); window.scrollTo(0,0); }}
+          >
+            <div className="nav-icon-wrap">
+              <i className="fa-solid fa-bag-shopping"></i>
+            </div>
+            <span className="nav-label">Đơn hàng</span>
+          </button>
+
+          <button 
+            type="button"
+            className={`mobile-bottom-nav-item${activeTab === 'payouts' ? ' active' : ''}`}
+            onClick={() => { setActiveTab('payouts'); sessionStorage.setItem('adminTab','payouts'); window.scrollTo(0,0); }}
+          >
+            <div className="nav-icon-wrap">
+              <i className="fa-solid fa-wallet"></i>
+              {stats.pendingPayoutsCount > 0 && (
+                <span className="mobile-nav-badge">{stats.pendingPayoutsCount}</span>
+              )}
+            </div>
+            <span className="nav-label">Rút tiền</span>
+          </button>
+
+          <button 
+            type="button"
+            className="mobile-bottom-nav-item"
+            onClick={() => { setView('home'); sessionStorage.removeItem('adminView'); window.scrollTo(0,0); }}
+          >
+            <div className="nav-icon-wrap">
+              <i className="fa-solid fa-house"></i>
+            </div>
+            <span className="nav-label">Trang chủ</span>
+          </button>
+        </nav>
+      );
+    }
+
+    const scrollToSection = (id) => {
+      if (view !== 'home') {
+        setView('home');
+        setTimeout(() => {
+          const elem = document.getElementById(id);
+          if (elem) elem.scrollIntoView({ behavior: 'smooth' });
+        }, 100);
+      } else {
+        const elem = document.getElementById(id);
+        if (elem) elem.scrollIntoView({ behavior: 'smooth' });
+      }
+    };
+
+    return (
+      <nav className="mobile-bottom-nav">
+        <button 
+          type="button"
+          className={`mobile-bottom-nav-item${view === 'home' ? ' active' : ''}`}
+          onClick={() => { setView('home'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+        >
+          <div className="nav-icon-wrap">
+            <i className="fa-solid fa-house"></i>
+          </div>
+          <span className="nav-label">Trang chủ</span>
+        </button>
+
+        <button 
+          type="button"
+          className={`mobile-bottom-nav-item${view === 'lookup' ? ' active' : ''}`}
+          onClick={() => { setView('lookup'); window.history.pushState({}, '', '/?view=lookup'); window.scrollTo(0,0); }}
+        >
+          <div className="nav-icon-wrap">
+            <i className="fa-solid fa-magnifying-glass"></i>
+          </div>
+          <span className="nav-label">Tra cứu</span>
+        </button>
+
+        <button 
+          type="button"
+          className="mobile-bottom-nav-item"
+          onClick={() => scrollToSection('features')}
+        >
+          <div className="nav-icon-wrap">
+            <i className="fa-solid fa-layer-group"></i>
+          </div>
+          <span className="nav-label">Tính năng</span>
+        </button>
+
+        <button 
+          type="button"
+          className="mobile-bottom-nav-item"
+          onClick={() => scrollToSection('pricing')}
+        >
+          <div className="nav-icon-wrap">
+            <i className="fa-solid fa-tags"></i>
+          </div>
+          <span className="nav-label">Bảng giá</span>
+        </button>
+
+        {token ? (
+          <button 
+            type="button"
+            className="mobile-bottom-nav-item"
+            onClick={() => {
+              if (window.confirm('Bạn có muốn đăng xuất không?')) {
+                handleLogout();
+              }
+            }}
+          >
+            <div className="nav-icon-wrap">
+              {user?.avatarUrl ? (
+                <img src={user.avatarUrl} alt="User" referrerPolicy="no-referrer" style={{ width: '22px', height: '22px', borderRadius: '50%', objectFit: 'cover' }} />
+              ) : (
+                <i className="fa-solid fa-user"></i>
+              )}
+            </div>
+            <span className="nav-label">{user?.fullName?.split(' ')[0] || 'Tài khoản'}</span>
+          </button>
+        ) : (
+          <button 
+            type="button"
+            className={`mobile-bottom-nav-item${view === 'login' ? ' active' : ''}`}
+            onClick={() => { setView('login'); window.history.pushState({}, '', '/?view=login'); window.scrollTo(0,0); }}
+          >
+            <div className="nav-icon-wrap">
+              <i className="fa-solid fa-right-to-bracket"></i>
+            </div>
+            <span className="nav-label">Đăng nhập</span>
+          </button>
+        )}
+
+        {isAdmin && (
+          <button 
+            type="button"
+            className="mobile-bottom-nav-item admin-badge-btn"
+            onClick={() => { setView('admin'); sessionStorage.setItem('adminView','admin'); window.scrollTo(0,0); }}
+          >
+            <div className="nav-icon-wrap">
+              <i className="fa-solid fa-shield-halved"></i>
+            </div>
+            <span className="nav-label">Quản trị</span>
+          </button>
+        )}
+      </nav>
     );
-  }
+  };
+
+  if (view === 'lookup') {
+    return (
+      <div className="lookup-page-container">
+        {/* Header bar */}
+        <div className="lookup-header-bar">
+          <button className="lookup-back-btn" onClick={() => setView('home')}>
+            ← Trang chủ
+          </button>
+          <div className="lookup-brand">
+            <i className="fa-solid fa-bolt" style={{ color: '#ea580c', marginRight: '6px' }}></i>
+            <span>AFFILIATE ROBOT</span>
+          </div>
+          {isAdmin && (
+            <button className="lookup-admin-link" onClick={() => { setView('admin'); sessionStorage.setItem('adminView', 'admin'); }}>
+              <i className="fa-solid fa-shield-halved"></i> Quản trị
+            </button>
+          )}
+        </div>
 
   if (view === 'login') {
     const calculatedWidth = Math.max(200, Math.min(336, windowWidth - 64));
@@ -3188,7 +3378,7 @@ function App() {
           </div>
         </footer>
 
-
+        {renderMobileBottomNav()}
       </div>
     );
   }
@@ -3897,6 +4087,7 @@ function App() {
           </div>
         </div>
       )}
+      {renderMobileBottomNav()}
     </div>
   );
 }

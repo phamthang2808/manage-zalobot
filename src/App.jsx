@@ -605,87 +605,88 @@ function App() {
     }
   };
 
-  // Auto-run lookup if search params are present in the URL on load
-  useEffect(() => {
-    function renderMobileBottomNav() {
-    const isNavAdminMode = view === 'admin';
+  function renderMobileBottomNav() {
+  const isNavAdminMode = view === 'admin';
 
-    if (isNavAdminMode) {
-      return (
-        <nav className="mobile-bottom-nav">
-          <button 
-            type="button"
-            className={`mobile-bottom-nav-item${activeTab === 'dashboard' ? ' active' : ''}`}
-            onClick={() => { setActiveTab('dashboard'); sessionStorage.setItem('adminTab','dashboard'); window.scrollTo(0,0); }}
-          >
-            <div className="nav-icon-wrap">
-              <i className="fa-solid fa-chart-pie"></i>
-            </div>
-            <span className="nav-label">Tổng quan</span>
-          </button>
+  if (isNavAdminMode) {
+    return (
+      <nav className="mobile-bottom-nav">
+        <button 
+          type="button"
+          className={`mobile-bottom-nav-item${activeTab === 'dashboard' ? ' active' : ''}`}
+          onClick={() => { setActiveTab('dashboard'); sessionStorage.setItem('adminTab','dashboard'); window.scrollTo(0,0); }}
+        >
+          <div className="nav-icon-wrap">
+            <i className="fa-solid fa-chart-pie"></i>
+          </div>
+          <span className="nav-label">Tổng quan</span>
+        </button>
 
-          <button 
-            type="button"
-            className={`mobile-bottom-nav-item${activeTab === 'users' ? ' active' : ''}`}
-            onClick={() => { setActiveTab('users'); sessionStorage.setItem('adminTab','users'); window.scrollTo(0,0); }}
-          >
-            <div className="nav-icon-wrap">
-              <i className="fa-solid fa-users"></i>
-            </div>
-            <span className="nav-label">Thành viên</span>
-          </button>
+        <button 
+          type="button"
+          className={`mobile-bottom-nav-item${activeTab === 'users' ? ' active' : ''}`}
+          onClick={() => { setActiveTab('users'); sessionStorage.setItem('adminTab','users'); window.scrollTo(0,0); }}
+        >
+          <div className="nav-icon-wrap">
+            <i className="fa-solid fa-users"></i>
+          </div>
+          <span className="nav-label">Thành viên</span>
+        </button>
 
-          <button 
-            type="button"
-            className={`mobile-bottom-nav-item${activeTab === 'orders' ? ' active' : ''}`}
-            onClick={() => { setActiveTab('orders'); sessionStorage.setItem('adminTab','orders'); window.scrollTo(0,0); }}
-          >
-            <div className="nav-icon-wrap">
-              <i className="fa-solid fa-boxes-stacked"></i>
-            </div>
-            <span className="nav-label">Đơn hàng</span>
-          </button>
+        <button 
+          type="button"
+          className={`mobile-bottom-nav-item${activeTab === 'orders' ? ' active' : ''}`}
+          onClick={() => { setActiveTab('orders'); sessionStorage.setItem('adminTab','orders'); window.scrollTo(0,0); }}
+        >
+          <div className="nav-icon-wrap">
+            <i className="fa-solid fa-boxes-stacked"></i>
+          </div>
+          <span className="nav-label">Đơn hàng</span>
+        </button>
 
-          <button 
-            type="button"
-            className={`mobile-bottom-nav-item${activeTab === 'payouts' ? ' active' : ''}`}
-            onClick={() => { setActiveTab('payouts'); sessionStorage.setItem('adminTab','payouts'); window.scrollTo(0,0); }}
-          >
-            <div className="nav-icon-wrap">
-              <i className="fa-solid fa-wallet"></i>
-              {stats?.pendingPayoutsCount > 0 && (
-                <span className="mobile-nav-badge">{stats.pendingPayoutsCount}</span>
-              )}
-            </div>
-            <span className="nav-label">Rút tiền</span>
-          </button>
+        <button 
+          type="button"
+          className={`mobile-bottom-nav-item${activeTab === 'payouts' ? ' active' : ''}`}
+          onClick={() => { setActiveTab('payouts'); sessionStorage.setItem('adminTab','payouts'); window.scrollTo(0,0); }}
+        >
+          <div className="nav-icon-wrap">
+            <i className="fa-solid fa-wallet"></i>
+            {stats?.pendingPayoutsCount > 0 && (
+              <span className="mobile-nav-badge">{stats.pendingPayoutsCount}</span>
+            )}
+          </div>
+          <span className="nav-label">Rút tiền</span>
+        </button>
 
-          <button 
-            type="button"
-            className="mobile-bottom-nav-item"
-            onClick={() => { setView('home'); sessionStorage.removeItem('adminView'); window.scrollTo(0,0); }}
-          >
-            <div className="nav-icon-wrap">
-              <i className="fa-solid fa-house"></i>
-            </div>
-            <span className="nav-label">Trang chủ</span>
-          </button>
-        </nav>
-      );
-    }
+        <button 
+          type="button"
+          className="mobile-bottom-nav-item"
+          onClick={() => { setView('home'); sessionStorage.removeItem('adminView'); window.scrollTo(0,0); }}
+        >
+          <div className="nav-icon-wrap">
+            <i className="fa-solid fa-house"></i>
+          </div>
+          <span className="nav-label">Trang chủ</span>
+        </button>
+      </nav>
+    );
+  }
 
-    const scrollToSection = (id) => {
-      if (view !== 'home') {
-        setView('home');
-        setTimeout(() => {
-          const elem = document.getElementById(id);
-          if (elem) elem.scrollIntoView({ behavior: 'smooth' });
-        }, 100);
-      } else {
+  const scrollToSection = (id) => {
+    if (view !== 'home') {
+      setView('home');
+      setTimeout(() => {
         const elem = document.getElementById(id);
         if (elem) elem.scrollIntoView({ behavior: 'smooth' });
-      }
-    };
+      }, 100);
+    } else {
+      const elem = document.getElementById(id);
+      if (elem) elem.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
+
+
 
     return (
       <nav className="mobile-bottom-nav">
@@ -786,7 +787,8 @@ function App() {
     );
   };
 
-  if (view === 'lookup') {
+  useEffect(() => {
+    if (view === 'lookup') {
       const params = new URLSearchParams(window.location.search);
       const urlToken = params.get('token');
       const urlSearchType = urlToken ? 'ZALO_ID' : (params.get('searchType') || 'ZALO_ID');

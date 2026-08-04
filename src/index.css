@@ -1474,7 +1474,7 @@ tr:hover td {
   overflow: hidden;
   animation: floatSlow 10s ease-in-out infinite; /* Subtle float animation (8-12s) */
   transition: transform 0.3s ease;
-  z-index: 5;
+  z-index: 2;
 }
 
 .zalo-phone-mockup:hover {
@@ -1689,7 +1689,7 @@ tr:hover td {
 .customer-msg .msg-time { align-self: flex-start; }
 .bot-msg .msg-time { align-self: flex-end; }
 
-/* Floating Badges */
+/* Floating Badges (Elevated Z-Index On Top Of Phone Mockup) */
 .floating-badge {
   position: absolute;
   background: #ffffff;
@@ -1699,28 +1699,31 @@ tr:hover td {
   display: flex;
   align-items: center;
   gap: 8px;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
-  z-index: 5;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.14);
+  z-index: 100 !important;
   backdrop-filter: blur(10px);
   animation: floatSlow 5s ease-in-out infinite;
 }
 
 .badge-top-right {
-  top: -12px;
-  right: -10px;
+  top: -16px;
+  right: -25px;
   animation-delay: 0s;
+  z-index: 100 !important;
 }
 
 .badge-mid-left {
   top: 45%;
-  left: -20px;
+  left: -35px;
   animation-delay: 1.5s;
+  z-index: 100 !important;
 }
 
 .badge-bot-right {
-  bottom: -15px;
-  right: 10px;
+  bottom: -18px;
+  right: -20px;
   animation-delay: 3s;
+  z-index: 100 !important;
 }
 
 @media (max-width: 480px) {

@@ -25,11 +25,32 @@ function AppRouter() {
 }
 
 export default function App() {
-  const [showSplash, setShowSplash] = useState(true);
+  const [showSplash, setShowSplash] = useState(() => {
+    try {
+      // Chỉ hiển thị Splash Screen ĐÚNG 1 LẦN duy nhất khi mở trang web lần đầu tiên
+      const hasSeen = sessionStorage.getItem('hasSeenSplash');
+      const isLoginOrAdmin = window.location.pathname.includes('/login') ||
+                             window.location.search.includes('view=login') ||
+                             window.location.search.includes('view=admin');
+      if (hasSeen || isLoginOrAdmin) {
+        return false;
+      }
+      return true;
+    } catch {
+      return false;
+    }
+  });
+
+  const handleSplashFinish = () => {
+    try {
+      sessionStorage.setItem('hasSeenSplash', 'true');
+    } catch { /* ignore */ }
+    setShowSplash(false);
+  };
 
   return (
     <AppProvider>
-      {showSplash && <SplashScreen onFinish={() => setShowSplash(false)} />}
+      {showSplash && <SplashScreen onFinish={handleSplashFinish} />}
       <AppRouter />
     </AppProvider>
   );

@@ -1,4 +1,4 @@
-﻿import { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 const API_URL_ROOT = import.meta.env.PROD ? "" : (import.meta.env.VITE_API_URL || 'http://localhost:8080');
 const API_BASE = `${API_URL_ROOT}/api/admin`;
@@ -51,6 +51,15 @@ function App() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [cfStatus, setCfStatus] = useState('verifying');
   const [windowWidth, setWindowWidth] = useState(() => typeof window !== 'undefined' ? window.innerWidth : 1200);
+
+  const [theme, setTheme] = useState(() => localStorage.getItem('theme') || 'light');
+
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', theme);
+    localStorage.setItem('theme', theme);
+  }, [theme]);
+
+  const toggleTheme = () => setTheme(prev => (prev === 'light' ? 'dark' : 'light'));
 
   useEffect(() => {
     const handleResize = () => setWindowWidth(window.innerWidth);
@@ -604,6 +613,185 @@ function App() {
       setPayoutSaveLoading(false);
     }
   };
+
+  function renderMobileBottomNav() {
+    const isNavAdminMode = view === 'admin';
+
+    if (isNavAdminMode) {
+      return (
+        <nav className="mobile-bottom-nav">
+          <button 
+            type="button"
+            className={`mobile-bottom-nav-item${activeTab === 'dashboard' ? ' active' : ''}`}
+            onClick={() => { setActiveTab('dashboard'); sessionStorage.setItem('adminTab','dashboard'); window.scrollTo(0,0); }}
+          >
+            <div className="nav-icon-wrap">
+              <i className="fa-solid fa-chart-pie"></i>
+            </div>
+            <span className="nav-label">Tổng quan</span>
+          </button>
+
+          <button 
+            type="button"
+            className={`mobile-bottom-nav-item${activeTab === 'users' ? ' active' : ''}`}
+            onClick={() => { setActiveTab('users'); sessionStorage.setItem('adminTab','users'); window.scrollTo(0,0); }}
+          >
+            <div className="nav-icon-wrap">
+              <i className="fa-solid fa-users"></i>
+            </div>
+            <span className="nav-label">Thành viên</span>
+          </button>
+
+          <button 
+            type="button"
+            className={`mobile-bottom-nav-item${activeTab === 'orders' ? ' active' : ''}`}
+            onClick={() => { setActiveTab('orders'); sessionStorage.setItem('adminTab','orders'); window.scrollTo(0,0); }}
+          >
+            <div className="nav-icon-wrap">
+              <i className="fa-solid fa-boxes-stacked"></i>
+            </div>
+            <span className="nav-label">Đơn hàng</span>
+          </button>
+
+          <button 
+            type="button"
+            className={`mobile-bottom-nav-item${activeTab === 'payouts' ? ' active' : ''}`}
+            onClick={() => { setActiveTab('payouts'); sessionStorage.setItem('adminTab','payouts'); window.scrollTo(0,0); }}
+          >
+            <div className="nav-icon-wrap">
+              <i className="fa-solid fa-wallet"></i>
+              {stats?.pendingPayoutsCount > 0 && (
+                <span className="mobile-nav-badge">{stats.pendingPayoutsCount}</span>
+              )}
+            </div>
+            <span className="nav-label">Rút tiền</span>
+          </button>
+
+          <button 
+            type="button"
+            className="mobile-bottom-nav-item"
+            onClick={() => { setView('home'); sessionStorage.removeItem('adminView'); window.scrollTo(0,0); }}
+          >
+            <div className="nav-icon-wrap">
+              <i className="fa-solid fa-house"></i>
+            </div>
+            <span className="nav-label">Trang chủ</span>
+          </button>
+        </nav>
+      );
+    }
+
+    const scrollToSection = (id) => {
+      if (view !== 'home') {
+        setView('home');
+        setTimeout(() => {
+          const elem = document.getElementById(id);
+          if (elem) elem.scrollIntoView({ behavior: 'smooth' });
+        }, 100);
+      } else {
+        const elem = document.getElementById(id);
+        if (elem) elem.scrollIntoView({ behavior: 'smooth' });
+      }
+    };
+
+    return (
+      <nav className="mobile-bottom-nav">
+        {/* Nút 1: Trang chủ */}
+        <button 
+          type="button"
+          className={`mobile-bottom-nav-item${view === 'home' ? ' active' : ''}`}
+          onClick={() => { setView('home'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+        >
+          <div className="nav-icon-wrap">
+            <i className="fa-solid fa-house"></i>
+          </div>
+          <span className="nav-label">Trang chủ</span>
+        </button>
+
+        {/* Nút 2: Tra cứu (khi từ Zalo /tracuu tới sẽ active) */}
+        <button 
+          type="button"
+          className={`mobile-bottom-nav-item${view === 'lookup' ? ' active' : ''}`}
+          onClick={() => { setView('lookup'); window.history.pushState({}, '', '/?view=lookup'); window.scrollTo(0,0); }}
+        >
+          <div className="nav-icon-wrap">
+            <i className="fa-solid fa-magnifying-glass"></i>
+          </div>
+          <span className="nav-label">Tra cứu</span>
+        </button>
+
+        {/* Nút 3 (Nút Nổi Ở Giữa - Floating Action Button): Mở Bot Zalo Group */}
+        <a 
+          href="https://zalo.me/g/0p083nqqoordpki9zgvy" 
+          target="_blank" 
+          rel="noreferrer"
+          className="mobile-bottom-nav-item mobile-nav-fab"
+          title="Nhắn tin với Bot Zalo hoàn tiền"
+        >
+          <div className="fab-circle">
+            <i className="fa-solid fa-comment-dots"></i>
+          </div>
+          <span className="nav-label">Bot Zalo</span>
+        </a>
+
+        {/* Nút 4: Hướng dẫn */}
+        <button 
+          type="button"
+          className="mobile-bottom-nav-item"
+          onClick={() => scrollToSection('steps')}
+        >
+          <div className="nav-icon-wrap">
+            <i className="fa-solid fa-circle-question"></i>
+          </div>
+          <span className="nav-label">Hướng dẫn</span>
+        </button>
+
+        {/* Nút 5: Quản trị / Tài khoản */}
+        {isAdmin ? (
+          <button 
+            type="button"
+            className={`mobile-bottom-nav-item${view === 'admin' ? ' active' : ''}`}
+            onClick={() => { setView('admin'); sessionStorage.setItem('adminView','admin'); window.scrollTo(0,0); }}
+          >
+            <div className="nav-icon-wrap">
+              <i className="fa-solid fa-user-gear"></i>
+            </div>
+            <span className="nav-label">Quản trị</span>
+          </button>
+        ) : token ? (
+          <button 
+            type="button"
+            className="mobile-bottom-nav-item"
+            onClick={() => {
+              if (window.confirm('Bạn có muốn đăng xuất không?')) {
+                handleLogout();
+              }
+            }}
+          >
+            <div className="nav-icon-wrap">
+              {user?.avatarUrl ? (
+                <img src={user.avatarUrl} alt="User" referrerPolicy="no-referrer" style={{ width: '22px', height: '22px', borderRadius: '50%', objectFit: 'cover' }} />
+              ) : (
+                <i className="fa-solid fa-user"></i>
+              )}
+            </div>
+            <span className="nav-label">{user?.fullName?.split(' ')[0] || 'Tài khoản'}</span>
+          </button>
+        ) : (
+          <button 
+            type="button"
+            className={`mobile-bottom-nav-item${view === 'login' ? ' active' : ''}`}
+            onClick={() => { setView('login'); window.history.pushState({}, '', '/?view=login'); window.scrollTo(0,0); }}
+          >
+            <div className="nav-icon-wrap">
+              <i className="fa-solid fa-right-to-bracket"></i>
+            </div>
+            <span className="nav-label">Đăng nhập</span>
+          </button>
+        )}
+      </nav>
+    );
+  }
 
   // Auto-run lookup if search params are present in the URL on load
   useEffect(() => {
@@ -1534,23 +1722,7 @@ function App() {
         {/* Custom Toast Notification Top-Right */}
         {toastElement}
 
-        {/* Top Navbar */}
-        <header className="lookup-header">
-          <div className="lookup-logo">
-            <img src="/logo.jpg" alt="Logo" style={{ width: '32px', height: '32px', borderRadius: '50%', objectFit: 'cover' }} />
-            <span>28Symues <span style={{ color: '#f97316' }}>Affiliate</span></span>
-          </div>
-          <button 
-            className="lookup-admin-link" 
-            onClick={() => {
-              setView('home');
-              sessionStorage.setItem('adminView', 'home');
-              window.location.hash = '';
-            }}
-          >
-            <i className="fa-solid fa-house" style={{ marginRight: '6px' }}></i> Về Trang Chủ
-          </button>
-        </header>
+        
 
         {/* Search Panel Card */}
         <div className="lookup-card">
@@ -2010,6 +2182,7 @@ function App() {
             </div>
           </div>
         )}
+        {renderMobileBottomNav()}
       </div>
     );
   }
@@ -2400,6 +2573,15 @@ function App() {
           </div>
           <div className="login-split-nav">
             <button 
+              className="theme-toggle-btn"
+              onClick={toggleTheme}
+              title={theme === 'dark' ? 'Chuyển sang Chế độ Sáng' : 'Chuyển sang Chế độ Tối'}
+              style={{ marginRight: '10px' }}
+            >
+              <span className="theme-icon">{theme === 'dark' ? '☀️' : '🌙'}</span>
+              <span className="theme-label">{theme === 'dark' ? 'Sáng' : 'Tối'}</span>
+            </button>
+            <button 
               className="btn-back" 
               onClick={() => {
                 setView('home');
@@ -2577,6 +2759,14 @@ function App() {
             <a href="#steps" onClick={() => setMobileMenuOpen(false)}>Hướng dẫn</a>
             <a href="#pricing" onClick={() => setMobileMenuOpen(false)}>Bảng giá</a>
             <a href="#" onClick={(e) => { e.preventDefault(); setView('lookup'); window.history.pushState({}, '', '/?view=lookup'); setMobileMenuOpen(false); }} style={{ color: '#ea580c', fontWeight: '700' }}><i className="fa-thin fa-magnifying-glass" style={{ marginRight: '6px' }}></i>Tra cứu đơn hàng</a>
+            <button 
+              className="theme-toggle-btn"
+              onClick={toggleTheme}
+              title={theme === 'dark' ? 'Chuyển sang Chế độ Sáng' : 'Chuyển sang Chế độ Tối'}
+            >
+              <span className="theme-icon">{theme === 'dark' ? '☀️' : '🌙'}</span>
+              <span className="theme-label">{theme === 'dark' ? 'Sáng' : 'Tối'}</span>
+            </button>
             {/* Mobile-only actions inside nav */}
             <div className="mobile-nav-actions">
               {token ? (
@@ -2782,8 +2972,8 @@ function App() {
                     <span className="online-dot"></span>
                   </div>
                   <div className="zalo-header-info">
-                    <div className="zalo-group-name">Nhiệt Huyết Săn Sale 🚀</div>
-                    <div className="zalo-group-sub">850 thành viên • Bot đang hoạt động</div>
+                    <div className="zalo-group-name" style={{ fontSize: "11px", letterSpacing: "-0.2px", fontWeight: "800" }}>HOÀN TIỀN HOA HỒNG SHOPPE + ĐẶT ĐƠN NGƯỜI MỚI</div>
+                    <div className="zalo-group-sub">Cộng đồng • 👥 284 thành viên • Bot đang hoạt động</div>
                   </div>
                 </div>
 
@@ -3187,8 +3377,7 @@ function App() {
             </div>
           </div>
         </footer>
-
-
+        {renderMobileBottomNav()}
       </div>
     );
   }
@@ -3302,6 +3491,15 @@ function App() {
             </div>
           </div>
           <button 
+            className="theme-toggle-btn"
+            onClick={toggleTheme}
+            style={{ width: '100%', marginBottom: '8px', justifyContent: 'center' }}
+            title={theme === 'dark' ? 'Chuyển sang Chế độ Sáng' : 'Chuyển sang Chế độ Tối'}
+          >
+            <span className="theme-icon">{theme === 'dark' ? '☀️' : '🌙'}</span>
+            <span>{theme === 'dark' ? 'Chế độ Sáng' : 'Chế độ Tối'}</span>
+          </button>
+          <button 
             onClick={handleLogout} 
             style={{ 
               width: '100%', 
@@ -3354,6 +3552,16 @@ function App() {
               <div className="avatar">{(user?.fullName || 'PT').substring(0, 2).toUpperCase()}</div>
             )}
             <button 
+              className="theme-toggle-btn"
+              onClick={toggleTheme}
+              title={theme === 'dark' ? 'Chuyển sang Chế độ Sáng' : 'Chuyển sang Chế độ Tối'}
+              aria-label="Toggle Theme"
+              style={{ marginLeft: '8px' }}
+            >
+              <span className="theme-icon">{theme === 'dark' ? '☀️' : '🌙'}</span>
+              <span className="theme-label">{theme === 'dark' ? 'Sáng' : 'Tối'}</span>
+            </button>
+            <button 
               className="btn btn-refresh" 
               onClick={(e) => {
                 const svg = e.currentTarget.querySelector('svg');
@@ -3368,7 +3576,7 @@ function App() {
                 fetchData(token, user);
               }} 
               style={{ 
-                marginLeft: '12px', 
+                marginLeft: '8px', 
                 display: 'inline-flex', 
                 alignItems: 'center', 
                 gap: '8px', 
@@ -3666,7 +3874,7 @@ function App() {
                             return (
                               <tr key={o.id}>
                                 <td>
-                                  <code style={{ fontWeight: 'bold', fontSize: '12.5px', color: '#fff' }}>{o.orderId}</code>
+                                  <code className="order-id-code">{o.orderId}</code>
                                 </td>
                                 <td title={o.productName} style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                                   {o.productName}
@@ -3803,13 +4011,13 @@ function App() {
                   <div className="detail-label" style={{ fontSize: '12px', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '8px', color: 'var(--text-muted)' }}>Tên thành viên</div>
                   <div className="detail-value" style={{ color: 'var(--color-primary)', fontSize: '22px', fontWeight: '700' }}>{selectedUser.zaloName || 'Vô danh'}</div>
                 </div>
-                <div className="detail-item" style={{ padding: '20px', background: 'rgba(255,255,255,0.03)', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.05)' }}>
+                <div className="detail-item" style={{ padding: '20px', borderRadius: '12px', border: '1px solid var(--border-color)', background: 'var(--bg-main)' }}>
                   <div className="detail-label" style={{ fontSize: '12px', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '8px', color: 'var(--text-muted)' }}>Zalo ID</div>
-                  <div className="detail-value" style={{ fontSize: '16px', wordBreak: 'break-all', fontFamily: 'monospace', color: '#fff' }}>{selectedUser.zaloId}</div>
+                  <div className="detail-value" style={{ fontSize: '16px', wordBreak: 'break-all', fontFamily: 'monospace', color: 'var(--text-bright)' }}>{selectedUser.zaloId}</div>
                 </div>
-                <div className="detail-item" style={{ padding: '20px', background: 'rgba(255,255,255,0.03)', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.05)' }}>
+                <div className="detail-item" style={{ padding: '20px', borderRadius: '12px', border: '1px solid var(--border-color)', background: 'var(--bg-main)' }}>
                   <div className="detail-label" style={{ fontSize: '12px', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '8px', color: 'var(--text-muted)' }}>Ngân hàng nhận tiền</div>
-                  <div className="detail-value" style={{ fontSize: '20px', fontWeight: '600', color: '#fff' }}>{getBankAndAccount(selectedUser).bankName || '⚠️ Chưa cập nhật'}</div>
+                  <div className="detail-value" style={{ fontSize: '20px', fontWeight: '600', color: 'var(--text-bright)' }}>{getBankAndAccount(selectedUser).bankName || '⚠️ Chưa cập nhật'}</div>
                 </div>
                 <div className="detail-item" style={{ padding: '20px', background: 'rgba(255,255,255,0.03)', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.05)' }}>
                   <div className="detail-label" style={{ fontSize: '12px', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '8px', color: 'var(--text-muted)' }}>Số tài khoản</div>
@@ -3897,6 +4105,7 @@ function App() {
           </div>
         </div>
       )}
+      {renderMobileBottomNav()}
     </div>
   );
 }

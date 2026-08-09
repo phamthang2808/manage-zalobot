@@ -65,8 +65,8 @@ export default function LoginView() {
       setToken('session-cookie');
       setUser(authData.user);
       sessionStorage.setItem('adminUser', JSON.stringify(authData.user));
-      sessionStorage.setItem('adminToken', 'session-cookie');
-      if (authData.user && (authData.user.role === 'ADMIN' || authData.user.role === 'SUPER_ADMIN')) {
+      const isAdminUser = authData.user && (authData.user.role === 'ADMIN' || authData.user.role === 'SUPER_ADMIN' || authData.user.isAdmin);
+      if (isAdminUser) {
         setView('admin');
         sessionStorage.setItem('adminView', 'admin');
       } else {
@@ -107,7 +107,8 @@ export default function LoginView() {
       setUser(authData.user);
       sessionStorage.setItem('adminUser', JSON.stringify(authData.user));
       sessionStorage.setItem('adminToken', 'session-cookie');
-      if (authData.user && (authData.user.role === 'ADMIN' || authData.user.role === 'SUPER_ADMIN')) {
+      const isAdminUser = authData.user && (authData.user.role === 'ADMIN' || authData.user.role === 'SUPER_ADMIN' || authData.user.isAdmin);
+      if (isAdminUser) {
         setView('admin');
         sessionStorage.setItem('adminView', 'admin');
       } else {

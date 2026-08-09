@@ -35,7 +35,7 @@ export function AppProvider({ children }) {
   const [users, setUsers] = useState([]);
   const [orders, setOrders] = useState([]);
   const [payouts, setPayouts] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
   // Toast
@@ -64,10 +64,90 @@ export function AppProvider({ children }) {
 
   const isAdmin = user?.role === 'ADMIN' || user?.role === 'SUPER_ADMIN' || user?.isAdmin || false;
 
+  // Check active session on startup & handle Google Redirect Hash & TikTok bypass
+  useEffect(() => {
+    // 1. TikTok redirect bypass
+    const params = new URLSearchParams(window.location.search);
+    const openTiktokProduct = params.get('open_tiktok_product');
+    if (openTiktokProduct) {
+      try {
+        const decodedUrl = decodeURIComponent(openTiktokProduct);
+        window.location.href = decodedUrl;
+        return;
+      } catch (e) { /* ignore */ }
+    }
+
+    // 2. Clear legacy tokens
+    localStorage.removeItem('admin_token');
+    localStorage.removeItem('accessToken');
+    localStorage.removeItem('refreshToken');
+
+    // 3. Handle Google Redirect Hash (#id_token=...)
+    const handleRedirectHash = async () => {
+      try {
+        const hash = window.location.hash;
+        if (hash && (hash.includes('id_token=') || hash.includes('access_token='))) {
+          const p = new URLSearchParams(hash.substring(1));
+          const idToken = p.get('id_token');
+          if (idToken) {
+            const res = await fetch(`${API_URL_ROOT}/api/users/google-login`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ token: idToken }),
+              credentials: 'include'
+            });
+            const result = await res.json();
+            if (res.ok && result.data) {
+              const authData = result.data;
+              setToken('session-cookie');
+              setUser(authData.user);
+              sessionStorage.setItem('adminUser', JSON.stringify(authData.user));
+              sessionStorage.setItem('adminToken', 'session-cookie');
+              const isAdminUser = authData.user?.role === 'ADMIN' || authData.user?.role === 'SUPER_ADMIN' || authData.user?.isAdmin;
+              if (isAdminUser) {
+                setView('admin');
+                sessionStorage.setItem('adminView', 'admin');
+              } else {
+                setView('home');
+              }
+              window.history.replaceState(null, null, window.location.pathname + window.location.search);
+              showToast('Đăng nhập Google thành công!', 'success');
+              return true;
+            }
+          }
+        }
+      } catch (e) { console.error("Google redirect error:", e); }
+      return false;
+    };
+
+    // 4. Verify session cookie with backend
+    const checkSession = async () => {
+      const handledGoogle = await handleRedirectHash();
+      if (handledGoogle) return;
+
+      try {
+        const res = await fetch(`${API_URL_ROOT}/api/users/profile`, { credentials: 'include' });
+        if (res.ok) {
+          const result = await res.json();
+          setUser(result.data);
+          setToken('session-cookie');
+          sessionStorage.setItem('adminUser', JSON.stringify(result.data));
+          sessionStorage.setItem('adminToken', 'session-cookie');
+        }
+      } catch (err) {
+        /* Keep session user from sessionStorage on network failure */
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    checkSession();
+  }, []);
+
   // Fetch admin data
   const fetchData = async (currentToken, currentUser) => {
-    if (!currentToken) return;
-    const isAdminUser = currentUser && (currentUser.role === 'ADMIN' || currentUser.role === 'SUPER_ADMIN');
+    if (!currentToken || !currentUser) return;
+    const isAdminUser = currentUser.role === 'ADMIN' || currentUser.role === 'SUPER_ADMIN' || currentUser.isAdmin;
     if (!isAdminUser) { setLoading(false); return; }
 
     setLoading(true);
@@ -80,7 +160,11 @@ export function AppProvider({ children }) {
         fetch(`${API_BASE}/orders`, opts),
         fetch(`${API_BASE}/payouts`, opts),
       ]);
-      if (statsRes.status === 401 || statsRes.status === 403) { handleLogout(); return; }
+      if (statsRes.status === 401 || statsRes.status === 403) {
+        setError('Phiên làm việc admin hết hạn hoặc không có quyền.');
+        setLoading(false);
+        return;
+      }
       if (!statsRes.ok) throw new Error('Không thể tải dữ liệu thống kê');
       if (!usersRes.ok) throw new Error('Không thể tải danh sách thành viên');
       if (!ordersRes.ok) throw new Error('Không thể tải danh sách đơn hàng');
@@ -112,8 +196,8 @@ export function AppProvider({ children }) {
   };
 
   useEffect(() => {
-    if (token && user) fetchData(token, user);
-  }, [token, user]);
+    if (token && user && view === 'admin') fetchData(token, user);
+  }, [token, user, view]);
 
   // SEO document title
   useEffect(() => {

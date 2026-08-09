@@ -131,6 +131,7 @@
   line-height: 1.5;
   box-sizing: border-box;
   -webkit-font-smoothing: antialiased;
+<<<<<<< HEAD
 }
 
 /* ============================================
@@ -173,6 +174,8 @@
   --shadow-sm: 0 2px 6px rgba(0, 0, 0, 0.4);
   --shadow-md: 0 6px 12px rgba(0, 0, 0, 0.45);
   --shadow-lg: 0 16px 24px rgba(0, 0, 0, 0.5);
+=======
+>>>>>>> dccd68e9329cb3156847ab56aa5bb4e246b4ffe6
 }
 
 *,
@@ -185,9 +188,13 @@ body {
   margin: 0;
   padding: 0;
   overflow-x: hidden;
+<<<<<<< HEAD
   background-color: var(--bg-main);
   color: var(--text-main);
   transition: background-color 0.25s ease, color 0.25s ease;
+=======
+  background-color: var(--gray-50);
+>>>>>>> dccd68e9329cb3156847ab56aa5bb4e246b4ffe6
 }
 
 /* Scrollbar */
@@ -3473,6 +3480,7 @@ tr:hover td {
     font-weight: 800;
   }
 }
+<<<<<<< HEAD
 
 /* =========================================================
    THEME TOGGLE BUTTON & DARK MODE CONTRAST FIXES
@@ -3574,3 +3582,5 @@ tr:hover td {
   }
 }
 
+=======
+>>>>>>> dccd68e9329cb3156847ab56aa5bb4e246b4ffe6

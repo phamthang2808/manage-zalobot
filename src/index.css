@@ -3565,16 +3565,64 @@ body.dark .landing-logo span {
   color: #f8fafc !important;
 }
 
+/* Dark Mode Mobile Header Nav & Dropdown Menu */
+html[data-theme="dark"] .landing-nav,
+html.dark .landing-nav,
+body.dark .landing-nav {
+  background: rgba(15, 23, 42, 0.98) !important;
+  backdrop-filter: blur(24px) !important;
+  -webkit-backdrop-filter: blur(24px) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12) !important;
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.7) !important;
+}
+
 html[data-theme="dark"] .landing-nav a,
 html.dark .landing-nav a,
 body.dark .landing-nav a {
-  color: #cbd5e1 !important;
+  color: #f8fafc !important;
+  font-weight: 600 !important;
 }
 
 html[data-theme="dark"] .landing-nav a:hover,
 html.dark .landing-nav a:hover,
 body.dark .landing-nav a:hover {
-  color: #f97316 !important;
+  background: rgba(249, 115, 22, 0.16) !important;
+  color: #fb923c !important;
+}
+
+html[data-theme="dark"] .mobile-nav-actions,
+html.dark .mobile-nav-actions,
+body.dark .mobile-nav-actions {
+  border-top: 1px solid rgba(255, 255, 255, 0.12) !important;
+}
+
+html[data-theme="dark"] .mobile-nav-actions > div,
+html.dark .mobile-nav-actions > div,
+body.dark .mobile-nav-actions > div {
+  background: rgba(30, 41, 59, 0.8) !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+}
+
+html[data-theme="dark"] .landing-nav .user-widget,
+html.dark .landing-nav .user-widget,
+body.dark .landing-nav .user-widget {
+  background: rgba(30, 41, 59, 0.8) !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  color: #ffffff !important;
+}
+
+html[data-theme="dark"] .landing-nav .user-widget-name,
+html.dark .landing-nav .user-widget-name,
+body.dark .landing-nav .user-widget-name {
+  color: #ffffff !important;
+}
+
+html[data-theme="dark"] .landing-nav .btn,
+html.dark .landing-nav .btn,
+body.dark .landing-nav .btn {
+  background: rgba(30, 41, 59, 0.8) !important;
+  color: #f8fafc !important;
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
 }
 
 html[data-theme="dark"] .hero-title,

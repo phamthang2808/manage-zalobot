@@ -4335,3 +4335,107 @@ wa-icon {
     display: none !important;
   }
 }
+
+/* =========================================================
+   ENHANCED GLOWING DARK MODE CARDS (SÁNG ĐẸP NỔI BẬT)
+   ========================================================= */
+
+html[data-theme="dark"],
+html.dark,
+body.dark {
+  /* Glowing bright cards in Dark Mode */
+  .stat-card,
+  .data-card,
+  .lookup-card,
+  .stat-card-item,
+  .order-card-item,
+  .table-container table tbody tr {
+    background: linear-gradient(145deg, #1e293b 0%, #0f172a 100%) !important;
+    border: 1.5px solid rgba(255, 255, 255, 0.14) !important;
+    box-shadow: 0 8px 24px -4px rgba(0, 0, 0, 0.4), 0 0 16px rgba(249, 115, 22, 0.08) !important;
+    backdrop-filter: blur(12px);
+    transition: all 0.3s ease !important;
+  }
+
+  .stat-card:hover,
+  .data-card:hover,
+  .lookup-card:hover,
+  .stat-card-item:hover,
+  .order-card-item:hover,
+  .table-container table tbody tr:hover {
+    border-color: rgba(249, 115, 22, 0.5) !important;
+    box-shadow: 0 10px 28px -4px rgba(0, 0, 0, 0.5), 0 0 22px rgba(249, 115, 22, 0.25) !important;
+  }
+
+  /* Specific glowing variants for stat cards & lookup stat items */
+  .stat-card.success,
+  .stat-card-item.completed {
+    background: linear-gradient(145deg, rgba(16, 185, 129, 0.14), #0f172a 90%) !important;
+    border: 1.5px solid rgba(52, 211, 153, 0.45) !important;
+    box-shadow: 0 4px 20px rgba(16, 185, 129, 0.2), inset 0 0 12px rgba(52, 211, 153, 0.1) !important;
+  }
+  .stat-card.success .stat-val,
+  .stat-card-item.completed .stat-card-value {
+    color: #34d399 !important;
+    text-shadow: 0 0 12px rgba(52, 211, 153, 0.35);
+  }
+
+  .stat-card.warning,
+  .stat-card-item.withdrawable,
+  .stat-card-item.total {
+    background: linear-gradient(145deg, rgba(249, 115, 22, 0.15), #0f172a 90%) !important;
+    border: 1.5px solid rgba(251, 146, 60, 0.5) !important;
+    box-shadow: 0 4px 20px rgba(249, 115, 22, 0.22), inset 0 0 12px rgba(251, 146, 60, 0.1) !important;
+  }
+  .stat-card.warning .stat-val,
+  .stat-card-item.total .stat-card-value,
+  .stat-card-item.withdrawable .stat-card-value {
+    color: #fb923c !important;
+    text-shadow: 0 0 12px rgba(251, 146, 60, 0.35);
+  }
+
+  .stat-card-item.pending {
+    background: linear-gradient(145deg, rgba(245, 158, 11, 0.14), #0f172a 90%) !important;
+    border: 1.5px solid rgba(251, 191, 36, 0.45) !important;
+    box-shadow: 0 4px 20px rgba(245, 158, 11, 0.18) !important;
+  }
+
+  .stat-card-item.received {
+    background: linear-gradient(145deg, rgba(74, 222, 128, 0.14), #0f172a 90%) !important;
+    border: 1.5px solid rgba(74, 222, 128, 0.4) !important;
+    box-shadow: 0 4px 20px rgba(74, 222, 128, 0.18) !important;
+  }
+
+  /* Make inner inputs, code badges, and highlight boxes shine in Dark Mode */
+  .table-container table tbody tr td[data-label="Khả dụng rút"],
+  .table-container table tbody tr td[data-label="Số tiền"] {
+    background: linear-gradient(135deg, rgba(34, 197, 94, 0.2), rgba(15, 23, 42, 0.85)) !important;
+    border: 1.5px solid rgba(74, 222, 128, 0.55) !important;
+    box-shadow: 0 0 18px rgba(74, 222, 128, 0.25) !important;
+    color: #4ade80 !important;
+    text-shadow: 0 0 12px rgba(74, 222, 128, 0.35);
+  }
+
+  /* Card headers and title text bright contrast */
+  .card-title,
+  .stats-section-title,
+  .lookup-title {
+    color: #f8fafc !important;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
+  }
+
+  /* Form controls and search inputs glow */
+  .form-control,
+  .lookup-input {
+    background: #0f172a !important;
+    border: 1.5px solid rgba(255, 255, 255, 0.18) !important;
+    color: #f8fafc !important;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3) !important;
+  }
+
+  .form-control:focus,
+  .lookup-input:focus {
+    border-color: #f97316 !important;
+    box-shadow: 0 0 16px rgba(249, 115, 22, 0.4), inset 0 2px 4px rgba(0, 0, 0, 0.3) !important;
+  }
+}

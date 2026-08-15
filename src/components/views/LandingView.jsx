@@ -98,9 +98,9 @@ export default function LandingView() {
       </header>
       {mobileMenuOpen && <div className="mobile-overlay" onClick={() => setMobileMenuOpen(false)}></div>}
 
-      {/* Hero Section */}
-      <section id="home" className="hero-section">
-        <div className="hero-grid-split">
+      {/* Hero Section Container */}
+      <section id="home" className="landing-block-container hero-section" style={{ marginTop: '24px' }}>
+        <div className="hero-grid-split" style={{ background: 'none', border: 'none', boxShadow: 'none', padding: 0 }}>
           <div className="hero-content-left">
             <div className="hero-badge">
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" style={{ color: '#ea580c', flexShrink: 0 }}>
@@ -115,7 +115,7 @@ export default function LandingView() {
               Biến mọi liên kết mua sắm trong nhóm chat Zalo của bạn thành nguồn thu nhập thụ động chỉ trong vài giây. Tiện lợi, tự động và hoàn toàn minh bạch.
             </p>
             <div className="hero-buttons">
-              <a href="#steps" className="btn btn-hero-1">Bắt đầu ngay</a>
+              <a href="#intro-banner" className="btn btn-hero-1">Khám phá ngay</a>
               <button onClick={() => { setView('lookup'); window.history.pushState({}, '', '/?view=lookup'); }} className="btn btn-hero-2">
                 <i className="fa-thin fa-magnifying-glass"></i> Tra cứu đơn hàng
               </button>
@@ -166,8 +166,65 @@ export default function LandingView() {
         </div>
       </section>
 
-      {/* Features Section */}
-      <section id="features" className="features-section">
+      {/* Showcase Banner Container Section */}
+      <section id="intro-banner" className="landing-block-container banner-showcase-section">
+        <div className="section-badge" style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', padding: '6px 16px', borderRadius: '30px', background: 'rgba(249, 115, 22, 0.12)', color: '#ea580c', fontSize: '12px', fontWeight: '800', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '12px' }}>
+          🌟 GIỚI THIỆU HỆ THỐNG BOT CÔNG NGHỆ 4.0
+        </div>
+        <h2 className="section-title" style={{ fontSize: '32px', fontWeight: '800', color: 'var(--text-bright)', marginBottom: '12px' }}>
+          Giải Pháp Săn Sale & Hoàn Tiền Hoa Hồng Tự Động 24/7
+        </h2>
+        <p className="section-subtitle" style={{ color: 'var(--text-muted)', fontSize: '15.5px', maxWidth: '750px', margin: '0 auto 28px', lineHeight: '1.6' }}>
+          Hệ thống Zalo Bot chuyên nghiệp hỗ trợ chuyển đổi link Shopee, Lazada & TikTok Shop thông minh, tự động nhận diện ID thành viên và tích lũy ví hoa hồng minh bạch.
+        </p>
+
+        {/* Showcase Banner Container Card */}
+        <div className="banner-showcase-card">
+          <img 
+            src="/ChatGPT Image 16_03_45 30 thg 7, 2026.png" 
+            alt="Zalo Bot Affiliate System Showcase Banner" 
+            className="banner-showcase-img" 
+          />
+        </div>
+
+        {/* Advantage Badges Grid */}
+        <div className="banner-badge-grid">
+          <div className="banner-badge-item">
+            <div className="banner-badge-icon"><i className="fa-regular fa-link"></i></div>
+            <div>
+              <div className="banner-badge-title">Tự Động Đổi Link Affiliated</div>
+              <div className="banner-badge-desc">Gắn chính xác SubID của người gửi link trong nhóm chat Zalo.</div>
+            </div>
+          </div>
+
+          <div className="banner-badge-item">
+            <div className="banner-badge-icon"><i className="fa-solid fa-bolt"></i></div>
+            <div>
+              <div className="banner-badge-title">Tốc Độ Phản Hồi &lt; 0.5s</div>
+              <div className="banner-badge-desc">Bot trả lời ngay lập tức, kích thích nhu cầu chốt đơn săn sale.</div>
+            </div>
+          </div>
+
+          <div className="banner-badge-item">
+            <div className="banner-badge-icon"><i className="fa-regular fa-wallet"></i></div>
+            <div>
+              <div className="banner-badge-title">Ví Tích Lũy & Rút Tiền</div>
+              <div className="banner-badge-desc">Thành viên tự xem ví và gõ lệnh `/rut-tien` thanh toán nhanh gọn.</div>
+            </div>
+          </div>
+
+          <div className="banner-badge-item">
+            <div className="banner-badge-icon"><i className="fa-brands fa-bots"></i></div>
+            <div>
+              <div className="banner-badge-title">AI GPT-4o Soạn Lời Chào</div>
+              <div className="banner-badge-desc">Tương tác tự nhiên, vui vẻ, tăng tỷ lệ mua hàng vượt trội.</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Features Section Container */}
+      <section id="features" className="landing-block-container features-section">
         <h2 className="section-title">Tính Năng Nổi Bật</h2>
         <p className="section-subtitle">Mọi thứ bạn cần để vận hành hệ thống săn sale hoa hồng tự động</p>
         <div className="features-grid">
@@ -194,8 +251,8 @@ export default function LandingView() {
         </div>
       </section>
 
-      {/* Steps Section */}
-      <section id="steps" className="instructions-section" style={{ borderTop: '1px solid var(--border-color)', borderBottom: '1px solid var(--border-color)' }}>
+      {/* Steps Section Container */}
+      <section id="steps" className="landing-block-container instructions-section">
         <h2 className="section-title">3 Bước Bắt Đầu Đơn Giản</h2>
         <p className="section-subtitle">Chỉ mất 5 phút để thiết lập và khởi chạy chatbot trong nhóm của bạn</p>
         <div className="instructions-grid">
@@ -205,8 +262,8 @@ export default function LandingView() {
         </div>
       </section>
 
-      {/* Pricing Section */}
-      <section id="pricing" className="pricing-section" style={{ padding: '80px 20px', textAlign: 'center', position: 'relative', zIndex: 10 }}>
+      {/* Pricing Section Container */}
+      <section id="pricing" className="landing-block-container pricing-section" style={{ textAlign: 'center' }}>
         <h2 className="section-title" style={{ fontSize: '36px', fontWeight: '800', color: 'var(--text-bright)', marginBottom: '12px' }}>Bảng Giá Dịch Vụ</h2>
         <p className="section-subtitle" style={{ color: 'var(--text-muted)', fontSize: '16px', marginBottom: '48px' }}>Chi phí tối ưu, hiệu quả tối đa cho nhóm Zalo săn sale của bạn</p>
         <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '24px', maxWidth: '1200px', margin: '0 auto' }}>
@@ -249,13 +306,13 @@ export default function LandingView() {
         </div>
       </section>
 
-      {/* QR Banner */}
+      {/* QR Banner Container */}
       {showBanner && (
-        <section style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', margin: '40px 0 20px', position: 'relative', zIndex: 2 }}>
+        <section className="landing-block-container community-container" style={{ textAlign: 'center' }}>
           <h3 style={{ fontSize: '18px', color: 'var(--text-bright)', marginBottom: '16px', fontWeight: '800', textAlign: 'center', padding: '0 16px', lineHeight: '1.4' }}>
             🌟 Quét QR Tham Gia Nhóm Zalo Nhận Hoàn Tiền Ngay
           </h3>
-          <div style={{ position: 'relative', width: '280px', borderRadius: '16px', overflow: 'hidden', boxShadow: '0 12px 40px rgba(0,0,0,0.1), 0 0 30px rgba(249,115,22,0.2)', border: '2px solid #fed7aa', transition: 'transform 0.3s ease' }}>
+          <div style={{ position: 'relative', width: '280px', margin: '0 auto', borderRadius: '16px', overflow: 'hidden', boxShadow: '0 12px 40px rgba(0,0,0,0.1), 0 0 30px rgba(249,115,22,0.2)', border: '2px solid #fed7aa', transition: 'transform 0.3s ease' }}>
             <button onClick={e => { e.stopPropagation(); setShowBanner(false); }} style={{ position: 'absolute', top: '8px', right: '8px', background: 'rgba(0,0,0,0.6)', color: '#fff', border: 'none', borderRadius: '50%', width: '26px', height: '26px', fontSize: '16px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 5 }}>×</button>
             <img src="/banner.jpg" alt="Tham gia Zalo Group nhận hoa hồng" style={{ width: '100%', display: 'block' }} />
           </div>

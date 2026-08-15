@@ -1,4 +1,5 @@
-﻿import { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
+import ThemeToggle from './components/common/ThemeToggle';
 
 const API_URL_ROOT = import.meta.env.PROD ? "" : (import.meta.env.VITE_API_URL || 'http://localhost:8080');
 const API_BASE = `${API_URL_ROOT}/api/admin`;
@@ -2562,7 +2563,8 @@ function App() {
             <img src="/logo.jpg" alt="Logo" />
             <span>28Symues <span style={{ color: '#f97316' }}>Affiliate</span></span>
           </div>
-          <div className="login-split-nav">
+          <div className="login-split-nav" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <ThemeToggle />
             <button 
               className="btn-back" 
               onClick={() => {
@@ -2743,6 +2745,10 @@ function App() {
             <a href="#" onClick={(e) => { e.preventDefault(); setView('lookup'); window.history.pushState({}, '', '/?view=lookup'); setMobileMenuOpen(false); }} style={{ color: '#ea580c', fontWeight: '700' }}><i className="fa-thin fa-magnifying-glass" style={{ marginRight: '6px' }}></i>Tra cứu đơn hàng</a>
             {/* Mobile-only actions inside nav */}
             <div className="mobile-nav-actions">
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '6px 12px', background: 'var(--bg-main)', borderRadius: '10px', marginBottom: '8px' }}>
+                <span style={{ fontSize: '13.5px', fontWeight: '600', color: 'var(--text-main)' }}>Giao diện Dark/Light</span>
+                <ThemeToggle />
+              </div>
               {token ? (
                 <>
                   <div className="user-widget">
@@ -2810,6 +2816,7 @@ function App() {
             </div>
           </nav>
           <div className="landing-actions">
+            <ThemeToggle style={{ marginRight: '8px' }} />
             {token ? (
               <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
                 <div className="user-widget">
@@ -3505,6 +3512,7 @@ function App() {
             {activeTab === 'payouts' && 'Danh Sách Yêu Cầu Rút Tiền'}
           </h1>
           <div className="admin-profile">
+            <ThemeToggle style={{ marginRight: '8px' }} />
             <span className="admin-name">{user?.fullName || 'Admin'}</span>
             {user?.avatarUrl ? (
               <img 

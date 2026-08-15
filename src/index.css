@@ -4142,3 +4142,126 @@ body.dark .login-split-nav .btn-back:hover {
   border-color: #f97316 !important;
   color: #f97316 !important;
 }
+
+/* =========================================================
+   WA-ICON & MOBILE RESPONSIVE CARD LAYOUT FOR ADMIN TABLES
+   ========================================================= */
+
+wa-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  vertical-align: middle;
+  line-height: 1;
+}
+
+.card-title wa-icon {
+  margin-right: 6px;
+  font-size: 1.15em;
+  color: var(--color-primary, #f97316);
+}
+
+@media (max-width: 768px) {
+  .table-container {
+    overflow-x: visible !important;
+  }
+
+  .table-container table {
+    min-width: 100% !important;
+    width: 100% !important;
+    display: block !important;
+  }
+
+  .table-container table thead {
+    display: none !important; /* Hide column headers on mobile */
+  }
+
+  .table-container table tbody {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 14px !important;
+    width: 100% !important;
+  }
+
+  .table-container table tbody tr {
+    display: flex !important;
+    flex-direction: column !important;
+    width: 100% !important;
+    background: var(--bg-card, #ffffff);
+    border: 1px solid var(--border-color, rgba(226, 232, 240, 0.8));
+    border-radius: 14px;
+    padding: 12px 16px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+    box-sizing: border-box !important;
+  }
+
+  /* Dark mode support for mobile cards */
+  html[data-theme="dark"] .table-container table tbody tr,
+  html.dark .table-container table tbody tr,
+  body.dark .table-container table tbody tr {
+    background: #1e293b !important;
+    border-color: #334155 !important;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
+  }
+
+  .table-container table tbody tr:hover {
+    border-color: var(--color-primary-border, #fdba74);
+  }
+
+  .table-container table tbody tr td {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    padding: 9px 0 !important;
+    border-bottom: 1px dashed var(--border-color, rgba(226, 232, 240, 0.7)) !important;
+    text-align: right !important;
+    font-size: 13px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  html[data-theme="dark"] .table-container table tbody tr td,
+  html.dark .table-container table tbody tr td,
+  body.dark .table-container table tbody tr td {
+    border-bottom-color: rgba(255, 255, 255, 0.08) !important;
+  }
+
+  .table-container table tbody tr td:last-child {
+    border-bottom: none !important;
+    padding-bottom: 0 !important;
+    margin-top: 4px;
+    justify-content: flex-end !important;
+  }
+
+  /* Key-value label on mobile */
+  .table-container table tbody tr td[data-label]::before {
+    content: attr(data-label);
+    font-weight: 600;
+    color: var(--text-muted, #64748b);
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    margin-right: 12px;
+    text-align: left !important;
+    flex-shrink: 0;
+  }
+
+  html[data-theme="dark"] .table-container table tbody tr td[data-label]::before,
+  html.dark .table-container table tbody tr td[data-label]::before,
+  body.dark .table-container table tbody tr td[data-label]::before {
+    color: #94a3b8 !important;
+  }
+
+  /* Empty row state on mobile */
+  .table-container table tbody tr.empty-row td,
+  .table-container table tbody tr td[colspan] {
+    justify-content: center !important;
+    text-align: center !important;
+    border-bottom: none !important;
+  }
+  .table-container table tbody tr.empty-row td::before,
+  .table-container table tbody tr td[colspan]::before {
+    content: none !important;
+  }
+}

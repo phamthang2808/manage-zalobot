@@ -70,19 +70,19 @@ function UserDetailModal({ selectedUser, onClose, orders }) {
               </thead>
               <tbody>
                 {orders.filter(o => o.zaloId === selectedUser.zaloId).length === 0 ? (
-                  <tr><td colSpan="6" style={{ textAlign: 'center', color: 'var(--text-muted)' }}>Chưa có đơn hàng nào.</td></tr>
+                  <tr className="empty-row"><td colSpan="6" style={{ textAlign: 'center', color: 'var(--text-muted)' }}>Chưa có đơn hàng nào.</td></tr>
                 ) : (
                   orders.filter(o => o.zaloId === selectedUser.zaloId).slice(0, 10).map(o => {
                     const afterTax = (o.commission || 0) * 0.9;
                     const afterDeduction = afterTax * 0.8;
                     return (
                       <tr key={o.id}>
-                        <td style={{ fontSize: '11px' }}>{o.orderId}</td>
-                        <td style={{ maxWidth: '160px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{o.productName}</td>
-                        <td style={{ color: 'var(--text-muted)', fontSize: '12px' }}>{formatMoney(o.commission)}</td>
-                        <td style={{ color: 'var(--color-warning)', fontSize: '12px' }}>{formatMoney(afterTax)}</td>
-                        <td style={{ color: 'var(--color-success)', fontWeight: '700', fontSize: '12px' }}>{formatMoney(afterDeduction)}</td>
-                        <td>
+                        <td data-label="Mã đơn" style={{ fontSize: '11px' }}>{o.orderId}</td>
+                        <td data-label="Sản phẩm" style={{ maxWidth: '160px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{o.productName}</td>
+                        <td data-label="HH Gốc" style={{ color: 'var(--text-muted)', fontSize: '12px' }}>{formatMoney(o.commission)}</td>
+                        <td data-label="Sau thuế" style={{ color: 'var(--color-warning)', fontSize: '12px' }}>{formatMoney(afterTax)}</td>
+                        <td data-label="Thực nhận" style={{ color: 'var(--color-success)', fontWeight: '700', fontSize: '12px' }}>{formatMoney(afterDeduction)}</td>
+                        <td data-label="Trạng thái">
                           <span className={`badge ${o.status === 'Hoàn thành' ? 'badge-completed' : o.status === 'Hủy' ? 'badge-cancelled' : 'badge-pending'}`} style={{ fontSize: '10px', padding: '2px 6px' }}>
                             {o.status}
                           </span>
@@ -141,32 +141,34 @@ export default function UsersTab() {
             </thead>
             <tbody>
               {filteredUsers.length === 0 ? (
-                <tr><td colSpan="8" style={{ textAlign: 'center', color: 'var(--text-muted)' }}>Không tìm thấy thành viên phù hợp</td></tr>
+                <tr className="empty-row"><td colSpan="8" style={{ textAlign: 'center', color: 'var(--text-muted)' }}>Không tìm thấy thành viên phù hợp</td></tr>
               ) : (
                 filteredUsers.map(u => {
                   const bankAndAcc = getBankAndAccount(u);
                   return (
                     <tr key={u.zaloId}>
-                      <td style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                      <td data-label="Zalo ID" style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                         <code style={{ color: 'var(--text-muted)', fontSize: '11.5px' }} title={u.zaloId}>{u.zaloId}</code>
                       </td>
-                      <td style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                      <td data-label="Tên thành viên" style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                         <strong title={u.zaloName}>{u.zaloName || 'Vô danh (Chờ đồng bộ)'}</strong>
                       </td>
-                      <td>
+                      <td data-label="Tài khoản nhận tiền">
                         <div style={{ fontSize: '13px', fontWeight: '500' }}>{bankAndAcc.bankName || '⚠️ Chưa cập nhật'}</div>
                         {bankAndAcc.accountNumber && <div style={{ fontSize: '11.5px', color: 'var(--text-muted)', marginTop: '2px' }}><code>{bankAndAcc.accountNumber}</code></div>}
                       </td>
-                      <td style={{ color: 'var(--color-warning)', textAlign: 'right', fontWeight: '500' }}>{formatMoney(u.wallet?.pendingCommission)}</td>
-                      <td style={{ textAlign: 'right' }}>
+                      <td data-label="Chờ xử lý" style={{ color: 'var(--color-warning)', textAlign: 'right', fontWeight: '500' }}>{formatMoney(u.wallet?.pendingCommission)}</td>
+                      <td data-label="Tích lũy hoàn thành" style={{ textAlign: 'right' }}>
                         <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>Gốc: {formatMoney(u.wallet?.completedCommission)}</div>
                         <div style={{ fontSize: '11.5px', color: 'var(--color-warning)', marginTop: '2px' }}>Sau thuế: {formatMoney((u.wallet?.completedCommission || 0) * 0.9)}</div>
                         <div style={{ fontSize: '11.5px', color: 'var(--color-success)', marginTop: '2px', fontWeight: '600' }}>Khách: {formatMoney((u.wallet?.completedCommission || 0) * 0.9 * 0.8)}</div>
                       </td>
-                      <td style={{ color: 'var(--color-success)', fontWeight: '700', textAlign: 'right' }}>{formatMoney(u.wallet?.withdrawableCommission)}</td>
-                      <td style={{ textAlign: 'right', color: 'var(--text-muted)' }}>{formatMoney(u.wallet?.receivedCommission)}</td>
-                      <td style={{ textAlign: 'center' }}>
-                        <button className="btn" onClick={() => setSelectedUser(u)} style={{ padding: '4px 8px', fontSize: '12px' }}>👁 Xem</button>
+                      <td data-label="Khả dụng rút" style={{ color: 'var(--color-success)', fontWeight: '700', textAlign: 'right' }}>{formatMoney(u.wallet?.withdrawableCommission)}</td>
+                      <td data-label="Đã rút" style={{ textAlign: 'right', color: 'var(--text-muted)' }}>{formatMoney(u.wallet?.receivedCommission)}</td>
+                      <td data-label="Chi tiết" style={{ textAlign: 'center' }}>
+                        <button className="btn" onClick={() => setSelectedUser(u)} style={{ padding: '4px 10px', fontSize: '12px', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                          <wa-icon name="eye" variant="regular"></wa-icon> Xem
+                        </button>
                       </td>
                     </tr>
                   );

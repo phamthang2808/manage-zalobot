@@ -3644,7 +3644,9 @@ function App() {
                   {/* Quick table of recent pending payouts */}
                   <div className="data-card">
                     <div className="card-header">
-                      <h2 className="card-title">🚨 Yêu Cầu Rút Tiền Chờ Duyệt Gần Đây</h2>
+                      <h2 className="card-title">
+                        <wa-icon name="money-check-dollar"></wa-icon> Yêu Cầu Rút Tiền Chờ Duyệt Gần Đây
+                      </h2>
                     </div>
                     <div className="table-container">
                       <table>
@@ -3661,9 +3663,11 @@ function App() {
                         </thead>
                         <tbody>
                           {payouts.filter(p => p.status === 'PENDING').length === 0 ? (
-                            <tr>
+                            <tr className="empty-row">
                               <td colSpan="7" style={{ textAlign: 'center', color: 'var(--text-muted)', padding: '24px' }}>
-                                🎉 Không có yêu cầu rút tiền nào đang chờ duyệt!
+                                <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', justifyContent: 'center' }}>
+                                  <wa-icon name="money-check-dollar" style={{ fontSize: '1.2em' }}></wa-icon> Không có yêu cầu rút tiền nào đang chờ duyệt!
+                                </span>
                               </td>
                             </tr>
                           ) : (
@@ -3672,13 +3676,13 @@ function App() {
                               const bankAndAcc = getBankAndAccount(p);
                               return (
                                 <tr key={p.id}>
-                                  <td><strong>PT_{p.id}</strong></td>
-                                  <td>{user ? user.zaloName : p.zaloId}</td>
-                                  <td>{bankAndAcc.bankName || 'Chưa cấu hình'}</td>
-                                  <td><code>{bankAndAcc.accountNumber || 'Chưa cấu hình'}</code></td>
-                                  <td style={{ color: 'var(--color-primary)', fontWeight: 'bold' }}>{formatMoney(p.amount)}</td>
-                                  <td>{formatDateTime(p.createdAt)}</td>
-                                  <td>
+                                  <td data-label="Mã GD"><strong>PT_{p.id}</strong></td>
+                                  <td data-label="Thành viên">{user ? user.zaloName : p.zaloId}</td>
+                                  <td data-label="Ngân hàng">{bankAndAcc.bankName || 'Chưa cấu hình'}</td>
+                                  <td data-label="Số tài khoản"><code>{bankAndAcc.accountNumber || 'Chưa cấu hình'}</code></td>
+                                  <td data-label="Số tiền" style={{ color: 'var(--color-primary)', fontWeight: 'bold' }}>{formatMoney(p.amount)}</td>
+                                  <td data-label="Thời gian gửi">{formatDateTime(p.createdAt)}</td>
+                                  <td data-label="Hành động">
                                     <button 
                                       className="btn btn-success"
                                       onClick={() => handleApprovePayout(p.id)}
@@ -3725,7 +3729,7 @@ function App() {
                       </thead>
                       <tbody>
                         {filteredUsers.length === 0 ? (
-                          <tr>
+                          <tr className="empty-row">
                             <td colSpan="8" style={{ textAlign: 'center', color: 'var(--text-muted)' }}>
                               Không tìm thấy thành viên phù hợp
                             </td>
@@ -3735,37 +3739,37 @@ function App() {
                             const bankAndAcc = getBankAndAccount(u);
                             return (
                               <tr key={u.zaloId}>
-                                <td style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                                <td data-label="Zalo ID" style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                                   <code style={{ color: 'var(--text-muted)', fontSize: '11.5px' }} title={u.zaloId}>{u.zaloId}</code>
                                 </td>
-                                <td style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                                <td data-label="Tên thành viên" style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                                   <strong title={u.zaloName}>{u.zaloName || 'Vô danh (Chờ đồng bộ)'}</strong>
                                 </td>
-                                <td>
+                                <td data-label="Tài khoản nhận tiền">
                                   <div style={{ fontSize: '13px', fontWeight: '500' }}>{bankAndAcc.bankName || '⚠️ Chưa cập nhật'}</div>
                                   {bankAndAcc.accountNumber && <div style={{ fontSize: '11.5px', color: 'var(--text-muted)', marginTop: '2px' }}><code>{bankAndAcc.accountNumber}</code></div>}
                                 </td>
-                                <td style={{ color: 'var(--color-warning)', textAlign: 'right', fontWeight: '500' }}>
+                                <td data-label="Chờ xử lý" style={{ color: 'var(--color-warning)', textAlign: 'right', fontWeight: '500' }}>
                                   {formatMoney(u.wallet?.pendingCommission)}
                                 </td>
-                                <td style={{ textAlign: 'right' }}>
+                                <td data-label="Tích lũy hoàn thành" style={{ textAlign: 'right' }}>
                                   <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>Gốc: {formatMoney(u.wallet?.completedCommission)}</div>
                                   <div style={{ fontSize: '11.5px', color: 'var(--color-warning)', marginTop: '2px' }}>Sau thuế: {formatMoney((u.wallet?.completedCommission || 0) * 0.9)}</div>
                                   <div style={{ fontSize: '11.5px', color: 'var(--color-success)', marginTop: '2px', fontWeight: '600' }}>Khách: {formatMoney((u.wallet?.completedCommission || 0) * 0.9 * 0.8)}</div>
                                 </td>
-                                <td style={{ color: 'var(--color-success)', fontWeight: '700', textAlign: 'right' }}>
+                                <td data-label="Khả dụng rút" style={{ color: 'var(--color-success)', fontWeight: '700', textAlign: 'right' }}>
                                   {formatMoney(u.wallet?.withdrawableCommission)}
                                 </td>
-                                <td style={{ textAlign: 'right', color: 'var(--text-muted)' }}>
+                                <td data-label="Đã rút" style={{ textAlign: 'right', color: 'var(--text-muted)' }}>
                                   {formatMoney(u.wallet?.receivedCommission)}
                                 </td>
-                                <td style={{ textAlign: 'center' }}>
+                                <td data-label="Chi tiết" style={{ textAlign: 'center' }}>
                                   <button
                                     className="btn"
                                     onClick={() => setSelectedUser(u)}
-                                    style={{ padding: '4px 8px', fontSize: '12px' }}
+                                    style={{ padding: '4px 10px', fontSize: '12px', display: 'inline-flex', alignItems: 'center', gap: '4px' }}
                                   >
-                                    👁 Xem
+                                    <wa-icon name="eye" variant="regular"></wa-icon> Xem
                                   </button>
                                 </td>
                               </tr>
@@ -3840,7 +3844,7 @@ function App() {
                       </thead>
                       <tbody>
                         {filteredOrders.length === 0 ? (
-                          <tr>
+                          <tr className="empty-row">
                             <td colSpan="6" style={{ textAlign: 'center', color: 'var(--text-muted)' }}>
                               Không tìm thấy đơn hàng nào
                             </td>
@@ -3852,13 +3856,13 @@ function App() {
                             const afterDeduction = afterTax * 0.8;
                             return (
                               <tr key={o.id}>
-                                <td>
+                                <td data-label="Mã đơn">
                                   <code className="order-id-code">{o.orderId}</code>
                                 </td>
-                                <td title={o.productName} style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                                <td data-label="Sản phẩm" title={o.productName} style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                                   {o.productName}
                                 </td>
-                                <td style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                                <td data-label="Thành viên" style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                                   <div style={{ fontWeight: '600', fontSize: '13.5px' }} title={orderUser ? orderUser.zaloName : (o.zaloId || 'UNKNOWN')}>
                                     {orderUser ? orderUser.zaloName : <code style={{ color: 'var(--color-danger)', fontSize: '11px' }}>{o.zaloId || 'UNKNOWN'}</code>}
                                   </div>
@@ -3866,12 +3870,12 @@ function App() {
                                     <code style={{ fontSize: '11.5px', color: 'var(--text-muted)' }} title={o.subId}>{o.subId || '-'}</code>
                                   </div>
                                 </td>
-                                <td style={{ textAlign: 'right' }}>
+                                <td data-label="Hoa hồng" style={{ textAlign: 'right' }}>
                                   <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>Gốc: {formatMoney(o.commission)}</div>
                                   <div style={{ fontSize: '11.5px', color: 'var(--color-warning)', marginTop: '2px' }}>Sau thuế: {formatMoney(afterTax)}</div>
                                   <div style={{ fontSize: '11.5px', color: 'var(--color-success)', marginTop: '2px', fontWeight: '600' }}>Khách: {formatMoney(afterDeduction)}</div>
                                 </td>
-                                <td>
+                                <td data-label="Thời gian">
                                   <div style={{ fontSize: '12px' }} title={`Đặt mua: ${formatDateTime(o.purchaseTime)}`}>Đặt: {formatDateTime(o.purchaseTime)}</div>
                                   {o.completeTime && (
                                     <div style={{ fontSize: '11px', color: 'var(--text-muted)', marginTop: '2px' }} title={`Hoàn thành: ${formatDateTime(o.completeTime)}`}>
@@ -3879,7 +3883,7 @@ function App() {
                                     </div>
                                   )}
                                 </td>
-                                <td style={{ textAlign: 'center' }}>
+                                <td data-label="Trạng thái" style={{ textAlign: 'center' }}>
                                   <span className={`badge ${
                                     o.status === 'Hoàn thành' ? 'badge-completed' :
                                     o.status === 'Đã hủy' ? 'badge-cancelled' : 'badge-pending'
@@ -3926,7 +3930,7 @@ function App() {
                       </thead>
                       <tbody>
                         {filteredPayouts.length === 0 ? (
-                          <tr>
+                          <tr className="empty-row">
                             <td colSpan="9" style={{ textAlign: 'center', color: 'var(--text-muted)' }}>
                               Không tìm thấy yêu cầu rút tiền nào
                             </td>
@@ -3937,21 +3941,21 @@ function App() {
                             const bankAndAcc = getBankAndAccount(p);
                             return (
                               <tr key={p.id}>
-                                <td><strong>PT_{p.id}</strong></td>
-                                <td>{user ? user.zaloName : p.zaloId}</td>
-                                <td>{bankAndAcc.bankName || 'Chưa cấu hình'}</td>
-                                <td style={{ fontSize: '13px' }}><code>{bankAndAcc.accountNumber || 'Chưa cấu hình'}</code></td>
-                                <td style={{ color: 'var(--color-primary)', fontWeight: 'bold' }}>{formatMoney(p.amount)}</td>
-                                <td>{formatDateTime(p.createdAt)}</td>
-                                <td>{formatDateTime(p.completedAt)}</td>
-                                <td>
+                                <td data-label="Mã GD"><strong>PT_{p.id}</strong></td>
+                                <td data-label="Thành viên">{user ? user.zaloName : p.zaloId}</td>
+                                <td data-label="Ngân hàng">{bankAndAcc.bankName || 'Chưa cấu hình'}</td>
+                                <td data-label="Số tài khoản" style={{ fontSize: '13px' }}><code>{bankAndAcc.accountNumber || 'Chưa cấu hình'}</code></td>
+                                <td data-label="Số tiền" style={{ color: 'var(--color-primary)', fontWeight: 'bold' }}>{formatMoney(p.amount)}</td>
+                                <td data-label="Ngày gửi">{formatDateTime(p.createdAt)}</td>
+                                <td data-label="Phê duyệt">{formatDateTime(p.completedAt)}</td>
+                                <td data-label="Trạng thái">
                                   <span className={`badge ${
                                     p.status === 'COMPLETED' ? 'badge-completed' : 'badge-pending'
                                   }`}>
                                     {p.status === 'COMPLETED' ? 'Đã thanh toán' : 'Chờ duyệt'}
                                   </span>
                                 </td>
-                                <td>
+                                <td data-label="Thao tác">
                                   {p.status === 'PENDING' ? (
                                     <button 
                                       className="btn btn-success"
@@ -4048,7 +4052,7 @@ function App() {
                   </thead>
                   <tbody>
                     {orders.filter(o => o.zaloId === selectedUser.zaloId).length === 0 ? (
-                      <tr>
+                      <tr className="empty-row">
                         <td colSpan="6" style={{ textAlign: 'center', color: 'var(--text-muted)' }}>Chưa có đơn hàng nào.</td>
                       </tr>
                     ) : (
@@ -4057,12 +4061,12 @@ function App() {
                         const afterDeduction = afterTax * 0.8;
                         return (
                           <tr key={o.id}>
-                            <td style={{ fontSize: '11px' }}>{o.orderId}</td>
-                            <td style={{ maxWidth: '160px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{o.productName}</td>
-                            <td style={{ color: 'var(--text-muted)', fontSize: '12px' }}>{formatMoney(o.commission)}</td>
-                            <td style={{ color: 'var(--color-warning)', fontSize: '12px' }}>{formatMoney(afterTax)}</td>
-                            <td style={{ color: 'var(--color-success)', fontWeight: '700', fontSize: '12px' }}>{formatMoney(afterDeduction)}</td>
-                            <td>
+                            <td data-label="Mã đơn" style={{ fontSize: '11px' }}>{o.orderId}</td>
+                            <td data-label="Sản phẩm" style={{ maxWidth: '160px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{o.productName}</td>
+                            <td data-label="HH Gốc" style={{ color: 'var(--text-muted)', fontSize: '12px' }}>{formatMoney(o.commission)}</td>
+                            <td data-label="Sau thuế" style={{ color: 'var(--color-warning)', fontSize: '12px' }}>{formatMoney(afterTax)}</td>
+                            <td data-label="Thực nhận" style={{ color: 'var(--color-success)', fontWeight: '700', fontSize: '12px' }}>{formatMoney(afterDeduction)}</td>
+                            <td data-label="Trạng thái">
                               <span className={`badge ${
                                 o.status === 'Hoàn thành' ? 'badge-completed' :
                                 o.status === 'Hủy' ? 'badge-cancelled' : 'badge-pending'

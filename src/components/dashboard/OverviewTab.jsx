@@ -63,7 +63,9 @@ export default function OverviewTab() {
 
       <div className="data-card">
         <div className="card-header">
-          <h2 className="card-title">🚨 Yêu Cầu Rút Tiền Chờ Duyệt Gần Đây</h2>
+          <h2 className="card-title">
+            <wa-icon name="money-check-dollar"></wa-icon> Yêu Cầu Rút Tiền Chờ Duyệt Gần Đây
+          </h2>
         </div>
         <div className="table-container">
           <table>
@@ -75,9 +77,11 @@ export default function OverviewTab() {
             </thead>
             <tbody>
               {pendingPayouts.length === 0 ? (
-                <tr>
+                <tr className="empty-row">
                   <td colSpan="7" style={{ textAlign: 'center', color: 'var(--text-muted)', padding: '24px' }}>
-                    🎉 Không có yêu cầu rút tiền nào đang chờ duyệt!
+                    <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', justifyContent: 'center' }}>
+                      <wa-icon name="money-check-dollar" style={{ fontSize: '1.2em' }}></wa-icon> Không có yêu cầu rút tiền nào đang chờ duyệt!
+                    </span>
                   </td>
                 </tr>
               ) : (
@@ -86,13 +90,13 @@ export default function OverviewTab() {
                   const bankAndAcc = getBankAndAccount(p);
                   return (
                     <tr key={p.id}>
-                      <td><strong>PT_{p.id}</strong></td>
-                      <td>{memberUser ? memberUser.zaloName : p.zaloId}</td>
-                      <td>{bankAndAcc.bankName || 'Chưa cấu hình'}</td>
-                      <td><code>{bankAndAcc.accountNumber || 'Chưa cấu hình'}</code></td>
-                      <td style={{ color: 'var(--color-primary)', fontWeight: 'bold' }}>{formatMoney(p.amount)}</td>
-                      <td>{formatDateTime(p.createdAt)}</td>
-                      <td>
+                      <td data-label="Mã GD"><strong>PT_{p.id}</strong></td>
+                      <td data-label="Thành viên">{memberUser ? memberUser.zaloName : p.zaloId}</td>
+                      <td data-label="Ngân hàng">{bankAndAcc.bankName || 'Chưa cấu hình'}</td>
+                      <td data-label="Số tài khoản"><code>{bankAndAcc.accountNumber || 'Chưa cấu hình'}</code></td>
+                      <td data-label="Số tiền" style={{ color: 'var(--color-primary)', fontWeight: 'bold' }}>{formatMoney(p.amount)}</td>
+                      <td data-label="Thời gian gửi">{formatDateTime(p.createdAt)}</td>
+                      <td data-label="Hành động">
                         <button className="btn btn-success" onClick={() => handleApprovePayout(p.id)}>✓ Phê duyệt</button>
                       </td>
                     </tr>

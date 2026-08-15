@@ -99,7 +99,7 @@ export default function OrdersTab() {
           </thead>
           <tbody>
             {filteredOrders.length === 0 ? (
-              <tr><td colSpan="6" style={{ textAlign: 'center', color: 'var(--text-muted)' }}>Không tìm thấy đơn hàng nào</td></tr>
+              <tr className="empty-row"><td colSpan="6" style={{ textAlign: 'center', color: 'var(--text-muted)' }}>Không tìm thấy đơn hàng nào</td></tr>
             ) : (
               filteredOrders.map(o => {
                 const orderUser = users.find(u => u.zaloId === o.zaloId);
@@ -107,11 +107,11 @@ export default function OrdersTab() {
                 const afterDeduction = afterTax * 0.8;
                 return (
                   <tr key={o.id}>
-                    <td><code className="order-id-code">{o.orderId}</code></td>
-                    <td title={o.productName} style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                    <td data-label="Mã đơn"><code className="order-id-code">{o.orderId}</code></td>
+                    <td data-label="Sản phẩm" title={o.productName} style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                       {o.productName}
                     </td>
-                    <td style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                    <td data-label="Thành viên" style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                       <div style={{ fontWeight: '600', fontSize: '13.5px' }} title={orderUser ? orderUser.zaloName : (o.zaloId || 'UNKNOWN')}>
                         {orderUser ? orderUser.zaloName : <code style={{ color: 'var(--color-danger)', fontSize: '11px' }}>{o.zaloId || 'UNKNOWN'}</code>}
                       </div>
@@ -119,18 +119,18 @@ export default function OrdersTab() {
                         <code style={{ fontSize: '11.5px', color: 'var(--text-muted)' }} title={o.subId}>{o.subId || '-'}</code>
                       </div>
                     </td>
-                    <td style={{ textAlign: 'right' }}>
+                    <td data-label="Hoa hồng" style={{ textAlign: 'right' }}>
                       <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>Gốc: {formatMoney(o.commission)}</div>
                       <div style={{ fontSize: '11.5px', color: 'var(--color-warning)', marginTop: '2px' }}>Sau thuế: {formatMoney(afterTax)}</div>
                       <div style={{ fontSize: '11.5px', color: 'var(--color-success)', marginTop: '2px', fontWeight: '600' }}>Khách: {formatMoney(afterDeduction)}</div>
                     </td>
-                    <td>
+                    <td data-label="Thời gian">
                       <div style={{ fontSize: '12px' }} title={`Đặt mua: ${formatDateTime(o.purchaseTime)}`}>Đặt: {formatDateTime(o.purchaseTime)}</div>
                       {o.completeTime && (
                         <div style={{ fontSize: '11px', color: 'var(--text-muted)', marginTop: '2px' }}>Xong: {formatDateTime(o.completeTime)}</div>
                       )}
                     </td>
-                    <td style={{ textAlign: 'center' }}>
+                    <td data-label="Trạng thái" style={{ textAlign: 'center' }}>
                       <span className={`badge ${o.status === 'Hoàn thành' ? 'badge-completed' : o.status === 'Đã hủy' ? 'badge-cancelled' : 'badge-pending'}`}
                         style={{ fontSize: '11px', padding: '3px 8px' }}>
                         {o.status}

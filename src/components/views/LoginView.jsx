@@ -244,10 +244,10 @@ export default function LoginView() {
       <ToastNotification />
 
       {/* Header */}
-      <header className="login-split-header" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%', padding: '12px 14px', flexWrap: 'nowrap', gap: '8px', boxSizing: 'border-box' }}>
+      <header className="login-split-header" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%', padding: '12px 16px', flexWrap: 'nowrap', gap: '8px', boxSizing: 'border-box' }}>
         <div className="login-split-logo" style={{ display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 0, whiteSpace: 'nowrap' }}>
-          <img src="/MAIN.png" alt="Logo" style={{ width: '30px', height: '30px', borderRadius: '50%', flexShrink: 0, objectFit: 'cover' }} />
-          <span className="login-logo-text" style={{ fontSize: '14.5px', fontWeight: '800', whiteSpace: 'nowrap', display: 'inline-flex', alignItems: 'center', gap: '5px' }}>
+          <img src="/MAIN.png" alt="Logo" style={{ width: '35px', height: '35px', borderRadius: '50%', flexShrink: 0, objectFit: 'cover', border: '1px solid rgba(249, 115, 22, 0.4)' }} />
+          <span className="login-logo-text" style={{ fontSize: '17px', fontWeight: '800', whiteSpace: 'nowrap', display: 'inline-flex', alignItems: 'center', gap: '6px', letterSpacing: '0.3px' }}>
             <span>28Symues</span>
             <span style={{ color: '#f97316', whiteSpace: 'nowrap', display: 'inline' }}>Affiliate</span>
           </span>
@@ -257,7 +257,7 @@ export default function LoginView() {
           <button 
             className="btn-back" 
             onClick={() => { setView('home'); window.history.pushState({}, '', '/'); }}
-            style={{ whiteSpace: 'nowrap', display: 'inline-flex', alignItems: 'center', gap: '5px', padding: '5px 11px', fontSize: '12px', borderRadius: '14px', flexShrink: 0, cursor: 'pointer' }}
+            style={{ whiteSpace: 'nowrap', display: 'inline-flex', alignItems: 'center', gap: '5px', padding: '6px 12px', fontSize: '12.5px', borderRadius: '16px', flexShrink: 0, cursor: 'pointer' }}
           >
             <i className="fa-solid fa-house" style={{ color: '#ea580c', fontSize: '12px', flexShrink: 0 }}></i>
             <span className="btn-back-text" style={{ whiteSpace: 'nowrap', display: 'inline' }}>Trang chủ</span>

@@ -3852,7 +3852,7 @@ function App() {
                             return (
                               <tr key={o.id}>
                                 <td>
-                                  <code style={{ fontWeight: 'bold', fontSize: '12.5px', color: '#fff' }}>{o.orderId}</code>
+                                  <code className="order-id-code">{o.orderId}</code>
                                 </td>
                                 <td title={o.productName} style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                                   {o.productName}
@@ -3862,7 +3862,7 @@ function App() {
                                     {orderUser ? orderUser.zaloName : <code style={{ color: 'var(--color-danger)', fontSize: '11px' }}>{o.zaloId || 'UNKNOWN'}</code>}
                                   </div>
                                   <div style={{ marginTop: '4px' }}>
-                                    <code style={{ fontSize: '11.5px', color: 'var(--color-primary)' }} title={o.subId}>{o.subId || '-'}</code>
+                                    <code style={{ fontSize: '11.5px', color: 'var(--text-muted)' }} title={o.subId}>{o.subId || '-'}</code>
                                   </div>
                                 </td>
                                 <td style={{ textAlign: 'right' }}>

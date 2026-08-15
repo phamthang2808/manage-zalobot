@@ -116,7 +116,7 @@ export default function OrdersTab() {
                         {orderUser ? orderUser.zaloName : <code style={{ color: 'var(--color-danger)', fontSize: '11px' }}>{o.zaloId || 'UNKNOWN'}</code>}
                       </div>
                       <div style={{ marginTop: '4px' }}>
-                        <code style={{ fontSize: '11.5px', color: 'var(--color-primary)' }} title={o.subId}>{o.subId || '-'}</code>
+                        <code style={{ fontSize: '11.5px', color: 'var(--text-muted)' }} title={o.subId}>{o.subId || '-'}</code>
                       </div>
                     </td>
                     <td style={{ textAlign: 'right' }}>

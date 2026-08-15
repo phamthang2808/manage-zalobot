@@ -3792,3 +3792,51 @@ body.dark .lookup-input-group input {
   border-color: #334155 !important;
   color: #f8fafc !important;
 }
+
+/* ==========================================================================
+   PRICING CARD DARK MODE TEXT COLOR FIX
+   ========================================================================== */
+html[data-theme="dark"] .pricing-card span,
+html[data-theme="dark"] .pricing-card p,
+html[data-theme="dark"] .pricing-card h3,
+html[data-theme="dark"] .pricing-card div,
+html.dark .pricing-card span,
+html.dark .pricing-card p,
+html.dark .pricing-card h3,
+html.dark .pricing-card div,
+body.dark .pricing-card span,
+body.dark .pricing-card p,
+body.dark .pricing-card h3,
+body.dark .pricing-card div {
+  color: #f8fafc !important;
+}
+
+html[data-theme="dark"] .pricing-card span:nth-child(2),
+html.dark .pricing-card span:nth-child(2),
+body.dark .pricing-card span:nth-child(2) {
+  color: #94a3b8 !important;
+}
+
+/* ==========================================================================
+   ORDER ID CODE BADGE CONTRAST FOR LIGHT & DARK MODE
+   ========================================================================== */
+.order-id-code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-weight: 700;
+  font-size: 12px;
+  color: #0f172a !important;
+  background: #f1f5f9;
+  padding: 3px 7px;
+  border-radius: 6px;
+  border: 1px solid #cbd5e1;
+  display: inline-block;
+  letter-spacing: 0.3px;
+}
+
+html[data-theme="dark"] .order-id-code,
+html.dark .order-id-code,
+body.dark .order-id-code {
+  color: #38bdf8 !important;
+  background: #0f172a !important;
+  border-color: #334155 !important;
+}

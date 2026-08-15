@@ -3368,7 +3368,7 @@ function App() {
                 <p style={{ color: '#64748b', fontSize: '14px', marginBottom: '24px' }}>Có trang quản trị riêng cho sếp và trang tự tra cứu cho khách</p>
                 
                 <div style={{ marginBottom: '32px' }}>
-                  <span style={{ fontSize: '42px', fontWeight: '800', color: '#0f172a', fontFamily: 'var(--font-heading)' }}>399.000đ</span>
+                  <span style={{ fontSize: '42px', fontWeight: '800', color: '#0f172a', fontFamily: 'var(--font-heading)' }}>299.000đ</span>
                   <span style={{ color: '#64748b', fontSize: '15px' }}> / tháng</span>
                 </div>
                 
@@ -3427,7 +3427,7 @@ function App() {
                 <p style={{ color: '#64748b', fontSize: '14px', marginBottom: '24px' }}>Hệ thống ví tiền tự động và rút tiền qua tin nhắn chat</p>
                 
                 <div style={{ marginBottom: '32px' }}>
-                  <span style={{ fontSize: '42px', fontWeight: '800', color: '#0f172a', fontFamily: 'var(--font-heading)' }}>599.000đ</span>
+                  <span style={{ fontSize: '42px', fontWeight: '800', color: '#0f172a', fontFamily: 'var(--font-heading)' }}>399.000đ</span>
                   <span style={{ color: '#64748b', fontSize: '15px' }}> / tháng</span>
                 </div>
                 

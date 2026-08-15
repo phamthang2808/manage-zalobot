@@ -237,7 +237,7 @@ export default function LoginView() {
       {/* Header */}
       <header className="login-split-header">
         <div className="login-split-logo">
-          <img src="/logo.jpg" alt="Logo" />
+          <img src="/MAIN.png" alt="Logo" />
           <span>28Symues <span style={{ color: '#f97316' }}>Affiliate</span></span>
         </div>
         <div className="login-split-nav">

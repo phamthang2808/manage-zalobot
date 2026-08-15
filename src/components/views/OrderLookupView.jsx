@@ -255,7 +255,7 @@ export default function OrderLookupView() {
       {/* Header */}
       <div className="lookup-header">
         <div className="lookup-logo">
-          <img src="/logo.jpg" alt="Logo" style={{ width: '30px', height: '30px', borderRadius: '50%', objectFit: 'cover' }} />
+          <img src="/MAIN.png" alt="Logo" style={{ width: '30px', height: '30px', borderRadius: '50%', objectFit: 'cover' }} />
           <span>28Symues <span style={{ color: '#f97316' }}>Affiliate</span></span>
         </div>
         <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>

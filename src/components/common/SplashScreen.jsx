@@ -31,7 +31,7 @@ export default function SplashScreen({ onFinish }) {
           <div className="splash-ring ring-outer"></div>
           <div className="splash-ring ring-inner"></div>
           <div className="splash-logo-box">
-            <img src="/logo.jpg" alt="28Symues Affiliate Logo" className="splash-logo-img" />
+            <img src="/MAIN.png" alt="28Symues Affiliate Logo" className="splash-logo-img" />
             <div className="splash-shimmer"></div>
           </div>
         </div>

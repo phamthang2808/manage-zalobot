@@ -13,7 +13,7 @@ export default function LandingView() {
       <ToastNotification />
       <header className="landing-header">
         <div className="landing-logo">
-          <img src="/logo.jpg" alt="Logo" style={{ width: '32px', height: '32px', borderRadius: '50%', objectFit: 'cover' }} />
+          <img src="/MAIN.png" alt="Logo" style={{ width: '32px', height: '32px', borderRadius: '50%', objectFit: 'cover' }} />
           <span>28Symues <span style={{ color: '#f97316' }}>Affiliate</span></span>
         </div>
         <nav className={`landing-nav${mobileMenuOpen ? ' open' : ''}`}>
@@ -123,7 +123,7 @@ export default function LandingView() {
             <div className="floating-badge badge-bot-right"><span className="badge-icon">🤖</span><span className="badge-text">AI GPT-4o Tự Động</span></div>
             <div className="zalo-phone-mockup">
               <div className="zalo-phone-header">
-                <div className="zalo-avatar"><img src="/logo.jpg" alt="Bot Logo" /><span className="online-dot"></span></div>
+                <div className="zalo-avatar"><img src="/MAIN.png" alt="Bot Logo" /><span className="online-dot"></span></div>
                 <div className="zalo-header-info">
                   <div className="zalo-group-name" style={{ fontSize: "11px", letterSpacing: "-0.2px", fontWeight: "800" }}>HOÀN TIỀN HOA HỒNG SHOPPE + ĐẶT ĐƠN NGƯỜI MỚI</div>
                   <div className="zalo-group-sub">Cộng đồng • 👥 284 thành viên • Bot đang hoạt động</div>
@@ -260,7 +260,7 @@ export default function LandingView() {
       <footer className="landing-footer">
         <div className="footer-container">
           <div className="footer-info">
-            <div className="footer-logo"><img src="/logo.jpg" alt="Logo" /><span>28Symues Affiliate</span></div>
+            <div className="footer-logo"><img src="/MAIN.png" alt="Logo" /><span>28Symues Affiliate</span></div>
             <p className="footer-slogan">Hệ thống Zalo Bot chuyên nghiệp hỗ trợ tăng doanh số affiliate tự động 24/7 trên Shopee, Lazada và TikTok Shop.</p>
           </div>
           <div className="footer-links">

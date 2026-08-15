@@ -1714,7 +1714,22 @@ function App() {
         {/* Custom Toast Notification Top-Right */}
         {toastElement}
 
-        
+        {/* Lookup Header Bar */}
+        <header className="lookup-header">
+          <div className="lookup-logo" onClick={() => setView('home')} style={{ cursor: 'pointer' }}>
+            <img src="/logo.jpg" alt="Logo" style={{ width: '28px', height: '28px', borderRadius: '50%', objectFit: 'cover' }} />
+            <span>28Symues <span style={{ color: '#f97316' }}>Affiliate</span></span>
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <ThemeToggle />
+            <button
+              className="lookup-admin-link"
+              onClick={() => setView('home')}
+            >
+              <i className="fa-solid fa-house" style={{ marginRight: '4px' }}></i> Trang chủ
+            </button>
+          </div>
+        </header>
 
         {/* Search Panel Card */}
         <div className="lookup-card">

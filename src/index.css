@@ -3705,3 +3705,90 @@ html.dark .mobile-bottom-nav-item,
 body.dark .mobile-bottom-nav-item {
   color: #94a3b8 !important;
 }
+
+/* ==========================================================================
+   LOOKUP VIEW LIGHT & DARK MODE OVERRIDES
+   ========================================================================== */
+html[data-theme="light"] .lookup-page-container,
+html:not(.dark) .lookup-page-container {
+  background: #f8fafc !important;
+  color: #1e293b !important;
+}
+
+html[data-theme="light"] .lookup-card,
+html:not(.dark) .lookup-card {
+  background: #ffffff !important;
+  border-color: #cbd5e1 !important;
+  color: #1e293b !important;
+}
+
+html[data-theme="light"] .lookup-title,
+html:not(.dark) .lookup-title {
+  color: #0f172a !important;
+}
+
+html[data-theme="light"] .lookup-subtitle,
+html:not(.dark) .lookup-subtitle {
+  color: #64748b !important;
+}
+
+html[data-theme="dark"] .lookup-page-container,
+html.dark .lookup-page-container,
+body.dark .lookup-page-container {
+  background: #0f172a !important;
+  color: #f8fafc !important;
+}
+
+html[data-theme="dark"] .lookup-header,
+html.dark .lookup-header,
+body.dark .lookup-header {
+  border-bottom-color: #334155 !important;
+}
+
+html[data-theme="dark"] .lookup-logo span,
+html.dark .lookup-logo span,
+body.dark .lookup-logo span {
+  color: #f8fafc !important;
+}
+
+html[data-theme="dark"] .lookup-admin-link,
+html.dark .lookup-admin-link,
+body.dark .lookup-admin-link {
+  background: #1e293b !important;
+  color: #f8fafc !important;
+  border-color: #475569 !important;
+}
+
+html[data-theme="dark"] .lookup-card,
+html.dark .lookup-card,
+body.dark .lookup-card {
+  background: #1e293b !important;
+  border-color: #334155 !important;
+  color: #f8fafc !important;
+}
+
+html[data-theme="dark"] .lookup-title,
+html.dark .lookup-title,
+body.dark .lookup-title {
+  color: #f8fafc !important;
+}
+
+html[data-theme="dark"] .lookup-subtitle,
+html.dark .lookup-subtitle,
+body.dark .lookup-subtitle {
+  color: #cbd5e1 !important;
+}
+
+html[data-theme="dark"] .lookup-label,
+html.dark .lookup-label,
+body.dark .lookup-label {
+  color: #e2e8f0 !important;
+}
+
+html[data-theme="dark"] .lookup-input-group input,
+html.dark .lookup-input-group input,
+body.dark .lookup-input-group input {
+  background: #0f172a !important;
+  border-color: #334155 !important;
+  color: #f8fafc !important;
+}

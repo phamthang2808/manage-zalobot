@@ -2381,9 +2381,10 @@ tr:hover td {
 
   .hero-buttons {
     flex-direction: column;
-    width: 100%;
-    max-width: 320px;
-    align-items: stretch;
+    width: 100% !important;
+    max-width: 100% !important;
+    align-items: stretch !important;
+    box-sizing: border-box !important;
   }
 
   .hero-buttons a,
@@ -2392,13 +2393,15 @@ tr:hover td {
   .btn-hero-2,
   .btn-hero-3 {
     width: 100% !important;
+    max-width: 100% !important;
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
     text-align: center !important;
     font-size: 15px !important;
     padding: 13px 20px !important;
-    box-sizing: border-box;
+    border-radius: 12px !important;
+    box-sizing: border-box !important;
   }
 
   /* ====== Features responsive ====== */

@@ -1795,8 +1795,8 @@ function App() {
           <>
             {/* 0. Bank Info Card */}
             <div className="lookup-card" style={{ marginBottom: '24px' }}>
-              <h3 className="stats-section-title" style={{ margin: 0, marginBottom: '12px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
-                <span>🏦 Thông Tin Ngân Hàng Nhận Tiền</span>
+              <h3 className="stats-section-title bank-card-header-title">
+                <span className="bank-card-title-text">🏦 Thông Tin Ngân Hàng Nhận Tiền</span>
                 {!isEditingBank && (
                   <button 
                     className="bank-edit-btn" 
@@ -1807,7 +1807,7 @@ function App() {
                       setIsEditingBank(true);
                     }}
                   >
-                    <i className="fa-regular fa-pen-to-square" style={{ fontSize: '13px' }}></i>
+                    <i className="fa-regular fa-pen-to-square" style={{ fontSize: '12px' }}></i>
                     <span>{lookupResult.bankName ? 'Sửa' : 'Cài đặt'}</span>
                   </button>
                 )}

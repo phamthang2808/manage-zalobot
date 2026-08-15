@@ -4533,25 +4533,58 @@ body.dark {
    BANK INFO CARD STYLES (FAR RIGHT BUTTON & DARK MODE)
    ========================================================= */
 
+.bank-card-header-title {
+  margin: 0 !important;
+  margin-bottom: 12px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  width: 100% !important;
+  gap: 8px !important;
+  flex-wrap: nowrap !important;
+}
+
+.bank-card-title-text {
+  font-size: 15px;
+  font-weight: 700;
+  white-space: nowrap !important;
+  flex-shrink: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 .bank-edit-btn {
   font-size: 12px;
-  padding: 4px 12px;
+  padding: 4px 10px;
   background: rgba(249, 115, 22, 0.1);
   color: #ea580c;
   border: 1px solid rgba(249, 115, 22, 0.3);
   border-radius: 6px;
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: 5px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
+  flex-shrink: 0 !important;
+  white-space: nowrap !important;
   margin-left: auto;
 }
 
 .bank-edit-btn:hover {
   background: rgba(249, 115, 22, 0.2);
   border-color: #f97316;
+}
+
+@media (max-width: 768px) {
+  .bank-card-title-text {
+    font-size: 13.5px !important;
+  }
+
+  .bank-edit-btn {
+    font-size: 11.5px !important;
+    padding: 3px 8px !important;
+  }
 }
 
 html[data-theme="dark"] .bank-edit-btn,

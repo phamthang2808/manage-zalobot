@@ -1,14 +1,37 @@
 import { useApp } from '../../context/AppContext';
+import { useState, useEffect } from 'react';
 
-export default function ThemeToggle({ style = {}, className = '' }) {
-  const { theme, toggleTheme } = useApp();
-  const isDark = theme === 'dark';
+export default function ThemeToggle({ style = {}, className = '', theme: propTheme, toggleTheme: propToggleTheme }) {
+  const app = useApp();
+  const [localTheme, setLocalTheme] = useState(() => localStorage.getItem('theme') || 'light');
+
+  const activeTheme = propTheme || app?.theme || localTheme;
+
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', activeTheme);
+    document.documentElement.classList.toggle('dark', activeTheme === 'dark');
+    if (document.body) document.body.classList.toggle('dark', activeTheme === 'dark');
+    localStorage.setItem('theme', activeTheme);
+  }, [activeTheme]);
+
+  const handleToggle = () => {
+    if (propToggleTheme) {
+      propToggleTheme();
+    } else if (app?.toggleTheme) {
+      app.toggleTheme();
+    } else {
+      const next = localTheme === 'light' ? 'dark' : 'light';
+      setLocalTheme(next);
+    }
+  };
+
+  const isDark = activeTheme === 'dark';
 
   return (
     <button
       type="button"
       className={`theme-toggle-switch ${isDark ? 'dark' : 'light'} ${className}`}
-      onClick={toggleTheme}
+      onClick={handleToggle}
       title={isDark ? 'Chuyển sang Chế độ Sáng' : 'Chuyển sang Chế độ Tối'}
       aria-label="Toggle Theme"
       style={{

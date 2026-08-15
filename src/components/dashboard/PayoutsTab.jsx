@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useApp } from '../../context/AppContext';
-import { formatMoney, formatDateTime, getBankAndAccount } from '../../utils/formatters';
+import { formatDateTime, formatMoney, getBankAndAccount } from '../../utils/formatters';
 
 export default function PayoutsTab() {
   const { payouts, users, handleApprovePayout } = useApp();

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useApp } from '../../context/AppContext';
-import { formatMoney, formatDateTime } from '../../utils/formatters';
+import { formatDateTime, formatMoney } from '../../utils/formatters';
 
 export default function OrdersTab() {
   const { orders, users, token, user, fetchData, showToast, API_URL_ROOT } = useApp();

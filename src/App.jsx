@@ -1494,35 +1494,36 @@ function App() {
           .stat-card-item {
             border-radius: 12px;
             padding: 16px;
-            border: 1.5px solid #cbd5e1;
+            border: 1.5px solid var(--border-color, #cbd5e1);
             display: flex;
             flex-direction: column;
             box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+            background: var(--bg-card, #ffffff);
           }
           .stat-card-item.total {
-            background: linear-gradient(135deg, #ffedd5 0%, #ffffff 100%);
+            background: linear-gradient(135deg, rgba(254,215,170,0.4) 0%, var(--bg-card, #ffffff) 100%);
             border-color: #fdba74;
           }
           .stat-card-item.pending {
-            background: linear-gradient(135deg, #fef3c7 0%, #ffffff 100%);
+            background: linear-gradient(135deg, rgba(253,230,138,0.4) 0%, var(--bg-card, #ffffff) 100%);
             border-color: #fcd34d;
           }
           .stat-card-item.completed {
-            background: linear-gradient(135deg, #d1fae5 0%, #ffffff 100%);
+            background: linear-gradient(135deg, rgba(167,243,208,0.4) 0%, var(--bg-card, #ffffff) 100%);
             border-color: #6ee7b7;
           }
           .stat-card-item.withdrawable {
-            background: linear-gradient(135deg, #ffedd5 0%, #ffffff 100%);
+            background: linear-gradient(135deg, rgba(254,215,170,0.4) 0%, var(--bg-card, #ffffff) 100%);
             border-color: #fdba74;
           }
           .stat-card-item.received {
-            background: linear-gradient(135deg, #dcfce7 0%, #ffffff 100%);
+            background: linear-gradient(135deg, rgba(187,247,208,0.4) 0%, var(--bg-card, #ffffff) 100%);
             border-color: #86efac;
           }
           .stat-card-label {
             font-size: 11.5px;
             text-transform: uppercase;
-            color: #334155;
+            color: var(--text-muted, #334155);
             margin-bottom: 4px;
             font-weight: 700;
             letter-spacing: 0.5px;
@@ -1530,18 +1531,18 @@ function App() {
           .stat-card-value {
             font-size: 24px;
             font-weight: 900;
-            color: #0f172a;
+            color: var(--text-bright, #0f172a);
           }
           .stat-card-value.primary {
-            color: #c2410c;
+            color: #ea580c;
           }
           .orders-container {
             width: 100%;
             max-width: 600px;
           }
           .order-card-item {
-            background: #ffffff;
-            border: 1.5px solid #cbd5e1;
+            background: var(--bg-card, #ffffff);
+            border: 1.5px solid var(--border-color, #cbd5e1);
             border-radius: 12px;
             padding: 16px;
             margin-bottom: 12px;
@@ -1553,7 +1554,7 @@ function App() {
             align-items: center;
             margin-bottom: 8px;
             font-size: 12.5px;
-            color: #334155;
+            color: var(--text-muted, #334155);
             font-weight: 600;
           }
           .order-id-badge {
@@ -1565,7 +1566,7 @@ function App() {
           .order-card-title {
             font-size: 14.5px;
             font-weight: 700;
-            color: #0f172a;
+            color: var(--text-bright, #0f172a);
             margin-bottom: 10px;
             line-height: 1.4;
             overflow: hidden;

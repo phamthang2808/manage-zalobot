@@ -245,8 +245,8 @@ export default function LoginView() {
 
       {/* Header */}
       <header className="login-split-header" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%', padding: '10px 12px', flexWrap: 'nowrap', gap: '6px', boxSizing: 'border-box' }}>
-        <div className="login-split-logo" style={{ display: 'flex', alignItems: 'center', gap: '6px', flexShrink: 1, minWidth: 0, whiteSpace: 'nowrap' }}>
-          <img src="/MAIN.png" alt="Logo" style={{ borderRadius: '50%', flexShrink: 0, objectFit: 'cover', border: '1px solid rgba(249, 115, 22, 0.45)' }} />
+        <div className="login-split-logo" style={{ display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 1, minWidth: 0, whiteSpace: 'nowrap' }}>
+          <img src="/MAIN.png" alt="Logo" style={{ width: '32px', height: '32px', maxWidth: '32px', maxHeight: '32px', borderRadius: '50%', flexShrink: 0, objectFit: 'cover', border: '1.5px solid rgba(249, 115, 22, 0.45)' }} />
           <span className="login-logo-text" style={{ fontWeight: '800', lineHeight: 1, whiteSpace: 'nowrap', display: 'inline-flex', alignItems: 'center', letterSpacing: '0.2px' }}>
             <span>28Symues&nbsp;</span>
             <span style={{ color: '#f97316', whiteSpace: 'nowrap', display: 'inline' }}>Affiliate</span>

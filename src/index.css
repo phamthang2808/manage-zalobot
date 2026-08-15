@@ -4759,6 +4759,35 @@ body.dark .sidebar-toggle span {
   white-space: nowrap !important;
 }
 
+/* =========================================================
+   HEADER LOGO IMAGE BASE SIZE CONTROL (DESKTOP & MOBILE)
+   ========================================================= */
+
+.login-split-logo img,
+.landing-logo img,
+.lookup-logo img {
+  width: 34px;
+  height: 34px;
+  max-width: 34px;
+  max-height: 34px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+  border: 1.5px solid rgba(249, 115, 22, 0.45);
+}
+
+.login-logo-text,
+.landing-logo-text,
+.lookup-logo-text {
+  font-size: 18px;
+  font-weight: 800;
+  line-height: 1;
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  letter-spacing: 0.3px;
+}
+
 @media (max-width: 768px) {
   .login-split-header,
   .landing-header,
@@ -4782,6 +4811,8 @@ body.dark .sidebar-toggle span {
   .lookup-logo img {
     width: 28px !important;
     height: 28px !important;
+    max-width: 28px !important;
+    max-height: 28px !important;
     flex-shrink: 0 !important;
   }
 

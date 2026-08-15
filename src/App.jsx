@@ -1716,22 +1716,22 @@ function App() {
         {toastElement}
 
         {/* Lookup Header Bar */}
-        <header className="lookup-header" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%', padding: '14px 18px', flexWrap: 'nowrap', gap: '8px', boxSizing: 'border-box' }}>
-          <div className="lookup-logo" onClick={() => setView('home')} style={{ display: 'flex', alignItems: 'center', gap: '10px', flexShrink: 0, whiteSpace: 'nowrap', cursor: 'pointer' }}>
-            <img src="/MAIN.png" alt="Logo" style={{ width: '36px', height: '36px', borderRadius: '50%', flexShrink: 0, objectFit: 'cover', border: '1.5px solid rgba(249, 115, 22, 0.45)' }} />
-            <span className="lookup-logo-text" style={{ fontSize: '18px', fontWeight: '800', lineHeight: 1, whiteSpace: 'nowrap', display: 'inline-flex', alignItems: 'center', gap: '0px', letterSpacing: '0.4px' }}>
+        <header className="lookup-header" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%', padding: '10px 12px', flexWrap: 'nowrap', gap: '6px', boxSizing: 'border-box' }}>
+          <div className="lookup-logo" onClick={() => setView('home')} style={{ display: 'flex', alignItems: 'center', gap: '6px', flexShrink: 1, minWidth: 0, whiteSpace: 'nowrap', cursor: 'pointer' }}>
+            <img src="/MAIN.png" alt="Logo" style={{ borderRadius: '50%', flexShrink: 0, objectFit: 'cover', border: '1px solid rgba(249, 115, 22, 0.45)' }} />
+            <span className="lookup-logo-text" style={{ fontWeight: '800', lineHeight: 1, whiteSpace: 'nowrap', display: 'inline-flex', alignItems: 'center', letterSpacing: '0.2px' }}>
               <span>28Symues&nbsp;</span>
               <span style={{ color: '#f97316', whiteSpace: 'nowrap', display: 'inline' }}>Affiliate</span>
             </span>
           </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexShrink: 0, whiteSpace: 'nowrap' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexShrink: 0, whiteSpace: 'nowrap' }}>
             <ThemeToggle />
             <button
               className="lookup-admin-link"
               onClick={() => { setView('home'); window.history.pushState({}, '', '/'); }}
-              style={{ whiteSpace: 'nowrap', display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '6px 14px', fontSize: '13px', borderRadius: '16px', flexShrink: 0, cursor: 'pointer' }}
+              style={{ whiteSpace: 'nowrap', display: 'inline-flex', alignItems: 'center', gap: '4px', flexShrink: 0, cursor: 'pointer' }}
             >
-              <i className="fa-solid fa-house" style={{ color: '#ea580c', fontSize: '13px', flexShrink: 0 }}></i>
+              <i className="fa-solid fa-house" style={{ color: '#ea580c', flexShrink: 0 }}></i>
               <span style={{ whiteSpace: 'nowrap', display: 'inline' }}>Trang chủ</span>
             </button>
           </div>
@@ -2622,15 +2622,15 @@ function App() {
         `}} />
 
         {/* Header */}
-        <header className="login-split-header" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%', padding: '14px 18px', flexWrap: 'nowrap', gap: '8px', boxSizing: 'border-box' }}>
-          <div className="login-split-logo" style={{ display: 'flex', alignItems: 'center', gap: '10px', flexShrink: 0, whiteSpace: 'nowrap' }}>
-            <img src="/MAIN.png" alt="Logo" style={{ width: '36px', height: '36px', borderRadius: '50%', flexShrink: 0, objectFit: 'cover', border: '1.5px solid rgba(249, 115, 22, 0.45)' }} />
-            <span className="login-logo-text" style={{ fontSize: '18px', fontWeight: '800', lineHeight: 1, whiteSpace: 'nowrap', display: 'inline-flex', alignItems: 'center', gap: '0px', letterSpacing: '0.4px' }}>
+        <header className="login-split-header" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%', padding: '10px 12px', flexWrap: 'nowrap', gap: '6px', boxSizing: 'border-box' }}>
+          <div className="login-split-logo" style={{ display: 'flex', alignItems: 'center', gap: '6px', flexShrink: 1, minWidth: 0, whiteSpace: 'nowrap' }}>
+            <img src="/MAIN.png" alt="Logo" style={{ borderRadius: '50%', flexShrink: 0, objectFit: 'cover', border: '1px solid rgba(249, 115, 22, 0.45)' }} />
+            <span className="login-logo-text" style={{ fontWeight: '800', lineHeight: 1, whiteSpace: 'nowrap', display: 'inline-flex', alignItems: 'center', letterSpacing: '0.2px' }}>
               <span>28Symues&nbsp;</span>
               <span style={{ color: '#f97316', whiteSpace: 'nowrap', display: 'inline' }}>Affiliate</span>
             </span>
           </div>
-          <div className="login-split-nav" style={{ display: 'flex', alignItems: 'center', gap: '10px', flexShrink: 0, whiteSpace: 'nowrap' }}>
+          <div className="login-split-nav" style={{ display: 'flex', alignItems: 'center', gap: '6px', flexShrink: 0, whiteSpace: 'nowrap' }}>
             <ThemeToggle />
             <button 
               className="btn-back" 
@@ -2638,9 +2638,9 @@ function App() {
                 setView('home');
                 window.history.pushState({}, '', '/');
               }}
-              style={{ whiteSpace: 'nowrap', display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '6px 14px', fontSize: '13px', borderRadius: '16px', flexShrink: 0, cursor: 'pointer' }}
+              style={{ whiteSpace: 'nowrap', display: 'inline-flex', alignItems: 'center', gap: '4px', flexShrink: 0, cursor: 'pointer' }}
             >
-              <i className="fa-solid fa-house" style={{ color: '#ea580c', fontSize: '13px', flexShrink: 0 }}></i>
+              <i className="fa-solid fa-house" style={{ color: '#ea580c', flexShrink: 0 }}></i>
               <span className="btn-back-text" style={{ whiteSpace: 'nowrap', display: 'inline' }}>Trang chủ</span>
             </button>
           </div>

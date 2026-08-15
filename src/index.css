@@ -4760,22 +4760,28 @@ body.dark .sidebar-toggle span {
 }
 
 @media (max-width: 768px) {
-  .login-split-header {
-    padding: 12px 14px !important;
-    gap: 8px !important;
+  .login-split-header,
+  .landing-header,
+  .lookup-header {
+    padding: 10px 12px !important;
+    gap: 6px !important;
   }
 
-  .login-split-logo {
-    gap: 8px !important;
+  .login-split-logo,
+  .landing-logo,
+  .lookup-logo {
+    gap: 6px !important;
     flex-shrink: 0 !important;
     min-width: 0 !important;
     display: flex !important;
     align-items: center !important;
   }
 
-  .login-split-logo img {
-    width: 36px !important;
-    height: 36px !important;
+  .login-split-logo img,
+  .landing-logo img,
+  .lookup-logo img {
+    width: 28px !important;
+    height: 28px !important;
     flex-shrink: 0 !important;
   }
 
@@ -4785,7 +4791,7 @@ body.dark .sidebar-toggle span {
   .login-split-logo span,
   .landing-logo span,
   .lookup-logo span {
-    font-size: 17.5px !important;
+    font-size: 14px !important;
     font-weight: 800 !important;
     line-height: 1 !important;
     white-space: nowrap !important;
@@ -4793,15 +4799,42 @@ body.dark .sidebar-toggle span {
     align-items: center !important;
   }
 
-  .login-split-nav {
-    gap: 8px !important;
+  .login-split-nav,
+  .lookup-admin-link {
+    gap: 6px !important;
     flex-shrink: 0 !important;
   }
 
-  .login-split-nav .btn-back {
-    padding: 5px 11px !important;
-    font-size: 12px !important;
+  .btn-back,
+  .lookup-admin-link {
+    padding: 4px 9px !important;
+    font-size: 11.5px !important;
     white-space: nowrap !important;
+    border-radius: 14px !important;
+  }
+}
+
+@media (max-width: 400px) {
+  .login-split-header,
+  .landing-header,
+  .lookup-header {
+    padding: 8px 10px !important;
+    gap: 4px !important;
+  }
+
+  .login-logo-text,
+  .landing-logo-text,
+  .lookup-logo-text,
+  .login-split-logo span,
+  .landing-logo span,
+  .lookup-logo span {
+    font-size: 13px !important;
+  }
+
+  .btn-back,
+  .lookup-admin-link {
+    padding: 4px 7px !important;
+    font-size: 11px !important;
   }
 }
 

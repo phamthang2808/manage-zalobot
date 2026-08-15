@@ -129,8 +129,8 @@ export default function UsersTab() {
           <table style={{ tableLayout: 'fixed', width: '100%' }}>
             <thead>
               <tr>
-                <th style={{ width: '110px' }}>Zalo ID</th>
                 <th style={{ width: '130px' }}>Tên thành viên</th>
+                <th style={{ width: '110px' }}>Zalo ID</th>
                 <th style={{ width: '150px' }}>Tài khoản nhận tiền</th>
                 <th style={{ width: '95px', textAlign: 'right' }} title="Đơn đang chờ Shopee đối soát">Chờ xử lý</th>
                 <th style={{ width: '150px', textAlign: 'right' }}>Tích lũy hoàn thành</th>
@@ -147,11 +147,11 @@ export default function UsersTab() {
                   const bankAndAcc = getBankAndAccount(u);
                   return (
                     <tr key={u.zaloId}>
-                      <td data-label="Zalo ID" style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                        <code style={{ color: 'var(--text-muted)', fontSize: '11.5px' }} title={u.zaloId}>{u.zaloId}</code>
-                      </td>
                       <td data-label="Tên thành viên" style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                         <strong title={u.zaloName}>{u.zaloName || 'Vô danh (Chờ đồng bộ)'}</strong>
+                      </td>
+                      <td data-label="Zalo ID" style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                        <code style={{ color: 'var(--text-muted)', fontSize: '11.5px' }} title={u.zaloId}>{u.zaloId}</code>
                       </td>
                       <td data-label="Tài khoản nhận tiền">
                         <div style={{ fontSize: '13px', fontWeight: '500' }}>{bankAndAcc.bankName || '⚠️ Chưa cập nhật'}</div>

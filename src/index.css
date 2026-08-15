@@ -4179,7 +4179,7 @@ wa-icon {
   .table-container table tbody {
     display: flex !important;
     flex-direction: column !important;
-    gap: 8px !important; /* Compact gap between item cards */
+    gap: 14px !important;
     width: 100% !important;
   }
 
@@ -4188,11 +4188,12 @@ wa-icon {
     flex-direction: column !important;
     width: 100% !important;
     background: var(--bg-card, #ffffff);
-    border: 1px solid var(--border-color, rgba(226, 232, 240, 0.8));
-    border-radius: 10px;
-    padding: 8px 12px !important; /* Ultra compact padding */
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+    border: 1.5px solid var(--border-color, rgba(226, 232, 240, 0.9));
+    border-radius: 14px;
+    padding: 14px 16px !important;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
     box-sizing: border-box !important;
+    position: relative;
   }
 
   /* Dark mode support for mobile cards */
@@ -4201,33 +4202,28 @@ wa-icon {
   body.dark .table-container table tbody tr {
     background: #1e293b !important;
     border-color: #334155 !important;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
-  }
-
-  .table-container table tbody tr:hover {
-    border-color: var(--color-primary-border, #fdba74);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
   }
 
   .table-container table tbody tr td {
     display: flex !important;
     justify-content: space-between !important;
     align-items: center !important;
-    padding: 3px 0 !important; /* Compact line height */
+    padding: 5px 0 !important;
     border-bottom: none !important;
-    font-size: 12.5px !important;
-    line-height: 1.3 !important;
+    font-size: 13.5px !important;
+    line-height: 1.4 !important;
     width: 100% !important;
     box-sizing: border-box !important;
   }
 
-  /* Compact label representation */
+  /* Default label prefix for secondary rows */
   .table-container table tbody tr td[data-label]::before {
-    content: attr(data-label) ": ";
+    content: attr(data-label) ":";
     font-weight: 600;
     color: var(--text-muted, #64748b);
-    font-size: 11.5px;
-    text-transform: none;
-    margin-right: 6px;
+    font-size: 12px;
+    margin-right: 8px;
     text-align: left !important;
     flex-shrink: 0;
   }
@@ -4238,34 +4234,104 @@ wa-icon {
     color: #94a3b8 !important;
   }
 
-  /* First row in card (Header of item card) - subtle bottom divider */
-  .table-container table tbody tr td:first-child {
-    border-bottom: 1px dashed rgba(226, 232, 240, 0.6) !important;
-    padding-bottom: 5px !important;
-    margin-bottom: 3px !important;
-    font-weight: 700;
-  }
-  html[data-theme="dark"] .table-container table tbody tr td:first-child,
-  html.dark .table-container table tbody tr td:first-child,
-  body.dark .table-container table tbody tr td:first-child {
-    border-bottom-color: rgba(255, 255, 255, 0.08) !important;
+  /* --- CARD HEADER (Tên thành viên / Sản phẩm / Mã GD / Mã đơn) --- */
+  .table-container table tbody tr td[data-label="Tên thành viên"],
+  .table-container table tbody tr td[data-label="Sản phẩm"],
+  .table-container table tbody tr td[data-label="Mã GD"],
+  .table-container table tbody tr td[data-label="Mã đơn"] {
+    font-size: 16px !important;
+    font-weight: 800 !important;
+    color: var(--text-bright, #0f172a) !important;
+    padding-bottom: 8px !important;
+    border-bottom: 1px dashed rgba(226, 232, 240, 0.8) !important;
+    margin-bottom: 6px !important;
   }
 
-  .table-container table tbody tr td:last-child {
-    padding-top: 4px !important;
+  html[data-theme="dark"] .table-container table tbody tr td[data-label="Tên thành viên"],
+  html[data-theme="dark"] .table-container table tbody tr td[data-label="Sản phẩm"],
+  html[data-theme="dark"] .table-container table tbody tr td[data-label="Mã GD"],
+  html[data-theme="dark"] .table-container table tbody tr td[data-label="Mã đơn"],
+  body.dark .table-container table tbody tr td[data-label="Tên thành viên"],
+  body.dark .table-container table tbody tr td[data-label="Sản phẩm"],
+  body.dark .table-container table tbody tr td[data-label="Mã GD"],
+  body.dark .table-container table tbody tr td[data-label="Mã đơn"] {
+    color: #f8fafc !important;
+    border-bottom-color: rgba(255, 255, 255, 0.1) !important;
+  }
+
+  /* Hide redundant label prefixes for primary headers & actions */
+  .table-container table tbody tr td[data-label="Tên thành viên"]::before,
+  .table-container table tbody tr td[data-label="Sản phẩm"]::before,
+  .table-container table tbody tr td[data-label="Chi tiết"]::before,
+  .table-container table tbody tr td[data-label="Hành động"]::before,
+  .table-container table tbody tr td[data-label="Thao tác"]::before {
+    display: none !important;
+  }
+
+  /* --- HIGHLIGHTED MONEY BOX (Khả dụng rút / Số tiền rút / Hoa hồng) --- */
+  .table-container table tbody tr td[data-label="Khả dụng rút"],
+  .table-container table tbody tr td[data-label="Số tiền"] {
+    background: rgba(34, 197, 94, 0.08) !important;
+    border: 1.5px solid rgba(34, 197, 94, 0.3) !important;
+    border-radius: 10px !important;
+    padding: 10px 14px !important;
+    margin: 8px 0 !important;
+    font-size: 18px !important;
+    font-weight: 800 !important;
+    color: #15803d !important;
+  }
+
+  html[data-theme="dark"] .table-container table tbody tr td[data-label="Khả dụng rút"],
+  html[data-theme="dark"] .table-container table tbody tr td[data-label="Số tiền"],
+  body.dark .table-container table tbody tr td[data-label="Khả dụng rút"],
+  body.dark .table-container table tbody tr td[data-label="Số tiền"] {
+    background: rgba(34, 197, 94, 0.15) !important;
+    border-color: rgba(34, 197, 94, 0.4) !important;
+    color: #4ade80 !important;
+  }
+
+  .table-container table tbody tr td[data-label="Khả dụng rút"]::before,
+  .table-container table tbody tr td[data-label="Số tiền"]::before {
+    font-size: 13.5px !important;
+    font-weight: 700 !important;
+    color: #15803d !important;
+  }
+
+  html[data-theme="dark"] .table-container table tbody tr td[data-label="Khả dụng rút"]::before,
+  html[data-theme="dark"] .table-container table tbody tr td[data-label="Số tiền"]::before,
+  body.dark .table-container table tbody tr td[data-label="Khả dụng rút"]::before,
+  body.dark .table-container table tbody tr td[data-label="Số tiền"]::before {
+    color: #4ade80 !important;
+  }
+
+  /* --- ACTION BUTTONS ON CARD --- */
+  .table-container table tbody tr td[data-label="Chi tiết"],
+  .table-container table tbody tr td[data-label="Hành động"],
+  .table-container table tbody tr td[data-label="Thao tác"] {
+    margin-top: 6px !important;
     justify-content: flex-end !important;
   }
 
-  /* Empty row state on mobile */
+  .table-container table tbody tr td[data-label="Chi tiết"] .btn,
+  .table-container table tbody tr td[data-label="Hành động"] .btn,
+  .table-container table tbody tr td[data-label="Thao tác"] .btn {
+    padding: 8px 16px !important;
+    font-size: 13.5px !important;
+    font-weight: 700 !important;
+    border-radius: 8px !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15) !important;
+  }
+
+  /* Empty row state */
   .table-container table tbody tr.empty-row td,
   .table-container table tbody tr td[colspan] {
     justify-content: center !important;
     text-align: center !important;
-    padding: 12px 0 !important;
+    padding: 16px 0 !important;
     border-bottom: none !important;
   }
   .table-container table tbody tr.empty-row td::before,
   .table-container table tbody tr td[colspan]::before {
-    content: none !important;
+    display: none !important;
   }
 }

@@ -305,49 +305,49 @@ export default function OrderLookupView() {
         <>
           {/* Bank Info */}
           <div className="lookup-card" style={{ marginBottom: '24px' }}>
-                <h3 className="stats-section-title" style={{ margin: 0, marginBottom: '12px' }}>
-                  🏦 Thông Tin Ngân Hàng Nhận Tiền
-                  {!isEditingBank && (
-                    <button className="lookup-admin-link" style={{ fontSize: '12px', padding: '4px 10px', background: '#fff7ed', color: '#ea580c', border: '1px solid #fed7aa', display: 'flex', alignItems: 'center', gap: '6px' }}
-                      onClick={() => { setEditBankName(lookupResult.bankName || ''); setEditAccountNumber(lookupResult.accountNumber || ''); setBankSaveError(''); setIsEditingBank(true); }}>
-                      <i className="fa-regular fa-pen-to-square" style={{ fontSize: '14px' }}></i>
-                      <span>{lookupResult.bankName ? 'Sửa' : 'Cài đặt'}</span>
-                    </button>
-                  )}
-                </h3>
-                {isEditingBank ? (
-                  <div style={{ marginTop: '16px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                    <div className="lookup-date-grid" style={{ marginBottom: '4px' }}>
-                      <div className="lookup-input-group" style={{ marginBottom: 0 }}>
-                        <label className="lookup-label">Tên Ngân Hàng</label>
-                        <input type="text" className="lookup-input" placeholder="Ví dụ: MB, Techcombank..." value={editBankName} onChange={e => setEditBankName(e.target.value)} />
-                      </div>
-                      <div className="lookup-input-group" style={{ marginBottom: 0 }}>
-                        <label className="lookup-label">Số Tài Khoản</label>
-                        <input type="text" className="lookup-input" placeholder="Số tài khoản..." value={editAccountNumber} onChange={e => setEditAccountNumber(e.target.value)} />
-                      </div>
-                    </div>
-                    {bankSaveError && <div style={{ color: '#ef4444', fontSize: '12px' }}>⚠️ {bankSaveError}</div>}
-                    <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end', marginTop: '4px' }}>
-                      <button className="lookup-admin-link" style={{ padding: '6px 14px', background: 'var(--bg-main)', color: 'var(--text-muted)' }} onClick={() => setIsEditingBank(false)} disabled={bankSaveLoading}>Hủy</button>
-                      <button className="lookup-btn" style={{ width: 'auto', padding: '6px 16px', fontSize: '13px' }} onClick={() => sendOtpToUser('BANK')} disabled={bankSaveLoading}>
-                        {bankSaveLoading ? 'Đang lưu...' : 'Lưu thông tin'}
-                      </button>
-                    </div>
+            <h3 className="stats-section-title" style={{ margin: 0, marginBottom: '12px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
+              <span>🏦 Thông Tin Ngân Hàng Nhận Tiền</span>
+              {!isEditingBank && (
+                <button className="bank-edit-btn"
+                  onClick={() => { setEditBankName(lookupResult.bankName || ''); setEditAccountNumber(lookupResult.accountNumber || ''); setBankSaveError(''); setIsEditingBank(true); }}>
+                  <i className="fa-regular fa-pen-to-square" style={{ fontSize: '13px' }}></i>
+                  <span>{lookupResult.bankName ? 'Sửa' : 'Cài đặt'}</span>
+                </button>
+              )}
+            </h3>
+            {isEditingBank ? (
+              <div style={{ marginTop: '16px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                <div className="lookup-date-grid" style={{ marginBottom: '4px' }}>
+                  <div className="lookup-input-group" style={{ marginBottom: 0 }}>
+                    <label className="lookup-label">Tên Ngân Hàng</label>
+                    <input type="text" className="lookup-input" placeholder="Ví dụ: MB, Techcombank..." value={editBankName} onChange={e => setEditBankName(e.target.value)} />
                   </div>
-                ) : (
-                  <div style={{ marginTop: '16px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', background: 'var(--bg-main)', padding: '12px 16px', borderRadius: '8px', border: '1px solid var(--border-color)' }}>
-                    <div>
-                      <span className="lookup-label" style={{ fontSize: '10px', color: 'var(--text-muted)' }}>Ngân Hàng</span>
-                      <strong style={{ fontSize: '15px', color: 'var(--text-bright)' }}>{lookupResult.bankName || 'Chưa thiết lập'}</strong>
-                    </div>
-                    <div>
-                      <span className="lookup-label" style={{ fontSize: '10px', color: 'var(--text-muted)' }}>Số Tài Khoản</span>
-                      <strong style={{ fontSize: '15px', color: 'var(--text-bright)' }}>{lookupResult.accountNumber || 'Chưa thiết lập'}</strong>
-                    </div>
+                  <div className="lookup-input-group" style={{ marginBottom: 0 }}>
+                    <label className="lookup-label">Số Tài Khoản</label>
+                    <input type="text" className="lookup-input" placeholder="Số tài khoản..." value={editAccountNumber} onChange={e => setEditAccountNumber(e.target.value)} />
                   </div>
-                )}
+                </div>
+                {bankSaveError && <div style={{ color: '#ef4444', fontSize: '12px' }}>⚠️ {bankSaveError}</div>}
+                <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end', marginTop: '4px' }}>
+                  <button className="lookup-admin-link" style={{ padding: '6px 14px', background: 'var(--bg-main)', color: 'var(--text-muted)' }} onClick={() => setIsEditingBank(false)} disabled={bankSaveLoading}>Hủy</button>
+                  <button className="lookup-btn" style={{ width: 'auto', padding: '6px 16px', fontSize: '13px' }} onClick={() => sendOtpToUser('BANK')} disabled={bankSaveLoading}>
+                    {bankSaveLoading ? 'Đang lưu...' : 'Lưu thông tin'}
+                  </button>
+                </div>
               </div>
+            ) : (
+              <div className="bank-info-display-box">
+                <div>
+                  <span className="bank-info-label">NGÂN HÀNG</span>
+                  <strong className="bank-info-val">{lookupResult.bankName || 'Chưa thiết lập'}</strong>
+                </div>
+                <div>
+                  <span className="bank-info-label">SỐ TÀI KHOẢN</span>
+                  <strong className="bank-info-val">{lookupResult.accountNumber || 'Chưa thiết lập'}</strong>
+                </div>
+              </div>
+            )}
+          </div>
 
               {/* Wallet Stats */}
               <div className="stats-container">

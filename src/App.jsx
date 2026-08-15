@@ -1795,12 +1795,11 @@ function App() {
           <>
             {/* 0. Bank Info Card */}
             <div className="lookup-card" style={{ marginBottom: '24px' }}>
-              <h3 className="stats-section-title" style={{ margin: 0, marginBottom: '12px' }}>
-                🏦 Thông Tin Ngân Hàng Nhận Tiền
+              <h3 className="stats-section-title" style={{ margin: 0, marginBottom: '12px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
+                <span>🏦 Thông Tin Ngân Hàng Nhận Tiền</span>
                 {!isEditingBank && (
                   <button 
-                    className="lookup-admin-link" 
-                    style={{ fontSize: '12px', padding: '4px 10px', background: '#fff7ed', color: '#ea580c', border: '1px solid #fed7aa', display: 'flex', alignItems: 'center', gap: '6px' }}
+                    className="bank-edit-btn" 
                     onClick={() => {
                       setEditBankName(lookupResult.bankName || '');
                       setEditAccountNumber(lookupResult.accountNumber || '');
@@ -1808,7 +1807,7 @@ function App() {
                       setIsEditingBank(true);
                     }}
                   >
-                    <i className="fa-regular fa-pen-to-square" style={{ fontSize: '14px' }}></i>
+                    <i className="fa-regular fa-pen-to-square" style={{ fontSize: '13px' }}></i>
                     <span>{lookupResult.bankName ? 'Sửa' : 'Cài đặt'}</span>
                   </button>
                 )}
@@ -1842,7 +1841,7 @@ function App() {
                       <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end', marginTop: '4px' }}>
                         <button 
                           className="lookup-admin-link" 
-                          style={{ padding: '6px 14px', background: '#f1f5f9', color: '#64748b' }}
+                          style={{ padding: '6px 14px', background: 'var(--bg-main)', color: 'var(--text-muted)' }}
                           onClick={() => setIsEditingBank(false)}
                           disabled={bankSaveLoading}
                         >
@@ -1859,14 +1858,14 @@ function App() {
                       </div>
                     </div>
                   ) : (
-                    <div style={{ marginTop: '16px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', background: '#f8fafc', padding: '12px 16px', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
+                    <div className="bank-info-display-box">
                       <div>
-                        <span className="lookup-label" style={{ fontSize: '10px', color: '#64748b' }}>Ngân Hàng</span>
-                        <strong style={{ fontSize: '15px', color: '#0f172a' }}>{lookupResult.bankName || 'Chưa thiết lập'}</strong>
+                        <span className="bank-info-label">NGÂN HÀNG</span>
+                        <strong className="bank-info-val">{lookupResult.bankName || 'Chưa thiết lập'}</strong>
                       </div>
                       <div>
-                        <span className="lookup-label" style={{ fontSize: '10px', color: '#64748b' }}>Số Tài Khoản</span>
-                        <strong style={{ fontSize: '15px', color: '#0f172a' }}>{lookupResult.accountNumber || 'Chưa thiết lập'}</strong>
+                        <span className="bank-info-label">SỐ TÀI KHOẢN</span>
+                        <strong className="bank-info-val">{lookupResult.accountNumber || 'Chưa thiết lập'}</strong>
                       </div>
                     </div>
                   )}

@@ -219,7 +219,12 @@ export default function LoginView() {
         .modal-divider { display: flex; align-items: center; gap: 12px; margin: 20px 0; color: var(--text-muted); font-size: 13px; font-weight: 500; }
         .modal-divider::before, .modal-divider::after { content: ''; flex: 1; height: 1px; background: var(--border-color); }
         @media (max-width: 992px) {
-          .login-split-header { padding: 15px 20px; height: auto; }
+          .login-split-header { padding: 12px 16px; height: auto; flex-wrap: nowrap; gap: 8px; }
+          .login-split-logo { gap: 8px; flex-shrink: 1; min-width: 0; }
+          .login-split-logo img { width: 30px; height: 30px; flex-shrink: 0; }
+          .login-split-logo span { font-size: 16px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+          .login-split-nav { gap: 10px; flex-shrink: 0; }
+          .login-split-nav .btn-back { padding: 6px 12px; font-size: 12.5px; white-space: nowrap; }
           .login-split-content { flex-direction: column; padding: 20px 20px 60px; gap: 30px; justify-content: center; flex: 1; }
           .login-split-left { text-align: center; max-width: 100%; }
           .login-split-left h1 { font-size: 28px; margin-bottom: 12px; }
@@ -227,6 +232,10 @@ export default function LoginView() {
           .login-split-card { padding: 24px 20px; width: 100%; max-width: 100%; }
         }
         @media (max-width: 480px) {
+          .login-split-header { padding: 10px 12px !important; }
+          .login-split-logo img { width: 26px !important; height: 26px !important; }
+          .login-split-logo span { font-size: 14px !important; }
+          .login-split-nav .btn-back { padding: 4px 10px !important; font-size: 11.5px !important; }
           .login-split-left h1 { font-size: 24px; }
           .login-split-card h2 { font-size: 22px; }
         }

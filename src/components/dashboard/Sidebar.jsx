@@ -73,7 +73,7 @@ export default function Sidebar() {
           </li>
         </ul>
 
-        <div className="sidebar-footer" style={{ padding: '12px 16px 16px', borderTop: '1px solid var(--border-color)' }}>
+        <div className="sidebar-footer" style={{ padding: '12px 16px 85px', borderTop: '1px solid var(--border-color)' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '12px', padding: '10px 12px', background: 'var(--bg-main)', borderRadius: '10px', border: '1px solid var(--border-color)' }}>
             {user?.avatarUrl ? (
               <img src={user.avatarUrl} alt="Avatar" referrerPolicy="no-referrer"

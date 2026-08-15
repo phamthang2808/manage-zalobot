@@ -2465,30 +2465,37 @@ tr:hover td {
     left: 0;
     bottom: 0;
     width: 260px;
+    height: 100vh !important;
     transform: translateX(-100%);
     transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    z-index: 200;
+    z-index: 99999 !important;
     box-shadow: none;
   }
 
   .sidebar.open {
     transform: translateX(0);
-    box-shadow: 8px 0 30px rgba(0, 0, 0, 0.3);
+    box-shadow: 8px 0 30px rgba(0, 0, 0, 0.5);
   }
 
   .sidebar-overlay {
     display: block;
     position: fixed;
     inset: 0;
-    background: rgba(0, 0, 0, 0.4);
-    z-index: 190;
+    background: rgba(0, 0, 0, 0.6);
+    z-index: 99990 !important;
     animation: fadeIn 0.2s ease-out;
+  }
+
+  .sidebar-footer {
+    padding: 12px 16px 85px 16px !important;
   }
 
   /* ====== Dashboard header ====== */
   .dashboard-header {
-    padding: 0 12px;
-    height: 56px;
+    padding: 10px 14px !important;
+    height: auto !important;
+    min-height: 56px !important;
+    margin-top: 4px !important;
   }
 
   .header-title {
@@ -2513,7 +2520,8 @@ tr:hover td {
 
   /* ====== Dashboard content ====== */
   .content-body {
-    padding: 16px;
+    padding: 16px 10px 90px 10px !important;
+    margin-top: 6px !important;
   }
 
   .stats-grid {
@@ -4698,4 +4706,30 @@ html.dark .bank-info-val,
 body.dark .bank-info-val {
   color: #ffffff !important;
   text-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+}
+
+/* =========================================================
+   GLOWING HAMBURGER & SIDEBAR TOGGLE BUTTONS (DARK MODE)
+   ========================================================= */
+
+html[data-theme="dark"] .hamburger,
+html.dark .hamburger,
+body.dark .hamburger,
+html[data-theme="dark"] .sidebar-toggle,
+html.dark .sidebar-toggle,
+body.dark .sidebar-toggle {
+  background: rgba(30, 41, 59, 0.9) !important;
+  border: 1.5px solid rgba(255, 255, 255, 0.35) !important;
+  box-shadow: 0 0 12px rgba(249, 115, 22, 0.25), inset 0 0 8px rgba(255, 255, 255, 0.05) !important;
+  border-radius: 8px !important;
+}
+
+html[data-theme="dark"] .hamburger span,
+html.dark .hamburger span,
+body.dark .hamburger span,
+html[data-theme="dark"] .sidebar-toggle span,
+html.dark .sidebar-toggle span,
+body.dark .sidebar-toggle span {
+  background: #ffffff !important;
+  box-shadow: 0 0 6px rgba(255, 255, 255, 0.8) !important;
 }

@@ -2555,8 +2555,8 @@ tr:hover td {
   }
 
   table {
-    min-width: 600px;
-    /* Force horizontal scroll for complex tables */
+    min-width: 0;
+    width: 100%;
   }
 
   th {
@@ -4162,14 +4162,42 @@ wa-icon {
 }
 
 @media (max-width: 768px) {
-  .table-container {
-    overflow-x: visible !important;
+  .content-body {
+    padding: 12px 10px 80px 10px !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+    overflow-x: hidden !important;
   }
 
-  .table-container table {
-    min-width: 100% !important;
+  .data-card {
+    padding: 12px 10px !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
     width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+    overflow: hidden !important;
+  }
+
+  .table-container {
+    overflow-x: hidden !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  table,
+  .table-container table {
+    min-width: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
     display: block !important;
+    table-layout: auto !important;
+    box-sizing: border-box !important;
+    margin: 0 !important;
   }
 
   .table-container table thead {
@@ -4179,21 +4207,27 @@ wa-icon {
   .table-container table tbody {
     display: flex !important;
     flex-direction: column !important;
-    gap: 14px !important;
+    gap: 12px !important;
     width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+    margin: 0 !important;
+    padding: 0 !important;
   }
 
   .table-container table tbody tr {
     display: flex !important;
     flex-direction: column !important;
     width: 100% !important;
+    max-width: 100% !important;
     background: var(--bg-card, #ffffff);
     border: 1.5px solid var(--border-color, rgba(226, 232, 240, 0.9));
     border-radius: 14px;
-    padding: 14px 16px !important;
+    padding: 12px 12px !important;
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
     box-sizing: border-box !important;
     position: relative;
+    margin: 0 !important;
   }
 
   /* Dark mode support for mobile cards */
@@ -4437,5 +4471,60 @@ body.dark {
   .lookup-input:focus {
     border-color: #f97316 !important;
     box-shadow: 0 0 16px rgba(249, 115, 22, 0.4), inset 0 2px 4px rgba(0, 0, 0, 0.3) !important;
+  }
+
+  /* --- BRIGHT TEXT CONTRAST IN DARK MODE --- */
+  --text-main: #f8fafc !important;
+  --text-muted: #cbd5e1 !important;
+  --text-subtle: #94a3b8 !important;
+  --text-bright: #ffffff !important;
+  --navy-800: #f8fafc !important;
+  --navy-900: #ffffff !important;
+  --gray-600: #cbd5e1 !important;
+  --gray-500: #94a3b8 !important;
+
+  .stat-card-label,
+  .stat-label,
+  .lookup-label,
+  label,
+  th,
+  .order-commission-label,
+  .table-container table tbody tr td[data-label]::before {
+    color: #e2e8f0 !important;
+    font-weight: 700 !important;
+  }
+
+  .stat-card-desc,
+  .lookup-subtitle,
+  .card-header span,
+  .text-muted,
+  p {
+    color: #cbd5e1 !important;
+  }
+
+  /* Make 0đ or unassigned values bright white instead of dim gray */
+  .stat-card-value,
+  .stat-val,
+  .order-commission-val {
+    color: #ffffff;
+  }
+
+  /* Input placeholders white and clear */
+  ::placeholder,
+  .form-control::placeholder,
+  .lookup-input::placeholder {
+    color: #cbd5e1 !important;
+    opacity: 0.85 !important;
+  }
+
+  /* History tags bright */
+  .recent-tag {
+    background: rgba(30, 41, 59, 0.9) !important;
+    border-color: rgba(255, 255, 255, 0.25) !important;
+    color: #ffffff !important;
+  }
+  .recent-tag:hover {
+    border-color: #f97316 !important;
+    color: #f97316 !important;
   }
 }

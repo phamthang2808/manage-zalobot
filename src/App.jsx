@@ -2528,11 +2528,39 @@ function App() {
               flex-direction: column;
             }
             .login-split-header {
-              padding: 15px 20px;
-              height: auto;
+              padding: 12px 16px !important;
+              height: auto !important;
+              display: flex !important;
+              flex-wrap: nowrap !important;
+              align-items: center !important;
+              justify-content: space-between !important;
+              gap: 6px !important;
             }
-            .login-split-logo span {
-              font-size: 18px;
+            .login-split-logo {
+              gap: 6px !important;
+              flex-shrink: 1 !important;
+              min-width: 0 !important;
+            }
+            .login-split-logo img {
+              width: 28px !important;
+              height: 28px !important;
+              flex-shrink: 0 !important;
+            }
+            .login-logo-text {
+              font-size: 14px !important;
+              white-space: nowrap !important;
+            }
+            .login-split-nav {
+              gap: 6px !important;
+              flex-shrink: 0 !important;
+            }
+            .login-split-nav .btn-back {
+              padding: 4px 8px !important;
+              font-size: 11.5px !important;
+              white-space: nowrap !important;
+            }
+            .btn-back-text {
+              white-space: nowrap !important;
             }
             .login-split-content {
               flex-direction: column;
@@ -2563,6 +2591,22 @@ function App() {
             }
           }
           @media (max-width: 480px) {
+            .login-split-header {
+              padding: 10px 10px !important;
+            }
+            .login-split-logo img {
+              width: 24px !important;
+              height: 24px !important;
+            }
+            .login-logo-text {
+              font-size: 13px !important;
+              white-space: nowrap !important;
+            }
+            .login-split-nav .btn-back {
+              padding: 3px 7px !important;
+              font-size: 11px !important;
+              white-space: nowrap !important;
+            }
             .login-split-left h1 {
               font-size: 24px;
             }
@@ -2575,10 +2619,10 @@ function App() {
         {/* Header */}
         <header className="login-split-header">
           <div className="login-split-logo">
-            <img src="/logo.jpg" alt="Logo" />
-            <span>28Symues <span style={{ color: '#f97316' }}>Affiliate</span></span>
+            <img src="/MAIN.png" alt="Logo" />
+            <span className="login-logo-text">28Symues <span style={{ color: '#f97316' }}>Affiliate</span></span>
           </div>
-          <div className="login-split-nav" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <div className="login-split-nav" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
             <ThemeToggle />
             <button 
               className="btn-back" 
@@ -2586,8 +2630,10 @@ function App() {
                 setView('home');
                 window.history.pushState({}, '', '/');
               }}
+              style={{ whiteSpace: 'nowrap', display: 'inline-flex', alignItems: 'center', gap: '5px' }}
             >
-              <i className="fa-solid fa-house"></i> Trang chủ
+              <i className="fa-solid fa-house" style={{ color: '#ea580c', fontSize: '12px' }}></i>
+              <span className="btn-back-text">Trang chủ</span>
             </button>
           </div>
         </header>

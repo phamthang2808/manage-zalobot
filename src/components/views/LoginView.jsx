@@ -247,12 +247,17 @@ export default function LoginView() {
       <header className="login-split-header">
         <div className="login-split-logo">
           <img src="/MAIN.png" alt="Logo" />
-          <span>28Symues <span style={{ color: '#f97316' }}>Affiliate</span></span>
+          <span className="login-logo-text">28Symues <span style={{ color: '#f97316' }}>Affiliate</span></span>
         </div>
-        <div className="login-split-nav">
-          <ThemeToggle style={{ marginRight: '10px' }} />
-          <button className="btn-back" onClick={() => { setView('home'); window.history.pushState({}, '', '/'); }}>
-            <i className="fa-solid fa-house"></i> Trang chủ
+        <div className="login-split-nav" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+          <ThemeToggle />
+          <button 
+            className="btn-back" 
+            onClick={() => { setView('home'); window.history.pushState({}, '', '/'); }}
+            style={{ whiteSpace: 'nowrap', display: 'inline-flex', alignItems: 'center', gap: '5px' }}
+          >
+            <i className="fa-solid fa-house" style={{ color: '#ea580c', fontSize: '12px' }}></i>
+            <span className="btn-back-text">Trang chủ</span>
           </button>
         </div>
       </header>

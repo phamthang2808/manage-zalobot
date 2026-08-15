@@ -167,7 +167,7 @@ export default function UsersTab() {
                       <td data-label="Đã rút" style={{ textAlign: 'right', color: 'var(--text-muted)' }}>{formatMoney(u.wallet?.receivedCommission)}</td>
                       <td data-label="Chi tiết" style={{ textAlign: 'center' }}>
                         <button className="btn" onClick={() => setSelectedUser(u)} style={{ padding: '4px 10px', fontSize: '12px', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
-                          <wa-icon name="eye" variant="regular"></wa-icon> Xem
+                          <i className="fa-regular fa-eye"></i> Xem
                         </button>
                       </td>
                     </tr>

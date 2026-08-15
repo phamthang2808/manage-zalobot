@@ -64,7 +64,7 @@ export default function OverviewTab() {
       <div className="data-card">
         <div className="card-header">
           <h2 className="card-title">
-            <wa-icon name="money-check-dollar"></wa-icon> Yêu Cầu Rút Tiền Chờ Duyệt Gần Đây
+            <i className="fa-solid fa-money-check-dollar" style={{ color: '#f97316', marginRight: '8px' }}></i> Yêu Cầu Rút Tiền Chờ Duyệt Gần Đây
           </h2>
         </div>
         <div className="table-container">
@@ -80,7 +80,7 @@ export default function OverviewTab() {
                 <tr className="empty-row">
                   <td colSpan="7" style={{ textAlign: 'center', color: 'var(--text-muted)', padding: '24px' }}>
                     <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', justifyContent: 'center' }}>
-                      <wa-icon name="money-check-dollar" style={{ fontSize: '1.2em' }}></wa-icon> Không có yêu cầu rút tiền nào đang chờ duyệt!
+                      <i className="fa-solid fa-money-check-dollar" style={{ fontSize: '1.2em', color: '#f97316' }}></i> Không có yêu cầu rút tiền nào đang chờ duyệt!
                     </span>
                   </td>
                 </tr>

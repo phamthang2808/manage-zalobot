@@ -4024,3 +4024,121 @@ body.dark .history-pill {
   border-color: #334155 !important;
   color: #cbd5e1 !important;
 }
+
+/* ==========================================================================
+   LOGIN VIEW DARK MODE OVERRIDES
+   ========================================================================== */
+html[data-theme="dark"] .login-page-split,
+html.dark .login-page-split,
+body.dark .login-page-split {
+  background: #0f172a !important;
+  color: #f8fafc !important;
+}
+
+html[data-theme="dark"] .login-split-header,
+html.dark .login-split-header,
+body.dark .login-split-header {
+  border-bottom: 1px solid #334155 !important;
+}
+
+html[data-theme="dark"] .login-split-logo span,
+html.dark .login-split-logo span,
+body.dark .login-split-logo span {
+  color: #f8fafc !important;
+}
+
+html[data-theme="dark"] .login-split-left h1,
+html.dark .login-split-left h1,
+body.dark .login-split-left h1 {
+  color: #f8fafc !important;
+}
+
+html[data-theme="dark"] .login-split-left p,
+html.dark .login-split-left p,
+body.dark .login-split-left p {
+  color: #cbd5e1 !important;
+}
+
+html[data-theme="dark"] .login-split-left .badge,
+html.dark .login-split-left .badge,
+body.dark .login-split-left .badge {
+  background: linear-gradient(135deg, rgba(249, 115, 22, 0.2), rgba(234, 88, 12, 0.1)) !important;
+  border: 1px solid rgba(249, 115, 22, 0.4) !important;
+  color: #fb923c !important;
+}
+
+html[data-theme="dark"] .login-split-card,
+html.dark .login-split-card,
+body.dark .login-split-card {
+  background: #1e293b !important;
+  border: 1px solid #334155 !important;
+  color: #f8fafc !important;
+  box-shadow: 0 20px 50px -10px rgba(0, 0, 0, 0.5) !important;
+}
+
+html[data-theme="dark"] .login-split-card h2,
+html.dark .login-split-card h2,
+body.dark .login-split-card h2 {
+  color: #f8fafc !important;
+}
+
+html[data-theme="dark"] .login-split-card .subtitle,
+html.dark .login-split-card .subtitle,
+body.dark .login-split-card .subtitle {
+  color: #cbd5e1 !important;
+}
+
+html[data-theme="dark"] .form-label,
+html.dark .form-label,
+body.dark .form-label {
+  color: #cbd5e1 !important;
+}
+
+html[data-theme="dark"] .form-input,
+html[data-theme="dark"] input[type="password"],
+html.dark .form-input,
+html.dark input[type="password"],
+body.dark .form-input,
+body.dark input[type="password"] {
+  background: #0f172a !important;
+  border-color: #334155 !important;
+  color: #f8fafc !important;
+}
+
+html[data-theme="dark"] .form-input:focus,
+html.dark .form-input:focus,
+body.dark .form-input:focus {
+  background: #0f172a !important;
+  border-color: #f97316 !important;
+  box-shadow: 0 0 16px rgba(249, 115, 22, 0.3) !important;
+}
+
+html[data-theme="dark"] .cf-turnstile-sim,
+html.dark .cf-turnstile-sim,
+body.dark .cf-turnstile-sim {
+  background: #0f172a !important;
+  border-color: #334155 !important;
+  color: #f8fafc !important;
+}
+
+html[data-theme="dark"] .cf-success-left span,
+html.dark .cf-success-left span,
+body.dark .cf-success-left span {
+  color: #f8fafc !important;
+}
+
+html[data-theme="dark"] .login-split-nav .btn-back,
+html.dark .login-split-nav .btn-back,
+body.dark .login-split-nav .btn-back {
+  background: #1e293b !important;
+  border-color: #475569 !important;
+  color: #f8fafc !important;
+}
+
+html[data-theme="dark"] .login-split-nav .btn-back:hover,
+html.dark .login-split-nav .btn-back:hover,
+body.dark .login-split-nav .btn-back:hover {
+  background: #334155 !important;
+  border-color: #f97316 !important;
+  color: #f97316 !important;
+}

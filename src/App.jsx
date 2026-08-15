@@ -2617,15 +2617,15 @@ function App() {
         `}} />
 
         {/* Header */}
-        <header className="login-split-header" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%', padding: '10px 12px', flexWrap: 'nowrap', gap: '6px', boxSizing: 'border-box' }}>
-          <div className="login-split-logo" style={{ display: 'flex', alignItems: 'center', gap: '6px', flexShrink: 1, minWidth: 0, whiteSpace: 'nowrap' }}>
-            <img src="/MAIN.png" alt="Logo" style={{ width: '28px', height: '28px', borderRadius: '50%', flexShrink: 0, objectFit: 'cover' }} />
-            <span className="login-logo-text" style={{ fontSize: '13.5px', fontWeight: '800', whiteSpace: 'nowrap', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+        <header className="login-split-header" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%', padding: '12px 14px', flexWrap: 'nowrap', gap: '8px', boxSizing: 'border-box' }}>
+          <div className="login-split-logo" style={{ display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 0, whiteSpace: 'nowrap' }}>
+            <img src="/MAIN.png" alt="Logo" style={{ width: '30px', height: '30px', borderRadius: '50%', flexShrink: 0, objectFit: 'cover' }} />
+            <span className="login-logo-text" style={{ fontSize: '14.5px', fontWeight: '800', whiteSpace: 'nowrap', display: 'inline-flex', alignItems: 'center', gap: '5px' }}>
               <span>28Symues</span>
               <span style={{ color: '#f97316', whiteSpace: 'nowrap', display: 'inline' }}>Affiliate</span>
             </span>
           </div>
-          <div className="login-split-nav" style={{ display: 'flex', alignItems: 'center', gap: '6px', flexShrink: 0, whiteSpace: 'nowrap' }}>
+          <div className="login-split-nav" style={{ display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 0, whiteSpace: 'nowrap' }}>
             <ThemeToggle />
             <button 
               className="btn-back" 
@@ -2633,9 +2633,9 @@ function App() {
                 setView('home');
                 window.history.pushState({}, '', '/');
               }}
-              style={{ whiteSpace: 'nowrap', display: 'inline-flex', alignItems: 'center', gap: '4px', padding: '4px 8px', fontSize: '11.5px', borderRadius: '12px', flexShrink: 0 }}
+              style={{ whiteSpace: 'nowrap', display: 'inline-flex', alignItems: 'center', gap: '5px', padding: '5px 11px', fontSize: '12px', borderRadius: '14px', flexShrink: 0, cursor: 'pointer' }}
             >
-              <i className="fa-solid fa-house" style={{ color: '#ea580c', fontSize: '11px', flexShrink: 0 }}></i>
+              <i className="fa-solid fa-house" style={{ color: '#ea580c', fontSize: '12px', flexShrink: 0 }}></i>
               <span className="btn-back-text" style={{ whiteSpace: 'nowrap', display: 'inline' }}>Trang chủ</span>
             </button>
           </div>

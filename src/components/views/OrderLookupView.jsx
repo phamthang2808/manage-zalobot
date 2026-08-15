@@ -253,16 +253,23 @@ export default function OrderLookupView() {
       <ToastNotification />
 
       {/* Header */}
-      <div className="lookup-header">
-        <div className="lookup-logo">
-          <img src="/MAIN.png" alt="Logo" style={{ width: '30px', height: '30px', borderRadius: '50%', objectFit: 'cover' }} />
-          <span>28Symues <span style={{ color: '#f97316' }}>Affiliate</span></span>
+      <div className="lookup-header" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%', padding: '14px 18px', flexWrap: 'nowrap', gap: '8px', boxSizing: 'border-box' }}>
+        <div className="lookup-logo" onClick={() => { setView('home'); window.history.pushState({}, '', '/'); }} style={{ display: 'flex', alignItems: 'center', gap: '10px', flexShrink: 0, whiteSpace: 'nowrap', cursor: 'pointer' }}>
+          <img src="/MAIN.png" alt="Logo" style={{ width: '36px', height: '36px', borderRadius: '50%', flexShrink: 0, objectFit: 'cover', border: '1.5px solid rgba(249, 115, 22, 0.45)' }} />
+          <span className="lookup-logo-text" style={{ fontSize: '18px', fontWeight: '800', lineHeight: 1, whiteSpace: 'nowrap', display: 'inline-flex', alignItems: 'center', gap: '0px', letterSpacing: '0.4px' }}>
+            <span>28Symues&nbsp;</span>
+            <span style={{ color: '#f97316', whiteSpace: 'nowrap', display: 'inline' }}>Affiliate</span>
+          </span>
         </div>
-        <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexShrink: 0, whiteSpace: 'nowrap' }}>
           <ThemeToggle />
-          <button className="lookup-admin-link" onClick={() => { setView('home'); window.history.pushState({}, '', '/'); }} style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
-            <i className="fa-solid fa-house" style={{ color: '#ea580c', fontSize: '13px' }}></i>
-            <span>Trang chủ</span>
+          <button 
+            className="lookup-admin-link" 
+            onClick={() => { setView('home'); window.history.pushState({}, '', '/'); }} 
+            style={{ whiteSpace: 'nowrap', display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '6px 14px', fontSize: '13px', borderRadius: '16px', flexShrink: 0, cursor: 'pointer' }}
+          >
+            <i className="fa-solid fa-house" style={{ color: '#ea580c', fontSize: '13px', flexShrink: 0 }}></i>
+            <span style={{ whiteSpace: 'nowrap', display: 'inline' }}>Trang chủ</span>
           </button>
         </div>
       </div>

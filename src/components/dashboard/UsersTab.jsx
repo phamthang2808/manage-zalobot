@@ -166,7 +166,7 @@ export default function UsersTab() {
                       <td data-label="Khả dụng rút" style={{ color: 'var(--color-success)', fontWeight: '700', textAlign: 'right' }}>{formatMoney(u.wallet?.withdrawableCommission)}</td>
                       <td data-label="Đã rút" style={{ textAlign: 'right', color: 'var(--text-muted)' }}>{formatMoney(u.wallet?.receivedCommission)}</td>
                       <td data-label="Chi tiết" style={{ textAlign: 'center' }}>
-                        <button className="btn" onClick={() => setSelectedUser(u)} style={{ padding: '4px 10px', fontSize: '12px', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                        <button className="user-view-btn" onClick={() => setSelectedUser(u)}>
                           <i className="fa-regular fa-eye"></i> Xem
                         </button>
                       </td>

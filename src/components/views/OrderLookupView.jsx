@@ -303,10 +303,8 @@ export default function OrderLookupView() {
       {/* Results */}
       {lookupResult && (
         <>
-          {lookupSearchType !== 'ORDER_ID' && (
-            <>
-              {/* Bank Info */}
-              <div className="lookup-card" style={{ marginBottom: '24px' }}>
+          {/* Bank Info */}
+          <div className="lookup-card" style={{ marginBottom: '24px' }}>
                 <h3 className="stats-section-title" style={{ margin: 0, marginBottom: '12px' }}>
                   🏦 Thông Tin Ngân Hàng Nhận Tiền
                   {!isEditingBank && (

@@ -1793,24 +1793,26 @@ function App() {
         {/* Results Panel */}
         {lookupResult && (
           <>
-            {lookupSearchType !== 'ORDER_ID' && (
-              <>
-                {/* 0. Bank Info Card                     {!isEditingBank && (
-                      <button 
-                        className="lookup-admin-link" 
-                        style={{ fontSize: '12px', padding: '4px 10px', background: '#fff7ed', color: '#ea580c', border: '1px solid #fed7aa', display: 'flex', alignItems: 'center', gap: '6px' }}
-                        onClick={() => {
-                          setEditBankName(lookupResult.bankName || '');
-                          setEditAccountNumber(lookupResult.accountNumber || '');
-                          setBankSaveError('');
-                          setIsEditingBank(true);
-                        }}
-                      >
-                        <i className="fa-regular fa-pen-to-square" style={{ fontSize: '14px' }}></i>
-                        <span>{lookupResult.bankName ? 'Sửa' : 'Cài đặt'}</span>
-                      </button>
-                    )}
-                  </h3>
+            {/* 0. Bank Info Card */}
+            <div className="lookup-card" style={{ marginBottom: '24px' }}>
+              <h3 className="stats-section-title" style={{ margin: 0, marginBottom: '12px' }}>
+                🏦 Thông Tin Ngân Hàng Nhận Tiền
+                {!isEditingBank && (
+                  <button 
+                    className="lookup-admin-link" 
+                    style={{ fontSize: '12px', padding: '4px 10px', background: '#fff7ed', color: '#ea580c', border: '1px solid #fed7aa', display: 'flex', alignItems: 'center', gap: '6px' }}
+                    onClick={() => {
+                      setEditBankName(lookupResult.bankName || '');
+                      setEditAccountNumber(lookupResult.accountNumber || '');
+                      setBankSaveError('');
+                      setIsEditingBank(true);
+                    }}
+                  >
+                    <i className="fa-regular fa-pen-to-square" style={{ fontSize: '14px' }}></i>
+                    <span>{lookupResult.bankName ? 'Sửa' : 'Cài đặt'}</span>
+                  </button>
+                )}
+              </h3>
                   
                   {isEditingBank ? (
                     <div style={{ marginTop: '16px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
@@ -1965,8 +1967,6 @@ function App() {
                     </div>
                   )}
                 </div>
-              </>
-            )}
 
             {/* 2. Orders Cards List */}
             <div className="orders-container">

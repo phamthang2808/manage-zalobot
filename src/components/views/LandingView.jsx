@@ -46,7 +46,8 @@ export default function LandingView() {
 
       <header className="landing-header" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%', padding: '14px 18px', flexWrap: 'nowrap', gap: '8px', boxSizing: 'border-box' }}>
         <div className="landing-logo" style={{ display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 1, minWidth: 0, whiteSpace: 'nowrap' }}>
-          <img src="/MAIN.png" alt="Logo" style={{ width: '32px', height: '32px', maxWidth: '32px', maxHeight: '32px', borderRadius: '50%', flexShrink: 0, objectFit: 'cover', border: '1.5px solid rgba(249, 115, 22, 0.45)' }} />
+          <img src="/1111.png" alt="Logo" style={{ width: '32px', height: '32px', maxWidth: '32px', maxHeight: '32px', flexShrink: 0, objectFit: 'contain' }} />
+
           <span className="landing-logo-text" style={{ fontWeight: '800', lineHeight: 1, whiteSpace: 'nowrap', display: 'inline-flex', alignItems: 'center', letterSpacing: '0.2px' }}>
             <span>28Symues&nbsp;</span>
             <span style={{ color: '#f97316', whiteSpace: 'nowrap', display: 'inline' }}>Affiliate</span>

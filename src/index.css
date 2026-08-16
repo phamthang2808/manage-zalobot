@@ -4778,11 +4778,12 @@ body.dark .sidebar-toggle span {
   height: 34px;
   max-width: 34px;
   max-height: 34px;
-  border-radius: 50%;
-  object-fit: cover;
+  border-radius: 0 !important;
+  object-fit: contain !important;
   flex-shrink: 0;
-  border: 1.5px solid rgba(249, 115, 22, 0.45);
+  border: none !important;
 }
+
 
 .login-logo-text,
 .landing-logo-text,

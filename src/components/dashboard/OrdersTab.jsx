@@ -152,7 +152,7 @@ export default function OrdersTab() {
                   fontSize: '13.5px',
                   fontWeight: isActive ? '700' : '600',
                   background: isActive
-                    ? (tab.key === 'TikTok Shop' ? 'linear-gradient(135deg, #000000 0%, #1a1a1a 100%)' : tab.key === 'ShopeeFood' ? '#d0011b' : '#ee4d2d')
+                    ? (tab.key === 'TikTok Shop' ? '#000000' : tab.key === 'ShopeeFood' ? '#d0011b' : '#ee4d2d')
                     : 'var(--bg-secondary, rgba(0,0,0,0.04))',
                   color: isActive ? '#ffffff' : 'var(--text-muted, #64748b)',
                   boxShadow: isActive ? '0 4px 12px rgba(0,0,0,0.15)' : 'none',
@@ -182,25 +182,29 @@ export default function OrdersTab() {
         {/* Sync / Action Controls */}
         {platformFilter === 'TikTok Shop' ? (
           <button
-            className="btn btn-primary"
+            className="btn btn-refresh"
             onClick={handleSyncTiktok}
             disabled={syncLoading}
             style={{
-              background: 'linear-gradient(135deg, #000000 0%, #25f4ee 50%, #fe2c55 100%)',
-              border: 'none',
-              color: '#fff',
-              fontWeight: '700',
-              fontSize: '13px',
-              padding: '8px 18px',
-              borderRadius: '8px',
               display: 'inline-flex',
               alignItems: 'center',
-              gap: '6px',
+              gap: '8px',
+              padding: '8px 16px',
+              background: 'var(--color-primary-light, rgba(249, 115, 22, 0.1))',
+              color: 'var(--color-primary, #ea580c)',
+              border: '1px solid var(--color-primary-border, rgba(249, 115, 22, 0.3))',
+              fontWeight: '600',
+              fontSize: '13.5px',
+              borderRadius: '8px',
+              transition: 'all 0.2s ease',
               cursor: 'pointer',
               whiteSpace: 'nowrap'
             }}
           >
-            {syncLoading ? '⏳ Đang đồng bộ...' : '🎵 Đồng bộ đơn TikTok (RioHub)'}
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ transition: 'transform 0.5s ease', transform: syncLoading ? 'rotate(360deg)' : 'none' }}>
+              <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l.73-.73"/>
+            </svg>
+            {syncLoading ? 'Đang đồng bộ...' : 'Đồng bộ TikTok (RioHub)'}
           </button>
         ) : platformFilter === 'Shopee' ? (
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>

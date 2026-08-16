@@ -12,7 +12,7 @@ export default function DashboardHeader({ activeTab, fetchData }) {
       <h1 className="header-title">
         {activeTab === 'dashboard' && 'Bảng Điều Khiển Tổng Quan'}
         {activeTab === 'users' && 'Quản Lý Thành Viên'}
-        {activeTab === 'orders' && 'Danh Sách Đơn Hàng Shopee'}
+        {activeTab === 'orders' && 'Danh Sách Đơn Hàng Tiếp Thị'}
         {activeTab === 'payouts' && 'Danh Sách Yêu Cầu Rút Tiền'}
       </h1>
       <div className="admin-profile">

@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import ThemeToggle from './components/common/ThemeToggle';
 import RunningCatMascot from './components/common/RunningCatMascot';
+import OrdersTab from './components/dashboard/OrdersTab';
 
 const API_URL_ROOT = import.meta.env.PROD ? "" : (import.meta.env.VITE_API_URL || 'http://localhost:8080');
 
@@ -2995,9 +2996,8 @@ function App() {
               </button>
             )}
           </div>
-          {/* Hamburger button + ThemeToggle - mobile */}
+          {/* Hamburger button - mobile */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexShrink: 0 }}>
-            <ThemeToggle />
             <button
               className={`hamburger${mobileMenuOpen ? ' active' : ''}`}
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -3718,7 +3718,7 @@ function App() {
           <h1 className="header-title">
             {activeTab === 'dashboard' && 'Bảng Điều Khiển Tổng Quan'}
             {activeTab === 'users' && 'Quản Lý Thành Viên'}
-            {activeTab === 'orders' && 'Danh Sách Đơn Hàng Shopee'}
+            {activeTab === 'orders' && 'Danh Sách Đơn Hàng Tiếp Thị'}
             {activeTab === 'payouts' && 'Danh Sách Yêu Cầu Rút Tiền'}
           </h1>
           <div className="admin-profile">
@@ -3977,125 +3977,8 @@ function App() {
               )}
 
               {/* Tab 3: ORDERS LIST */}
-              {activeTab === 'orders' && (
-                <div className="data-card">
-                  {/* Upload file import */}
-                  <div style={{ padding: '16px 0 20px', borderBottom: '1px solid rgba(255,255,255,0.06)', marginBottom: '20px' }}>
-                    <h3 style={{ marginBottom: '12px', fontSize: '15px' }}>📥 Import báo cáo đối soát Shopee (CSV/Excel)</h3>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
-                      <input
-                        type="file"
-                        accept=".csv,.xlsx,.xls"
-                        onChange={(e) => { setImportFile(e.target.files[0]); setImportResult(null); }}
-                        style={{ color: 'var(--text-muted)', fontSize: '13px' }}
-                      />
-                      <button
-                        className="btn btn-success"
-                        onClick={handleImportFile}
-                        disabled={!importFile || importLoading}
-                        style={{ minWidth: '120px' }}
-                      >
-                        {importLoading ? '⏳ Đang import...' : '⬆️ Import'}
-                      </button>
-                      {importFile && <span style={{ fontSize: '13px', color: 'var(--text-muted)' }}>{importFile.name}</span>}
-                    </div>
-                    {importResult && (
-                      <div style={{
-                        marginTop: '10px',
-                        padding: '10px 14px',
-                        borderRadius: '8px',
-                        fontSize: '13px',
-                        background: importResult.success ? 'rgba(74, 222, 128, 0.1)' : 'rgba(248, 113, 113, 0.1)',
-                        border: `1px solid ${importResult.success ? 'var(--color-success)' : 'var(--color-danger)'}`,
-                        color: importResult.success ? 'var(--color-success)' : 'var(--color-danger)'
-                      }}>
-                        {importResult.success ? '✅ ' : '❌ '}{importResult.message}
-                      </div>
-                    )}
-                  </div>
+              {activeTab === 'orders' && <OrdersTab />}
 
-                  <div className="search-container">
-                    <input
-                      type="text"
-                      className="form-control"
-                      placeholder="Tìm kiếm đơn hàng (ID/Sản phẩm/Zalo ID)..."
-                      value={orderSearch}
-                      onChange={(e) => setOrderSearch(e.target.value)}
-                    />
-                  </div>
-
-                  <div className="table-container">
-                    <table style={{ tableLayout: 'fixed', width: '100%' }}>
-                      <thead>
-                        <tr>
-                          <th style={{ width: '135px' }}>Mã đơn hàng</th>
-                          <th style={{ width: '240px' }}>Tên sản phẩm</th>
-                          <th style={{ width: '160px' }}>Thành viên / Zalo ID</th>
-                          <th style={{ width: '140px', textAlign: 'right' }}>Tích lũy hoa hồng</th>
-                          <th style={{ width: '145px' }}>Thời gian</th>
-                          <th style={{ width: '100px', textAlign: 'center' }}>Trạng thái</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {filteredOrders.length === 0 ? (
-                          <tr className="empty-row">
-                            <td colSpan="6" style={{ textAlign: 'center', color: 'var(--text-muted)' }}>
-                              Không tìm thấy đơn hàng nào
-                            </td>
-                          </tr>
-                        ) : (
-                          filteredOrders.map(o => {
-                            const orderUser = users.find(u => u.zaloId === o.zaloId);
-                            const afterTax = (o.commission || 0) * 0.9;
-                            const afterDeduction = afterTax * 0.8;
-                            return (
-                              <tr key={o.id}>
-                                <td data-label="Mã đơn">
-                                  <code className="order-id-code">{o.orderId}</code>
-                                </td>
-                                <td data-label="Sản phẩm" title={o.productName}>
-                                  <span style={{ fontWeight: '600' }}>{o.productName}</span>
-                                </td>
-                                <td data-label="Thành viên">
-                                  <div style={{ fontWeight: '600', fontSize: '13.5px' }} title={orderUser ? orderUser.zaloName : (o.zaloId || 'UNKNOWN')}>
-                                    {orderUser ? orderUser.zaloName : <code style={{ color: 'var(--color-danger)', fontSize: '11px' }}>{o.zaloId || 'UNKNOWN'}</code>}
-                                  </div>
-                                  <div style={{ marginTop: '2px' }}>
-                                    <code style={{ fontSize: '11.5px', color: 'var(--text-muted)' }} title={o.subId}>{o.subId || '-'}</code>
-                                  </div>
-                                </td>
-                                <td data-label="Hoa hồng" style={{ textAlign: 'right' }}>
-                                  <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap', justifyContent: 'flex-end', fontSize: '12px' }}>
-                                    <span style={{ color: 'var(--text-muted)' }}>Gốc: {formatMoney(o.commission)}</span>
-                                    <span style={{ color: 'var(--color-warning)' }}>Sau thuế: {formatMoney(afterTax)}</span>
-                                    <span style={{ color: 'var(--color-success)', fontWeight: '700' }}>Khách: {formatMoney(afterDeduction)}</span>
-                                  </div>
-                                </td>
-                                <td data-label="Thời gian">
-                                  <div style={{ fontSize: '12px' }} title={`Đặt mua: ${formatDateTime(o.purchaseTime)}`}>Đặt: {formatDateTime(o.purchaseTime)}</div>
-                                  {o.completeTime && (
-                                    <div style={{ fontSize: '11px', color: 'var(--text-muted)', marginTop: '2px' }} title={`Hoàn thành: ${formatDateTime(o.completeTime)}`}>
-                                      Xong: {formatDateTime(o.completeTime)}
-                                    </div>
-                                  )}
-                                </td>
-                                <td data-label="Trạng thái" style={{ textAlign: 'center' }}>
-                                  <span className={`badge ${
-                                    o.status === 'Hoàn thành' ? 'badge-completed' :
-                                    o.status === 'Đã hủy' ? 'badge-cancelled' : 'badge-pending'
-                                  }`} style={{ fontSize: '11px', padding: '3px 8px' }}>
-                                    {o.status}
-                                  </span>
-                                </td>
-                              </tr>
-                            );
-                          })
-                        )}
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-              )}
 
               {/* Tab 4: PAYOUTS LIST */}
               {activeTab === 'payouts' && (

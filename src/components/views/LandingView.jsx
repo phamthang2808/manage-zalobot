@@ -124,7 +124,6 @@ export default function LandingView() {
           )}
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexShrink: 0 }}>
-          <ThemeToggle />
           <button className={`hamburger${mobileMenuOpen ? ' active' : ''}`} onClick={() => setMobileMenuOpen(!mobileMenuOpen)} aria-label="Toggle menu">
             <span></span><span></span><span></span>
           </button>

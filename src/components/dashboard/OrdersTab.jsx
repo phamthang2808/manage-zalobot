@@ -89,6 +89,20 @@ export default function OrdersTab() {
     }
   });
 
+  // Dynamic presets based on platform (Shopee removes "Hôm nay", others show "Hôm nay" then "Hôm qua")
+  const datePresets = platformFilter === 'Shopee' ? [
+    { key: 'ALL', label: 'Tất cả ngày' },
+    { key: 'YESTERDAY', label: 'Hôm qua' },
+    { key: 'LAST_7_DAYS', label: '7 ngày qua' },
+    { key: 'THIS_MONTH', label: 'Tháng này' }
+  ] : [
+    { key: 'ALL', label: 'Tất cả ngày' },
+    { key: 'TODAY', label: 'Hôm nay' },
+    { key: 'YESTERDAY', label: 'Hôm qua' },
+    { key: 'LAST_7_DAYS', label: '7 ngày qua' },
+    { key: 'THIS_MONTH', label: 'Tháng này' }
+  ];
+
   const filteredOrders = combinedOrders.filter(o => {
     // 1. Platform filter
     const itemPlatform = o.platform || (o.orderId?.startsWith('579') ? 'TikTok Shop' : o.orderId?.startsWith('SPF') ? 'ShopeeFood' : 'Shopee');
@@ -158,6 +172,11 @@ export default function OrdersTab() {
     }
   };
 
+  const handleSelectPlatform = (key) => {
+    setPlatformFilter(key);
+    setActiveDatePreset('ALL'); // Reset date filter to "Tất cả ngày" when switching platforms!
+  };
+
   return (
     <div className="data-card" style={{ padding: '20px' }}>
       {/* Top Bar: Platform Switcher Tabs + Sync Action */}
@@ -188,7 +207,7 @@ export default function OrdersTab() {
             return (
               <button
                 key={tab.key}
-                onClick={() => setPlatformFilter(tab.key)}
+                onClick={() => handleSelectPlatform(tab.key)}
                 style={{
                   border: 'none',
                   padding: '9px 18px',
@@ -341,13 +360,7 @@ export default function OrdersTab() {
           <span style={{ fontSize: '12px', color: 'var(--text-muted, #94a3b8)', fontWeight: '600', marginRight: '4px', whiteSpace: 'nowrap', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
             <i className="fa-regular fa-calendar-days" style={{ color: 'var(--color-primary, #ea580c)' }}></i> Lọc nhanh:
           </span>
-          {[
-            { key: 'ALL', label: 'Tất cả ngày' },
-            { key: 'YESTERDAY', label: 'Hôm qua' },
-            { key: 'TODAY', label: 'Hôm nay' },
-            { key: 'LAST_7_DAYS', label: '7 ngày qua' },
-            { key: 'THIS_MONTH', label: 'Tháng này' }
-          ].map(preset => {
+          {datePresets.map(preset => {
             const isSelected = activeDatePreset === preset.key;
             return (
               <button
@@ -390,16 +403,7 @@ export default function OrdersTab() {
             {filteredOrders.length === 0 ? (
               <tr className="empty-row">
                 <td colSpan="6" style={{ textAlign: 'center', color: 'var(--text-muted)', padding: '32px 16px' }}>
-                  {activeDatePreset === 'TODAY' ? (
-                    <div>
-                      <div>⚠️ Báo cáo Shopee đối soát trễ 1 ngày (đơn mới nhất đến ngày <strong>Hôm qua</strong>).</div>
-                      <div style={{ fontSize: '13px', marginTop: '8px', color: 'var(--color-primary, #ea580c)', cursor: 'pointer', fontWeight: '700' }} onClick={() => setActiveDatePreset('YESTERDAY')}>
-                        👉 Bấm vào đây để xem đơn <strong>Hôm qua ({(() => { const y = new Date(); y.setDate(y.getDate() - 1); return `${String(y.getDate()).padStart(2,'0')}/${String(y.getMonth()+1).padStart(2,'0')}`; })()})</strong> ({combinedOrders.filter(o => !o.platform || o.platform === platformFilter).length} đơn)
-                      </div>
-                    </div>
-                  ) : (
-                    `Không tìm thấy đơn hàng ${platformFilter} nào phù hợp`
-                  )}
+                  Không tìm thấy đơn hàng {platformFilter} nào phù hợp
                 </td>
               </tr>
             ) : (

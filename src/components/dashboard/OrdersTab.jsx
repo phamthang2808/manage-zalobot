@@ -45,11 +45,9 @@ const DEMO_ORDERS = [
 const parseDateToYMD = (val) => {
   if (!val) return '';
   if (typeof val === 'string') {
-    // "2026-08-16T10:15:00" or "2026-08-16"
     if (/^\d{4}-\d{2}-\d{2}/.test(val)) {
       return val.substring(0, 10);
     }
-    // "16/08/2026" or "16-08-2026"
     const match = val.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})/);
     if (match) {
       const day = match[1].padStart(2, '0');
@@ -81,45 +79,7 @@ export default function OrdersTab() {
   const [orderSearch, setOrderSearch] = useState('');
   const [platformFilter, setPlatformFilter] = useState('Shopee');
   const [syncLoading, setSyncLoading] = useState(false);
-  const [startDate, setStartDate] = useState('');
-  const [endDate, setEndDate] = useState('');
   const [activeDatePreset, setActiveDatePreset] = useState('ALL');
-
-  // Quick Date Range Preset Selector
-  const applyPreset = (preset) => {
-    setActiveDatePreset(preset);
-    const today = new Date();
-    const formatDate = (d) => {
-      const year = d.getFullYear();
-      const month = String(d.getMonth() + 1).padStart(2, '0');
-      const day = String(d.getDate()).padStart(2, '0');
-      return `${year}-${month}-${day}`;
-    };
-
-    if (preset === 'ALL') {
-      setStartDate('');
-      setEndDate('');
-    } else if (preset === 'TODAY') {
-      const str = formatDate(today);
-      setStartDate(str);
-      setEndDate(str);
-    } else if (preset === 'YESTERDAY') {
-      const yesterday = new Date();
-      yesterday.setDate(today.getDate() - 1);
-      const str = formatDate(yesterday);
-      setStartDate(str);
-      setEndDate(str);
-    } else if (preset === 'LAST_7_DAYS') {
-      const past = new Date();
-      past.setDate(today.getDate() - 7);
-      setStartDate(formatDate(past));
-      setEndDate(formatDate(today));
-    } else if (preset === 'THIS_MONTH') {
-      const firstDay = new Date(today.getFullYear(), today.getMonth(), 1);
-      setStartDate(formatDate(firstDay));
-      setEndDate(formatDate(today));
-    }
-  };
 
   // Combine real backend orders with DEMO orders for missing platforms
   const combinedOrders = [...(orders || [])];
@@ -145,13 +105,35 @@ export default function OrdersTab() {
       if (!matchKeyword) return false;
     }
 
-    // 3. Date Range Filter (Works on ALL platforms!)
-    if (startDate || endDate) {
+    // 3. Quick Date Preset Filter
+    if (activeDatePreset !== 'ALL') {
       const rawDate = o.purchaseTime || o.orderDate || o.createdTime || o.completeTime;
       const orderDateStr = parseDateToYMD(rawDate);
       if (orderDateStr) {
-        if (startDate && orderDateStr < startDate) return false;
-        if (endDate && orderDateStr > endDate) return false;
+        const today = new Date();
+        const formatDate = (d) => {
+          const year = d.getFullYear();
+          const month = String(d.getMonth() + 1).padStart(2, '0');
+          const day = String(d.getDate()).padStart(2, '0');
+          return `${year}-${month}-${day}`;
+        };
+        const todayStr = formatDate(today);
+
+        if (activeDatePreset === 'TODAY') {
+          if (orderDateStr !== todayStr) return false;
+        } else if (activeDatePreset === 'YESTERDAY') {
+          const yesterday = new Date();
+          yesterday.setDate(today.getDate() - 1);
+          if (orderDateStr !== formatDate(yesterday)) return false;
+        } else if (activeDatePreset === 'LAST_7_DAYS') {
+          const past = new Date();
+          past.setDate(today.getDate() - 7);
+          const pastStr = formatDate(past);
+          if (orderDateStr < pastStr || orderDateStr > todayStr) return false;
+        } else if (activeDatePreset === 'THIS_MONTH') {
+          const firstDayStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-01`;
+          if (orderDateStr < firstDayStr || orderDateStr > todayStr) return false;
+        }
       }
     }
 
@@ -272,138 +254,79 @@ export default function OrdersTab() {
         )}
       </div>
 
-      {/* Modern Responsive Search & Date Filter Bar */}
+      {/* Modern Clean Search & Quick Preset Chips Bar */}
       <div style={{
         display: 'flex',
         flexDirection: 'column',
-        gap: '12px',
+        gap: '10px',
         background: 'var(--bg-secondary, rgba(0, 0, 0, 0.02))',
-        padding: '14px 16px',
+        padding: '12px 14px',
         borderRadius: '12px',
         border: '1px solid var(--border-color, rgba(0, 0, 0, 0.08))',
         marginBottom: '18px'
       }}>
-        {/* Row 1: Search Box + Date Range Controls */}
-        <div style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: '12px',
-          flexWrap: 'wrap'
-        }}>
-          {/* Keyword Search Input */}
-          <div style={{
-            position: 'relative',
-            flex: '1 1 280px',
-            minWidth: '220px'
-          }}>
-            <svg
-              width="15"
-              height="15"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2.2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
+        {/* Row 1: Keyword Search Input */}
+        <div style={{ position: 'relative', width: '100%' }}>
+          <svg
+            width="15"
+            height="15"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2.2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            style={{
+              position: 'absolute',
+              left: '14px',
+              top: '50%',
+              transform: 'translateY(-50%)',
+              color: 'var(--text-muted, #94a3b8)',
+              pointerEvents: 'none'
+            }}
+          >
+            <circle cx="11" cy="11" r="8" />
+            <line x1="21" y1="21" x2="16.65" y2="16.65" />
+          </svg>
+          <input
+            type="text"
+            className="form-control"
+            placeholder={`Tìm đơn ${platformFilter} (Mã đơn / Sản phẩm / Zalo ID / Sub ID)...`}
+            value={orderSearch}
+            onChange={e => setOrderSearch(e.target.value)}
+            style={{
+              width: '100%',
+              paddingLeft: '38px',
+              paddingRight: orderSearch ? '32px' : '14px',
+              height: '42px',
+              borderRadius: '10px',
+              border: '1px solid var(--border-color, #cbd5e1)',
+              background: 'var(--bg-card, #ffffff)',
+              color: 'var(--text-main, #0f172a)',
+              fontSize: '13.5px',
+              outline: 'none',
+              transition: 'all 0.2s ease'
+            }}
+          />
+          {orderSearch && (
+            <button
+              onClick={() => setOrderSearch('')}
               style={{
                 position: 'absolute',
-                left: '14px',
+                right: '10px',
                 top: '50%',
                 transform: 'translateY(-50%)',
+                background: 'none',
+                border: 'none',
                 color: 'var(--text-muted, #94a3b8)',
-                pointerEvents: 'none'
+                cursor: 'pointer',
+                fontSize: '14px',
+                padding: '2px 4px'
               }}
             >
-              <circle cx="11" cy="11" r="8" />
-              <line x1="21" y1="21" x2="16.65" y2="16.65" />
-            </svg>
-            <input
-              type="text"
-              className="form-control"
-              placeholder={`Tìm đơn ${platformFilter} (Mã đơn, sản phẩm, Zalo ID)...`}
-              value={orderSearch}
-              onChange={e => setOrderSearch(e.target.value)}
-              style={{
-                width: '100%',
-                paddingLeft: '38px',
-                paddingRight: orderSearch ? '32px' : '14px',
-                height: '40px',
-                borderRadius: '8px',
-                border: '1px solid var(--border-color, #cbd5e1)',
-                background: 'var(--bg-card, #ffffff)',
-                color: 'var(--text-main, #0f172a)',
-                fontSize: '13.5px',
-                outline: 'none',
-                transition: 'all 0.2s ease'
-              }}
-            />
-            {orderSearch && (
-              <button
-                onClick={() => setOrderSearch('')}
-                style={{
-                  position: 'absolute',
-                  right: '10px',
-                  top: '50%',
-                  transform: 'translateY(-50%)',
-                  background: 'none',
-                  border: 'none',
-                  color: 'var(--text-muted, #94a3b8)',
-                  cursor: 'pointer',
-                  fontSize: '14px',
-                  padding: '2px 4px'
-                }}
-              >
-                <i className="fa-solid fa-xmark"></i>
-              </button>
-            )}
-          </div>
-
-          {/* Date Inputs Group */}
-          <div style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '8px',
-            flexWrap: 'wrap',
-            flex: '0 1 auto'
-          }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-              <span style={{ fontSize: '12.5px', fontWeight: '600', color: 'var(--text-muted, #64748b)' }}>Từ:</span>
-              <input
-                type="date"
-                value={startDate}
-                onChange={e => { setStartDate(e.target.value); setActiveDatePreset('CUSTOM'); }}
-                style={{
-                  height: '40px',
-                  padding: '0 10px',
-                  borderRadius: '8px',
-                  border: '1px solid var(--border-color, #cbd5e1)',
-                  background: 'var(--bg-card, #ffffff)',
-                  color: 'var(--text-main, #0f172a)',
-                  fontSize: '13px',
-                  cursor: 'pointer'
-                }}
-              />
-            </div>
-
-            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-              <span style={{ fontSize: '12.5px', fontWeight: '600', color: 'var(--text-muted, #64748b)' }}>Đến:</span>
-              <input
-                type="date"
-                value={endDate}
-                onChange={e => { setEndDate(e.target.value); setActiveDatePreset('CUSTOM'); }}
-                style={{
-                  height: '40px',
-                  padding: '0 10px',
-                  borderRadius: '8px',
-                  border: '1px solid var(--border-color, #cbd5e1)',
-                  background: 'var(--bg-card, #ffffff)',
-                  color: 'var(--text-main, #0f172a)',
-                  fontSize: '13px',
-                  cursor: 'pointer'
-                }}
-              />
-            </div>
-          </div>
+              <i className="fa-solid fa-xmark"></i>
+            </button>
+          )}
         </div>
 
         {/* Row 2: Date Preset Quick Filter Chips */}
@@ -429,7 +352,7 @@ export default function OrdersTab() {
             return (
               <button
                 key={preset.key}
-                onClick={() => applyPreset(preset.key)}
+                onClick={() => setActiveDatePreset(preset.key)}
                 style={{
                   border: isSelected ? '1px solid var(--color-primary, #ea580c)' : '1px solid var(--border-color, #cbd5e1)',
                   padding: '4px 12px',
@@ -447,27 +370,6 @@ export default function OrdersTab() {
               </button>
             );
           })}
-
-          {(startDate || endDate) && (
-            <button
-              onClick={() => applyPreset('ALL')}
-              style={{
-                border: 'none',
-                background: 'transparent',
-                color: 'var(--color-danger, #ef4444)',
-                fontSize: '12px',
-                fontWeight: '600',
-                cursor: 'pointer',
-                marginLeft: '6px',
-                whiteSpace: 'nowrap',
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '4px'
-              }}
-            >
-              <i className="fa-solid fa-rotate-left"></i> Xóa lọc ngày
-            </button>
-          )}
         </div>
       </div>
 
@@ -491,12 +393,12 @@ export default function OrdersTab() {
                   {activeDatePreset === 'TODAY' ? (
                     <div>
                       <div>⚠️ Báo cáo Shopee đối soát trễ 1 ngày (đơn mới nhất đến ngày <strong>Hôm qua</strong>).</div>
-                      <div style={{ fontSize: '13px', marginTop: '8px', color: 'var(--color-primary, #ea580c)', cursor: 'pointer', fontWeight: '700' }} onClick={() => applyPreset('YESTERDAY')}>
+                      <div style={{ fontSize: '13px', marginTop: '8px', color: 'var(--color-primary, #ea580c)', cursor: 'pointer', fontWeight: '700' }} onClick={() => setActiveDatePreset('YESTERDAY')}>
                         👉 Bấm vào đây để xem đơn <strong>Hôm qua ({(() => { const y = new Date(); y.setDate(y.getDate() - 1); return `${String(y.getDate()).padStart(2,'0')}/${String(y.getMonth()+1).padStart(2,'0')}`; })()})</strong> ({combinedOrders.filter(o => !o.platform || o.platform === platformFilter).length} đơn)
                       </div>
                     </div>
                   ) : (
-                    `Không có đơn hàng ${platformFilter} nào phù hợp điều kiện tìm kiếm`
+                    `Không tìm thấy đơn hàng ${platformFilter} nào phù hợp`
                   )}
                 </td>
               </tr>

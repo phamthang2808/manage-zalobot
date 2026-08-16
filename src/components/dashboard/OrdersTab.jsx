@@ -45,10 +45,40 @@ export default function OrdersTab() {
   const { orders, users, token, user, fetchData, showToast, API_URL_ROOT } = useApp();
   const [orderSearch, setOrderSearch] = useState('');
   const [platformFilter, setPlatformFilter] = useState('Shopee');
-  const [importFile, setImportFile] = useState(null);
-  const [importLoading, setImportLoading] = useState(false);
-  const [importResult, setImportResult] = useState(null);
   const [syncLoading, setSyncLoading] = useState(false);
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
+  const [activeDatePreset, setActiveDatePreset] = useState('ALL');
+
+  // Quick Date Range Preset Selector
+  const applyPreset = (preset) => {
+    setActiveDatePreset(preset);
+    const today = new Date();
+    const formatDate = (d) => {
+      const year = d.getFullYear();
+      const month = String(d.getMonth() + 1).padStart(2, '0');
+      const day = String(d.getDate()).padStart(2, '0');
+      return `${year}-${month}-${day}`;
+    };
+
+    if (preset === 'ALL') {
+      setStartDate('');
+      setEndDate('');
+    } else if (preset === 'TODAY') {
+      const str = formatDate(today);
+      setStartDate(str);
+      setEndDate(str);
+    } else if (preset === 'LAST_7_DAYS') {
+      const past = new Date();
+      past.setDate(today.getDate() - 6);
+      setStartDate(formatDate(past));
+      setEndDate(formatDate(today));
+    } else if (preset === 'THIS_MONTH') {
+      const firstDay = new Date(today.getFullYear(), today.getMonth(), 1);
+      setStartDate(formatDate(firstDay));
+      setEndDate(formatDate(today));
+    }
+  };
 
   // Combine real backend orders with DEMO orders for missing platforms
   const combinedOrders = [...(orders || [])];
@@ -59,42 +89,31 @@ export default function OrdersTab() {
   });
 
   const filteredOrders = combinedOrders.filter(o => {
-    const matchesSearch =
-      o.orderId?.toLowerCase().includes(orderSearch.toLowerCase()) ||
-      o.zaloId?.toLowerCase().includes(orderSearch.toLowerCase()) ||
-      o.productName?.toLowerCase().includes(orderSearch.toLowerCase());
-    
-    if (!matchesSearch) return false;
-
+    // 1. Platform filter
     const itemPlatform = o.platform || (o.orderId?.startsWith('579') ? 'TikTok Shop' : o.orderId?.startsWith('SPF') ? 'ShopeeFood' : 'Shopee');
-    return itemPlatform === platformFilter;
-  });
+    if (itemPlatform !== platformFilter) return false;
 
-  const handleImportFile = async () => {
-    if (!importFile) return;
-    const formData = new FormData();
-    formData.append('file', importFile);
-    setImportLoading(true);
-    setImportResult(null);
-    try {
-      const res = await fetch(`${API_URL_ROOT}/api/admin/import-excel`, {
-        method: 'POST',
-        body: formData,
-        credentials: 'include'
-      });
-      const text = await res.text();
-      if (!res.ok) throw new Error(text);
-      setImportResult({ success: true, message: text });
-      showToast('Import file Excel thành công: ' + text, 'success');
-      setImportFile(null);
-      fetchData(token, user);
-    } catch (err) {
-      setImportResult({ success: false, message: err.message });
-      showToast('Lỗi Import Excel: ' + err.message, 'error');
-    } finally {
-      setImportLoading(false);
+    // 2. Keyword Search
+    const q = orderSearch.trim().toLowerCase();
+    if (q) {
+      const matchKeyword =
+        o.orderId?.toLowerCase().includes(q) ||
+        o.zaloId?.toLowerCase().includes(q) ||
+        o.subId?.toLowerCase().includes(q) ||
+        o.productName?.toLowerCase().includes(q);
+      if (!matchKeyword) return false;
     }
-  };
+
+    // 3. Date Range Filter
+    if (startDate || endDate) {
+      if (!o.purchaseTime) return false;
+      const orderDateStr = o.purchaseTime.substring(0, 10); // YYYY-MM-DD
+      if (startDate && orderDateStr < startDate) return false;
+      if (endDate && orderDateStr > endDate) return false;
+    }
+
+    return true;
+  });
 
   const handleSyncTiktok = async () => {
     setSyncLoading(true);
@@ -116,7 +135,7 @@ export default function OrdersTab() {
 
   return (
     <div className="data-card" style={{ padding: '20px' }}>
-      {/* Platform Switcher Tabs */}
+      {/* Top Bar: Platform Switcher Tabs + Sync Action */}
       <div style={{
         display: 'flex',
         alignItems: 'center',
@@ -125,7 +144,7 @@ export default function OrdersTab() {
         gap: '12px',
         borderBottom: '2px solid var(--border-color, rgba(0,0,0,0.06))',
         paddingBottom: '14px',
-        marginBottom: '20px'
+        marginBottom: '18px'
       }}>
         <div style={{
           display: 'flex',
@@ -179,8 +198,8 @@ export default function OrdersTab() {
           })}
         </div>
 
-        {/* Sync / Action Controls */}
-        {platformFilter === 'TikTok Shop' ? (
+        {/* Action Controls */}
+        {platformFilter === 'TikTok Shop' && (
           <button
             className="btn btn-refresh"
             onClick={handleSyncTiktok}
@@ -204,48 +223,204 @@ export default function OrdersTab() {
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ transition: 'transform 0.5s ease', transform: syncLoading ? 'rotate(360deg)' : 'none' }}>
               <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l.73-.73"/>
             </svg>
-            {syncLoading ? 'Đang đồng bộ...' : 'Đồng bộ TikTok (RioHub)'}
+            {syncLoading ? 'Đang cập nhật...' : 'Cập nhật'}
           </button>
-        ) : platformFilter === 'Shopee' ? (
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
-            <input
-              type="file"
-              accept=".csv,.xlsx,.xls"
-              onChange={e => { setImportFile(e.target.files[0]); setImportResult(null); }}
-              style={{ color: 'var(--text-muted)', fontSize: '13px', maxWidth: '200px' }}
-            />
-            <button
-              className="btn btn-success"
-              onClick={handleImportFile}
-              disabled={!importFile || importLoading}
-              style={{ minWidth: '120px', whiteSpace: 'nowrap' }}
-            >
-              {importLoading ? '⏳ Đang import...' : '⬆️ Import Excel Shopee'}
-            </button>
-          </div>
-        ) : null}
+        )}
       </div>
 
-      {importResult && (
+      {/* Modern Responsive Search & Date Filter Bar */}
+      <div style={{
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '12px',
+        background: 'var(--bg-secondary, rgba(0, 0, 0, 0.02))',
+        padding: '14px 16px',
+        borderRadius: '12px',
+        border: '1px solid var(--border-color, rgba(0, 0, 0, 0.08))',
+        marginBottom: '18px'
+      }}>
+        {/* Row 1: Search Box + Date Range Controls */}
         <div style={{
-          marginBottom: '16px', padding: '10px 14px', borderRadius: '8px', fontSize: '13px',
-          background: importResult.success ? 'rgba(74, 222, 128, 0.1)' : 'rgba(248, 113, 113, 0.1)',
-          border: `1px solid ${importResult.success ? 'var(--color-success)' : 'var(--color-danger)'}`,
-          color: importResult.success ? 'var(--color-success)' : 'var(--color-danger)'
+          display: 'flex',
+          alignItems: 'center',
+          gap: '12px',
+          flexWrap: 'wrap'
         }}>
-          {importResult.success ? '✅ ' : '❌ '}{importResult.message}
-        </div>
-      )}
+          {/* Keyword Search Input */}
+          <div style={{
+            position: 'relative',
+            flex: '1 1 280px',
+            minWidth: '220px'
+          }}>
+            <svg
+              width="15"
+              height="15"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              style={{
+                position: 'absolute',
+                left: '14px',
+                top: '50%',
+                transform: 'translateY(-50%)',
+                color: 'var(--text-muted, #94a3b8)',
+                pointerEvents: 'none'
+              }}
+            >
+              <circle cx="11" cy="11" r="8" />
+              <line x1="21" y1="21" x2="16.65" y2="16.65" />
+            </svg>
+            <input
+              type="text"
+              className="form-control"
+              placeholder={`Tìm đơn ${platformFilter} (Mã đơn, sản phẩm, Zalo ID)...`}
+              value={orderSearch}
+              onChange={e => setOrderSearch(e.target.value)}
+              style={{
+                width: '100%',
+                paddingLeft: '38px',
+                paddingRight: orderSearch ? '32px' : '14px',
+                height: '40px',
+                borderRadius: '8px',
+                border: '1px solid var(--border-color, #cbd5e1)',
+                background: 'var(--bg-card, #ffffff)',
+                color: 'var(--text-main, #0f172a)',
+                fontSize: '13.5px',
+                outline: 'none',
+                transition: 'all 0.2s ease'
+              }}
+            />
+            {orderSearch && (
+              <button
+                onClick={() => setOrderSearch('')}
+                style={{
+                  position: 'absolute',
+                  right: '10px',
+                  top: '50%',
+                  transform: 'translateY(-50%)',
+                  background: 'none',
+                  border: 'none',
+                  color: 'var(--text-muted, #94a3b8)',
+                  cursor: 'pointer',
+                  fontSize: '14px',
+                  padding: '2px 4px'
+                }}
+              >
+                ✕
+              </button>
+            )}
+          </div>
 
-      {/* Search Input */}
-      <div className="search-container" style={{ marginBottom: '16px' }}>
-        <input
-          type="text"
-          className="form-control"
-          placeholder={`Tìm kiếm đơn hàng ${platformFilter} (Mã đơn / Sản phẩm / Zalo ID)...`}
-          value={orderSearch}
-          onChange={e => setOrderSearch(e.target.value)}
-        />
+          {/* Date Inputs Group */}
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+            flexWrap: 'wrap',
+            flex: '0 1 auto'
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <span style={{ fontSize: '12.5px', fontWeight: '600', color: 'var(--text-muted, #64748b)' }}>Từ:</span>
+              <input
+                type="date"
+                value={startDate}
+                onChange={e => { setStartDate(e.target.value); setActiveDatePreset('CUSTOM'); }}
+                style={{
+                  height: '40px',
+                  padding: '0 10px',
+                  borderRadius: '8px',
+                  border: '1px solid var(--border-color, #cbd5e1)',
+                  background: 'var(--bg-card, #ffffff)',
+                  color: 'var(--text-main, #0f172a)',
+                  fontSize: '13px',
+                  cursor: 'pointer'
+                }}
+              />
+            </div>
+
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <span style={{ fontSize: '12.5px', fontWeight: '600', color: 'var(--text-muted, #64748b)' }}>Đến:</span>
+              <input
+                type="date"
+                value={endDate}
+                onChange={e => { setEndDate(e.target.value); setActiveDatePreset('CUSTOM'); }}
+                style={{
+                  height: '40px',
+                  padding: '0 10px',
+                  borderRadius: '8px',
+                  border: '1px solid var(--border-color, #cbd5e1)',
+                  background: 'var(--bg-card, #ffffff)',
+                  color: 'var(--text-main, #0f172a)',
+                  fontSize: '13px',
+                  cursor: 'pointer'
+                }}
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Row 2: Date Preset Quick Filter Chips */}
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: '6px',
+          overflowX: 'auto',
+          paddingBottom: '2px',
+          WebkitOverflowScrolling: 'touch'
+        }}>
+          <span style={{ fontSize: '12px', color: 'var(--text-muted, #94a3b8)', fontWeight: '600', marginRight: '4px', whiteSpace: 'nowrap' }}>
+            📅 Lọc nhanh:
+          </span>
+          {[
+            { key: 'ALL', label: 'Tất cả ngày' },
+            { key: 'TODAY', label: 'Hôm nay' },
+            { key: 'LAST_7_DAYS', label: '7 ngày qua' },
+            { key: 'THIS_MONTH', label: 'Tháng này' }
+          ].map(preset => {
+            const isSelected = activeDatePreset === preset.key;
+            return (
+              <button
+                key={preset.key}
+                onClick={() => applyPreset(preset.key)}
+                style={{
+                  border: isSelected ? '1px solid var(--color-primary, #ea580c)' : '1px solid var(--border-color, #cbd5e1)',
+                  padding: '4px 12px',
+                  borderRadius: '16px',
+                  fontSize: '12px',
+                  fontWeight: isSelected ? '700' : '500',
+                  background: isSelected ? 'var(--color-primary-light, rgba(249, 115, 22, 0.12))' : 'var(--bg-card, #ffffff)',
+                  color: isSelected ? 'var(--color-primary, #ea580c)' : 'var(--text-main, #475569)',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s ease',
+                  whiteSpace: 'nowrap'
+                }}
+              >
+                {preset.label}
+              </button>
+            );
+          })}
+
+          {(startDate || endDate) && (
+            <button
+              onClick={() => applyPreset('ALL')}
+              style={{
+                border: 'none',
+                background: 'transparent',
+                color: 'var(--color-danger, #ef4444)',
+                fontSize: '12px',
+                fontWeight: '600',
+                cursor: 'pointer',
+                marginLeft: '6px',
+                whiteSpace: 'nowrap'
+              }}
+            >
+              🔄 Xóa lọc ngày
+            </button>
+          )}
+        </div>
       </div>
 
       {/* Responsive Orders Table */}
@@ -265,7 +440,7 @@ export default function OrdersTab() {
             {filteredOrders.length === 0 ? (
               <tr className="empty-row">
                 <td colSpan="6" style={{ textAlign: 'center', color: 'var(--text-muted)', padding: '32px 16px' }}>
-                  Không có đơn hàng {platformFilter} nào
+                  Không có đơn hàng {platformFilter} nào phù hợp điều kiện tìm kiếm
                 </td>
               </tr>
             ) : (

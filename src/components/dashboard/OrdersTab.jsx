@@ -29,18 +29,6 @@ const DEMO_ORDERS = [
   },
   {
     id: 103,
-    orderId: '24081691823901',
-    productName: 'Son Kem Lì Mịn Môi Chống Nước Shopee Store',
-    zaloId: '27765123456789',
-    subId: 'PhamThang',
-    platform: 'Shopee',
-    commission: 18500,
-    status: 'Hoàn thành',
-    purchaseTime: '2026-08-15T16:20:00',
-    completeTime: '2026-08-16T09:30:00'
-  },
-  {
-    id: 104,
     orderId: 'SPF9182371982',
     productName: 'Trà Sữa Chân Châu Đường Đen ShopeeFood',
     zaloId: '27765123456789',
@@ -56,16 +44,21 @@ const DEMO_ORDERS = [
 export default function OrdersTab() {
   const { orders, users, token, user, fetchData, showToast, API_URL_ROOT } = useApp();
   const [orderSearch, setOrderSearch] = useState('');
-  const [platformFilter, setPlatformFilter] = useState('ALL');
+  const [platformFilter, setPlatformFilter] = useState('Shopee');
   const [importFile, setImportFile] = useState(null);
   const [importLoading, setImportLoading] = useState(false);
   const [importResult, setImportResult] = useState(null);
   const [syncLoading, setSyncLoading] = useState(false);
 
-  // Combine real backend orders with DEMO orders if empty or showcase
-  const displayOrders = (orders && orders.length > 0) ? orders : DEMO_ORDERS;
+  // Combine real backend orders with DEMO orders for missing platforms
+  const combinedOrders = [...(orders || [])];
+  DEMO_ORDERS.forEach(demo => {
+    if (!combinedOrders.some(o => o.orderId === demo.orderId)) {
+      combinedOrders.push(demo);
+    }
+  });
 
-  const filteredOrders = displayOrders.filter(o => {
+  const filteredOrders = combinedOrders.filter(o => {
     const matchesSearch =
       o.orderId?.toLowerCase().includes(orderSearch.toLowerCase()) ||
       o.zaloId?.toLowerCase().includes(orderSearch.toLowerCase()) ||
@@ -73,7 +66,6 @@ export default function OrdersTab() {
     
     if (!matchesSearch) return false;
 
-    if (platformFilter === 'ALL') return true;
     const itemPlatform = o.platform || (o.orderId?.startsWith('579') ? 'TikTok Shop' : o.orderId?.startsWith('SPF') ? 'ShopeeFood' : 'Shopee');
     return itemPlatform === platformFilter;
   });
@@ -122,70 +114,73 @@ export default function OrdersTab() {
     }
   };
 
-  const getPlatformBadge = (order) => {
-    const platform = order.platform || (order.orderId?.startsWith('579') ? 'TikTok Shop' : order.orderId?.startsWith('SPF') ? 'ShopeeFood' : 'Shopee');
-    if (platform === 'TikTok Shop') {
-      return (
-        <span style={{
-          display: 'inline-flex',
-          alignItems: 'center',
-          gap: '4px',
-          padding: '2px 8px',
-          borderRadius: '4px',
-          fontSize: '11px',
-          fontWeight: '700',
-          background: '#000000',
-          color: '#00f2fe',
-          border: '1px solid #fe2c55'
-        }}>
-          🎵 TikTok Shop
-        </span>
-      );
-    } else if (platform === 'ShopeeFood') {
-      return (
-        <span style={{
-          display: 'inline-flex',
-          alignItems: 'center',
-          gap: '4px',
-          padding: '2px 8px',
-          borderRadius: '4px',
-          fontSize: '11px',
-          fontWeight: '700',
-          background: 'rgba(208, 1, 27, 0.12)',
-          color: '#d0011b',
-          border: '1px solid rgba(208, 1, 27, 0.3)'
-        }}>
-          🍔 ShopeeFood
-        </span>
-      );
-    }
-    return (
-      <span style={{
-        display: 'inline-flex',
-        alignItems: 'center',
-        gap: '4px',
-        padding: '2px 8px',
-        borderRadius: '4px',
-        fontSize: '11px',
-        fontWeight: '700',
-        background: 'rgba(238, 77, 45, 0.12)',
-        color: '#ee4d2d',
-        border: '1px solid rgba(238, 77, 45, 0.3)'
-      }}>
-        🛒 Shopee
-      </span>
-    );
-  };
-
   return (
-    <div className="data-card">
-      {/* Action Bar & Controls */}
-      <div style={{ padding: '16px 0 20px', borderBottom: '1px solid var(--border-color)', marginBottom: '20px' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px', marginBottom: '12px' }}>
-          <h3 style={{ margin: 0, fontSize: '16px', fontWeight: '700', display: 'flex', alignItems: 'center', gap: '8px' }}>
-            📦 Báo Cáo Đối Soát Đơn Hàng Tiếp Thị
-          </h3>
+    <div className="data-card" style={{ padding: '20px' }}>
+      {/* Platform Switcher Tabs */}
+      <div style={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        flexWrap: 'wrap',
+        gap: '12px',
+        borderBottom: '2px solid var(--border-color, rgba(0,0,0,0.06))',
+        paddingBottom: '14px',
+        marginBottom: '20px'
+      }}>
+        <div style={{
+          display: 'flex',
+          gap: '8px',
+          overflowX: 'auto',
+          maxWidth: '100%',
+          paddingBottom: '4px',
+          WebkitOverflowScrolling: 'touch'
+        }}>
+          {[
+            { key: 'Shopee', label: '🛒 Shopee', count: combinedOrders.filter(o => !o.platform || o.platform === 'Shopee').length },
+            { key: 'TikTok Shop', label: '🎵 TikTok Shop', count: combinedOrders.filter(o => o.platform === 'TikTok Shop' || o.orderId?.startsWith('579')).length },
+            { key: 'ShopeeFood', label: '🍔 ShopeeFood', count: combinedOrders.filter(o => o.platform === 'ShopeeFood' || o.orderId?.startsWith('SPF')).length }
+          ].map(tab => {
+            const isActive = platformFilter === tab.key;
+            return (
+              <button
+                key={tab.key}
+                onClick={() => setPlatformFilter(tab.key)}
+                style={{
+                  border: 'none',
+                  padding: '9px 18px',
+                  borderRadius: '10px',
+                  fontSize: '13.5px',
+                  fontWeight: isActive ? '700' : '600',
+                  background: isActive
+                    ? (tab.key === 'TikTok Shop' ? 'linear-gradient(135deg, #000000 0%, #1a1a1a 100%)' : tab.key === 'ShopeeFood' ? '#d0011b' : '#ee4d2d')
+                    : 'var(--bg-secondary, rgba(0,0,0,0.04))',
+                  color: isActive ? '#ffffff' : 'var(--text-muted, #64748b)',
+                  boxShadow: isActive ? '0 4px 12px rgba(0,0,0,0.15)' : 'none',
+                  cursor: 'pointer',
+                  transition: 'all 0.25s ease',
+                  whiteSpace: 'nowrap',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '8px'
+                }}
+              >
+                <span>{tab.label}</span>
+                <span style={{
+                  fontSize: '11px',
+                  padding: '2px 7px',
+                  borderRadius: '12px',
+                  background: isActive ? 'rgba(255,255,255,0.25)' : 'rgba(0,0,0,0.08)',
+                  color: isActive ? '#ffffff' : 'var(--text-main, #334155)'
+                }}>
+                  {tab.count}
+                </span>
+              </button>
+            );
+          })}
+        </div>
 
+        {/* Sync / Action Controls */}
+        {platformFilter === 'TikTok Shop' ? (
           <button
             className="btn btn-primary"
             onClick={handleSyncTiktok}
@@ -196,104 +191,79 @@ export default function OrdersTab() {
               color: '#fff',
               fontWeight: '700',
               fontSize: '13px',
-              padding: '7px 16px',
+              padding: '8px 18px',
               borderRadius: '8px',
               display: 'inline-flex',
               alignItems: 'center',
               gap: '6px',
-              cursor: 'pointer'
+              cursor: 'pointer',
+              whiteSpace: 'nowrap'
             }}
           >
             {syncLoading ? '⏳ Đang đồng bộ...' : '🎵 Đồng bộ đơn TikTok (RioHub)'}
           </button>
-        </div>
-
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
-          <input
-            type="file"
-            accept=".csv,.xlsx,.xls"
-            onChange={e => { setImportFile(e.target.files[0]); setImportResult(null); }}
-            style={{ color: 'var(--text-muted)', fontSize: '13px' }}
-          />
-          <button
-            className="btn btn-success"
-            onClick={handleImportFile}
-            disabled={!importFile || importLoading}
-            style={{ minWidth: '120px' }}
-          >
-            {importLoading ? '⏳ Đang import...' : '⬆️ Import Excel Shopee'}
-          </button>
-          {importFile && <span style={{ fontSize: '13px', color: 'var(--text-muted)' }}>{importFile.name}</span>}
-        </div>
-
-        {importResult && (
-          <div style={{
-            marginTop: '10px', padding: '10px 14px', borderRadius: '8px', fontSize: '13px',
-            background: importResult.success ? 'rgba(74, 222, 128, 0.1)' : 'rgba(248, 113, 113, 0.1)',
-            border: `1px solid ${importResult.success ? 'var(--color-success)' : 'var(--color-danger)'}`,
-            color: importResult.success ? 'var(--color-success)' : 'var(--color-danger)'
-          }}>
-            {importResult.success ? '✅ ' : '❌ '}{importResult.message}
-          </div>
-        )}
-      </div>
-
-      {/* Filter and Search */}
-      <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', marginBottom: '16px', alignItems: 'center' }}>
-        <div style={{ flex: '1', minWidth: '220px' }}>
-          <input
-            type="text"
-            className="form-control"
-            placeholder="Tìm kiếm đơn hàng (Mã đơn / Sản phẩm / Zalo ID / Sub ID)..."
-            value={orderSearch}
-            onChange={e => setOrderSearch(e.target.value)}
-          />
-        </div>
-
-        <div style={{ display: 'flex', gap: '6px', background: 'var(--bg-secondary, rgba(0,0,0,0.04))', padding: '4px', borderRadius: '8px' }}>
-          {[
-            { key: 'ALL', label: 'Tất cả sàn' },
-            { key: 'Shopee', label: '🛒 Shopee' },
-            { key: 'TikTok Shop', label: '🎵 TikTok Shop' },
-            { key: 'ShopeeFood', label: '🍔 ShopeeFood' }
-          ].map(p => (
+        ) : platformFilter === 'Shopee' ? (
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
+            <input
+              type="file"
+              accept=".csv,.xlsx,.xls"
+              onChange={e => { setImportFile(e.target.files[0]); setImportResult(null); }}
+              style={{ color: 'var(--text-muted)', fontSize: '13px', maxWidth: '200px' }}
+            />
             <button
-              key={p.key}
-              onClick={() => setPlatformFilter(p.key)}
-              style={{
-                border: 'none',
-                padding: '6px 12px',
-                borderRadius: '6px',
-                fontSize: '12.5px',
-                fontWeight: platformFilter === p.key ? '700' : '500',
-                background: platformFilter === p.key ? 'var(--bg-card, #ffffff)' : 'transparent',
-                color: platformFilter === p.key ? 'var(--text-main, #111)' : 'var(--text-muted, #666)',
-                boxShadow: platformFilter === p.key ? '0 1px 3px rgba(0,0,0,0.1)' : 'none',
-                cursor: 'pointer',
-                transition: 'all 0.2s ease'
-              }}
+              className="btn btn-success"
+              onClick={handleImportFile}
+              disabled={!importFile || importLoading}
+              style={{ minWidth: '120px', whiteSpace: 'nowrap' }}
             >
-              {p.label}
+              {importLoading ? '⏳ Đang import...' : '⬆️ Import Excel Shopee'}
             </button>
-          ))}
-        </div>
+          </div>
+        ) : null}
       </div>
 
-      <div className="table-container">
-        <table style={{ tableLayout: 'fixed', width: '100%' }}>
+      {importResult && (
+        <div style={{
+          marginBottom: '16px', padding: '10px 14px', borderRadius: '8px', fontSize: '13px',
+          background: importResult.success ? 'rgba(74, 222, 128, 0.1)' : 'rgba(248, 113, 113, 0.1)',
+          border: `1px solid ${importResult.success ? 'var(--color-success)' : 'var(--color-danger)'}`,
+          color: importResult.success ? 'var(--color-success)' : 'var(--color-danger)'
+        }}>
+          {importResult.success ? '✅ ' : '❌ '}{importResult.message}
+        </div>
+      )}
+
+      {/* Search Input */}
+      <div className="search-container" style={{ marginBottom: '16px' }}>
+        <input
+          type="text"
+          className="form-control"
+          placeholder={`Tìm kiếm đơn hàng ${platformFilter} (Mã đơn / Sản phẩm / Zalo ID)...`}
+          value={orderSearch}
+          onChange={e => setOrderSearch(e.target.value)}
+        />
+      </div>
+
+      {/* Responsive Orders Table */}
+      <div className="table-container" style={{ overflowX: 'auto' }}>
+        <table style={{ tableLayout: 'fixed', width: '100%', minWidth: '780px' }}>
           <thead>
             <tr>
-              <th style={{ width: '150px' }}>Sàn & Mã đơn</th>
-              <th style={{ width: '230px' }}>Tên sản phẩm</th>
-              <th style={{ width: '160px' }}>Thành viên / Sub ID</th>
-              <th style={{ width: '140px', textAlign: 'right' }}>Tích lũy hoa hồng</th>
+              <th style={{ width: '150px' }}>Mã đơn hàng</th>
+              <th style={{ width: '250px' }}>Tên sản phẩm</th>
+              <th style={{ width: '160px' }}>Thành viên / Zalo ID</th>
+              <th style={{ width: '150px', textAlign: 'right' }}>Tích lũy hoa hồng</th>
               <th style={{ width: '145px' }}>Thời gian</th>
-              <th style={{ width: '100px', textAlign: 'center' }}>Trạng thái</th>
+              <th style={{ width: '110px', textAlign: 'center' }}>Trạng thái</th>
             </tr>
           </thead>
           <tbody>
             {filteredOrders.length === 0 ? (
-              <tr className="empty-row"><td colSpan="6" style={{ textAlign: 'center', color: 'var(--text-muted)' }}>Không tìm thấy đơn hàng nào</td></tr>
+              <tr className="empty-row">
+                <td colSpan="6" style={{ textAlign: 'center', color: 'var(--text-muted)', padding: '32px 16px' }}>
+                  Không có đơn hàng {platformFilter} nào
+                </td>
+              </tr>
             ) : (
               filteredOrders.map(o => {
                 const orderUser = users.find(u => u.zaloId === o.zaloId);
@@ -302,10 +272,7 @@ export default function OrdersTab() {
                 return (
                   <tr key={o.id}>
                     <td data-label="Mã đơn">
-                      <div style={{ marginBottom: '4px' }}>
-                        {getPlatformBadge(o)}
-                      </div>
-                      <code className="order-id-code" style={{ fontSize: '11.5px' }}>{o.orderId}</code>
+                      <code className="order-id-code" style={{ fontSize: '12px' }}>{o.orderId}</code>
                     </td>
                     <td data-label="Sản phẩm" title={o.productName}>
                       <span style={{ fontWeight: '600', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
@@ -316,9 +283,11 @@ export default function OrdersTab() {
                       <div style={{ fontWeight: '600', fontSize: '13.5px' }} title={orderUser ? orderUser.zaloName : (o.zaloId || 'UNKNOWN')}>
                         {orderUser ? orderUser.zaloName : <code style={{ color: 'var(--color-danger)', fontSize: '11px' }}>{o.zaloId || 'UNKNOWN'}</code>}
                       </div>
-                      <div style={{ marginTop: '2px' }}>
-                        <code style={{ fontSize: '11.5px', color: 'var(--text-muted)' }} title={o.subId}>SubID: {o.subId || '-'}</code>
-                      </div>
+                      {o.subId && (
+                        <div style={{ marginTop: '2px' }}>
+                          <code style={{ fontSize: '11.5px', color: 'var(--text-muted)' }} title={o.subId}>{o.subId}</code>
+                        </div>
+                      )}
                     </td>
                     <td data-label="Hoa hồng" style={{ textAlign: 'right' }}>
                       <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap', justifyContent: 'flex-end', fontSize: '12px' }}>
@@ -335,7 +304,7 @@ export default function OrdersTab() {
                     </td>
                     <td data-label="Trạng thái" style={{ textAlign: 'center' }}>
                       <span className={`badge ${o.status === 'Hoàn thành' ? 'badge-completed' : o.status === 'Đã hủy' ? 'badge-cancelled' : 'badge-pending'}`}
-                        style={{ fontSize: '11px', padding: '3px 8px' }}>
+                        style={{ fontSize: '11px', padding: '4px 10px' }}>
                         {o.status}
                       </span>
                     </td>

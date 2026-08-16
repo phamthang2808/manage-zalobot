@@ -5729,84 +5729,198 @@ body.dark .floating-badge {
 }
 
 /* =========================================================
-   FIXED VIEWPORT RUNNING CAT MASCOT HORIZONTAL ANIMATION
+   DYNAMIC RANDOM MONEY RUNNER ANIMATION
    ========================================================= */
 
-@keyframes catRunAcrossViewport {
-  0% {
-    left: -140px;
-    opacity: 0;
-    transform: translateY(0px) scale(0.9) rotate(-3deg);
-  }
-  4% {
-    opacity: 1;
-  }
-  25% {
-    transform: translateY(-8px) scale(1) rotate(3deg);
-  }
-  50% {
-    transform: translateY(0px) scale(1.04) rotate(-3deg);
-  }
-  75% {
-    transform: translateY(-8px) scale(1) rotate(3deg);
-  }
-  96% {
-    opacity: 1;
-  }
-  100% {
-    left: 102vw;
-    opacity: 0;
-    transform: translateY(0px) scale(0.9) rotate(3deg);
-  }
+.running-cat-scene {
+  position: fixed;
+  left: 0;
+  width: 100vw;
+  height: 60px;
+  pointer-events: none;
+  z-index: 9999;
+  overflow: visible;
+  transition: top 0.5s ease;
 }
 
-.running-cat-mascot {
-  position: fixed;
-  top: 92px;
-  left: -140px;
+/* 1. Mascot Runner Waypoint System (Lao nhanh -> Nhảy nhặt tiền -> Lật chạy về) */
+.dash-cat-runner {
+  position: absolute;
+  top: 6px;
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 7px 16px;
-  background: rgba(255, 255, 255, 0.95);
-  border: 2px solid #f97316;
-  border-radius: 30px;
-  box-shadow: 0 10px 25px rgba(249, 115, 22, 0.35), 0 0 15px rgba(249, 115, 22, 0.2);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  z-index: 95;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  background: transparent !important;
+  border: none !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
   pointer-events: none;
-  animation: catRunAcrossViewport 11s linear infinite;
-  animation-delay: 1s;
+  z-index: 10;
+  will-change: left, transform;
+}
+
+.dash-cat-runner.dashing {
+  transform: translateY(-4px) rotate(4deg) scale(1.05);
+}
+
+.dash-cat-runner.jumping {
+  animation: catJumpCollect 0.45s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes catJumpCollect {
+  0% { transform: translateY(0) scale(1) rotate(0deg); }
+  40% { transform: translateY(-18px) scale(1.28) rotate(-12deg); filter: drop-shadow(0 0 14px #f59e0b); }
+  70% { transform: translateY(-8px) scale(1.15) rotate(6deg); }
+  100% { transform: translateY(0) scale(1) rotate(0deg); }
 }
 
 .running-cat-img {
-  width: 32px;
-  height: 32px;
+  width: 48px;
+  height: 48px;
+  border-radius: 0;
+  object-fit: contain;
+  filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.15));
+  transition: transform 0.25s ease;
+}
+
+.cat-motion-sparkle {
+  position: absolute;
+  top: -6px;
+  right: -4px;
+  font-size: 13px;
+  animation: sparkleTwinkle 1.2s infinite ease-in-out alternate;
+}
+
+@keyframes sparkleTwinkle {
+  0% { transform: scale(0.8) rotate(0deg); opacity: 0.7; }
+  100% { transform: scale(1.2) rotate(20deg); opacity: 1; }
+}
+
+
+/* 2. Cấu trúc Dynamic Money Spot */
+.dynamic-money-spot {
+  position: absolute;
+  transition: all 0.3s ease;
+}
+
+.dynamic-money-spot .money-target {
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
-  object-fit: cover;
-  border: 1.5px solid #ea580c;
-  flex-shrink: 0;
+  background: rgba(254, 240, 138, 0.45);
+  border: 1.5px dashed #f59e0b;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 26px;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  animation: targetPulse 1.5s ease-in-out infinite alternate;
 }
 
-.running-cat-text {
-  font-size: 12px;
-  font-weight: 800;
-  color: #ea580c;
+.dynamic-money-spot.collected .money-target {
+  animation: targetCollectedAnim 0.4s ease-out forwards;
+}
+
+@keyframes targetPulse {
+  0% { transform: scale(0.95); filter: drop-shadow(0 0 4px rgba(245, 158, 11, 0.4)); }
+  100% { transform: scale(1.08); filter: drop-shadow(0 0 12px rgba(245, 158, 11, 0.8)); }
+}
+
+@keyframes targetCollectedAnim {
+  0% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.4) rotate(20deg); filter: brightness(1.5) drop-shadow(0 0 18px #f59e0b); }
+  100% { transform: scale(0); opacity: 0; }
+}
+
+.money-ring {
+  position: absolute;
+  inset: -4px;
+  border-radius: 50%;
+  border: 1px solid rgba(234, 179, 8, 0.5);
+  animation: ringPulse 1.8s ease-out infinite;
+}
+
+@keyframes ringPulse {
+  0% { transform: scale(0.9); opacity: 0.8; }
+  100% { transform: scale(1.4); opacity: 0; }
+}
+
+/* 3. Hiệu ứng cộng tiền Nổi lên */
+.money-plus-float {
+  position: absolute;
+  left: -20px;
+  top: -12px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 5px 13px;
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: #ffffff;
+  font-size: 13.5px;
+  font-weight: 900;
+  border-radius: 20px;
+  box-shadow: 0 6px 18px rgba(16, 185, 129, 0.55), 0 0 12px rgba(16, 185, 129, 0.35);
+  letter-spacing: 0.4px;
   white-space: nowrap;
+  animation: dynamicPlusFloat 1.2s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
 }
 
-html[data-theme="dark"] .running-cat-mascot,
-html.dark .running-cat-mascot,
-body.dark .running-cat-mascot {
-  background: rgba(15, 23, 42, 0.95) !important;
-  border-color: #f97316 !important;
-  box-shadow: 0 10px 25px rgba(249, 115, 22, 0.5) !important;
+.money-plus-float.big-reward {
+  background: linear-gradient(135deg, #8b5cf6, #6d28d9) !important;
+  box-shadow: 0 6px 18px rgba(139, 92, 246, 0.65), 0 0 14px rgba(139, 92, 246, 0.45) !important;
+}
+
+@keyframes dynamicPlusFloat {
+  0% { opacity: 0; transform: translateY(12px) scale(0.4); }
+  25% { opacity: 1; transform: translateY(-12px) scale(1.2); }
+  75% { opacity: 1; transform: translateY(-30px) scale(1); }
+  100% { opacity: 0; transform: translateY(-46px) scale(0.85); }
+}
+
+/* 4. Hạt xu nổ khi chạm */
+.coin-burst {
+  position: absolute;
+  left: 10px;
+  top: 10px;
+  font-size: 20px;
+  pointer-events: none;
+}
+
+.coin-burst.burst-left {
+  animation: burstAnimLeft 0.8s ease-out forwards;
+}
+
+.coin-burst.burst-right {
+  animation: burstAnimRight 0.8s ease-out forwards;
+}
+
+@keyframes burstAnimLeft {
+  0% { opacity: 1; transform: translate(0, 0) scale(0.8); }
+  100% { opacity: 0; transform: translate(-36px, -30px) scale(1.4) rotate(-45deg); }
+}
+
+@keyframes burstAnimRight {
+  0% { opacity: 1; transform: translate(0, 0) scale(0.8); }
+  100% { opacity: 0; transform: translate(36px, -30px) scale(1.4) rotate(45deg); }
 }
 
 @media (max-width: 768px) {
-  .running-cat-mascot {
-    top: 72px;
-    padding: 5px 12px;
+  .running-cat-scene {
+    top: 68px;
+  }
+  .dynamic-money-spot .money-target {
+    width: 38px;
+    height: 38px;
+    font-size: 22px;
+  }
+  .money-plus-float {
+    font-size: 11.5px;
+    padding: 3px 9px;
   }
 }
+
+
+

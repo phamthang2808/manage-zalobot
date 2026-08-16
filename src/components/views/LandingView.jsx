@@ -3,6 +3,7 @@ import { useApp } from '../../context/AppContext';
 import MobileBottomNav from '../common/MobileBottomNav';
 import ToastNotification from '../common/ToastNotification';
 import ThemeToggle from '../common/ThemeToggle';
+import RunningCatMascot from '../common/RunningCatMascot';
 
 export default function LandingView() {
   const { view, setView, token, user, isAdmin, theme, toggleTheme, mobileMenuOpen, setMobileMenuOpen, handleLogout, showToast, windowWidth } = useApp();
@@ -23,9 +24,10 @@ export default function LandingView() {
     };
 
     const observer = new IntersectionObserver(observerCallback, observerOptions);
-    const elements = document.querySelectorAll('.reveal-on-scroll');
+    const elements = document.querySelectorAll('.scroll-reveal');
     elements.forEach(el => {
-      if (window.innerWidth <= 768) {
+      const rect = el.getBoundingClientRect();
+      if (rect.top < window.innerHeight && rect.bottom > 0) {
         el.classList.add('revealed');
       } else {
         observer.observe(el);
@@ -40,10 +42,7 @@ export default function LandingView() {
       <ToastNotification />
 
       {/* Global Fixed Running Cat Mascot Screen Animation */}
-      <div className="running-cat-mascot">
-        <img src="/MAIN.png" alt="Running Cat Mascot" className="running-cat-img" />
-        <span className="running-cat-text">🐱 Bot 28Symues Tự Động... ⚡</span>
-      </div>
+      <RunningCatMascot />
 
       <header className="landing-header" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%', padding: '14px 18px', flexWrap: 'nowrap', gap: '8px', boxSizing: 'border-box' }}>
         <div className="landing-logo" style={{ display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 1, minWidth: 0, whiteSpace: 'nowrap' }}>

@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react';
 import ThemeToggle from './components/common/ThemeToggle';
+import RunningCatMascot from './components/common/RunningCatMascot';
 
 const API_URL_ROOT = import.meta.env.PROD ? "" : (import.meta.env.VITE_API_URL || 'http://localhost:8080');
+
 const API_BASE = `${API_URL_ROOT}/api/admin`;
 
 function App() {
@@ -1201,7 +1203,9 @@ function App() {
 
     return (
       <div className="lookup-page-container">
+        <RunningCatMascot />
         <style dangerouslySetInnerHTML={{__html: `
+
           .lookup-page-container {
             min-height: 100vh;
             width: 100%;
@@ -2831,10 +2835,8 @@ function App() {
     return (
       <div className="landing-container">
         {/* Global Fixed Running Cat Mascot Screen Animation */}
-        <div className="running-cat-mascot">
-          <img src="/MAIN.png" alt="Running Cat Mascot" className="running-cat-img" />
-          <span className="running-cat-text">🐱 Bot 28Symues Tự Động... ⚡</span>
-        </div>
+        <RunningCatMascot />
+
 
         <header className="landing-header" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%', padding: '14px 18px', flexWrap: 'nowrap', gap: '8px', boxSizing: 'border-box' }}>
           <div className="landing-logo" style={{ display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 1, minWidth: 0, whiteSpace: 'nowrap' }}>

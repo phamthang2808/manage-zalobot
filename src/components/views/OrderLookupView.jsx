@@ -4,8 +4,10 @@ import { formatMoney, formatDateTime } from '../../utils/formatters';
 import MobileBottomNav from '../common/MobileBottomNav';
 import ToastNotification from '../common/ToastNotification';
 import ThemeToggle from '../common/ThemeToggle';
+import RunningCatMascot from '../common/RunningCatMascot';
 
 export default function OrderLookupView() {
+
   const { view, setView, theme, showToast, API_URL_ROOT, windowWidth } = useApp();
 
   // Search state
@@ -185,7 +187,9 @@ export default function OrderLookupView() {
 
   return (
     <div className="lookup-page-container">
+      <RunningCatMascot />
       <style dangerouslySetInnerHTML={{__html: `
+
         .lookup-page-container { min-height: 100vh; width: 100%; background: var(--bg-main); color: var(--text-main); font-family: 'Inter', system-ui, sans-serif; padding: 16px; display: flex; flex-direction: column; align-items: center; position: relative; overflow: hidden; }
         .lookup-page-container::before { content: ''; position: absolute; top: -15%; left: -10%; width: 700px; height: 700px; background: radial-gradient(circle, rgba(249,115,22,0.1) 0%, rgba(234,88,12,0.03) 40%, transparent 70%); z-index: 1; pointer-events: none; animation: lookupFloatOrb1 8s ease-in-out infinite; }
         .lookup-page-container::after { content: ''; position: absolute; bottom: -20%; right: -10%; width: 600px; height: 600px; background: radial-gradient(circle, rgba(249,115,22,0.08) 0%, rgba(234,88,12,0.02) 40%, transparent 70%); z-index: 1; pointer-events: none; animation: lookupFloatOrb2 10s ease-in-out infinite; }

@@ -41,6 +41,41 @@ const DEMO_ORDERS = [
   }
 ];
 
+// Helper to reliably parse any date into YYYY-MM-DD
+const parseDateToYMD = (val) => {
+  if (!val) return '';
+  if (typeof val === 'string') {
+    // "2026-08-16T10:15:00" or "2026-08-16"
+    if (/^\d{4}-\d{2}-\d{2}/.test(val)) {
+      return val.substring(0, 10);
+    }
+    // "16/08/2026" or "16-08-2026"
+    const match = val.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})/);
+    if (match) {
+      const day = match[1].padStart(2, '0');
+      const month = match[2].padStart(2, '0');
+      const year = match[3];
+      return `${year}-${month}-${day}`;
+    }
+  }
+  if (Array.isArray(val) && val.length >= 3) {
+    const year = val[0];
+    const month = String(val[1]).padStart(2, '0');
+    const day = String(val[2]).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  }
+  try {
+    const d = new Date(val);
+    if (!isNaN(d.getTime())) {
+      const year = d.getFullYear();
+      const month = String(d.getMonth() + 1).padStart(2, '0');
+      const day = String(d.getDate()).padStart(2, '0');
+      return `${year}-${month}-${day}`;
+    }
+  } catch (e) {}
+  return '';
+};
+
 export default function OrdersTab() {
   const { orders, users, token, user, fetchData, showToast, API_URL_ROOT } = useApp();
   const [orderSearch, setOrderSearch] = useState('');
@@ -68,9 +103,15 @@ export default function OrdersTab() {
       const str = formatDate(today);
       setStartDate(str);
       setEndDate(str);
+    } else if (preset === 'YESTERDAY') {
+      const yesterday = new Date();
+      yesterday.setDate(today.getDate() - 1);
+      const str = formatDate(yesterday);
+      setStartDate(str);
+      setEndDate(str);
     } else if (preset === 'LAST_7_DAYS') {
       const past = new Date();
-      past.setDate(today.getDate() - 6);
+      past.setDate(today.getDate() - 7);
       setStartDate(formatDate(past));
       setEndDate(formatDate(today));
     } else if (preset === 'THIS_MONTH') {
@@ -104,12 +145,14 @@ export default function OrdersTab() {
       if (!matchKeyword) return false;
     }
 
-    // 3. Date Range Filter
+    // 3. Date Range Filter (Works on ALL platforms!)
     if (startDate || endDate) {
-      if (!o.purchaseTime) return false;
-      const orderDateStr = o.purchaseTime.substring(0, 10); // YYYY-MM-DD
-      if (startDate && orderDateStr < startDate) return false;
-      if (endDate && orderDateStr > endDate) return false;
+      const rawDate = o.purchaseTime || o.orderDate || o.createdTime || o.completeTime;
+      const orderDateStr = parseDateToYMD(rawDate);
+      if (orderDateStr) {
+        if (startDate && orderDateStr < startDate) return false;
+        if (endDate && orderDateStr > endDate) return false;
+      }
     }
 
     return true;
@@ -155,9 +198,9 @@ export default function OrdersTab() {
           WebkitOverflowScrolling: 'touch'
         }}>
           {[
-            { key: 'Shopee', label: '🛒 Shopee', count: combinedOrders.filter(o => !o.platform || o.platform === 'Shopee').length },
-            { key: 'TikTok Shop', label: '🎵 TikTok Shop', count: combinedOrders.filter(o => o.platform === 'TikTok Shop' || o.orderId?.startsWith('579')).length },
-            { key: 'ShopeeFood', label: '🍔 ShopeeFood', count: combinedOrders.filter(o => o.platform === 'ShopeeFood' || o.orderId?.startsWith('SPF')).length }
+            { key: 'Shopee', iconClass: 'fa-solid fa-bag-shopping', label: 'Shopee', count: combinedOrders.filter(o => !o.platform || o.platform === 'Shopee').length },
+            { key: 'TikTok Shop', iconClass: 'fa-brands fa-tiktok', label: 'TikTok Shop', count: combinedOrders.filter(o => o.platform === 'TikTok Shop' || o.orderId?.startsWith('579')).length },
+            { key: 'ShopeeFood', iconClass: 'fa-solid fa-utensils', label: 'ShopeeFood', count: combinedOrders.filter(o => o.platform === 'ShopeeFood' || o.orderId?.startsWith('SPF')).length }
           ].map(tab => {
             const isActive = platformFilter === tab.key;
             return (
@@ -183,6 +226,7 @@ export default function OrdersTab() {
                   gap: '8px'
                 }}
               >
+                <i className={tab.iconClass} style={{ fontSize: '14px' }}></i>
                 <span>{tab.label}</span>
                 <span style={{
                   fontSize: '11px',
@@ -309,7 +353,7 @@ export default function OrdersTab() {
                   padding: '2px 4px'
                 }}
               >
-                ✕
+                <i className="fa-solid fa-xmark"></i>
               </button>
             )}
           </div>
@@ -371,11 +415,12 @@ export default function OrdersTab() {
           paddingBottom: '2px',
           WebkitOverflowScrolling: 'touch'
         }}>
-          <span style={{ fontSize: '12px', color: 'var(--text-muted, #94a3b8)', fontWeight: '600', marginRight: '4px', whiteSpace: 'nowrap' }}>
-            📅 Lọc nhanh:
+          <span style={{ fontSize: '12px', color: 'var(--text-muted, #94a3b8)', fontWeight: '600', marginRight: '4px', whiteSpace: 'nowrap', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+            <i className="fa-regular fa-calendar-days" style={{ color: 'var(--color-primary, #ea580c)' }}></i> Lọc nhanh:
           </span>
           {[
             { key: 'ALL', label: 'Tất cả ngày' },
+            { key: 'YESTERDAY', label: 'Hôm qua' },
             { key: 'TODAY', label: 'Hôm nay' },
             { key: 'LAST_7_DAYS', label: '7 ngày qua' },
             { key: 'THIS_MONTH', label: 'Tháng này' }
@@ -414,10 +459,13 @@ export default function OrdersTab() {
                 fontWeight: '600',
                 cursor: 'pointer',
                 marginLeft: '6px',
-                whiteSpace: 'nowrap'
+                whiteSpace: 'nowrap',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '4px'
               }}
             >
-              🔄 Xóa lọc ngày
+              <i className="fa-solid fa-rotate-left"></i> Xóa lọc ngày
             </button>
           )}
         </div>
@@ -440,7 +488,16 @@ export default function OrdersTab() {
             {filteredOrders.length === 0 ? (
               <tr className="empty-row">
                 <td colSpan="6" style={{ textAlign: 'center', color: 'var(--text-muted)', padding: '32px 16px' }}>
-                  Không có đơn hàng {platformFilter} nào phù hợp điều kiện tìm kiếm
+                  {activeDatePreset === 'TODAY' ? (
+                    <div>
+                      <div>⚠️ Báo cáo Shopee đối soát trễ 1 ngày (đơn mới nhất đến ngày <strong>Hôm qua</strong>).</div>
+                      <div style={{ fontSize: '13px', marginTop: '8px', color: 'var(--color-primary, #ea580c)', cursor: 'pointer', fontWeight: '700' }} onClick={() => applyPreset('YESTERDAY')}>
+                        👉 Bấm vào đây để xem đơn <strong>Hôm qua ({(() => { const y = new Date(); y.setDate(y.getDate() - 1); return `${String(y.getDate()).padStart(2,'0')}/${String(y.getMonth()+1).padStart(2,'0')}`; })()})</strong> ({combinedOrders.filter(o => !o.platform || o.platform === platformFilter).length} đơn)
+                      </div>
+                    </div>
+                  ) : (
+                    `Không có đơn hàng ${platformFilter} nào phù hợp điều kiện tìm kiếm`
+                  )}
                 </td>
               </tr>
             ) : (

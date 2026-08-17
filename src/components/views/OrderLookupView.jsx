@@ -56,17 +56,15 @@ export default function OrderLookupView() {
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const urlToken = params.get('token');
-    const urlSearchType = urlToken ? 'ZALO_ID' : (params.get('searchType') || 'ZALO_ID');
-    const urlQuery = urlToken || params.get('query') || params.get('q') || params.get('zaloId');
+    const urlQuery = urlToken || params.get('query') || params.get('q') || params.get('orderId') || params.get('zaloId');
     const urlStartDate = params.get('startDate');
     const urlEndDate = params.get('endDate');
     if (urlQuery) {
-      if (urlSearchType === 'ORDER_ID') setLookupQuery(urlQuery);
-      else setLookupQuery('');
-      setLookupSearchType(urlSearchType);
+      setLookupQuery(urlQuery);
+      setLookupSearchType('ORDER_ID');
       if (urlStartDate) setLookupStartDate(urlStartDate);
       if (urlEndDate) setLookupEndDate(urlEndDate);
-      handlePublicLookup(urlQuery, urlSearchType);
+      handlePublicLookup(urlQuery, 'ORDER_ID');
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -287,38 +285,27 @@ export default function OrderLookupView() {
       {/* Search Panel */}
       <div className="lookup-card">
         <h2 className="lookup-title">
-          <i className="fa-thin fa-magnifying-glass" style={{ marginRight: '8px' }}></i> Tra Cứu Hoa Hồng & Đơn Hàng
+          <i className="fa-thin fa-magnifying-glass" style={{ marginRight: '8px' }}></i> Tra Cứu Đơn Hàng Shopee & TikTok Shop
         </h2>
-        <p className="lookup-subtitle">Tra cứu hoa hồng tích lũy và danh sách đơn hàng Shopee & TikTok Shop</p>
-
-        <div className="lookup-tabs" style={{ marginBottom: '16px' }}>
-          <button className={`lookup-tab ${lookupSearchType === 'ZALO_ID' ? 'active' : ''}`} onClick={() => setLookupSearchType('ZALO_ID')}>
-            🆔 Tra bằng Zalo ID
-          </button>
-          <button className={`lookup-tab ${lookupSearchType === 'ORDER_ID' ? 'active' : ''}`} onClick={() => setLookupSearchType('ORDER_ID')}>
-            🛍️ Tra bằng Mã Đơn
-          </button>
-        </div>
+        <p className="lookup-subtitle">Nhập mã đơn hàng Shopee hoặc TikTok Shop để kiểm tra trạng thái và hoa hồng</p>
 
         <div className="lookup-input-group">
-          <label className="lookup-label">
-            {lookupSearchType === 'ZALO_ID' ? 'Nhập Zalo ID của bạn' : 'Nhập mã đơn hàng (Shopee / TikTok Shop)'}
-          </label>
+          <label className="lookup-label">Mã đơn hàng (Shopee / TikTok Shop)</label>
           <input type="text" className="lookup-input" value={lookupQuery} onChange={e => setLookupQuery(e.target.value)}
-            placeholder={lookupSearchType === 'ZALO_ID' ? 'Ví dụ: 5818208752853769940...' : 'Ví dụ: 585592697583797863...'}
-            onKeyDown={e => e.key === 'Enter' && handlePublicLookup(null, lookupSearchType)} />
+            placeholder="Ví dụ: 260606C8W7YARK (Shopee) hoặc 585592697583797863 (TikTok)..."
+            onKeyDown={e => e.key === 'Enter' && handlePublicLookup(null, 'ORDER_ID')} />
         </div>
 
-        <button className="lookup-btn" onClick={() => handlePublicLookup(null, lookupSearchType)} disabled={lookupLoading}>
-          {lookupLoading ? (<><div className="lookup-spinner"></div>Đang tìm kiếm...</>) : 'Tra cứu ngay'}
+        <button className="lookup-btn" onClick={() => handlePublicLookup(null, 'ORDER_ID')} disabled={lookupLoading}>
+          {lookupLoading ? (<><div className="lookup-spinner"></div>Đang tìm kiếm...</>) : 'Tra cứu đơn hàng'}
         </button>
 
         {lookupRecentSearches.length > 0 && (
           <div className="recent-searches">
-            <span>Lịch sử:</span>
+            <span>Lịch sử tra cứu:</span>
             {lookupRecentSearches.map((item, idx) => (
-              <div key={idx} className="recent-tag" onClick={() => { setLookupQuery(item.query); setLookupSearchType(item.searchType); handlePublicLookup(item.query, item.searchType); }}>
-                <span>{item.searchType === 'ZALO_ID' ? '🆔' : '🛒'} {item.query.length > 15 ? item.query.substring(0, 15) + '...' : item.query}</span>
+              <div key={idx} className="recent-tag" onClick={() => { setLookupQuery(item.query); handlePublicLookup(item.query, 'ORDER_ID'); }}>
+                <span>🛒 {item.query.length > 18 ? item.query.substring(0, 18) + '...' : item.query}</span>
                 <span className="recent-close" onClick={e => removeRecentSearch(e, idx)}>&times;</span>
               </div>
             ))}

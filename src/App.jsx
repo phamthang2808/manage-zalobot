@@ -1340,22 +1340,33 @@ function App() {
             display: flex;
             background: var(--bg-main);
             border: 1.5px solid var(--border-color);
-            padding: 4px;
+            padding: 3px;
             border-radius: 10px;
             margin-bottom: 16px;
+            gap: 2px;
+            width: 100%;
+            box-sizing: border-box;
           }
           .lookup-tab {
             flex: 1;
+            min-width: 0;
             text-align: center;
-            padding: 10px;
-            font-size: 13.5px;
+            padding: 8px 4px;
+            font-size: 12px;
             font-weight: 700;
-            border-radius: 8px;
+            border-radius: 7px;
             cursor: pointer;
             background: transparent;
             border: none;
             color: var(--text-muted);
             transition: all 0.2s ease;
+            white-space: nowrap;
+          }
+          @media (max-width: 480px) {
+            .lookup-tab {
+              font-size: 11.5px;
+              padding: 7px 2px;
+            }
           }
           .lookup-tab:hover {
             color: var(--text-bright);
@@ -2023,7 +2034,7 @@ function App() {
                     <div className="lookup-tabs" style={{ marginBottom: 0 }}>
                       <button className={`lookup-tab ${platformFilter === 'ALL' ? 'active' : ''}`} onClick={() => setPlatformFilter('ALL')}>Tất cả ({lookupResult.orders.length})</button>
                       <button className={`lookup-tab ${platformFilter === 'Shopee' ? 'active' : ''}`} onClick={() => setPlatformFilter('Shopee')}>🟠 Shopee ({lookupResult.orders.filter(o => !o.platform || o.platform === 'Shopee').length})</button>
-                      <button className={`lookup-tab ${platformFilter === 'TikTok Shop' ? 'active' : ''}`} onClick={() => setPlatformFilter('TikTok Shop')}>🎵 TikTok Shop ({lookupResult.orders.filter(o => o.platform === 'TikTok Shop').length})</button>
+                      <button className={`lookup-tab ${platformFilter === 'TikTok Shop' ? 'active' : ''}`} onClick={() => setPlatformFilter('TikTok Shop')}>🎵 TikTok ({lookupResult.orders.filter(o => o.platform === 'TikTok Shop').length})</button>
                     </div>
                     <input 
                       type="text" 
@@ -2046,20 +2057,7 @@ function App() {
                   <div key={o.id} className="order-card-item">
                     <div className="order-card-header">
                       <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
-                        <span style={{
-                          fontSize: '11px',
-                          padding: '2px 8px',
-                          borderRadius: '12px',
-                          fontWeight: '700',
-                          background: o.platform === 'TikTok Shop' ? 'rgba(0,0,0,0.06)' : 'rgba(234,88,12,0.1)',
-                          color: o.platform === 'TikTok Shop' ? 'var(--text-bright)' : '#ea580c',
-                          border: `1px solid ${o.platform === 'TikTok Shop' ? 'var(--border-color)' : '#fed7aa'}`,
-                          display: 'inline-flex',
-                          alignItems: 'center',
-                          gap: '4px'
-                        }}>
-                          {o.platform === 'TikTok Shop' ? '🎵 TikTok Shop' : '🟠 Shopee'}
-                        </span>
+                        <i className="fa-regular fa-calendar" style={{ color: '#64748b', fontSize: '13px' }}></i>
                         <span>{formatDateTime(o.purchaseTime)}</span>
                       </span>
                       <span>Mã đơn: <span className="order-id-badge">{o.orderId}</span></span>

@@ -200,7 +200,13 @@ export function AppProvider({ children }) {
   };
 
   useEffect(() => {
-    if (token && user && view === 'admin') fetchData(token, user);
+    if (token && user && view === 'admin') {
+      fetchData(token, user);
+      const intervalId = setInterval(() => {
+        fetchData(token, user);
+      }, 60000); // Tự động làm mới dữ liệu 1 phút / lần
+      return () => clearInterval(intervalId);
+    }
   }, [token, user, view]);
 
   // SEO document title

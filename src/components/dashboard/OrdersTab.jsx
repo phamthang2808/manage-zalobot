@@ -2,45 +2,6 @@ import { useState } from 'react';
 import { useApp } from '../../context/AppContext';
 import { formatDateTime, formatMoney } from '../../utils/formatters';
 
-const DEMO_ORDERS = [
-  {
-    id: 101,
-    orderId: '57901289410928172',
-    productName: 'Áo thun Form Rộng Unisex TikTok Shop Rio',
-    zaloId: '27765123456789',
-    subId: 'PhamThang',
-    platform: 'TikTok Shop',
-    commission: 55720,
-    status: 'Hoàn thành',
-    purchaseTime: '2026-08-16T10:15:00',
-    completeTime: '2026-08-16T12:00:00'
-  },
-  {
-    id: 102,
-    orderId: '57908124912049182',
-    productName: 'Tai Nghe Bluetooth Không Dây TikTok Shop Official',
-    zaloId: '27765123456789',
-    subId: 'PhamThang',
-    platform: 'TikTok Shop',
-    commission: 32000,
-    status: 'Chờ xử lý',
-    purchaseTime: '2026-08-16T13:40:00',
-    completeTime: null
-  },
-  {
-    id: 103,
-    orderId: 'SPF9182371982',
-    productName: 'Trà Sữa Chân Châu Đường Đen ShopeeFood',
-    zaloId: '27765123456789',
-    subId: 'PhamThang',
-    platform: 'ShopeeFood',
-    commission: 12000,
-    status: 'Hoàn thành',
-    purchaseTime: '2026-08-16T11:30:00',
-    completeTime: '2026-08-16T11:55:00'
-  }
-];
-
 // Helper to reliably parse any date into YYYY-MM-DD
 const parseDateToYMD = (val) => {
   if (!val) return '';
@@ -81,13 +42,8 @@ export default function OrdersTab() {
   const [syncLoading, setSyncLoading] = useState(false);
   const [activeDatePreset, setActiveDatePreset] = useState('ALL');
 
-  // Combine real backend orders with DEMO orders for missing platforms
-  const combinedOrders = [...(orders || [])];
-  DEMO_ORDERS.forEach(demo => {
-    if (!combinedOrders.some(o => o.orderId === demo.orderId)) {
-      combinedOrders.push(demo);
-    }
-  });
+  // Real backend orders
+  const combinedOrders = orders || [];
 
   // Dynamic presets based on platform (Shopee removes "Hôm nay", others show "Hôm nay" then "Hôm qua")
   const datePresets = platformFilter === 'Shopee' ? [
@@ -408,7 +364,7 @@ export default function OrdersTab() {
               </tr>
             ) : (
               filteredOrders.map(o => {
-                const orderUser = users.find(u => u.zaloId === o.zaloId);
+                const orderUser = users.find(u => u.zaloId === o.zaloId || u.zaloId === o.subId);
                 const afterTax = (o.commission || 0) * 0.9;
                 const afterDeduction = afterTax * 0.8;
                 return (

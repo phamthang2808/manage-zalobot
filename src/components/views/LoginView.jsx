@@ -127,8 +127,8 @@ export default function LoginView() {
     <div className="login-page-split">
       <style dangerouslySetInnerHTML={{__html: `
         .login-page-split {
-          min-height: 100vh; width: 100%; background: var(--bg-main);
-          display: flex; flex-direction: column; position: relative;
+          min-height: 100vh; min-height: 100dvh; width: 100%; background: var(--bg-main);
+          display: flex; flex-direction: column; justify-content: space-between; position: relative;
           overflow-y: auto; box-sizing: border-box; color: var(--text-main);
         }
         .login-page-split::before {
@@ -145,7 +145,7 @@ export default function LoginView() {
         }
         .login-split-header {
           height: 70px; display: flex; align-items: center; justify-content: space-between;
-          padding: 0 40px; z-index: 10; width: 100%; box-sizing: border-box;
+          padding: 0 40px; z-index: 10; width: 100%; box-sizing: border-box; flex-shrink: 0;
         }
         .login-split-logo { display: flex; align-items: center; gap: 12px; }
         .login-split-logo img { width: 36px; height: 36px; border-radius: 50%; border: 1px solid rgba(249,115,22,0.35); object-fit: cover; }
@@ -159,7 +159,7 @@ export default function LoginView() {
         .login-split-nav .btn-back:hover { background: #fff7ed; border-color: #f97316; color: #ea580c; }
         .login-split-content {
           flex: 1; display: flex; align-items: center; justify-content: space-between;
-          padding: 0 80px; max-width: 1200px; margin: 0 auto; width: 100%; gap: 60px; z-index: 10; box-sizing: border-box;
+          padding: 24px 80px 70px; max-width: 1200px; margin: 0 auto; width: 100%; gap: 60px; z-index: 10; box-sizing: border-box;
         }
         .login-split-left { flex: 1.1; text-align: left; }
         .login-split-left .badge {
@@ -172,51 +172,51 @@ export default function LoginView() {
         .login-split-right { flex: 0.9; display: flex; justify-content: flex-end; width: 100%; }
         .login-split-card {
           background: var(--bg-card); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
-          border: 1px solid var(--border-color); border-radius: 24px;
-          width: 100%; max-width: 440px; padding: 28px 32px;
+          border: 1.5px solid var(--border-color); border-radius: 24px;
+          width: 100%; max-width: 440px; padding: 32px 36px;
           box-shadow: 0 20px 50px -10px rgba(0,0,0,0.12); box-sizing: border-box;
         }
         .login-split-card h2 { font-family: var(--font-heading); font-size: 28px; font-weight: 800; color: var(--text-bright); margin: 0 0 8px; text-align: left; }
-        .login-split-card .subtitle { font-size: 13.5px; color: var(--text-muted); margin-bottom: 16px; text-align: left; }
-        .form-label { display: block; text-align: left; font-size: 13px; font-weight: 600; color: var(--text-main); margin-bottom: 8px; }
-        .form-input-wrapper { position: relative; margin-bottom: 10px; }
+        .login-split-card .subtitle { font-size: 13.5px; color: var(--text-muted); margin-bottom: 20px; text-align: left; }
+        .form-label { display: block; text-align: left; font-size: 13px; font-weight: 700; color: var(--text-main); margin-bottom: 8px; }
+        .form-input-wrapper { position: relative; margin-bottom: 12px; }
         .form-input {
-          width: 100%; padding: 13px 16px; background: var(--bg-main); border: 1px solid var(--border-color);
-          border-radius: 12px; color: var(--text-main); font-size: 14.5px;
+          width: 100%; padding: 14px 16px; background: var(--bg-main); border: 1.5px solid var(--border-color);
+          border-radius: 14px; color: var(--text-main); font-size: 15px; font-weight: 600;
           transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1); box-sizing: border-box;
         }
         .form-input:focus { outline: none; border-color: #f97316; background: var(--bg-card); box-shadow: 0 0 16px rgba(249,115,22,0.2); }
         .cf-turnstile-sim {
-          background: var(--bg-main); border: 1px solid var(--border-color); border-radius: 6px;
-          padding: 10px 14px; display: flex; align-items: center; justify-content: space-between;
-          min-height: 58px; margin: 16px 0 20px; box-sizing: border-box; color: var(--text-main); user-select: none;
+          background: var(--bg-main); border: 1.5px solid var(--border-color); border-radius: 12px;
+          padding: 12px 16px; display: flex; align-items: center; justify-content: space-between;
+          min-height: 60px; margin: 18px 0 24px; box-sizing: border-box; color: var(--text-main); user-select: none;
         }
-        .cf-verifying { display: flex; align-items: center; gap: 10px; width: 100%; font-size: 13px; color: var(--text-muted); }
+        .cf-verifying { display: flex; align-items: center; gap: 10px; width: 100%; font-size: 13.5px; color: var(--text-muted); }
         .cf-spinner { width: 20px; height: 20px; border: 2px solid rgba(0,0,0,0.1); border-top-color: #f97316; border-radius: 50%; animation: cfSpin 0.8s linear infinite; flex-shrink: 0; }
         @keyframes cfSpin { to { transform: rotate(360deg); } }
         .cf-success { display: flex; align-items: center; justify-content: space-between; width: 100%; }
         .cf-success-left { display: flex; align-items: center; gap: 10px; }
         .cf-check-circle { width: 24px; height: 24px; background: #22c55e; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 12px; }
-        .cf-success-left span { font-size: 14px; font-weight: 600; color: var(--text-main); }
+        .cf-success-left span { font-size: 14px; font-weight: 700; color: var(--text-main); }
         .cf-success-right { display: flex; flex-direction: column; align-items: flex-end; gap: 1px; line-height: 1; }
         .cf-cloud-svg { width: 20px; height: 12px; }
         .cf-brand-text { font-size: 7px; font-weight: 800; letter-spacing: 0.8px; color: var(--text-muted); }
         .cf-links { display: flex; gap: 6px; margin-top: 1px; }
         .cf-links a { font-size: 8px; color: var(--text-muted); text-decoration: underline; }
-        .login-split-footer { text-align: center; margin-top: 24px; font-size: 13.5px; color: var(--text-muted); }
-        .login-split-footer a { color: #ea580c; text-decoration: underline; }
+        .login-split-footer { text-align: center; margin-top: 24px; font-size: 13.5px; color: var(--text-muted); font-weight: 600; }
+        .login-split-footer a { color: #ea580c; text-decoration: underline; font-weight: 700; }
         .login-error-msg {
           background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.3); border-radius: 10px;
           padding: 12px 14px; font-size: 13.5px; color: #ef4444; margin-bottom: 16px; text-align: left;
         }
         .modal-login-btn {
-          width: 100%; padding: 13px 20px; background: linear-gradient(135deg, #f97316, #ea580c);
-          color: #fff; border: none; border-radius: 12px; font-size: 15px; font-weight: 700;
+          width: 100%; padding: 15px 20px; background: linear-gradient(135deg, #f97316, #ea580c);
+          color: #fff; border: none; border-radius: 14px; font-size: 16px; font-weight: 800;
           cursor: pointer; transition: all 0.3s; letter-spacing: 0.3px; box-shadow: 0 6px 20px rgba(249,115,22,0.35);
         }
         .modal-login-btn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 10px 28px rgba(249,115,22,0.45); }
         .modal-login-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
-        .modal-divider { display: flex; align-items: center; gap: 12px; margin: 20px 0; color: var(--text-muted); font-size: 13px; font-weight: 500; }
+        .modal-divider { display: flex; align-items: center; gap: 12px; margin: 24px 0; color: var(--text-muted); font-size: 13px; font-weight: 600; }
         .modal-divider::before, .modal-divider::after { content: ''; flex: 1; height: 1px; background: var(--border-color); }
         @media (max-width: 992px) {
           .login-split-header { padding: 12px 16px; height: auto; flex-wrap: nowrap; gap: 8px; }
@@ -225,19 +225,21 @@ export default function LoginView() {
           .login-split-logo span { font-size: 16px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
           .login-split-nav { gap: 10px; flex-shrink: 0; }
           .login-split-nav .btn-back { padding: 6px 12px; font-size: 12.5px; white-space: nowrap; }
-          .login-split-content { flex-direction: column; padding: 20px 20px 60px; gap: 30px; justify-content: center; flex: 1; }
-          .login-split-left { text-align: center; max-width: 100%; }
-          .login-split-left h1 { font-size: 28px; margin-bottom: 12px; }
-          .login-split-right { justify-content: center; width: 100%; }
-          .login-split-card { padding: 24px 20px; width: 100%; max-width: 100%; }
+          .login-split-content {
+            flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center;
+            padding: 16px 16px 80px; gap: 0; max-width: 100%; box-sizing: border-box; margin: auto 0;
+          }
+          .login-split-left { display: none; }
+          .login-split-right { justify-content: center; width: 100%; max-width: 440px; margin: auto 0; }
+          .login-split-card { padding: 32px 24px; width: 100%; max-width: 100%; box-shadow: 0 15px 40px -5px rgba(0,0,0,0.15); }
         }
         @media (max-width: 480px) {
           .login-split-header { padding: 10px 12px !important; }
           .login-split-logo img { width: 26px !important; height: 26px !important; }
           .login-split-logo span { font-size: 14px !important; }
           .login-split-nav .btn-back { padding: 4px 10px !important; font-size: 11.5px !important; }
-          .login-split-left h1 { font-size: 24px; }
-          .login-split-card h2 { font-size: 22px; }
+          .login-split-card h2 { font-size: 24px; }
+          .login-split-card { padding: 28px 20px; }
         }
       `}} />
 

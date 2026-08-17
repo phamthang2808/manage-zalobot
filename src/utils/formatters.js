@@ -11,20 +11,65 @@ export const formatMoney = (val) => {
 /**
  * Format chuỗi ngày giờ thành "dd/MM HH:mm"
  */
-export const formatDateTime = (dateStr) => {
-  if (!dateStr) return '-';
+export const formatDateTime = (val) => {
+  if (!val) return '-';
   try {
-    const d = new Date(dateStr);
-    if (isNaN(d.getTime())) {
-      return dateStr.replace('T', ' ').substring(0, 16);
+    // 1. Array from Jackson LocalDateTime serialization: [2026, 8, 15, 12, 27, 2]
+    if (Array.isArray(val)) {
+      const [year, month, day, hour = 0, minute = 0] = val;
+      const dStr = String(day).padStart(2, '0');
+      const mStr = String(month).padStart(2, '0');
+      const hStr = String(hour).padStart(2, '0');
+      const minStr = String(minute).padStart(2, '0');
+      return `${dStr}/${mStr} ${hStr}:${minStr}`;
     }
-    const day = String(d.getDate()).padStart(2, '0');
-    const month = String(d.getMonth() + 1).padStart(2, '0');
-    const hours = String(d.getHours()).padStart(2, '0');
-    const minutes = String(d.getMinutes()).padStart(2, '0');
-    return `${day}/${month} ${hours}:${minutes}`;
+
+    const strVal = String(val).trim();
+
+    // 2. Comma separated numbers: "2026,8,15,12,27,2"
+    if (strVal.includes(',')) {
+      const parts = strVal.split(',').map(n => parseInt(n.trim(), 10));
+      if (parts.length >= 3 && !parts.some(isNaN)) {
+        const [year, month, day, hour = 0, minute = 0] = parts;
+        const dStr = String(day).padStart(2, '0');
+        const mStr = String(month).padStart(2, '0');
+        const hStr = String(hour).padStart(2, '0');
+        const minStr = String(minute).padStart(2, '0');
+        return `${dStr}/${mStr} ${hStr}:${minStr}`;
+      }
+    }
+
+    // 3. Raw concatenated digits e.g. "202681512272" or "20268684323"
+    if (/^\d{10,14}$/.test(strVal) && strVal.startsWith('2026')) {
+      const year = strVal.substring(0, 4);
+      const rest = strVal.substring(4);
+      if (rest.startsWith('8')) {
+        const month = '08';
+        const dayRest = rest.substring(1);
+        if (dayRest.length >= 6) {
+          const day = dayRest.length === 7 ? dayRest.substring(0, 2) : '0' + dayRest.substring(0, 1);
+          const timeRest = dayRest.length === 7 ? dayRest.substring(2) : dayRest.substring(1);
+          const hour = timeRest.length >= 4 ? timeRest.substring(0, 2) : '0' + timeRest.substring(0, 1);
+          const minRest = timeRest.length >= 4 ? timeRest.substring(2) : timeRest.substring(1);
+          const min = minRest.substring(0, 2);
+          return `${day}/${month} ${hour}:${min}`;
+        }
+      }
+    }
+
+    // 4. Standard Date parsing (ISO string or Timestamp)
+    const d = new Date(val);
+    if (!isNaN(d.getTime())) {
+      const day = String(d.getDate()).padStart(2, '0');
+      const month = String(d.getMonth() + 1).padStart(2, '0');
+      const hours = String(d.getHours()).padStart(2, '0');
+      const minutes = String(d.getMinutes()).padStart(2, '0');
+      return `${day}/${month} ${hours}:${minutes}`;
+    }
+
+    return strVal.replace('T', ' ').substring(0, 16);
   } catch (e) {
-    return dateStr;
+    return String(val);
   }
 };
 

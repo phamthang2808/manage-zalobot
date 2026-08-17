@@ -287,26 +287,38 @@ export default function OrderLookupView() {
       {/* Search Panel */}
       <div className="lookup-card">
         <h2 className="lookup-title">
-          <i className="fa-thin fa-magnifying-glass" style={{ marginRight: '8px' }}></i> Tra Cứu Đơn Hàng Shopee
+          <i className="fa-thin fa-magnifying-glass" style={{ marginRight: '8px' }}></i> Tra Cứu Hoa Hồng & Đơn Hàng
         </h2>
-        <p className="lookup-subtitle">Nhập mã đơn hàng để kiểm tra trạng thái và hoa hồng</p>
+        <p className="lookup-subtitle">Tra cứu hoa hồng tích lũy và danh sách đơn hàng Shopee & TikTok Shop</p>
 
-        <div className="lookup-input-group">
-          <label className="lookup-label">Nhập mã đơn hàng (Shopee)</label>
-          <input type="text" className="lookup-input" value={lookupQuery} onChange={e => setLookupQuery(e.target.value)}
-            placeholder="Ví dụ: 260606C8W7YARK..." onKeyDown={e => e.key === 'Enter' && handlePublicLookup(null, 'ORDER_ID')} />
+        <div className="lookup-tabs" style={{ marginBottom: '16px' }}>
+          <button className={`lookup-tab ${lookupSearchType === 'ZALO_ID' ? 'active' : ''}`} onClick={() => setLookupSearchType('ZALO_ID')}>
+            🆔 Tra bằng Zalo ID
+          </button>
+          <button className={`lookup-tab ${lookupSearchType === 'ORDER_ID' ? 'active' : ''}`} onClick={() => setLookupSearchType('ORDER_ID')}>
+            🛍️ Tra bằng Mã Đơn
+          </button>
         </div>
 
-        <button className="lookup-btn" onClick={() => handlePublicLookup(null, 'ORDER_ID')} disabled={lookupLoading}>
+        <div className="lookup-input-group">
+          <label className="lookup-label">
+            {lookupSearchType === 'ZALO_ID' ? 'Nhập Zalo ID của bạn' : 'Nhập mã đơn hàng (Shopee / TikTok Shop)'}
+          </label>
+          <input type="text" className="lookup-input" value={lookupQuery} onChange={e => setLookupQuery(e.target.value)}
+            placeholder={lookupSearchType === 'ZALO_ID' ? 'Ví dụ: 5818208752853769940...' : 'Ví dụ: 585592697583797863...'}
+            onKeyDown={e => e.key === 'Enter' && handlePublicLookup(null, lookupSearchType)} />
+        </div>
+
+        <button className="lookup-btn" onClick={() => handlePublicLookup(null, lookupSearchType)} disabled={lookupLoading}>
           {lookupLoading ? (<><div className="lookup-spinner"></div>Đang tìm kiếm...</>) : 'Tra cứu ngay'}
         </button>
 
-        {lookupRecentSearches.filter(item => item.searchType === 'ORDER_ID').length > 0 && (
+        {lookupRecentSearches.length > 0 && (
           <div className="recent-searches">
             <span>Lịch sử:</span>
-            {lookupRecentSearches.filter(item => item.searchType === 'ORDER_ID').map((item, idx) => (
+            {lookupRecentSearches.map((item, idx) => (
               <div key={idx} className="recent-tag" onClick={() => { setLookupQuery(item.query); setLookupSearchType(item.searchType); handlePublicLookup(item.query, item.searchType); }}>
-                <span>🛒 {item.query.length > 15 ? item.query.substring(0, 15) + '...' : item.query}</span>
+                <span>{item.searchType === 'ZALO_ID' ? '🆔' : '🛒'} {item.query.length > 15 ? item.query.substring(0, 15) + '...' : item.query}</span>
                 <span className="recent-close" onClick={e => removeRecentSearch(e, idx)}>&times;</span>
               </div>
             ))}
@@ -435,7 +447,7 @@ export default function OrderLookupView() {
               <h3 className="stats-section-title" style={{ marginBottom: 0, width: '100%', fontSize: '16px', fontWeight: '700', color: 'var(--text-bright)' }}>
                 {lookupSearchType === 'ORDER_ID' ? '🛒 Kết Quả Tra Cứu Đơn Hàng' : `🛒 Đơn hàng đã mua (${searchedOrders.length})`}
               </h3>
-              {lookupSearchType !== 'ORDER_ID' && lookupResult && lookupResult.orders && (
+              {lookupResult && lookupResult.orders && lookupResult.orders.length > 0 && (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', width: '100%', marginBottom: '4px' }}>
                   <div className="lookup-tabs" style={{ marginBottom: 0 }}>
                     <button className={`lookup-tab ${platformFilter === 'ALL' ? 'active' : ''}`} onClick={() => setPlatformFilter('ALL')}>Tất cả ({lookupResult.orders.length})</button>

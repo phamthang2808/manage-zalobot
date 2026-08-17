@@ -205,6 +205,12 @@ export default function LoginView() {
         .cf-links a { font-size: 8px; color: var(--text-muted); text-decoration: underline; }
         .login-split-footer { text-align: center; margin-top: 24px; font-size: 13.5px; color: var(--text-muted); font-weight: 600; }
         .login-split-footer a { color: #ea580c; text-decoration: underline; font-weight: 700; }
+        .login-feature-chips { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 24px; }
+        .login-feature-chip {
+          background: var(--bg-card); border: 1.5px solid var(--border-color); border-radius: 20px;
+          padding: 6px 14px; font-size: 13px; font-weight: 700; color: var(--text-bright);
+          display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
         .login-error-msg {
           background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.3); border-radius: 10px;
           padding: 12px 14px; font-size: 13.5px; color: #ef4444; margin-bottom: 16px; text-align: left;
@@ -226,12 +232,19 @@ export default function LoginView() {
           .login-split-nav { gap: 10px; flex-shrink: 0; }
           .login-split-nav .btn-back { padding: 6px 12px; font-size: 12.5px; white-space: nowrap; }
           .login-split-content {
-            flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center;
-            padding: 16px 16px 80px; gap: 0; max-width: 100%; box-sizing: border-box; margin: auto 0;
+            flex: 1; display: flex; flex-direction: column; justify-content: space-evenly; align-items: center;
+            padding: 12px 16px 70px; gap: 16px; max-width: 100%; box-sizing: border-box; width: 100%;
           }
-          .login-split-left { display: none; }
-          .login-split-right { justify-content: center; width: 100%; max-width: 440px; margin: auto 0; }
-          .login-split-card { padding: 32px 24px; width: 100%; max-width: 100%; box-shadow: 0 15px 40px -5px rgba(0,0,0,0.15); }
+          .login-split-left {
+            display: flex; flex-direction: column; align-items: center; text-align: center; max-width: 440px; margin-bottom: 4px;
+          }
+          .login-split-left .badge { margin-bottom: 8px; padding: 4px 12px; font-size: 11px; }
+          .login-split-left h1 { font-size: 20px; margin-bottom: 6px; line-height: 1.3; }
+          .login-split-left p { font-size: 12.5px; line-height: 1.45; max-width: 380px; }
+          .login-feature-chips { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; margin-top: 10px; }
+          .login-feature-chip { padding: 4px 10px; font-size: 11.5px; }
+          .login-split-right { justify-content: center; width: 100%; max-width: 440px; }
+          .login-split-card { padding: 24px 20px; width: 100%; max-width: 100%; box-shadow: 0 15px 40px -5px rgba(0,0,0,0.15); }
         }
         @media (max-width: 480px) {
           .login-split-header { padding: 10px 12px !important; }
@@ -239,7 +252,7 @@ export default function LoginView() {
           .login-split-logo span { font-size: 14px !important; }
           .login-split-nav .btn-back { padding: 4px 10px !important; font-size: 11.5px !important; }
           .login-split-card h2 { font-size: 24px; }
-          .login-split-card { padding: 28px 20px; }
+          .login-split-card { padding: 24px 18px; }
         }
       `}} />
 
@@ -275,7 +288,13 @@ export default function LoginView() {
             <i className="fa-thin fa-robot" style={{ fontSize: '14px' }}></i> 28Symues <span style={{ color: '#ea580c' }}>Affiliate</span>
           </div>
           <h1>Đăng nhập tài khoản</h1>
-          <p>Đăng nhập để theo dõi trạng thái đơn hàng Shopee, xem thống kê doanh số hoa hồng tạm tính và duyệt yêu cầu rút tiền tự động của các thành viên trong hệ thống.</p>
+          <p>Đăng nhập để theo dõi trạng thái đơn hàng Shopee & TikTok Shop, xem thống kê hoa hồng và duyệt rút tiền tự động hệ thống.</p>
+          <div className="login-feature-chips">
+            <span className="login-feature-chip">⚡ Hoàn tiền tự động</span>
+            <span className="login-feature-chip">🟠 Shopee Affiliate</span>
+            <span className="login-feature-chip">🎵 TikTok Shop</span>
+            <span className="login-feature-chip">💸 Rút tiền 24/7</span>
+          </div>
         </div>
 
         <div className="login-split-right">

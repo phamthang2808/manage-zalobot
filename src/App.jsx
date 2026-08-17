@@ -81,6 +81,7 @@ function App() {
     }
   });
   const [lookupLocalFilter, setLookupLocalFilter] = useState('');
+  const [platformFilter, setPlatformFilter] = useState('ALL');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [cfStatus, setCfStatus] = useState('verifying');
   const [windowWidth, setWindowWidth] = useState(() => typeof window !== 'undefined' ? window.innerWidth : 1200);
@@ -1196,10 +1197,11 @@ function App() {
 
     // Local filter of orders
     const searchedOrders = lookupResult
-      ? lookupResult.orders.filter(o => 
-          o.orderId?.toLowerCase().includes(lookupLocalFilter.toLowerCase()) ||
-          o.productName?.toLowerCase().includes(lookupLocalFilter.toLowerCase())
-        )
+      ? lookupResult.orders.filter(o => {
+          const matchesQuery = o.orderId?.toLowerCase().includes(lookupLocalFilter.toLowerCase()) || o.productName?.toLowerCase().includes(lookupLocalFilter.toLowerCase());
+          const matchesPlatform = platformFilter === 'ALL' || o.platform === platformFilter || (platformFilter === 'Shopee' && (!o.platform || o.platform === 'Shopee'));
+          return matchesQuery && matchesPlatform;
+        })
       : [];
 
     return (
@@ -1775,20 +1777,20 @@ function App() {
         {/* Search Panel Card */}
         <div className="lookup-card">
           <h2 className="lookup-title">
-            <i className="fa-thin fa-magnifying-glass" style={{ marginRight: '8px' }}></i> Tra Cứu Đơn Hàng Shopee
+            <i className="fa-thin fa-magnifying-glass" style={{ marginRight: '8px' }}></i> Tra Cứu Đơn Hàng Shopee & TikTok Shop
           </h2>
-          <p className="lookup-subtitle">Nhập mã đơn hàng để kiểm tra trạng thái và hoa hồng</p>
+          <p className="lookup-subtitle">Nhập mã đơn hàng Shopee hoặc TikTok Shop để kiểm tra trạng thái và hoa hồng</p>
 
           <div className="lookup-input-group">
             <label className="lookup-label">
-              Nhập mã đơn hàng (Shopee)
+              Mã đơn hàng (Shopee / TikTok Shop)
             </label>
             <input 
               type="text"
               className="lookup-input"
               value={lookupQuery}
               onChange={(e) => setLookupQuery(e.target.value)}
-              placeholder="Ví dụ: 260606C8W7YARK..."
+              placeholder="Ví dụ: 260606C8W7YARK (Shopee) hoặc 585592697583797863 (TikTok)..."
               onKeyDown={(e) => e.key === 'Enter' && handlePublicLookup(null, 'ORDER_ID')}
             />
           </div>
@@ -1804,7 +1806,7 @@ function App() {
                 Đang tìm kiếm...
               </>
             ) : (
-              'Tra cứu ngay'
+              'Tra cứu đơn hàng'
             )}
           </button>
 
@@ -2010,18 +2012,25 @@ function App() {
             {/* 2. Orders Cards List */}
             <div className="orders-container">
               <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '10px', marginBottom: '16px', width: '100%' }}>
-                <h3 className="stats-section-title" style={{ marginBottom: 0, width: '100%', fontSize: '16px', fontWeight: '700', color: '#0f172a' }}>
-                  {lookupSearchType === 'ORDER_ID' ? '🛒 Kết Quả Tra Cứu Đơn Hàng' : `🛒 Đơn hàng đã mua (${searchedOrders.length})`}
+                <h3 className="stats-section-title" style={{ marginBottom: 0, width: '100%', fontSize: '16px', fontWeight: '700', color: 'var(--text-bright)' }}>
+                  {`🛒 Đơn hàng đã mua (${searchedOrders.length})`}
                 </h3>
-                {lookupSearchType !== 'ORDER_ID' && (
-                  <input 
-                    type="text" 
-                    placeholder="Lọc nhanh đơn hàng..." 
-                    className="lookup-input"
-                    style={{ width: '100%', maxWidth: '100%', padding: '8px 12px', fontSize: '13px', borderRadius: '8px', margin: 0 }}
-                    value={lookupLocalFilter}
-                    onChange={(e) => setLookupLocalFilter(e.target.value)}
-                  />
+                {lookupResult && lookupResult.orders && lookupResult.orders.length > 0 && (
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', width: '100%', marginBottom: '4px' }}>
+                    <div className="lookup-tabs" style={{ marginBottom: 0 }}>
+                      <button className={`lookup-tab ${platformFilter === 'ALL' ? 'active' : ''}`} onClick={() => setPlatformFilter('ALL')}>Tất cả ({lookupResult.orders.length})</button>
+                      <button className={`lookup-tab ${platformFilter === 'Shopee' ? 'active' : ''}`} onClick={() => setPlatformFilter('Shopee')}>🟠 Shopee ({lookupResult.orders.filter(o => !o.platform || o.platform === 'Shopee').length})</button>
+                      <button className={`lookup-tab ${platformFilter === 'TikTok Shop' ? 'active' : ''}`} onClick={() => setPlatformFilter('TikTok Shop')}>🎵 TikTok Shop ({lookupResult.orders.filter(o => o.platform === 'TikTok Shop').length})</button>
+                    </div>
+                    <input 
+                      type="text" 
+                      placeholder="Lọc nhanh theo tên / mã đơn..." 
+                      className="lookup-input"
+                      style={{ width: '100%', maxWidth: '100%', padding: '8px 12px', fontSize: '13px', borderRadius: '8px', margin: 0 }}
+                      value={lookupLocalFilter}
+                      onChange={(e) => setLookupLocalFilter(e.target.value)}
+                    />
+                  </div>
                 )}
               </div>
 
@@ -2034,7 +2043,20 @@ function App() {
                   <div key={o.id} className="order-card-item">
                     <div className="order-card-header">
                       <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
-                        <i className="fa-regular fa-calendar" style={{ color: '#64748b', fontSize: '13px' }}></i>
+                        <span style={{
+                          fontSize: '11px',
+                          padding: '2px 8px',
+                          borderRadius: '12px',
+                          fontWeight: '700',
+                          background: o.platform === 'TikTok Shop' ? 'rgba(0,0,0,0.06)' : 'rgba(234,88,12,0.1)',
+                          color: o.platform === 'TikTok Shop' ? 'var(--text-bright)' : '#ea580c',
+                          border: `1px solid ${o.platform === 'TikTok Shop' ? 'var(--border-color)' : '#fed7aa'}`,
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: '4px'
+                        }}>
+                          {o.platform === 'TikTok Shop' ? '🎵 TikTok Shop' : '🟠 Shopee'}
+                        </span>
                         <span>{formatDateTime(o.purchaseTime)}</span>
                       </span>
                       <span>Mã đơn: <span className="order-id-badge">{o.orderId}</span></span>

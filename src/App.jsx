@@ -1322,7 +1322,7 @@ function App() {
             font-size: 22px;
             font-weight: 800;
             text-align: center;
-            color: #0f172a;
+            color: var(--text-bright);
             margin-bottom: 8px;
             display: flex;
             align-items: center;
@@ -1331,17 +1331,17 @@ function App() {
           }
           .lookup-subtitle {
             font-size: 13.5px;
-            color: #334155;
+            color: var(--text-muted);
             font-weight: 600;
             text-align: center;
             margin-bottom: 24px;
           }
           .lookup-tabs {
             display: flex;
-            background: #e2e8f0;
-            border: 1.5px solid #cbd5e1;
+            background: var(--bg-main);
+            border: 1.5px solid var(--border-color);
             padding: 4px;
-            border-radius: 8px;
+            border-radius: 10px;
             margin-bottom: 16px;
           }
           .lookup-tab {
@@ -1350,16 +1350,19 @@ function App() {
             padding: 10px;
             font-size: 13.5px;
             font-weight: 700;
-            border-radius: 6px;
+            border-radius: 8px;
             cursor: pointer;
             background: transparent;
             border: none;
-            color: #475569;
+            color: var(--text-muted);
             transition: all 0.2s ease;
+          }
+          .lookup-tab:hover {
+            color: var(--text-bright);
           }
           .lookup-tab.active {
             background: linear-gradient(135deg, #f97316, #ea580c);
-            color: #ffffff;
+            color: #ffffff !important;
             box-shadow: 0 4px 14px rgba(249, 115, 22, 0.35);
           }
           .lookup-input-group {
@@ -1372,7 +1375,7 @@ function App() {
             display: block;
             font-size: 12px;
             font-weight: 700;
-            color: #1e293b;
+            color: var(--text-bright);
             margin-bottom: 6px;
             text-transform: uppercase;
             letter-spacing: 0.5px;
@@ -1382,11 +1385,11 @@ function App() {
             min-width: 100% !important;
             max-width: 100% !important;
             box-sizing: border-box !important;
-            background: #ffffff;
-            border: 1.5px solid #94a3b8;
-            border-radius: 8px;
+            background: var(--bg-main);
+            border: 1.5px solid var(--border-color);
+            border-radius: 10px;
             padding: 12px 14px;
-            color: #0f172a;
+            color: var(--text-bright);
             font-size: 15px;
             font-weight: 600;
             outline: none;

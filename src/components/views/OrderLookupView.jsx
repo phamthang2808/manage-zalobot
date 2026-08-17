@@ -208,14 +208,15 @@ export default function OrderLookupView() {
         .lookup-card { width: 100%; max-width: 600px; box-sizing: border-box !important; background: var(--bg-card); border: 1.5px solid var(--border-color); backdrop-filter: blur(16px); border-radius: 16px; padding: 24px; box-shadow: 0 10px 30px -5px rgba(0,0,0,0.1); margin-bottom: 24px; overflow: hidden; }
         .lookup-title { font-size: 22px; font-weight: 800; text-align: center; color: var(--text-bright); margin-bottom: 8px; display: flex; align-items: center; justify-content: center; gap: 8px; }
         .lookup-subtitle { font-size: 13.5px; color: var(--text-muted); font-weight: 600; text-align: center; margin-bottom: 24px; }
-        .lookup-tabs { display: flex; background: var(--bg-main); border: 1.5px solid var(--border-color); padding: 4px; border-radius: 8px; margin-bottom: 16px; }
-        .lookup-tab { flex: 1; text-align: center; padding: 10px; font-size: 13.5px; font-weight: 700; border-radius: 6px; cursor: pointer; background: transparent; border: none; color: var(--text-muted); transition: all 0.2s ease; }
-        .lookup-tab.active { background: linear-gradient(135deg, #f97316, #ea580c); color: #ffffff; box-shadow: 0 4px 14px rgba(249,115,22,0.35); }
+        .lookup-tabs { display: flex; background: var(--bg-main); border: 1.5px solid var(--border-color); padding: 4px; border-radius: 10px; margin-bottom: 16px; }
+        .lookup-tab { flex: 1; text-align: center; padding: 10px; font-size: 13.5px; font-weight: 700; border-radius: 8px; cursor: pointer; background: transparent; border: none; color: var(--text-muted); transition: all 0.2s ease; }
+        .lookup-tab:hover { color: var(--text-bright); }
+        .lookup-tab.active { background: linear-gradient(135deg, #f97316, #ea580c); color: #ffffff !important; box-shadow: 0 4px 14px rgba(249,115,22,0.35); }
         .lookup-input-group { margin-bottom: 16px; width: 100% !important; max-width: 100% !important; box-sizing: border-box !important; }
-        .lookup-label { display: block; font-size: 12px; font-weight: 700; color: var(--text-main); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; }
-        .lookup-input { width: 100% !important; min-width: 100% !important; max-width: 100% !important; box-sizing: border-box !important; background: var(--bg-main); border: 1.5px solid var(--border-color); border-radius: 8px; padding: 12px 14px; color: var(--text-main); font-size: 15px; font-weight: 600; outline: none; transition: all 0.2s ease; display: block !important; -webkit-appearance: none; appearance: none; }
+        .lookup-label { display: block; font-size: 12px; font-weight: 700; color: var(--text-bright); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .lookup-input { width: 100% !important; min-width: 100% !important; max-width: 100% !important; box-sizing: border-box !important; background: var(--bg-main); border: 1.5px solid var(--border-color); border-radius: 10px; padding: 12px 14px; color: var(--text-bright); font-size: 15px; font-weight: 600; outline: none; transition: all 0.2s ease; display: block !important; -webkit-appearance: none; appearance: none; }
         input[type="date"].lookup-input { width: 100% !important; min-width: 100% !important; max-width: 100% !important; box-sizing: border-box !important; display: block !important; }
-        .lookup-input:focus { border-color: #ea580c; box-shadow: 0 0 12px rgba(249,115,22,0.25); }
+        .lookup-input:focus { border-color: #ea580c; background: var(--bg-card); box-shadow: 0 0 12px rgba(249,115,22,0.25); }
         .lookup-date-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; width: 100% !important; max-width: 100% !important; box-sizing: border-box !important; }
         @media (max-width: 768px) { .lookup-date-grid { display: flex !important; flex-direction: column !important; gap: 16px !important; } }
         .lookup-btn { width: 100%; max-width: 100% !important; box-sizing: border-box !important; background: linear-gradient(135deg, #f97316, #ea580c); color: #ffffff; font-size: 15px; font-weight: 800; border: none; border-radius: 8px; padding: 14px; cursor: pointer; transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 15px rgba(249,115,22,0.35); }

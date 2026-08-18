@@ -1,27 +1,27 @@
 import { useApp } from '../../context/AppContext';
-import { formatMoney, formatDateTime, getBankAndAccount } from '../../utils/formatters';
+import { formatDateTime, formatMoney, getBankAndAccount } from '../../utils/formatters';
 
 export default function OverviewTab() {
   const { stats, payouts, users, orders, handleApprovePayout } = useApp();
 
   const pendingPayouts = payouts.filter(p => p.status === 'PENDING');
 
-  // Compute separate counts & commissions for Shopee and TikTok
+  // Calculate separate counts & commissions for Shopee and TikTok
   const shopeeOrdersCount = stats.shopeeOrdersCount !== undefined 
     ? stats.shopeeOrdersCount 
-    : orders.filter(o => !o.platform || o.platform === 'Shopee').length;
+    : (orders || []).filter(o => !o.platform || o.platform === 'Shopee').length;
 
   const tiktokOrdersCount = stats.tiktokOrdersCount !== undefined 
     ? stats.tiktokOrdersCount 
-    : orders.filter(o => o.platform === 'TikTok Shop').length;
+    : (orders || []).filter(o => o.platform === 'TikTok Shop').length;
 
   const shopeeCommission = stats.shopeeCommission !== undefined
     ? stats.shopeeCommission
-    : orders.filter(o => !o.platform || o.platform === 'Shopee').reduce((sum, o) => sum + (o.commission || 0), 0);
+    : (orders || []).filter(o => !o.platform || o.platform === 'Shopee').reduce((sum, o) => sum + (o.commission || 0), 0);
 
   const tiktokCommission = stats.tiktokCommission !== undefined
     ? stats.tiktokCommission
-    : orders.filter(o => o.platform === 'TikTok Shop').reduce((sum, o) => sum + (o.commission || 0), 0);
+    : (orders || []).filter(o => o.platform === 'TikTok Shop').reduce((sum, o) => sum + (o.commission || 0), 0);
 
   return (
     <div>

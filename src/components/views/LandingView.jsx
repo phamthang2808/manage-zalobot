@@ -135,7 +135,7 @@ export default function LandingView() {
       <section id="home" className="landing-block-container hero-showcase-container reveal-on-scroll" style={{ marginTop: '24px', textAlign: 'center' }}>
         <div className="section-badge" style={{ display: 'inline-flex', alignItems: 'center', gap: '10px', padding: '8px 20px', borderRadius: '30px', background: 'rgba(249, 115, 22, 0.12)', color: '#ea580c', fontSize: '13px', fontWeight: '800', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '16px' }}>
           <img src="/robot-icon.png" alt="AI Robot" style={{ width: '32px', height: '32px', objectFit: 'contain', flexShrink: 0 }} />
-          <span><i className="fa-solid fa-bolt" style={{ color: '#ea580c', marginRight: '6px', fontSize: '16px' }}></i> HỆ THỐNG AUTOMATION AFFILIATE 4.0</span>
+          <span>HỆ THỐNG AUTOMATION AFFILIATE 4.0</span>
         </div>
         <h1 className="hero-title" style={{ fontSize: '38px', fontWeight: '900', color: 'var(--text-bright)', marginBottom: '14px', lineHeight: '1.2' }}>
           Tự Động Hóa Shopee Affiliate Với 28Symues
@@ -221,9 +221,11 @@ export default function LandingView() {
             <span className="badge-text" style={{ color: '#34d399' }}>+18.500đ Vừa ghi nhận</span>
           </div>
 
-          <div className="floating-badge badge-bot-right">
-            <span className="badge-icon">🤖</span>
-            <span className="badge-text" style={{ color: '#38bdf8' }}>AI GPT-4o Tự Động</span>
+          <div className="floating-badge badge-bot-right" style={{ padding: '8px 18px', borderRadius: '30px' }}>
+            <span className="badge-icon" style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}>
+              <img src="/robot-icon.png" alt="AI Robot" style={{ width: '22px', height: '22px', objectFit: 'contain' }} />
+            </span>
+            <span className="badge-text" style={{ color: '#38bdf8', fontWeight: '800' }}>AI GPT-4o Tự Động</span>
           </div>
 
           <div className="zalo-pc-live-card">

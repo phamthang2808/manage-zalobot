@@ -4238,14 +4238,15 @@ function App() {
                       </tr>
                     ) : (
                       orders.filter(o => o.zaloId === selectedUser.zaloId).slice(0, 10).map(o => {
-                        const afterTax = (o.commission || 0) * 0.9;
-                        const afterDeduction = afterTax * 0.8;
+                        const isTiktok = o.platform === 'TikTok Shop' || (o.orderId && o.orderId.length > 15 && !o.orderId.startsWith('2608'));
+                        const afterTax = isTiktok ? (o.commission || 0) : (o.commission || 0) * 0.9;
+                        const afterDeduction = isTiktok ? (o.commission || 0) * 0.8 : afterTax * 0.8;
                         return (
                           <tr key={o.id}>
                             <td data-label="Mã đơn" style={{ fontSize: '11px' }}>{o.orderId}</td>
                             <td data-label="Sản phẩm" style={{ maxWidth: '160px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{o.productName}</td>
                             <td data-label="HH Gốc" style={{ color: 'var(--text-muted)', fontSize: '12px' }}>{formatMoney(o.commission)}</td>
-                            <td data-label="Sau thuế" style={{ color: 'var(--color-warning)', fontSize: '12px' }}>{formatMoney(afterTax)}</td>
+                            <td data-label="Sau thuế" style={{ color: 'var(--color-warning)', fontSize: '12px' }}>{isTiktok ? '-' : formatMoney(afterTax)}</td>
                             <td data-label="Thực nhận" style={{ color: 'var(--color-success)', fontWeight: '700', fontSize: '12px' }}>{formatMoney(afterDeduction)}</td>
                             <td data-label="Trạng thái">
                               <span className={`badge ${

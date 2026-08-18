@@ -365,8 +365,9 @@ export default function OrdersTab() {
             ) : (
               filteredOrders.map(o => {
                 const orderUser = users.find(u => u.zaloId === o.zaloId || u.zaloId === o.subId);
-                const afterTax = (o.commission || 0) * 0.9;
-                const afterDeduction = afterTax * 0.8;
+                const isTiktok = o.platform === 'TikTok Shop' || (o.orderId && o.orderId.length > 15 && !o.orderId.startsWith('2608'));
+                const afterTax = isTiktok ? (o.commission || 0) : (o.commission || 0) * 0.9;
+                const afterDeduction = isTiktok ? (o.commission || 0) * 0.8 : afterTax * 0.8;
                 return (
                   <tr key={o.id}>
                     <td data-label="Mã đơn">
@@ -390,7 +391,7 @@ export default function OrdersTab() {
                     <td data-label="Hoa hồng" style={{ textAlign: 'right' }}>
                       <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap', justifyContent: 'flex-end', fontSize: '12px' }}>
                         <span style={{ color: 'var(--text-muted)' }}>Gốc: {formatMoney(o.commission)}</span>
-                        <span style={{ color: 'var(--color-warning)' }}>Sau thuế: {formatMoney(afterTax)}</span>
+                        {!isTiktok && <span style={{ color: 'var(--color-warning)' }}>Sau thuế: {formatMoney(afterTax)}</span>}
                         <span style={{ color: 'var(--color-success)', fontWeight: '700' }}>Khách: {formatMoney(afterDeduction)}</span>
                       </div>
                     </td>

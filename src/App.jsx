@@ -2758,8 +2758,9 @@ function App() {
         {/* Main Content split */}
         <div className="login-split-content">
           <div className="login-split-left">
-            <div className="badge">
-              <i className="fa-thin fa-robot" style={{ fontSize: '14px' }}></i> 28Symues <span style={{ color: '#ea580c' }}>Affiliate</span>
+            <div className="badge" style={{ display: 'inline-flex', alignItems: 'center', gap: '10px', padding: '6px 18px', fontSize: '15px' }}>
+              <img src="/robot-icon.png" alt="AI Robot" style={{ width: '36px', height: '36px', objectFit: 'contain', display: 'inline-block', flexShrink: 0 }} />
+              <span style={{ fontWeight: '700' }}>28Symues <span style={{ color: '#ea580c' }}>Affiliate</span></span>
             </div>
             <h1>Đăng nhập tài khoản</h1>
             <p>
@@ -3087,8 +3088,9 @@ function App() {
 
         {/* Container 1: Top Hero Banner Container */}
         <section id="home" className="landing-block-container hero-showcase-container reveal-on-scroll" style={{ marginTop: '24px', textAlign: 'center' }}>
-          <div className="section-badge" style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', padding: '6px 16px', borderRadius: '30px', background: 'rgba(249, 115, 22, 0.12)', color: '#ea580c', fontSize: '12px', fontWeight: '800', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '16px' }}>
-            ⚡ HỆ THỐNG AUTOMATION AFFILIATE 4.0
+          <div className="section-badge" style={{ display: 'inline-flex', alignItems: 'center', gap: '10px', padding: '8px 20px', borderRadius: '30px', background: 'rgba(249, 115, 22, 0.12)', color: '#ea580c', fontSize: '13px', fontWeight: '800', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '16px' }}>
+            <img src="/robot-icon.png" alt="AI Robot" style={{ width: '32px', height: '32px', objectFit: 'contain', flexShrink: 0 }} />
+            <span><i className="fa-solid fa-bolt" style={{ color: '#ea580c', marginRight: '6px', fontSize: '16px' }}></i> HỆ THỐNG AUTOMATION AFFILIATE 4.0</span>
           </div>
           <h1 className="hero-title" style={{ fontSize: '38px', fontWeight: '900', color: 'var(--text-bright)', marginBottom: '14px', lineHeight: '1.2' }}>
             Tự Động Hóa Shopee Affiliate Với 28Symues
@@ -3153,8 +3155,9 @@ function App() {
         {/* Container 2: Live Zalo Bot Chat Showcase (Desktop PC Version) */}
         <section id="zalo-demo" className="landing-block-container hero-section reveal-on-scroll">
           <div style={{ textAlign: 'center', marginBottom: '28px' }}>
-            <div className="section-badge" style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', padding: '6px 16px', borderRadius: '30px', background: 'rgba(249, 115, 22, 0.12)', color: '#ea580c', fontSize: '12px', fontWeight: '800', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '10px' }}>
-              💬 TRẢI NGHIỆM CHATBOT ZALO REALTIME
+            <div className="section-badge" style={{ display: 'inline-flex', alignItems: 'center', gap: '10px', padding: '8px 20px', borderRadius: '30px', background: 'rgba(249, 115, 22, 0.12)', color: '#ea580c', fontSize: '13px', fontWeight: '800', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '10px' }}>
+              <i className="fa-regular fa-envelope" style={{ fontSize: '18px', flexShrink: 0 }}></i>
+              <span>TRẢI NGHIỆM CHATBOT ZALO REALTIME</span>
             </div>
             <h2 className="section-title" style={{ fontSize: '30px', fontWeight: '800', marginBottom: '8px' }}>Tương Tác & Chuyển Đổi Link Tự Động</h2>
             <p className="section-subtitle" style={{ fontSize: '15px' }}>Giao diện đối soát đơn hàng và tự động phản hồi link hoa hồng trực tiếp trên Zalo Desktop</p>
@@ -3163,9 +3166,9 @@ function App() {
           {/* Large Crisp Native Zalo PC Desktop Form with Animated Floating Badges */}
           <div style={{ position: 'relative', width: '100%', maxWidth: '1180px', margin: '0 auto' }}>
             {/* Glowing Animated Floating Badges */}
-            <div className="floating-badge badge-top-right">
-              <span className="badge-icon">⚡</span>
-              <span className="badge-text" style={{ color: '#fb923c' }}>Tốc độ &lt; 0.5s</span>
+            <div className="floating-badge badge-top-right" style={{ padding: '8px 18px', borderRadius: '30px' }}>
+              <span className="badge-icon" style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontSize: '20px' }}><i className="fa-solid fa-bolt" style={{ color: '#fb923c', fontSize: '20px' }}></i></span>
+              <span className="badge-text" style={{ color: '#fb923c', fontSize: '14px', fontWeight: '800' }}>Tốc độ &lt; 0.5s</span>
             </div>
 
             <div className="floating-badge badge-mid-left">

@@ -284,13 +284,14 @@ export default function LoginView() {
       {/* Main Content split */}
       <div className="login-split-content">
         <div className="login-split-left">
-          <div className="badge">
-            <i className="fa-thin fa-robot" style={{ fontSize: '14px' }}></i> 28Symues <span style={{ color: '#ea580c' }}>Affiliate</span>
+          <div className="badge" style={{ display: 'inline-flex', alignItems: 'center', gap: '10px', padding: '6px 18px', fontSize: '15px' }}>
+            <img src="/robot-icon.png" alt="AI Robot" style={{ width: '36px', height: '36px', objectFit: 'contain', display: 'inline-block', flexShrink: 0 }} />
+            <span style={{ fontWeight: '700' }}>28Symues <span style={{ color: '#ea580c' }}>Affiliate</span></span>
           </div>
           <h1>Đăng nhập tài khoản</h1>
           <p>Đăng nhập để theo dõi trạng thái đơn hàng Shopee & TikTok Shop, xem thống kê hoa hồng và duyệt rút tiền tự động hệ thống.</p>
           <div className="login-feature-chips">
-            <span className="login-feature-chip">⚡ Hoàn tiền tự động</span>
+            <span className="login-feature-chip"><i className="fa-solid fa-bolt" style={{ color: '#ea580c', marginRight: '4px' }}></i> Hoàn tiền tự động</span>
             <span className="login-feature-chip">🟠 Shopee Affiliate</span>
             <span className="login-feature-chip">🎵 TikTok Shop</span>
             <span className="login-feature-chip">💸 Rút tiền 24/7</span>

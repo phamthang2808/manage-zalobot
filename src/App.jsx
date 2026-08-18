@@ -43,6 +43,27 @@ function App() {
   const [lookupLoading, setLookupLoading] = useState(false);
 
   useEffect(() => {
+    const path = window.location.pathname;
+    if (path.includes('/s/')) {
+      const code = path.split('/s/')[1]?.split('?')[0]?.trim();
+      if (code) {
+        fetch(`${API_URL_ROOT}/api/public/short-link/${code}`)
+          .then(res => res.json())
+          .then(resData => {
+            if (resData && resData.data) {
+              window.location.replace(resData.data);
+            } else {
+              window.location.replace('https://www.28symues.id.vn/lookup');
+            }
+          })
+          .catch(() => {
+            window.location.replace('https://www.28symues.id.vn/lookup');
+          });
+      }
+    }
+  }, []);
+
+  useEffect(() => {
     if (view === 'home') {
       const observerCallback = (entries) => {
         entries.forEach(entry => {

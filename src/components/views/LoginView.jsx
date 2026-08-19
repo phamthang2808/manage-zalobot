@@ -205,11 +205,27 @@ export default function LoginView() {
         .cf-links a { font-size: 8px; color: var(--text-muted); text-decoration: underline; }
         .login-split-footer { text-align: center; margin-top: 24px; font-size: 13.5px; color: var(--text-muted); font-weight: 600; }
         .login-split-footer a { color: #ea580c; text-decoration: underline; font-weight: 700; }
-        .login-feature-chips { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 24px; }
+        .login-feature-chips { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 20px; }
         .login-feature-chip {
           background: var(--bg-card); border: 1.5px solid var(--border-color); border-radius: 20px;
           padding: 6px 14px; font-size: 13px; font-weight: 700; color: var(--text-bright);
           display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+        .login-illustration-box {
+          margin-top: 20px;
+          width: 100%;
+          max-width: 440px;
+          border-radius: 20px;
+          overflow: hidden;
+          box-shadow: 0 16px 40px -10px rgba(249, 115, 22, 0.15);
+          border: 1.5px solid rgba(253, 186, 116, 0.5);
+          background: var(--bg-card);
+        }
+        .login-illustration-img {
+          width: 100%;
+          height: auto;
+          display: block;
+          border-radius: 18px;
         }
         .login-error-msg {
           background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.3); border-radius: 10px;
@@ -241,6 +257,7 @@ export default function LoginView() {
           .login-split-left .badge { margin-bottom: 8px; padding: 4px 12px; font-size: 11px; }
           .login-split-left h1 { font-size: 20px; margin-bottom: 6px; line-height: 1.3; }
           .login-split-left p { font-size: 12.5px; line-height: 1.45; max-width: 380px; }
+          .login-illustration-box { max-width: 280px; margin: 10px auto; }
           .login-feature-chips { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; margin-top: 10px; }
           .login-feature-chip { padding: 4px 10px; font-size: 11.5px; }
           .login-split-right { justify-content: center; width: 100%; max-width: 440px; }
@@ -284,6 +301,15 @@ export default function LoginView() {
           </div>
           <h1>Đăng nhập tài khoản</h1>
           <p>Đăng nhập để theo dõi trạng thái đơn hàng Shopee & TikTok Shop, xem thống kê hoa hồng và duyệt rút tiền tự động hệ thống.</p>
+          
+          <div className="login-illustration-box">
+            <img 
+              src="/ChatGPT Image 16_03_45 30 thg 7, 2026.png" 
+              alt="Minh họa Zalo Bot Affiliate" 
+              className="login-illustration-img" 
+            />
+          </div>
+
           <div className="login-feature-chips">
             <span className="login-feature-chip"><i className="fa-solid fa-bolt" style={{ color: '#ea580c', marginRight: '4px' }}></i> Hoàn tiền tự động</span>
             <span className="login-feature-chip">🟠 Shopee Affiliate</span>

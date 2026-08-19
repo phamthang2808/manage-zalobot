@@ -2779,6 +2779,15 @@ function App() {
             </div>
             <h1>Đăng nhập tài khoản</h1>
             <p>Đăng nhập để theo dõi trạng thái đơn hàng Shopee & TikTok Shop, xem thống kê hoa hồng và duyệt rút tiền tự động hệ thống.</p>
+            
+            <div className="login-illustration-box">
+              <img 
+                src="/ChatGPT Image 16_03_45 30 thg 7, 2026.png" 
+                alt="Minh họa Zalo Bot Affiliate" 
+                className="login-illustration-img" 
+              />
+            </div>
+
             <div className="login-feature-chips">
               <span className="login-feature-chip"><i className="fa-solid fa-bolt" style={{ color: '#ea580c', marginRight: '4px' }}></i> Hoàn tiền tự động</span>
               <span className="login-feature-chip">🟠 Shopee Affiliate</span>

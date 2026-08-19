@@ -212,20 +212,26 @@ export default function LoginView() {
           display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.05);
         }
         .login-illustration-box {
-          margin-top: 20px;
+          margin: 16px 0;
           width: 100%;
-          max-width: 440px;
-          border-radius: 20px;
+          max-width: 320px;
+          max-height: 180px;
+          border-radius: 16px;
           overflow: hidden;
-          box-shadow: 0 16px 40px -10px rgba(249, 115, 22, 0.15);
+          box-shadow: 0 12px 30px -8px rgba(249, 115, 22, 0.15);
           border: 1.5px solid rgba(253, 186, 116, 0.5);
           background: var(--bg-card);
+          display: flex;
+          align-items: center;
+          justify-content: center;
         }
         .login-illustration-img {
           width: 100%;
-          height: auto;
+          height: 100%;
+          max-height: 180px;
+          object-fit: cover;
           display: block;
-          border-radius: 18px;
+          border-radius: 14px;
         }
         .login-error-msg {
           background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.3); border-radius: 10px;
@@ -257,7 +263,8 @@ export default function LoginView() {
           .login-split-left .badge { margin-bottom: 8px; padding: 4px 12px; font-size: 11px; }
           .login-split-left h1 { font-size: 20px; margin-bottom: 6px; line-height: 1.3; }
           .login-split-left p { font-size: 12.5px; line-height: 1.45; max-width: 380px; }
-          .login-illustration-box { max-width: 280px; margin: 10px auto; }
+          .login-illustration-box { max-width: 240px; max-height: 130px; margin: 10px auto; }
+          .login-illustration-img { max-height: 130px; }
           .login-feature-chips { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; margin-top: 10px; }
           .login-feature-chip { padding: 4px 10px; font-size: 11.5px; }
           .login-split-right { justify-content: center; width: 100%; max-width: 440px; }

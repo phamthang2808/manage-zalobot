@@ -304,7 +304,7 @@ export default function LoginView() {
           
           <div className="login-illustration-box">
             <img 
-              src="/anh1.png" 
+              src="/111.png" 
               alt="Minh họa Zalo Bot Affiliate" 
               className="login-illustration-img" 
             />

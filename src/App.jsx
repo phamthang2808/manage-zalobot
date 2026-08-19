@@ -3114,7 +3114,7 @@ function App() {
             <span>HỆ THỐNG AUTOMATION AFFILIATE 4.0</span>
           </div>
           <h1 className="hero-title" style={{ fontSize: '38px', fontWeight: '900', color: 'var(--text-bright)', marginBottom: '14px', lineHeight: '1.2' }}>
-            Tự Động Hóa Shopee Affiliate Với 28Symues
+            Cho Thuê Zalo Bot Affiliate - Tự Động Đổi Link Shopee, TikTok Shop & Lazada 24/7
           </h1>
           <p className="hero-subtitle" style={{ color: 'var(--text-muted)', fontSize: '16px', maxWidth: '780px', margin: '0 auto 28px', lineHeight: '1.6' }}>
             Biến mọi liên kết mua sắm trong nhóm chat Zalo của bạn thành nguồn thu nhập thụ động chỉ trong vài giây. Tiện lợi, tự động, ghi nhận sub_id chuẩn xác và hoàn toàn minh bạch.
@@ -3137,40 +3137,6 @@ function App() {
             />
           </div>
 
-          {/* Advantage Badges Grid */}
-          <div className="banner-badge-grid" style={{ marginTop: '28px' }}>
-            <div className="banner-badge-item">
-              <div className="banner-badge-icon"><i className="fa-regular fa-link"></i></div>
-              <div>
-                <div className="banner-badge-title">Tự Động Đổi Link Affiliated</div>
-                <div className="banner-badge-desc">Gắn chính xác SubID của người gửi link trong nhóm chat Zalo.</div>
-              </div>
-            </div>
-
-            <div className="banner-badge-item">
-              <div className="banner-badge-icon"><i className="fa-solid fa-bolt"></i></div>
-              <div>
-                <div className="banner-badge-title">Tốc Độ Phản Hồi &lt; 0.5s</div>
-                <div className="banner-badge-desc">Bot trả lời ngay lập tức, kích thích nhu cầu chốt đơn săn sale.</div>
-              </div>
-            </div>
-
-            <div className="banner-badge-item">
-              <div className="banner-badge-icon"><i className="fa-regular fa-wallet"></i></div>
-              <div>
-                <div className="banner-badge-title">Ví Tích Lũy & Rút Tiền</div>
-                <div className="banner-badge-desc">Thành viên tự xem ví và gõ lệnh `/rut-tien` thanh toán nhanh gọn.</div>
-              </div>
-            </div>
-
-            <div className="banner-badge-item">
-              <div className="banner-badge-icon"><i className="fa-brands fa-bots"></i></div>
-              <div>
-                <div className="banner-badge-title">AI GPT-4o Soạn Lời Chào</div>
-                <div className="banner-badge-desc">Tương tác tự nhiên, vui vẻ, tăng tỷ lệ mua hàng vượt trội.</div>
-              </div>
-            </div>
-          </div>
         </section>
 
         {/* Container 2: Live Zalo Bot Chat Showcase (Desktop PC Version) */}
@@ -3308,33 +3274,26 @@ function App() {
         <section id="features" className="landing-block-container features-section reveal-on-scroll">
           <h2 className="section-title">Tính Năng Nổi Bật</h2>
           <p className="section-subtitle">Mọi thứ bạn cần để vận hành hệ thống săn sale hoa hồng tự động</p>
-          <div className="features-grid">
-            <div className="feature-card">
-              <div className="feature-icon"><i className="fa-regular fa-link"></i></div>
-              <h3 className="feature-title">Chuyển Đổi Link Tự Động</h3>
+          <div className="features-grid" style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '24px', width: '100%' }}>
+            <div className="feature-card" style={{ flex: '1 1 280px', maxWidth: '360px' }}>
+              <div className="feature-icon"><i className="fa-solid fa-link"></i></div>
+              <h3 className="feature-title">Tự Động Đổi Link Mua Sắm</h3>
               <p className="feature-desc">
-                Tự động nhận diện link Shopee, Lazada, TikTok Shop và chuyển đổi thành link affiliate có gắn Zalo ID của người gửi làm sub_id.
+                Tự động nhận diện link Shopee, Lazada, TikTok Shop do khách gửi trong nhóm và đổi thành link tiếp thị liên kết nhận hoa hồng 24/7.
               </p>
             </div>
-            <div className="feature-card success">
-              <div className="feature-icon"><i className="fa-brands fa-bots"></i></div>
-              <h3 className="feature-title">Tương Tác Bằng AI</h3>
+            <div className="feature-card success" style={{ flex: '1 1 280px', maxWidth: '360px' }}>
+              <div className="feature-icon"><i className="fa-solid fa-comments"></i></div>
+              <h3 className="feature-title">Phản Hồi Siêu Tốc & Lịch Sự</h3>
               <p className="feature-desc">
-                Sử dụng mô hình AI GPT-4o để tự động soạn thảo lời phản hồi vui nhộn, hấp dẫn, nâng cao tỷ lệ nhấn click mua sản phẩm.
+                Bot trả lời ngay lập tức với mẫu tin nhắn ngắn gọn, thân thiện, tự động gắn thẻ tên khách hàng giúp tăng tối đa tỷ lệ bấm mua sản phẩm.
               </p>
             </div>
-            <div className="feature-card warning">
-              <div className="feature-icon"><i className="fa-regular fa-chart-area"></i></div>
-              <h3 className="feature-title">Thống Kê Chi Tiết</h3>
+            <div className="feature-card warning" style={{ flex: '1 1 280px', maxWidth: '360px' }}>
+              <div className="feature-icon"><i className="fa-solid fa-chart-line"></i></div>
+              <h3 className="feature-title">Quản Lý Hoa Hồng Minh Bạch</h3>
               <p className="feature-desc">
-                Theo dõi đầy đủ lịch sử đơn hàng đã mua, phần trăm hoa hồng tạm tính và doanh số rút tiền của từng thành viên trong hệ thống.
-              </p>
-            </div>
-            <div className="feature-card">
-              <div className="feature-icon"><i className="fa-brands fa-cc-apple-pay"></i></div>
-              <h3 className="feature-title">Rút Tiền Tự Động</h3>
-              <p className="feature-desc">
-                Thành viên yêu cầu rút tiền trực tiếp bằng cú pháp `/rut-tien` trong nhóm Zalo. Admin phê duyệt nhanh chóng trên Dashboard.
+                Theo dõi chi tiết lịch sử đơn hàng đã mua, phần trăm hoa hồng tính toán chính xác và quản lý chi trả cho thành viên cực kỳ nhàn hạ.
               </p>
             </div>
           </div>
@@ -3344,21 +3303,21 @@ function App() {
         <section id="steps" className="landing-block-container instructions-section reveal-on-scroll">
           <h2 className="section-title">3 Bước Bắt Đầu Đơn Giản</h2>
           <p className="section-subtitle">Chỉ mất 5 phút để thiết lập và khởi chạy chatbot trong nhóm của bạn</p>
-          <div className="instructions-grid">
-            <div className="instruction-step">
+          <div className="instructions-grid" style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '24px', width: '100%', marginTop: '32px' }}>
+            <div className="instruction-step" style={{ flex: '1 1 280px', maxWidth: '360px' }}>
               <div className="step-num">1</div>
-              <h3 className="step-title">Quét QR Kết Nối</h3>
-              <p className="step-desc">Quét mã QR Zalo từ client bot để kết nối tài khoản phụ làm bot săn sale tự động.</p>
+              <h3 className="step-title">Quét QR Kết Nối Bot</h3>
+              <p className="step-desc">Chủ nhóm dùng ứng dụng Zalo quét mã QR để kích hoạt Bot chạy tự động 24/7.</p>
             </div>
-            <div className="instruction-step">
+            <div className="instruction-step" style={{ flex: '1 1 280px', maxWidth: '360px' }}>
               <div className="step-num">2</div>
-              <h3 className="step-title">Thêm Vào Nhóm Chat</h3>
-              <p className="step-desc">Thêm Bot vào nhóm săn sale của bạn. Bot sẽ tự động chào và lắng nghe các link sản phẩm.</p>
+              <h3 className="step-title">Thêm Bot Vào Nhóm Chat</h3>
+              <p className="step-desc">Thêm Bot vào nhóm săn sale của bạn. Bot tự động chào thành viên và sẵn sàng hỗ trợ đổi link.</p>
             </div>
-            <div className="instruction-step">
+            <div className="instruction-step" style={{ flex: '1 1 280px', maxWidth: '360px' }}>
               <div className="step-num">3</div>
-              <h3 className="step-title">Mua Sắm & Nhận Tiền</h3>
-              <p className="step-desc">Mọi đơn hàng thành công sẽ được đối soát và cộng dồn ví hoa hồng, rút nhanh qua lệnh chat.</p>
+              <h3 className="step-title">Khách Mua Sắm & Tích Hoa Hồng</h3>
+              <p className="step-desc">Thành viên gửi link mua hàng, Bot tự động đổi link và ghi nhận doanh số tích lũy minh bạch.</p>
             </div>
           </div>
         </section>
@@ -3377,7 +3336,7 @@ function App() {
             margin: '0 auto'
           }}>
             
-            {/* Gói Thường */}
+            {/* Gói Cơ Bản 199k */}
             <div className="pricing-card" style={{
               background: '#ffffff',
               border: '1px solid #e2e8f0',
@@ -3396,7 +3355,7 @@ function App() {
             }}>
               <div>
                 <h3 style={{ fontSize: '22px', color: '#0f172a', marginBottom: '8px', fontWeight: '700' }}>Zalo Bot Affiliate</h3>
-                <p style={{ color: '#64748b', fontSize: '14px', marginBottom: '24px' }}>Tự động chuyển đổi link mua sắm cơ bản trong nhóm chat</p>
+                <p style={{ color: '#64748b', fontSize: '14px', marginBottom: '24px' }}>Tự động chuyển đổi link tiếp thị liên kết 24/7 trực tiếp trong nhóm Zalo</p>
                 
                 <div style={{ marginBottom: '32px' }}>
                   <span style={{ fontSize: '42px', fontWeight: '800', color: '#0f172a', fontFamily: 'var(--font-heading)' }}>199.000đ</span>
@@ -3405,16 +3364,19 @@ function App() {
                 
                 <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 32px 0', textAlign: 'left', display: 'flex', flexDirection: 'column', gap: '16px' }}>
                   <li style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', color: '#334155', fontSize: '14px' }}>
-                    <span style={{ color: '#10b981', fontWeight: 'bold' }}>✓</span> Tự động đổi link nhận hoa hồng: Khách gửi link Shopee, Lazada... bot tự đổi thành link của sếp ngay lập tức.
+                    <span style={{ color: '#10b981', fontWeight: 'bold' }}>✓</span> Tự động đổi link mua sắm Shopee, Lazada, TikTok Shop sang link nhận hoa hồng của bạn.
                   </li>
                   <li style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', color: '#334155', fontSize: '14px' }}>
-                    <span style={{ color: '#10b981', fontWeight: 'bold' }}>✓</span> Tự nhận biết người gửi: Ghi nhận chính xác ai gửi link để sếp tính doanh số cho họ.
+                    <span style={{ color: '#10b981', fontWeight: 'bold' }}>✓</span> Hoạt động 24/7 trong nhóm chat, tự động trả lời tin nhắn ngay lập tức không cần trực máy.
                   </li>
                   <li style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', color: '#334155', fontSize: '14px' }}>
-                    <span style={{ color: '#10b981', fontWeight: 'bold' }}>✓</span> Hoạt động liên tục 24/7: Tự trả lời tin nhắn trong nhóm chat bất kể ngày đêm, sếp không cần trực máy.
+                    <span style={{ color: '#10b981', fontWeight: 'bold' }}>✓</span> Tự nhận biết người gửi link: Ghi nhận chính xác ai gửi link trong nhóm để bạn theo dõi doanh số.
                   </li>
                   <li style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', color: '#334155', fontSize: '14px' }}>
-                    <span style={{ color: '#10b981', fontWeight: 'bold' }}>✓</span> Tin nhắn phản hồi lịch sự: Mẫu tin nhắn ngắn gọn, rõ ràng, kích thích người mua bấm link.
+                    <span style={{ color: '#10b981', fontWeight: 'bold' }}>✓</span> Phản hồi siêu tốc 24/7: Bot trả lời tin nhắn tức thì, bạn không cần túc trực máy tính.
+                  </li>
+                  <li style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', color: '#334155', fontSize: '14px' }}>
+                    <span style={{ color: '#10b981', fontWeight: 'bold' }}>✓</span> Tin nhắn tối ưu mua hàng: Mẫu phản hồi lịch sự, ngắn gọn, gắn thẻ khách hàng kích thích bấm mua.
                   </li>
                 </ul>
               </div>
@@ -3469,7 +3431,7 @@ function App() {
               </div>
               <div>
                 <h3 style={{ fontSize: '22px', color: '#0f172a', marginBottom: '8px', fontWeight: '700', marginTop: '10px' }}>Zalo Bot Affiliate Pro</h3>
-                <p style={{ color: '#64748b', fontSize: '14px', marginBottom: '24px' }}>Có trang quản trị riêng cho sếp và trang tự tra cứu cho khách</p>
+                <p style={{ color: '#64748b', fontSize: '14px', marginBottom: '24px' }}>Gồm Bot tự đổi link + Trang Web tra cứu đơn cho khách & Trang quản trị cho chủ nhóm</p>
                 
                 <div style={{ marginBottom: '32px' }}>
                   <span style={{ fontSize: '42px', fontWeight: '800', color: '#0f172a', fontFamily: 'var(--font-heading)' }}>299.000đ</span>
@@ -3478,19 +3440,16 @@ function App() {
                 
                 <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 32px 0', textAlign: 'left', display: 'flex', flexDirection: 'column', gap: '16px' }}>
                   <li style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', color: '#334155', fontSize: '14px' }}>
-                    <span style={{ color: '#10b981', fontWeight: 'bold' }}>✓</span> Tự động đổi link mua sắm Shopee, Lazada, TikTok Shop mượt mà.
+                    <span style={{ color: '#10b981', fontWeight: 'bold' }}>✓</span> Bao gồm toàn bộ tính năng của bản Cơ Bản.
                   </li>
                   <li style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', color: '#334155', fontSize: '14px' }}>
-                    <span style={{ color: '#10b981', fontWeight: 'bold' }}>✓</span> Trang quản trị doanh thu riêng: Theo dõi toàn bộ đơn hàng và quản lý cực kỳ nhàn hạ.
+                    <span style={{ color: '#10b981', fontWeight: 'bold' }}>✓</span> Trang Web Tra Cứu riêng: Khách hàng tự mở Web xem danh sách đơn hàng & hoa hồng tích lũy.
                   </li>
                   <li style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', color: '#334155', fontSize: '14px' }}>
-                    <span style={{ color: '#10b981', fontWeight: 'bold' }}>✓</span> Khách tự tra cứu trên Web: Thành viên có thể tự vào xem đơn và hoa hồng mình tích lũy.
+                    <span style={{ color: '#10b981', fontWeight: 'bold' }}>✓</span> Trang Web Quản Trị Doanh Thu: Chủ nhóm đăng nhập xem toàn bộ đơn hàng và bấm duyệt thanh toán 1-click.
                   </li>
                   <li style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', color: '#334155', fontSize: '14px' }}>
-                    <span style={{ color: '#10b981', fontWeight: 'bold' }}>✓</span> Chạy cùng lúc nhiều nhóm: Bot hoạt động trên nhiều nhóm chat và gom số liệu về một nơi.
-                  </li>
-                  <li style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', color: '#334155', fontSize: '14px' }}>
-                    <span style={{ color: '#10b981', fontWeight: 'bold' }}>✓</span> Báo cáo hoa hồng chính xác: Tự tính tiền chuẩn sau thuế và lọc bỏ các đơn trùng lặp.
+                    <span style={{ color: '#10b981', fontWeight: 'bold' }}>✓</span> Tra cứu hoa hồng qua Zalo: Khách hàng gõ lệnh `/vitien` hoặc `/donhang` ngay trong nhóm để xem số dư.
                   </li>
                 </ul>
               </div>
@@ -3528,7 +3487,7 @@ function App() {
             }}>
               <div>
                 <h3 style={{ fontSize: '22px', color: '#0f172a', marginBottom: '8px', fontWeight: '700' }}>Zalo Bot Affiliate Pro Max</h3>
-                <p style={{ color: '#64748b', fontSize: '14px', marginBottom: '24px' }}>Hệ thống ví tiền tự động và rút tiền qua tin nhắn chat</p>
+                <p style={{ color: '#64748b', fontSize: '14px', marginBottom: '24px' }}>Hệ thống Trang Web riêng biệt + Ví tích lũy hoa hồng tự động & Khách tự đặt lệnh rút tiền</p>
                 
                 <div style={{ marginBottom: '32px' }}>
                   <span style={{ fontSize: '42px', fontWeight: '800', color: '#0f172a', fontFamily: 'var(--font-heading)' }}>399.000đ</span>
@@ -3537,19 +3496,22 @@ function App() {
                 
                 <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 32px 0', textAlign: 'left', display: 'flex', flexDirection: 'column', gap: '16px' }}>
                   <li style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', color: '#334155', fontSize: '14px' }}>
-                    <span style={{ color: '#10b981', fontWeight: 'bold' }}>✓</span> Đầy đủ toàn bộ tính năng cao cấp của bản Pro.
+                    <span style={{ color: '#10b981', fontWeight: 'bold' }}>✓</span> Bao gồm toàn bộ tính năng cao cấp của bản Pro.
                   </li>
                   <li style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', color: '#334155', fontSize: '14px' }}>
-                    <span style={{ color: '#10b981', fontWeight: 'bold' }}>✓</span> Ví tích lũy tiền tự động: Tự động cộng dồn tiền hoa hồng sau khi đơn hàng thành công.
+                    <span style={{ color: '#10b981', fontWeight: 'bold' }}>✓</span> Hệ thống Trang Web riêng biệt: Giao diện hiện đại, tra cứu ví hoa hồng và lịch sử dòng tiền minh bạch.
                   </li>
                   <li style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', color: '#334155', fontSize: '14px' }}>
-                    <span style={{ color: '#10b981', fontWeight: 'bold' }}>✓</span> Rút tiền nhanh bằng tin nhắn: Khách tự gõ lệnh `/rut-tien` trong nhóm để yêu cầu thanh toán.
+                    <span style={{ color: '#10b981', fontWeight: 'bold' }}>✓</span> Ví hoa hồng & Lịch sử rút tiền: Tự động cộng dồn hoa hồng khi đơn hoàn thành, theo dõi dòng tiền rõ ràng.
                   </li>
                   <li style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', color: '#334155', fontSize: '14px' }}>
-                    <span style={{ color: '#10b981', fontWeight: 'bold' }}>✓</span> Đường truyền riêng siêu tốc: Chạy trên máy chủ VPS riêng, phản hồi ngay lập tức không trễ lag.
+                    <span style={{ color: '#10b981', fontWeight: 'bold' }}>✓</span> Khách tự đặt lệnh rút tiền: Thành viên chủ động tạo yêu cầu rút tiền trên Web hoặc gõ lệnh rút tiền trong nhóm.
                   </li>
                   <li style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', color: '#334155', fontSize: '14px' }}>
-                    <span style={{ color: '#10b981', fontWeight: 'bold' }}>✓</span> Hỗ trợ kỹ thuật ưu tiên 24/7: Xử lý nhanh chóng mọi yêu cầu và sự cố phát sinh.
+                    <span style={{ color: '#10b981', fontWeight: 'bold' }}>✓</span> Duyệt rút tiền siêu nhanh: Chủ nhóm nhận thông báo và bấm duyệt thanh toán cho khách hàng chỉ với 1 bấm.
+                  </li>
+                  <li style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', color: '#334155', fontSize: '14px' }}>
+                    <span style={{ color: '#10b981', fontWeight: 'bold' }}>✓</span> Tốc độ xử lý siêu tốc 24/7: Vận hành riêng biệt, phản hồi tức thì, bảo mật và ổn định tuyệt đối.
                   </li>
                 </ul>
               </div>

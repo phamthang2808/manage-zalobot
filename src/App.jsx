@@ -2782,7 +2782,7 @@ function App() {
             
             <div className="login-illustration-box">
               <img 
-                src="/ChatGPT Image 16_03_45 30 thg 7, 2026.png" 
+                src="/anh1.png" 
                 alt="Minh họa Zalo Bot Affiliate" 
                 className="login-illustration-img" 
               />
@@ -3141,7 +3141,7 @@ function App() {
           <div className="zigzag-row">
             <div className="zigzag-media">
               <div className="zigzag-img-card">
-                <img src="/ChatGPT Image 16_03_45 30 thg 7, 2026.png" alt="Tự Động Đổi Link" style={{ width: '100%', height: 'auto', display: 'block', borderRadius: '24px' }} />
+                <img src="/anh1.png" alt="Tự Động Đổi Link" style={{ width: '100%', height: 'auto', display: 'block', borderRadius: '24px' }} />
               </div>
             </div>
             <div className="zigzag-content">

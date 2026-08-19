@@ -304,7 +304,7 @@ export default function LoginView() {
           
           <div className="login-illustration-box">
             <img 
-              src="/ChatGPT Image 16_03_45 30 thg 7, 2026.png" 
+              src="/anh1.png" 
               alt="Minh họa Zalo Bot Affiliate" 
               className="login-illustration-img" 
             />

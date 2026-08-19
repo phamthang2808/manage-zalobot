@@ -878,13 +878,13 @@ tr:hover td {
   width: 100%;
 }
 
-/* Standalone Discrete Block Containers - Strict 100% Equal Width Alignment */
+/* Standalone Discrete Block Containers - Generous Side Padding & Balanced Width */
 .landing-block-container {
-  width: calc(100% - 48px) !important;
-  max-width: 1320px !important;
-  margin: 24px auto !important;
-  padding: 44px 36px !important;
-  border-radius: 24px !important;
+  width: calc(100% - 96px) !important;
+  max-width: 1240px !important;
+  margin: 32px auto !important;
+  padding: 48px 48px !important;
+  border-radius: 28px !important;
   background: #ffffff;
   border: 1px solid #e2e8f0;
   box-shadow: 0 16px 40px rgba(0, 0, 0, 0.04);
@@ -893,11 +893,19 @@ tr:hover td {
   box-sizing: border-box !important;
 }
 
+@media (max-width: 1024px) {
+  .landing-block-container {
+    width: calc(100% - 48px) !important;
+    padding: 36px 32px !important;
+    margin: 24px auto !important;
+  }
+}
+
 @media (max-width: 768px) {
   .landing-block-container {
-    width: calc(100% - 20px) !important;
+    width: calc(100% - 32px) !important;
     margin: 16px auto !important;
-    padding: 24px 16px !important;
+    padding: 24px 18px !important;
     border-radius: 20px !important;
   }
 }
@@ -909,7 +917,9 @@ tr:hover td {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 40px;
+  padding: 0 48px;
+  max-width: 1336px;
+  margin: 0 auto;
   border-bottom: 1px solid #e2e8f0;
   background: #ffffff;
   backdrop-filter: blur(20px);
@@ -4938,17 +4948,7 @@ body.dark .sidebar-toggle span {
   }
 
   .login-illustration-box {
-    max-width: 280px !important;
-    max-height: 165px !important;
-    margin: 10px auto 14px !important;
-    border-radius: 18px !important;
-    box-shadow: 0 12px 30px -8px rgba(249, 115, 22, 0.18) !important;
-  }
-
-  .login-illustration-img {
-    max-height: 165px !important;
-    border-radius: 16px !important;
-    object-fit: cover !important;
+    display: none !important;
   }
 
   .login-split-right {
@@ -6487,8 +6487,9 @@ body.dark .landing-footer {
 }
 
 .footer-container {
-  max-width: 1440px;
+  max-width: 1240px;
   margin: 0 auto;
+  padding: 0 24px;
   display: grid;
   grid-template-columns: 2fr 1fr 1.2fr;
   gap: 48px;

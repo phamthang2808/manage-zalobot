@@ -303,9 +303,6 @@ export default function LoginView() {
       {/* Main Content split */}
       <div className="login-split-content">
         <div className="login-split-left">
-          <div className="badge">
-            <span style={{ fontWeight: '700' }}>28Symues Affiliate</span>
-          </div>
           <h1>Đăng nhập tài khoản</h1>
           <p>Đăng nhập để theo dõi trạng thái đơn hàng Shopee & TikTok Shop, xem thống kê hoa hồng và duyệt rút tiền tự động hệ thống.</p>
           

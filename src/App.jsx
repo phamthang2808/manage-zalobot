@@ -2773,10 +2773,6 @@ function App() {
         {/* Main Content split */}
         <div className="login-split-content">
           <div className="login-split-left">
-            <div className="badge" style={{ display: 'inline-flex', alignItems: 'center', gap: '10px', padding: '6px 18px', fontSize: '15px' }}>
-              <img src="/robot-icon.png" alt="AI Robot" style={{ width: '32px', height: '32px', objectFit: 'contain', display: 'inline-block', flexShrink: 0 }} />
-              <span style={{ fontWeight: '700' }}>28Symues <span style={{ color: '#ea580c' }}>Affiliate</span></span>
-            </div>
             <h1>Đăng nhập tài khoản</h1>
             <p>Đăng nhập để theo dõi trạng thái đơn hàng Shopee & TikTok Shop, xem thống kê hoa hồng và duyệt rút tiền tự động hệ thống.</p>
             

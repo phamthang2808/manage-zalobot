@@ -5685,20 +5685,21 @@ body.dark .zalo-pc-warning-note {
   }
 }
 
+/* Animated Floating Badges for Zalo Realtime Chat Showcase */
 .floating-badge {
   position: absolute;
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  padding: 10px 18px;
-  border-radius: 30px;
+  gap: 10px;
+  padding: 10px 20px;
+  border-radius: 40px;
   background: rgba(255, 255, 255, 0.95);
-  border: 1.5px solid rgba(249, 115, 22, 0.4);
-  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08), 0 4px 12px rgba(249, 115, 22, 0.12);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  font-size: 13px;
-  font-weight: 700;
+  border: 2px solid rgba(249, 115, 22, 0.5);
+  box-shadow: 0 14px 30px rgba(249, 115, 22, 0.18), 0 4px 12px rgba(0, 0, 0, 0.08);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  font-size: 14px;
+  font-weight: 800;
   color: #0f172a;
   z-index: 25;
   pointer-events: none;
@@ -5710,65 +5711,159 @@ html.dark .floating-badge,
 body.dark .floating-badge {
   background: rgba(15, 23, 42, 0.95) !important;
   color: #ffffff !important;
-  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35) !important;
+  box-shadow: 0 14px 30px rgba(0, 0, 0, 0.5), 0 0 20px rgba(249, 115, 22, 0.2) !important;
 }
 
 .badge-top-right {
-  top: -18px;
-  right: 24px;
-  border-color: rgba(249, 115, 22, 0.6);
+  top: -20px;
+  right: 28px;
+  border-color: rgba(249, 115, 22, 0.7);
   animation: floatSmooth 3.8s ease-in-out infinite;
 }
 
 .badge-mid-left {
-  top: 45%;
+  top: 160px;
   left: -20px;
-  border-color: rgba(16, 185, 129, 0.6);
-  box-shadow: 0 12px 30px rgba(16, 185, 129, 0.25), 0 6px 15px rgba(0,0,0,0.3);
+  border-color: rgba(16, 185, 129, 0.7);
+  box-shadow: 0 14px 30px rgba(16, 185, 129, 0.25), 0 6px 15px rgba(0,0,0,0.2);
   animation: floatSmoothReverse 4.2s ease-in-out infinite;
 }
 
 .badge-bot-right {
-  bottom: -18px;
-  right: 40px;
-  border-color: rgba(56, 189, 248, 0.6);
-  box-shadow: 0 12px 30px rgba(56, 189, 248, 0.25), 0 6px 15px rgba(0,0,0,0.3);
+  bottom: -20px;
+  right: 28px;
+  border-color: rgba(56, 189, 248, 0.7);
+  box-shadow: 0 14px 30px rgba(56, 189, 248, 0.25), 0 6px 15px rgba(0,0,0,0.2);
   animation: floatSmooth 4.5s ease-in-out infinite;
 }
 
 .badge-icon {
-  font-size: 16px;
+  font-size: 18px;
 }
 
 @media (max-width: 992px) {
-  .badge-mid-left {
-    left: 10px;
-    top: -18px;
-  }
-}
-
-@media (max-width: 768px) {
   .floating-badge {
     display: none !important;
   }
 }
 
+/* Zig-Zag Cartoon & UI Demo Card (Adaptive to Light & Dark mode) */
+.zigzag-demo-card {
+  width: 100%;
+  border-radius: 24px;
+  padding: 32px 24px;
+  background: rgba(255, 255, 255, 0.95);
+  border: 2px solid rgba(253, 186, 116, 0.6);
+  box-shadow: 0 20px 45px -10px rgba(249, 115, 22, 0.15);
+  backdrop-filter: blur(12px);
+  transition: all 0.3s ease;
+}
+
+html[data-theme="dark"] .zigzag-demo-card,
+html.dark .zigzag-demo-card,
+body.dark .zigzag-demo-card {
+  background: rgba(30, 20, 12, 0.9) !important;
+  border-color: rgba(249, 115, 22, 0.3) !important;
+  box-shadow: 0 20px 45px -10px rgba(0, 0, 0, 0.5) !important;
+}
+
 /* =========================================================
-   SMOOTH SCROLL REVEAL ANIMATIONS (SMOOTH SLIDE & FADE IN)
+   SMOOTH SCROLL REVEAL ANIMATIONS (60FPS SMOOTH SLIDE & FADE IN)
    ========================================================= */
 
-.reveal-on-scroll {
+.reveal-on-scroll,
+.scroll-reveal {
   opacity: 0;
-  transform: translateY(40px) scale(0.98);
-  transition: opacity 0.85s cubic-bezier(0.16, 1, 0.3, 1), 
+  transform: translateY(36px) scale(0.985);
+  transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), 
+              transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
+}
+
+.reveal-on-scroll.revealed,
+.scroll-reveal.revealed {
+  opacity: 1;
+  transform: translateY(0px) scale(1);
+}
+
+/* Zig-Zag Showcase Rows Smooth Entrance */
+.zigzag-row {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 0.85s cubic-bezier(0.16, 1, 0.3, 1),
               transform 0.85s cubic-bezier(0.16, 1, 0.3, 1);
   will-change: opacity, transform;
 }
 
-.reveal-on-scroll.revealed {
+.zigzag-row.revealed {
   opacity: 1;
-  transform: translateY(0px) scale(1);
+  transform: translateY(0);
 }
+
+/* Left/Right Directional Entrance for Zig-Zag Items */
+.zigzag-row .zigzag-media {
+  opacity: 0;
+  transform: translateX(-45px);
+  transition: opacity 0.9s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+  transition-delay: 0.1s;
+}
+
+.zigzag-row .zigzag-content {
+  opacity: 0;
+  transform: translateX(45px);
+  transition: opacity 0.9s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+  transition-delay: 0.2s;
+}
+
+.zigzag-row.reverse .zigzag-media {
+  transform: translateX(45px);
+}
+
+.zigzag-row.reverse .zigzag-content {
+  transform: translateX(-45px);
+}
+
+.zigzag-row.revealed .zigzag-media,
+.zigzag-row.revealed .zigzag-content {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* Zalo PC Card Zoom Entrance */
+.zalo-pc-live-card {
+  opacity: 0;
+  transform: translateY(40px) scale(0.96);
+  transition: opacity 0.9s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
+}
+
+.zalo-pc-live-card.revealed {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+/* Pricing Cards Staggered Pop-Up */
+.pricing-card {
+  opacity: 0;
+  transform: translateY(36px) scale(0.96);
+  transition: opacity 0.75s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.75s cubic-bezier(0.16, 1, 0.3, 1),
+              border-color 0.3s ease,
+              box-shadow 0.3s ease;
+  will-change: opacity, transform;
+}
+
+.pricing-card.revealed {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+.pricing-grid > .pricing-card:nth-child(1).revealed { transition-delay: 0.1s; }
+.pricing-grid > .pricing-card:nth-child(2).revealed { transition-delay: 0.25s; }
+.pricing-grid > .pricing-card:nth-child(3).revealed { transition-delay: 0.4s; }
 
 /* Staggered Children Animations */
 .features-grid > .feature-card,
@@ -5805,19 +5900,15 @@ body.dark .floating-badge {
 }
 
 @media (max-width: 768px) {
-  .reveal-on-scroll,
-  .reveal-on-scroll.revealed {
-    opacity: 1 !important;
-    transform: none !important;
-    transition: none !important;
+  .zigzag-row .zigzag-media,
+  .zigzag-row .zigzag-content,
+  .zigzag-row.reverse .zigzag-media,
+  .zigzag-row.reverse .zigzag-content {
+    transform: translateY(24px) !important;
   }
-
-  .features-grid > .feature-card,
-  .instructions-grid > .instruction-step,
-  .banner-badge-grid > .banner-badge-item {
-    opacity: 1 !important;
-    transform: none !important;
-    transition: none !important;
+  .zigzag-row.revealed .zigzag-media,
+  .zigzag-row.revealed .zigzag-content {
+    transform: translateY(0) !important;
   }
 }
 
@@ -6016,4 +6107,473 @@ body.dark .floating-badge {
 }
 
 
+/* =========================================================
+   VIBRANT WARM GOLD/ORANGE GRADIENT PAGE BACKGROUND & GLASSMORPHISM
+   ========================================================= */
 
+/* Default / Light Mode Gradient Background (Vàng / Cam Hổ Phách Nổi Bật & Sang Trọng) */
+body, #root {
+  background: 
+    radial-gradient(circle at 10% 15%, rgba(249, 115, 22, 0.15) 0%, transparent 45%),
+    radial-gradient(circle at 90% 75%, rgba(245, 158, 11, 0.18) 0%, transparent 45%),
+    radial-gradient(circle at 50% 50%, rgba(251, 146, 60, 0.10) 0%, transparent 60%),
+    linear-gradient(135deg, #fffbeb 0%, #ffedd5 35%, #fef3c7 70%, #fff7ed 100%) !important;
+  background-attachment: fixed !important;
+  min-height: 100vh;
+}
+
+/* Dark Mode Gradient Background (Nền Tối Vàng Cam Sunset Rực Rỡ) */
+html[data-theme="dark"] body,
+html[data-theme="dark"] #root,
+html.dark body,
+html.dark #root,
+body.dark,
+body.dark #root {
+  background: 
+    radial-gradient(circle at 15% 15%, rgba(249, 115, 22, 0.22) 0%, transparent 45%),
+    radial-gradient(circle at 85% 80%, rgba(217, 119, 6, 0.20) 0%, transparent 45%),
+    linear-gradient(135deg, #0d0905 0%, #1a0e04 35%, #261406 70%, #0c0915 100%) !important;
+  background-attachment: fixed !important;
+}
+
+/* Section Containers styling - Seamless, Borderless & Standard 1440px Max Width */
+.landing-block-container {
+  background: transparent !important;
+  border: none !important;
+  border-radius: 0 !important;
+  padding: 16px 24px;
+  margin-bottom: 16px;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  width: 100%;
+  max-width: 1440px !important;
+  margin-left: auto;
+  margin-right: auto;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-sizing: border-box;
+}
+
+html[data-theme="dark"] .landing-block-container,
+html.dark .landing-block-container,
+body.dark .landing-block-container {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+/* Dark Mode Image Glare Reduction (Giảm độ chói của các ảnh khi chuyển Dark Mode) */
+html[data-theme="dark"] img,
+html.dark img,
+body.dark img {
+  filter: brightness(0.85) contrast(1.05);
+  transition: filter 0.3s ease;
+}
+
+html[data-theme="dark"] .zigzag-img-card img,
+html.dark .zigzag-img-card img,
+body.dark .zigzag-img-card img,
+html[data-theme="dark"] .banner-showcase-img,
+html.dark .banner-showcase-img,
+body.dark .banner-showcase-img,
+html[data-theme="dark"] .zalo-pc-live-card,
+html.dark .zalo-pc-live-card,
+body.dark .zalo-pc-live-card {
+  filter: brightness(0.82) contrast(1.02) !important;
+}
+
+/* Banner Showcase Card Styling */
+.banner-showcase-card {
+  width: 100%;
+  max-width: 1360px;
+  margin: 0 auto;
+  border-radius: 24px;
+  overflow: hidden;
+  box-shadow: 0 20px 45px rgba(249, 115, 22, 0.15);
+  border: 1.5px solid rgba(253, 186, 116, 0.5);
+  background: transparent;
+}
+
+.banner-showcase-img {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 24px;
+}
+
+/* Feature Cards & Step Cards Refined Styling */
+.feature-card, .instruction-step, .pricing-card {
+  background: rgba(255, 255, 255, 0.95);
+  border: 1.5px solid rgba(253, 186, 116, 0.5);
+  border-radius: 24px;
+  padding: 32px 28px;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: 0 10px 25px -5px rgba(249, 115, 22, 0.08);
+  transition: all 0.3s ease;
+}
+
+.feature-card:hover, .instruction-step:hover {
+  transform: translateY(-8px);
+  border-color: #f97316 !important;
+  box-shadow: 0 20px 40px -10px rgba(249, 115, 22, 0.25) !important;
+}
+
+html[data-theme="dark"] .feature-card,
+html[data-theme="dark"] .instruction-step,
+html[data-theme="dark"] .pricing-card,
+html.dark .feature-card,
+html.dark .instruction-step,
+html.dark .pricing-card,
+body.dark .feature-card,
+body.dark .instruction-step,
+body.dark .pricing-card {
+  background: rgba(38, 23, 12, 0.85) !important;
+  border-color: rgba(249, 115, 22, 0.25) !important;
+  box-shadow: 0 15px 35px -10px rgba(0, 0, 0, 0.5) !important;
+}
+
+/* Vibrant Gradient Icons in Feature Cards */
+.feature-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 16px;
+  background: linear-gradient(135deg, #f97316, #ea580c) !important;
+  color: #ffffff !important;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  margin-bottom: 20px;
+  box-shadow: 0 8px 20px rgba(249, 115, 22, 0.35);
+}
+
+.step-num {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #f97316, #ea580c) !important;
+  color: #ffffff !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 900;
+  font-size: 20px;
+  margin: 0 auto 20px;
+  box-shadow: 0 8px 20px rgba(249, 115, 22, 0.4);
+}
+
+/* =========================================================
+   ZIG-ZAG FEATURE SHOWCASE SECTION WITH CONNECTOR LINES
+   ========================================================= */
+
+.zigzag-row {
+  display: flex;
+  align-items: center;
+  gap: 48px;
+  margin-bottom: 36px;
+  position: relative;
+}
+
+.zigzag-row.reverse {
+  flex-direction: row-reverse;
+}
+
+.zigzag-content {
+  flex: 1;
+  text-align: left;
+}
+
+.zigzag-media {
+  flex: 1;
+  position: relative;
+}
+
+.zigzag-img-card {
+  width: 100%;
+  border-radius: 24px;
+  overflow: hidden;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  border: 1px solid var(--border-color);
+  transition: transform 0.3s ease;
+}
+
+.zigzag-img-card:hover {
+  transform: translateY(-6px);
+}
+
+.zigzag-category-badge {
+  display: inline-block;
+  font-size: 12px;
+  font-weight: 800;
+  color: #0d9488;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 12px;
+}
+
+.zigzag-title {
+  font-size: 28px;
+  font-weight: 800;
+  color: var(--text-bright);
+  margin-bottom: 16px;
+  line-height: 1.3;
+}
+
+.zigzag-desc {
+  font-size: 15px;
+  color: var(--text-muted);
+  line-height: 1.6;
+  margin-bottom: 24px;
+}
+
+.zigzag-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 24px;
+  border-radius: 30px;
+  border: 1.5px solid var(--border-color);
+  background: var(--bg-card);
+  color: var(--text-bright);
+  font-weight: 700;
+  font-size: 14px;
+  text-decoration: none;
+  transition: all 0.25s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.zigzag-btn:hover {
+  border-color: #f97316;
+  color: #f97316;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(249, 115, 22, 0.15);
+}
+
+/* Dashed Curved Connector SVG */
+.zigzag-connector-svg {
+  width: 100%;
+  height: 80px;
+  margin: -15px 0 -5px;
+  overflow: visible;
+  pointer-events: none;
+}
+
+@media (max-width: 992px) {
+  .zigzag-row, .zigzag-row.reverse {
+    flex-direction: column !important;
+    gap: 28px;
+    margin-bottom: 40px;
+  }
+  .zigzag-content {
+    text-align: center;
+  }
+  .zigzag-connector-svg {
+    display: none;
+  }
+}
+
+/* =========================================================
+   PREMIUM LANDING FOOTER STYLES (1440px Responsive Grid)
+   ========================================================= */
+
+.landing-footer {
+  width: 100%;
+  margin-top: 60px;
+  background: rgba(255, 255, 255, 0.85);
+  border-top: 1.5px solid rgba(253, 186, 116, 0.5);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  padding: 50px 24px 30px;
+  box-sizing: border-box;
+  transition: all 0.3s ease;
+}
+
+html[data-theme="dark"] .landing-footer,
+html.dark .landing-footer,
+body.dark .landing-footer {
+  background: rgba(15, 23, 42, 0.92) !important;
+  border-top-color: rgba(249, 115, 22, 0.3) !important;
+}
+
+.footer-container {
+  max-width: 1440px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 2fr 1fr 1.2fr;
+  gap: 48px;
+  align-items: start;
+}
+
+.footer-logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--text-bright);
+  margin-bottom: 16px;
+  font-family: var(--font-heading);
+}
+
+.footer-logo img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #f97316;
+}
+
+.footer-slogan {
+  color: var(--text-muted);
+  font-size: 14.5px;
+  line-height: 1.65;
+  margin-bottom: 20px;
+  max-width: 480px;
+}
+
+.footer-platform-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.footer-platform-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 700;
+  background: rgba(249, 115, 22, 0.1);
+  color: #ea580c;
+  border: 1px solid rgba(249, 115, 22, 0.25);
+}
+
+.footer-links h4,
+.footer-contact h4 {
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--text-bright);
+  margin-bottom: 20px;
+  position: relative;
+  font-family: var(--font-heading);
+}
+
+.footer-links ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.footer-links a {
+  color: var(--text-muted);
+  font-size: 14px;
+  font-weight: 500;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.footer-links a:hover {
+  color: #f97316;
+  transform: translateX(4px);
+}
+
+.footer-contact-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.footer-contact-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: var(--text-muted);
+  font-size: 14px;
+}
+
+.footer-contact-item a {
+  color: #f97316;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.footer-contact-item a:hover {
+  text-decoration: underline;
+}
+
+.footer-bottom {
+  max-width: 1440px;
+  margin: 40px auto 0;
+  padding-top: 24px;
+  border-top: 1px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+  color: var(--text-subtle);
+  font-size: 13px;
+}
+
+html[data-theme="dark"] .footer-bottom,
+html.dark .footer-bottom,
+body.dark .footer-bottom {
+  border-top-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+.footer-bottom-links {
+  display: flex;
+  gap: 20px;
+}
+
+.footer-bottom-links a {
+  color: var(--text-muted);
+  text-decoration: none;
+  font-size: 13px;
+  transition: color 0.2s ease;
+}
+
+.footer-bottom-links a:hover {
+  color: #f97316;
+}
+
+.btn-back-to-top {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border-radius: 20px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  color: var(--text-bright);
+  font-size: 12.5px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-back-to-top:hover {
+  border-color: #f97316;
+  color: #f97316;
+  transform: translateY(-2px);
+}
+
+@media (max-width: 992px) {
+  .footer-container {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+  .footer-bottom {
+    flex-direction: column;
+    text-align: center;
+  }
+}

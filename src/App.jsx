@@ -30,7 +30,7 @@ function App() {
       return 'lookup';
     }
     if (path.includes('/login') || window.location.search.includes('view=login') || window.location.hash.includes('login')) {
-      return 'login';
+       return 'login';
     }
     return sessionStorage.getItem('adminView') || 'home';
   });
@@ -74,19 +74,13 @@ function App() {
       };
 
       const observerOptions = {
-        threshold: 0,
-        rootMargin: '100px 0px 100px 0px'
+        threshold: 0.1,
+        rootMargin: '0px 0px -30px 0px'
       };
 
       const observer = new IntersectionObserver(observerCallback, observerOptions);
-      const elements = document.querySelectorAll('.reveal-on-scroll');
-      elements.forEach(el => {
-        if (window.innerWidth <= 768) {
-          el.classList.add('revealed');
-        } else {
-          observer.observe(el);
-        }
-      });
+      const elements = document.querySelectorAll('.reveal-on-scroll, .scroll-reveal, .zigzag-row, .zalo-pc-live-card, .pricing-card');
+      elements.forEach(el => observer.observe(el));
 
       return () => observer.disconnect();
     }
@@ -2780,13 +2774,20 @@ function App() {
         <div className="login-split-content">
           <div className="login-split-left">
             <div className="badge" style={{ display: 'inline-flex', alignItems: 'center', gap: '10px', padding: '6px 18px', fontSize: '15px' }}>
-              <img src="/robot-icon.png" alt="AI Robot" style={{ width: '36px', height: '36px', objectFit: 'contain', display: 'inline-block', flexShrink: 0 }} />
-              <span style={{ fontWeight: '700' }}>28Symues <span style={{ color: '#ea580c' }}>Affiliate</span></span>
+              <img src="/robot-icon.png" alt="AI Robot" style={{ width: '32px', height: '32px', objectFit: 'contain', display: 'inline-block', flexShrink: 0 }} />
+              <span style={{ fontWeight: '700' }}>Cho Thuê Zalo Bot <span style={{ color: '#ea580c' }}>Affiliate</span></span>
             </div>
-            <h1>Đăng nhập tài khoản</h1>
-            <p>
-              Đăng nhập để theo dõi trạng thái đơn hàng Shopee, xem thống kê doanh số hoa hồng tạm tính và duyệt yêu cầu rút tiền tự động của các thành viên trong hệ thống.
-            </p>
+            <h1>Quản Lý Bot & Tra Cứu Hoa Hồng 24/7</h1>
+            <p>Đăng nhập để theo dõi trạng thái đơn hàng Shopee, TikTok Shop & Lazada, đối soát doanh số và phê duyệt rút tiền tự động hệ thống.</p>
+            
+            <img src="/anh2.png" alt="Zalo Bot Mascot" className="login-mascot-img" />
+
+            <div className="login-feature-chips">
+              <span className="login-feature-chip"><i className="fa-solid fa-bolt" style={{ color: '#ea580c' }}></i> Tự động đổi link</span>
+              <span className="login-feature-chip">🛒 Shopee Affiliate</span>
+              <span className="login-feature-chip">🎵 TikTok Shop</span>
+              <span className="login-feature-chip">💸 Rút tiền 1-Click</span>
+            </div>
           </div>
 
           <div className="login-split-right">
@@ -3076,7 +3077,6 @@ function App() {
                     Trang Quản Trị
                   </button>
                 )}
-                
                 <button className="btn" onClick={handleLogout} style={{ border: '1px solid #cbd5e1' }}>
                   Đăng xuất
                 </button>
@@ -3091,7 +3091,6 @@ function App() {
               </button>
             )}
           </div>
-          {/* Hamburger button - mobile */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexShrink: 0 }}>
             <button
               className={`hamburger${mobileMenuOpen ? ' active' : ''}`}
@@ -3104,42 +3103,102 @@ function App() {
             </button>
           </div>
         </header>
-        {/* Mobile menu overlay */}
         {mobileMenuOpen && <div className="mobile-overlay" onClick={() => setMobileMenuOpen(false)}></div>}
-
-        {/* Container 1: Top Hero Banner Container */}
-        <section id="home" className="landing-block-container hero-showcase-container reveal-on-scroll" style={{ marginTop: '24px', textAlign: 'center' }}>
-          <div className="section-badge" style={{ display: 'inline-flex', alignItems: 'center', gap: '10px', padding: '8px 20px', borderRadius: '30px', background: 'rgba(249, 115, 22, 0.12)', color: '#ea580c', fontSize: '13px', fontWeight: '800', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '16px' }}>
+        <section id="home" className="landing-block-container hero-showcase-container reveal-on-scroll" style={{ marginTop: '12px', marginBottom: '0px', paddingBottom: '0px', paddingTop: '10px', textAlign: 'center' }}>
+          <div className="section-badge" style={{ display: 'inline-flex', alignItems: 'center', gap: '10px', padding: '8px 20px', borderRadius: '30px', background: 'rgba(249, 115, 22, 0.12)', color: '#ea580c', fontSize: '13px', fontWeight: '800', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '14px' }}>
             <img src="/robot-icon.png" alt="AI Robot" style={{ width: '32px', height: '32px', objectFit: 'contain', flexShrink: 0 }} />
             <span>HỆ THỐNG AUTOMATION AFFILIATE 4.0</span>
           </div>
           <h1 className="hero-title" style={{ fontSize: '38px', fontWeight: '900', color: 'var(--text-bright)', marginBottom: '14px', lineHeight: '1.2' }}>
             Cho Thuê Zalo Bot Affiliate - Tự Động Đổi Link Shopee, TikTok Shop & Lazada 24/7
           </h1>
-          <p className="hero-subtitle" style={{ color: 'var(--text-muted)', fontSize: '16px', maxWidth: '780px', margin: '0 auto 28px', lineHeight: '1.6' }}>
+          <p className="hero-subtitle" style={{ color: 'var(--text-muted)', fontSize: '16px', maxWidth: '780px', margin: '0 auto 16px', lineHeight: '1.6' }}>
             Biến mọi liên kết mua sắm trong nhóm chat Zalo của bạn thành nguồn thu nhập thụ động chỉ trong vài giây. Tiện lợi, tự động, ghi nhận sub_id chuẩn xác và hoàn toàn minh bạch.
           </p>
-          <div className="hero-buttons" style={{ justifyContent: 'center', marginBottom: '36px' }}>
-            <a href="#zalo-demo" className="btn btn-hero-1">Bắt đầu ngay</a>
+          <div className="hero-buttons" style={{ justifyContent: 'center', marginBottom: '0px' }}>
+            <a href="#automation-features" className="btn btn-hero-1">Bắt đầu ngay</a>
             <button onClick={() => { setView('lookup'); window.history.pushState({}, '', '/?view=lookup'); }} className="btn btn-hero-2">
               <i className="fa-thin fa-magnifying-glass"></i> Tra cứu đơn hàng
             </button>
-            <a href="#features" className="btn btn-hero-3">Tìm hiểu tính năng</a>
+            <a href="#pricing" className="btn btn-hero-3">Xem bảng giá</a>
           </div>
-
-          {/* Big Hero Yellow Cat Banner Image Showcase Card */}
-          <div className="banner-showcase-card" style={{ marginTop: '0', borderRadius: '24px' }}>
-
-            <img 
-              src="/ChatGPT Image 16_03_45 30 thg 7, 2026.png" 
-              alt="Zalo Bot Affiliate System Top Banner Showcase" 
-              className="banner-showcase-img" 
-            />
-          </div>
-
         </section>
-
-        {/* Container 2: Live Zalo Bot Chat Showcase (Desktop PC Version) */}
+        <section id="automation-features" className="landing-block-container reveal-on-scroll" style={{ padding: '0px 20px 24px', marginTop: '0px', marginBottom: '16px' }}>
+          <div style={{ textAlign: 'center', marginBottom: '20px', marginTop: '0px' }}>
+            <div className="section-badge" style={{ display: 'inline-flex', alignItems: 'center', gap: '10px', padding: '8px 20px', borderRadius: '30px', background: 'rgba(13, 148, 136, 0.12)', color: '#0d9488', fontSize: '13px', fontWeight: '800', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '12px' }}>
+              <i className="fa-solid fa-sparkles"></i>
+              <span>KHÁM PHÁ CÁC TÍNH NĂNG ĐỘC BẢN</span>
+            </div>
+            <h2 className="section-title" style={{ fontSize: '32px', fontWeight: '800', marginBottom: '12px' }}>Hệ Thống Tự Động Hóa Affiliate Toàn Diện</h2>
+            <p className="section-subtitle" style={{ fontSize: '15px' }}>Giải pháp mượt mà, tối ưu nhất giúp sếp quản lý nhóm săn sale nhàn hạ 100%</p>
+          </div>
+          <div className="zigzag-row">
+            <div className="zigzag-media">
+              <div className="zigzag-img-card">
+                <img src="/ChatGPT Image 16_03_45 30 thg 7, 2026.png" alt="Tự Động Đổi Link" style={{ width: '100%', height: 'auto', display: 'block', borderRadius: '24px' }} />
+              </div>
+            </div>
+            <div className="zigzag-content">
+              <span className="zigzag-category-badge">AUTOMATION AFFILIATE 24/7</span>
+              <h3 className="zigzag-title">Tự Động Đổi Link Shopee, TikTok Shop & Lazada</h3>
+              <p className="zigzag-desc">
+                Thành viên trong nhóm chat Zalo chỉ cần dán link mua sắm sản phẩm. Zalo Bot tự động nhận biết người gửi, chuyển đổi thành link affiliate có gắn SubID chuẩn xác và phản hồi lại ngay lập tức.
+              </p>
+              <a href="#zalo-demo" className="zigzag-btn">
+                <span>Trải nghiệm ngay</span>
+                <i className="fa-solid fa-arrow-right"></i>
+              </a>
+            </div>
+          </div>
+          {/* Dashed Curved Line 1: Connects Image 1 (left) to Image 2 (right) */}
+          <svg className="zigzag-connector-svg" viewBox="0 0 1000 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M 220 2 C 220 50, 780 30, 780 78" stroke="#2dd4bf" strokeWidth="3" strokeDasharray="7 7" fill="none" opacity="0.85" />
+            <circle cx="220" cy="2" r="5" fill="#2dd4bf" />
+            <circle cx="780" cy="78" r="5" fill="#2dd4bf" />
+          </svg>
+          <div className="zigzag-row reverse">
+            <div className="zigzag-media">
+              <div className="zigzag-img-card" style={{ background: 'transparent', border: 'none', boxShadow: 'none' }}>
+                <img src="/anh2.png" alt="Trang Web Tra Cứu Đơn Hàng" style={{ width: '100%', height: 'auto', display: 'block', borderRadius: '24px', filter: 'drop-shadow(0 15px 30px rgba(0,0,0,0.08))' }} />
+              </div>
+            </div>
+            <div className="zigzag-content">
+              <span className="zigzag-category-badge">MINH BẠCH & TIỆN LỢI</span>
+              <h3 className="zigzag-title">Trang Web Tra Cứu Đơn Hàng & Hoa Hồng Tự Động</h3>
+              <p className="zigzag-desc">
+                Cung cấp trang Tra Cứu Web Portal riêng cho từng nhóm săn sale. Thành viên chủ động truy cập kiểm tra danh sách đơn hàng đã mua, số tiền hoa hồng được cộng dồn và trạng thái đơn minh bạch.
+              </p>
+              <button onClick={() => { setView('lookup'); window.history.pushState({}, '', '/?view=lookup'); }} className="zigzag-btn">
+                <span>Xem demo tra cứu</span>
+                <i className="fa-solid fa-arrow-right"></i>
+              </button>
+            </div>
+          </div>
+          {/* Dashed Curved Line 2: Connects Image 2 (right) to Image 3 (left) */}
+          <svg className="zigzag-connector-svg" viewBox="0 0 1000 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M 780 2 C 780 50, 220 30, 220 78" stroke="#2dd4bf" strokeWidth="3" strokeDasharray="7 7" fill="none" opacity="0.85" />
+            <circle cx="780" cy="2" r="5" fill="#2dd4bf" />
+            <circle cx="220" cy="78" r="5" fill="#2dd4bf" />
+          </svg>
+          <div className="zigzag-row">
+            <div className="zigzag-media">
+              <div className="zigzag-img-card" style={{ background: 'transparent', border: 'none', boxShadow: 'none' }}>
+                <img src="/anh3.png" alt="Ví Tích Lũy Hoa Hồng & Yêu Cầu Rút Tiền Siêu Tốc" style={{ width: '100%', height: 'auto', display: 'block', borderRadius: '24px', filter: 'drop-shadow(0 15px 30px rgba(0,0,0,0.08))' }} />
+              </div>
+            </div>
+            <div className="zigzag-content">
+              <span className="zigzag-category-badge">RÚT TIỀN TỰ ĐỘNG</span>
+              <h3 className="zigzag-title">Ví Tích Lũy Hoa Hồng & Yêu Cầu Rút Tiền Siêu Tốc</h3>
+              <p className="zigzag-desc">
+                Tích hợp hệ thống ví điện tử nội bộ tự động cộng dồn hoa hồng khi đơn hoàn thành. Thành viên dễ dàng gửi yêu cầu rút tiền qua lệnh chat hoặc trang Web, Admin nhận thông báo và phê duyệt 1-click nhàn hạ.
+              </p>
+              <a href="#pricing" className="zigzag-btn">
+                <span>Xem bảng giá dịch vụ</span>
+                <i className="fa-solid fa-arrow-right"></i>
+              </a>
+            </div>
+          </div>
+        </section>
         <section id="zalo-demo" className="landing-block-container hero-section reveal-on-scroll">
           <div style={{ textAlign: 'center', marginBottom: '28px' }}>
             <div className="section-badge" style={{ display: 'inline-flex', alignItems: 'center', gap: '10px', padding: '8px 20px', borderRadius: '30px', background: 'rgba(249, 115, 22, 0.12)', color: '#ea580c', fontSize: '13px', fontWeight: '800', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '10px' }}>
@@ -3149,179 +3208,107 @@ function App() {
             <h2 className="section-title" style={{ fontSize: '30px', fontWeight: '800', marginBottom: '8px' }}>Tương Tác & Chuyển Đổi Link Tự Động</h2>
             <p className="section-subtitle" style={{ fontSize: '15px' }}>Giao diện đối soát đơn hàng và tự động phản hồi link hoa hồng trực tiếp trên Zalo Desktop</p>
           </div>
-
-          {/* Large Crisp Native Zalo PC Desktop Form with Animated Floating Badges */}
-          <div style={{ position: 'relative', width: '100%', maxWidth: '1180px', margin: '0 auto' }}>
-            {/* Glowing Animated Floating Badges */}
-            <div className="floating-badge badge-top-right" style={{ padding: '8px 18px', borderRadius: '30px' }}>
-              <span className="badge-icon" style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontSize: '20px' }}><i className="fa-solid fa-bolt" style={{ color: '#fb923c', fontSize: '20px' }}></i></span>
-              <span className="badge-text" style={{ color: '#fb923c', fontSize: '14px', fontWeight: '800' }}>Tốc độ &lt; 0.5s</span>
+          <div style={{ position: 'relative', width: '100%', maxWidth: '1360px', margin: '0 auto' }}>
+            <div className="floating-badge badge-top-right">
+              <span className="badge-icon"><i className="fa-solid fa-bolt" style={{ color: '#fb923c' }}></i></span>
+              <span className="badge-text" style={{ color: '#fb923c', fontSize: '15px', fontWeight: '800' }}>Tốc độ &lt; 0.5s</span>
             </div>
-
             <div className="floating-badge badge-mid-left">
               <span className="badge-icon">💰</span>
-              <span className="badge-text" style={{ color: '#34d399' }}>+18.500đ Vừa ghi nhận</span>
+              <span className="badge-text" style={{ color: '#34d399', fontSize: '15px', fontWeight: '800' }}>+18.500đ Vừa ghi nhận</span>
             </div>
-
-            <div className="floating-badge badge-bot-right" style={{ padding: '8px 18px', borderRadius: '30px' }}>
-              <span className="badge-icon" style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}>
-                <img src="/robot-icon.png" alt="AI Robot" style={{ width: '22px', height: '22px', objectFit: 'contain' }} />
+            <div className="floating-badge badge-bot-right">
+              <span className="badge-icon">
+                <img src="/robot-icon.png" alt="AI Robot" style={{ width: '24px', height: '24px', objectFit: 'contain' }} />
               </span>
-              <span className="badge-text" style={{ color: '#38bdf8', fontWeight: '800' }}>AI GPT-4o Tự Động</span>
+              <span className="badge-text" style={{ color: '#38bdf8', fontSize: '15px', fontWeight: '800' }}>AI GPT-4o Tự Động</span>
             </div>
-
             <div className="zalo-pc-live-card">
-            {/* Zalo PC Topbar */}
-            <div className="zalo-pc-topbar">
-              <div className="zalo-pc-topbar-left">
-                <img src="/MAIN.png" alt="Group Logo" className="zalo-pc-topbar-avatar" />
-                <div>
-                  <div className="zalo-pc-topbar-title">HOÀN TIỀN HOA HỒNG SHOPPE + ĐẶT ĐƠN NGƯỜI MỚI</div>
-                  <div className="zalo-pc-topbar-sub">Cộng đồng • 👤 87 thành viên • Bot 28Symues đang hoạt động</div>
+              <div className="zalo-pc-topbar">
+                <div className="zalo-pc-topbar-left">
+                  <img src="/MAIN.png" alt="Group Logo" className="zalo-pc-topbar-avatar" />
+                  <div>
+                    <div className="zalo-pc-topbar-title">HOÀN TIỀN HOA HỒNG SHOPPE + ĐẶT ĐƠN NGƯỜI MỚI</div>
+                    <div className="zalo-pc-topbar-sub">Cộng đồng • 👤 87 thành viên • Bot 28Symues đang hoạt động</div>
+                  </div>
+                </div>
+                <div style={{ display: 'flex', gap: '16px', color: '#94a3b8', fontSize: '15px', alignItems: 'center' }}>
+                  <i className="fa-regular fa-user-plus" title="Thêm thành viên"></i>
+                  <i className="fa-regular fa-magnifying-glass" title="Tìm kiếm"></i>
+                  <i className="fa-regular fa-sidebar" title="Menu nhóm"></i>
                 </div>
               </div>
-              <div style={{ display: 'flex', gap: '16px', color: '#94a3b8', fontSize: '15px', alignItems: 'center' }}>
-                <i className="fa-regular fa-user-plus" title="Thêm thành viên"></i>
-                <i className="fa-regular fa-magnifying-glass" title="Tìm kiếm"></i>
-                <i className="fa-regular fa-sidebar" title="Menu nhóm"></i>
+              <div className="zalo-pc-pin-strip">
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <span style={{ color: '#f97316', fontWeight: 'bold' }}>📌 Ghi chú:</span>
+                  <span style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '680px' }}>
+                    📌 CÁCH THỰC HIỆN MUA SẮM & NHẬN HOÀN TIỀN TỰ ĐỘNG Bước 1: Gửi link sản phẩm hoặc...
+                  </span>
+                </div>
+                <div style={{ background: 'rgba(255,255,255,0.08)', padding: '2px 10px', borderRadius: '6px', fontSize: '11px', color: '#94a3b8' }}>+1 ghim ▾</div>
               </div>
-            </div>
-
-            {/* Zalo PC Pinned Strip */}
-            <div className="zalo-pc-pin-strip">
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <span style={{ color: '#f97316', fontWeight: 'bold' }}>📌 Ghi chú:</span>
-                <span style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '680px' }}>
-                  📌 CÁCH THỰC HIỆN MUA SẮM & NHẬN HOÀN TIỀN TỰ ĐỘNG Bước 1: Gửi link sản phẩm hoặc...
-                </span>
-              </div>
-              <div style={{ background: 'rgba(255,255,255,0.08)', padding: '2px 10px', borderRadius: '6px', fontSize: '11px', color: '#94a3b8' }}>+1 ghim ▾</div>
-            </div>
-
-            {/* Zalo PC Chat Messages Area */}
-            <div className="zalo-pc-chat-main">
-              <div className="zalo-pc-divider">04:50 13/08/2026</div>
-
-              {/* Member Message: Phạm Thắng */}
-              <div className="zalo-pc-msg-item">
-                <img src="/MAIN.png" alt="Phạm Thắng Avatar" className="zalo-pc-msg-avatar-img" />
-                <div className="zalo-pc-msg-body">
-                  <div className="zalo-pc-author">Phạm Thắng</div>
-                  <div className="zalo-pc-bubble">
-                    <div style={{ color: '#0284c7', wordBreak: 'break-all', marginBottom: '8px', fontWeight: '600' }}>https://s.shopee.vn/2qTix9i9pp</div>
-                    <div className="zalo-pc-link-preview-box">
-                      <div className="zalo-pc-link-preview-title">gói lẻ 1kg Phân nền thủy sinh Senda công nghệ Nhật...</div>
-                      <div className="zalo-pc-link-preview-desc">Mua gói lẻ 1kg Phân nền thủy sinh Senda công nghệ Nhật, phân nền thủy sinh cá tép cảnh, phụ kiện thủy sinh giá tốt...</div>
-                      <div style={{ fontSize: '11.5px', color: '#0284c7' }}>s.shopee.vn</div>
+              <div className="zalo-pc-chat-main">
+                <div className="zalo-pc-divider">04:50 13/08/2026</div>
+                <div className="zalo-pc-msg-item">
+                  <img src="/MAIN.png" alt="Phạm Thắng Avatar" className="zalo-pc-msg-avatar-img" />
+                  <div className="zalo-pc-msg-body">
+                    <div className="zalo-pc-author">Phạm Thắng</div>
+                    <div className="zalo-pc-bubble">
+                      <div style={{ color: '#0284c7', wordBreak: 'break-all', marginBottom: '8px', fontWeight: '600' }}>https://s.shopee.vn/2qTix9i9pp</div>
+                      <div className="zalo-pc-link-preview-box">
+                        <div className="zalo-pc-link-preview-title">gói lẻ 1kg Phân nền thủy sinh Senda công nghệ Nhật...</div>
+                        <div className="zalo-pc-link-preview-desc">Mua gói lẻ 1kg Phân nền thủy sinh Senda công nghệ Nhật, phân nền thủy sinh cá tép cảnh, phụ kiện thủy sinh giá tốt...</div>
+                        <div style={{ fontSize: '11.5px', color: '#0284c7' }}>s.shopee.vn</div>
+                      </div>
+                      <div style={{ fontSize: '10px', color: '#94a3b8', marginTop: '6px', textAlign: 'right' }}>04:50</div>
                     </div>
-                    <div style={{ fontSize: '10px', color: '#94a3b8', marginTop: '6px', textAlign: 'right' }}>04:50</div>
+                  </div>
+                </div>
+                <div className="zalo-pc-msg-item">
+                  <img src="/MAIN.png" alt="28Symues Bot Avatar" className="zalo-pc-msg-avatar-img" style={{ border: '1px solid #f97316' }} />
+                  <div className="zalo-pc-msg-body" style={{ maxWidth: '92%' }}>
+                    <div className="zalo-pc-author" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                      <span style={{ color: '#ea580c' }}>28Symues Bot</span>
+                      <span style={{ background: '#ea580c', color: '#ffffff', fontSize: '9.5px', padding: '1px 5px', borderRadius: '4px', fontWeight: '800' }}>BOT</span>
+                    </div>
+                    <div className="zalo-pc-bubble" style={{ borderLeft: '4px solid #ea580c' }}>
+                      <div className="zalo-pc-quote">
+                        <div className="zalo-pc-quote-name">Phạm Thắng</div>
+                        <div style={{ color: '#64748b' }}>[Link] https://s.shopee.vn/2qTix9i9pp</div>
+                      </div>
+                      <div style={{ fontWeight: '600', marginBottom: '8px' }}>Hi <span style={{ color: '#0284c7' }}>@Phạm Thắng</span>, link của bạn đây ạ:</div>
+                      <div style={{ marginBottom: '6px' }}>📦 <b>Gói lẻ 1kg Phân nền thủy sinh Senda công nghệ Nhật, phân nền thủy sinh cá tép cảnh, phụ kiện thủy sinh giá tốt</b></div>
+                      <div style={{ marginBottom: '6px' }}>💵 <b>Giá tham khảo:</b> <span style={{ color: '#10b981' }}>đ34.000</span></div>
+                      <div style={{ marginBottom: '6px', wordBreak: 'break-all' }}>🔗 <b>Link:</b> <span style={{ color: '#0284c7' }}>https://s.shopee.vn/an_redir?origin_link=https%3A%2F%2Fshop...d=17361610405&sub_id=PhamThang_99&deep_and_deferred=1</span></div>
+                      <div style={{ marginBottom: '6px' }}>💵 <b>Tổng hoa hồng:</b> <span style={{ color: '#ea580c', fontWeight: 'bold' }}>3% (đ1.020)</span> [Shop: 3% (đ1.020)]</div>
+                      <div className="zalo-pc-warning-note">
+                        ⚠️ <b>Lưu ý:</b> Click xong mua ngay trong ngày (nếu bấm link lần 2 trước khi đặt hàng để tăng tỷ lệ chuyển đổi), không xem Video/Live, xóa giỏ trước khi click.
+                      </div>
+                      <div style={{ fontSize: '10px', color: '#64748b', marginTop: '6px', textAlign: 'right' }}>04:50</div>
+                    </div>
                   </div>
                 </div>
               </div>
-
-              {/* Bot Reply Message: 28Symues Bot */}
-              <div className="zalo-pc-msg-item">
-                <img src="/MAIN.png" alt="28Symues Bot Avatar" className="zalo-pc-msg-avatar-img" style={{ border: '1px solid #f97316' }} />
-                <div className="zalo-pc-msg-body" style={{ maxWidth: '92%' }}>
-                  <div className="zalo-pc-author" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                    <span style={{ color: '#ea580c' }}>28Symues Bot</span>
-                    <span style={{ background: '#ea580c', color: '#ffffff', fontSize: '9.5px', padding: '1px 5px', borderRadius: '4px', fontWeight: '800' }}>BOT</span>
-                  </div>
-                  <div className="zalo-pc-bubble" style={{ borderLeft: '4px solid #ea580c' }}>
-                    {/* Quoted Card */}
-                    <div className="zalo-pc-quote">
-                      <div className="zalo-pc-quote-name">Phạm Thắng</div>
-                      <div style={{ color: '#64748b' }}>[Link] https://s.shopee.vn/2qTix9i9pp</div>
-                    </div>
-
-                    <div style={{ fontWeight: '600', marginBottom: '8px' }}>Hi <span style={{ color: '#0284c7' }}>@Phạm Thắng</span>, link của bạn đây ạ:</div>
-                    <div style={{ marginBottom: '6px' }}>📦 <b>Gói lẻ 1kg Phân nền thủy sinh Senda công nghệ Nhật, phân nền thủy sinh cá tép cảnh, phụ kiện thủy sinh giá tốt</b></div>
-                    <div style={{ marginBottom: '6px' }}>💵 <b>Giá tham khảo:</b> <span style={{ color: '#10b981' }}>đ34.000</span></div>
-                    <div style={{ marginBottom: '6px', wordBreak: 'break-all' }}>🔗 <b>Link:</b> <span style={{ color: '#0284c7' }}>https://s.shopee.vn/an_redir?origin_link=https%3A%2F%2Fshop...d=17361610405&sub_id=PhamThang_99&deep_and_deferred=1</span></div>
-                    <div style={{ marginBottom: '6px' }}>💵 <b>Tổng hoa hồng:</b> <span style={{ color: '#ea580c', fontWeight: 'bold' }}>3% (đ1.020)</span> [Shop: 3% (đ1.020)]</div>
-                    <div className="zalo-pc-warning-note">
-                      ⚠️ <b>Lưu ý:</b> Click xong mua ngay trong ngày (nếu bấm link lần 2 trước khi đặt hàng để tăng tỷ lệ chuyển đổi), không xem Video/Live, xóa giỏ trước khi click.
-                    </div>
-                    <div style={{ fontSize: '10px', color: '#64748b', marginTop: '6px', textAlign: 'right' }}>04:50</div>
-                  </div>
+              <div className="zalo-pc-bottom-bar">
+                <div className="zalo-pc-icons-mobile-hide" style={{ display: 'flex', gap: '14px', color: '#94a3b8', fontSize: '16px' }}>
+                  <i className="fa-regular fa-smile"></i>
+                  <i className="fa-regular fa-image"></i>
+                  <i className="fa-regular fa-paperclip"></i>
+                  <i className="fa-regular fa-address-card"></i>
+                  <i className="fa-regular fa-crop-simple"></i>
+                  <i className="fa-regular fa-font"></i>
+                </div>
+                <div className="zalo-pc-input-placeholder">
+                  Nhập @, tin nhắn tới HOÀN TIỀN HOA HỒNG SHOPPE + ĐẶT ĐƠN NGƯỜI MỚI...
+                </div>
+                <div style={{ display: 'flex', gap: '12px', color: '#f97316', fontSize: '18px' }}>
+                  <i className="fa-regular fa-face-smile"></i>
+                  <i className="fa-solid fa-thumbs-up"></i>
                 </div>
               </div>
-            </div>
-
-            {/* Zalo PC Bottom Toolbar */}
-            <div className="zalo-pc-bottom-bar">
-              <div className="zalo-pc-icons-mobile-hide" style={{ display: 'flex', gap: '14px', color: '#94a3b8', fontSize: '16px' }}>
-                <i className="fa-regular fa-smile"></i>
-                <i className="fa-regular fa-image"></i>
-                <i className="fa-regular fa-paperclip"></i>
-                <i className="fa-regular fa-address-card"></i>
-                <i className="fa-regular fa-crop-simple"></i>
-                <i className="fa-regular fa-font"></i>
-              </div>
-              <div className="zalo-pc-input-placeholder">
-                Nhập @, tin nhắn tới HOÀN TIỀN HOA HỒNG SHOPPE + ĐẶT ĐƠN NGƯỜI MỚI...
-              </div>
-              <div style={{ display: 'flex', gap: '12px', color: '#f97316', fontSize: '18px' }}>
-                <i className="fa-regular fa-face-smile"></i>
-                <i className="fa-solid fa-thumbs-up"></i>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-        {/* Features Section Container */}
-        <section id="features" className="landing-block-container features-section reveal-on-scroll">
-          <h2 className="section-title">Tính Năng Nổi Bật</h2>
-          <p className="section-subtitle">Mọi thứ bạn cần để vận hành hệ thống săn sale hoa hồng tự động</p>
-          <div className="features-grid" style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '24px', width: '100%' }}>
-            <div className="feature-card" style={{ flex: '1 1 280px', maxWidth: '360px' }}>
-              <div className="feature-icon"><i className="fa-solid fa-link"></i></div>
-              <h3 className="feature-title">Tự Động Đổi Link Mua Sắm</h3>
-              <p className="feature-desc">
-                Tự động nhận diện link Shopee, Lazada, TikTok Shop do khách gửi trong nhóm và đổi thành link tiếp thị liên kết nhận hoa hồng 24/7.
-              </p>
-            </div>
-            <div className="feature-card success" style={{ flex: '1 1 280px', maxWidth: '360px' }}>
-              <div className="feature-icon"><i className="fa-solid fa-comments"></i></div>
-              <h3 className="feature-title">Phản Hồi Siêu Tốc & Lịch Sự</h3>
-              <p className="feature-desc">
-                Bot trả lời ngay lập tức với mẫu tin nhắn ngắn gọn, thân thiện, tự động gắn thẻ tên khách hàng giúp tăng tối đa tỷ lệ bấm mua sản phẩm.
-              </p>
-            </div>
-            <div className="feature-card warning" style={{ flex: '1 1 280px', maxWidth: '360px' }}>
-              <div className="feature-icon"><i className="fa-solid fa-chart-line"></i></div>
-              <h3 className="feature-title">Quản Lý Hoa Hồng Minh Bạch</h3>
-              <p className="feature-desc">
-                Theo dõi chi tiết lịch sử đơn hàng đã mua, phần trăm hoa hồng tính toán chính xác và quản lý chi trả cho thành viên cực kỳ nhàn hạ.
-              </p>
             </div>
           </div>
         </section>
-
-        {/* Steps Section Container */}
-        <section id="steps" className="landing-block-container instructions-section reveal-on-scroll">
-          <h2 className="section-title">3 Bước Bắt Đầu Đơn Giản</h2>
-          <p className="section-subtitle">Chỉ mất 5 phút để thiết lập và khởi chạy chatbot trong nhóm của bạn</p>
-          <div className="instructions-grid" style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '24px', width: '100%', marginTop: '32px' }}>
-            <div className="instruction-step" style={{ flex: '1 1 280px', maxWidth: '360px' }}>
-              <div className="step-num">1</div>
-              <h3 className="step-title">Quét QR Kết Nối Bot</h3>
-              <p className="step-desc">Chủ nhóm dùng ứng dụng Zalo quét mã QR để kích hoạt Bot chạy tự động 24/7.</p>
-            </div>
-            <div className="instruction-step" style={{ flex: '1 1 280px', maxWidth: '360px' }}>
-              <div className="step-num">2</div>
-              <h3 className="step-title">Thêm Bot Vào Nhóm Chat</h3>
-              <p className="step-desc">Thêm Bot vào nhóm săn sale của bạn. Bot tự động chào thành viên và sẵn sàng hỗ trợ đổi link.</p>
-            </div>
-            <div className="instruction-step" style={{ flex: '1 1 280px', maxWidth: '360px' }}>
-              <div className="step-num">3</div>
-              <h3 className="step-title">Khách Mua Sắm & Tích Hoa Hồng</h3>
-              <p className="step-desc">Thành viên gửi link mua hàng, Bot tự động đổi link và ghi nhận doanh số tích lũy minh bạch.</p>
-            </div>
-          </div>
-        </section>
-
         {/* Pricing Section Container */}
         <section id="pricing" className="landing-block-container pricing-section reveal-on-scroll" style={{ textAlign: 'center' }}>
           <h2 className="section-title" style={{ fontSize: '36px', fontWeight: '800', color: 'var(--text-bright)', marginBottom: '12px' }}>Bảng Giá Dịch Vụ</h2>
@@ -3588,44 +3575,56 @@ function App() {
           <div className="footer-container">
             <div className="footer-info">
               <div className="footer-logo">
-                <img src="/logo.jpg" alt="Logo" />
-                <span>28Symues Affiliate</span>
+                <img src="/MAIN.png" alt="28Symues Affiliate Logo" />
+                <span>Cho Thuê Zalo Bot Affiliate</span>
               </div>
               <p className="footer-slogan">
-                Hệ thống Zalo Bot chuyên nghiệp hỗ trợ tăng doanh số affiliate tự động 24/7 trên Shopee, Lazada và TikTok Shop.
+                Giải pháp cho thuê Chatbot Zalo tự động nhận diện và chuyển đổi liên kết mua sắm Shopee, TikTok Shop & Lazada 24/7, gắn SubID chuẩn xác và quản lý ví hoa hồng tích lũy minh bạch cho chủ nhóm.
               </p>
+              <div className="footer-platform-badges">
+                <span className="footer-platform-chip">🛒 Shopee Affiliate</span>
+                <span className="footer-platform-chip">🎵 TikTok Shop</span>
+                <span className="footer-platform-chip">🛍️ Lazada Affiliate</span>
+              </div>
             </div>
-            
+
             <div className="footer-links">
-              <h4>Liên Kết Nhanh</h4>
+              <h4>Điều Hướng Nhanh</h4>
               <ul>
-                <li><a href="#features">Tính Năng</a></li>
-                <li><a href="#steps">Cách Hoạt Động</a></li>
-                <li><a href="#pricing">Bảng Giá</a></li>
-                <li><a href="http://zaloapp.com/qr/p/fd2gcjcjfuof" target="_blank" rel="noopener noreferrer">Hỗ Trợ Kỹ Thuật</a></li>
+                <li><a href="#automation-features">✨ Tính Năng Độc Bản</a></li>
+                <li><a href="#zalo-demo">💬 Trải Nghiệm Zalo Bot</a></li>
+                <li><button onClick={() => { setView('lookup'); window.history.pushState({}, '', '/?view=lookup'); }} style={{ background: 'none', border: 'none', padding: 0, color: 'var(--text-muted)', cursor: 'pointer', fontSize: '14px', fontWeight: 500, fontFamily: 'inherit' }}>📊 Tra Cứu Đơn Hàng Web</button></li>
+                <li><a href="#pricing">💎 Bảng Giá Dịch Vụ</a></li>
               </ul>
             </div>
-            
+
             <div className="footer-contact">
-              <h4>Liên Hệ Đăng Ký</h4>
+              <h4>Liên Hệ & Hỗ Trợ Kỹ Thuật</h4>
               <div className="footer-contact-list">
                 <div className="footer-contact-item">
-                  <span style={{ color: '#f97316' }}>💬</span>
-                  <span>Zalo Admin: <a href="http://zaloapp.com/qr/p/fd2gcjcjfuof" target="_blank" rel="noopener noreferrer">Phạm Thắng</a></span>
+                  <i className="fa-solid fa-user-gear" style={{ color: '#f97316' }}></i>
+                  <span>Zalo Admin: <a href="http://zaloapp.com/qr/p/fd2gcjcjfuof" target="_blank" rel="noopener noreferrer">Phạm Thắng (Kích hoạt 24/7)</a></span>
                 </div>
                 <div className="footer-contact-item">
-                  <span style={{ color: '#f97316' }}>🌐</span>
-                  <span>Cộng đồng hỗ trợ & hướng dẫn kiếm tiền</span>
+                  <i className="fa-solid fa-comments" style={{ color: '#059669' }}></i>
+                  <span>Cộng đồng hỗ trợ & Hướng dẫn sử dụng Zalo Bot</span>
+                </div>
+                <div className="footer-contact-item">
+                  <i className="fa-solid fa-shield-check" style={{ color: '#0284c7' }}></i>
+                  <span>Bảo mật dữ liệu & Đương quyền SubID chuẩn 100%</span>
                 </div>
               </div>
             </div>
           </div>
-          
+
           <div className="footer-bottom">
-            <p>© 2026 28Symues Affiliate. All rights reserved.</p>
+            <p>© 2026 Cho Thuê Zalo Bot Affiliate - 28Symues. All rights reserved.</p>
             <div className="footer-bottom-links">
               <a href="#privacy">Chính Sách Bảo Mật</a>
               <a href="#terms">Điều Khoản Sử Dụng</a>
+              <button onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="btn-back-to-top">
+                <i className="fa-solid fa-arrow-up"></i> Lên Đầu Trang
+              </button>
             </div>
           </div>
         </footer>

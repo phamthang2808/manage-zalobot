@@ -4890,9 +4890,10 @@ body.dark .sidebar-toggle span {
 
   .login-split-content {
     flex-direction: column !important;
-    padding: 10px 16px 20px !important;
-    gap: 8px !important;
+    padding: 10px 16px 40px !important;
+    gap: 12px !important;
     justify-content: flex-start !important;
+    align-items: center !important;
     flex: 1 0 auto !important;
     margin: 0 auto !important;
     width: 100% !important;
@@ -4900,7 +4901,24 @@ body.dark .sidebar-toggle span {
   }
 
   .login-split-left {
-    display: none !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    text-align: center !important;
+    width: 100% !important;
+    max-width: 440px !important;
+    margin-bottom: 4px !important;
+  }
+
+  .login-split-left h1 {
+    font-size: 20px !important;
+    margin-bottom: 4px !important;
+  }
+
+  .login-split-left p {
+    font-size: 12.5px !important;
+    line-height: 1.4 !important;
+    margin-bottom: 6px !important;
   }
 
   .login-split-right {
@@ -5909,6 +5927,45 @@ body.dark .zigzag-demo-card {
   .zigzag-row.revealed .zigzag-media,
   .zigzag-row.revealed .zigzag-content {
     transform: translateY(0) !important;
+  }
+}
+
+/* =========================================================
+   LOGIN VIEW ILLUSTRATION BOX & RESPONSIVE CONSTRAINTS
+   ========================================================= */
+
+.login-illustration-box {
+  margin: 16px 0 !important;
+  width: 100% !important;
+  max-width: 340px !important;
+  max-height: 190px !important;
+  border-radius: 16px !important;
+  overflow: hidden !important;
+  box-shadow: 0 12px 30px -8px rgba(249, 115, 22, 0.18) !important;
+  border: 1.5px solid rgba(253, 186, 116, 0.6) !important;
+  background: var(--bg-card) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.login-illustration-img {
+  width: 100% !important;
+  height: 100% !important;
+  max-height: 190px !important;
+  object-fit: cover !important;
+  display: block !important;
+  border-radius: 14px !important;
+}
+
+@media (max-width: 992px) {
+  .login-illustration-box {
+    max-width: 260px !important;
+    max-height: 140px !important;
+    margin: 10px auto !important;
+  }
+  .login-illustration-img {
+    max-height: 140px !important;
   }
 }
 

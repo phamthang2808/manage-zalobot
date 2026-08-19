@@ -309,19 +309,13 @@ export default function LoginView() {
           <h1>Đăng nhập tài khoản</h1>
           <p>Đăng nhập để theo dõi trạng thái đơn hàng Shopee & TikTok Shop, xem thống kê hoa hồng và duyệt rút tiền tự động hệ thống.</p>
           
-          <div className="login-illustration-box">
+          <div className="login-illustration-box" style={{ margin: '16px 0', width: '100%', maxWidth: '340px', maxHeight: '190px', borderRadius: '16px', overflow: 'hidden', border: '1.5px solid rgba(253, 186, 116, 0.6)', boxShadow: '0 12px 30px -8px rgba(249, 115, 22, 0.18)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <img 
               src="/111.png" 
               alt="Minh họa Zalo Bot Affiliate" 
               className="login-illustration-img" 
+              style={{ width: '100%', height: '100%', maxHeight: '190px', objectFit: 'cover', display: 'block', borderRadius: '14px' }}
             />
-          </div>
-
-          <div className="login-feature-chips">
-            <span className="login-feature-chip"><i className="fa-solid fa-bolt" style={{ color: '#ea580c', marginRight: '4px' }}></i> Hoàn tiền tự động</span>
-            <span className="login-feature-chip">🟠 Shopee Affiliate</span>
-            <span className="login-feature-chip">🎵 TikTok Shop</span>
-            <span className="login-feature-chip">💸 Rút tiền 24/7</span>
           </div>
         </div>
 

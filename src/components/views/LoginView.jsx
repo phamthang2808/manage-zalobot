@@ -158,24 +158,22 @@ export default function LoginView() {
         }
         .login-split-nav .btn-back:hover { background: #fff7ed; border-color: #f97316; color: #ea580c; }
         .login-split-content {
-          flex: 1; display: flex; align-items: center; justify-content: center;
-          padding: 20px 40px 80px; max-width: 1440px; margin: 0 auto; width: 100%; gap: 60px; z-index: 10; box-sizing: border-box;
-          min-height: calc(100vh - 140px);
+          flex: 1; display: flex; align-items: center; justify-content: space-between;
+          padding: 24px 80px 70px; max-width: 1200px; margin: 0 auto; width: 100%; gap: 60px; z-index: 10; box-sizing: border-box;
         }
-        .login-split-left { flex: 1.1; text-align: left; max-width: 540px; }
+        .login-split-left { flex: 1.1; text-align: left; }
         .login-split-left .badge {
           display: inline-flex; align-items: center; gap: 8px; background: #fff7ed; border: 1px solid #ffedd5;
           color: #ea580c; padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 700;
-          text-transform: uppercase; margin-bottom: 20px;
+          text-transform: uppercase; margin-bottom: 24px;
         }
-        .login-split-left h1 { font-family: var(--font-heading); font-size: 36px; font-weight: 800; color: var(--text-bright); line-height: 1.3; margin: 0 0 16px; }
-        .login-split-left p { font-size: 15.5px; color: var(--text-muted); line-height: 1.65; margin: 0 0 20px; }
-        .login-mascot-img { width: 100%; max-width: 260px; height: auto; display: block; margin: 0 auto 16px; filter: drop-shadow(0 15px 30px rgba(0,0,0,0.1)); }
-        .login-split-right { flex: 0.9; display: flex; justify-content: center; width: 100%; }
+        .login-split-left h1 { font-family: var(--font-heading); font-size: 40px; font-weight: 800; color: var(--text-bright); line-height: 1.3; margin: 0 0 20px; }
+        .login-split-left p { font-size: 16px; color: var(--text-muted); line-height: 1.6; margin: 0; }
+        .login-split-right { flex: 0.9; display: flex; justify-content: flex-end; width: 100%; }
         .login-split-card {
           background: var(--bg-card); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
-          border: 1.5px solid var(--border-color); border-radius: 28px;
-          width: 100%; max-width: 440px; padding: 36px 36px;
+          border: 1.5px solid var(--border-color); border-radius: 24px;
+          width: 100%; max-width: 440px; padding: 32px 36px;
           box-shadow: 0 20px 50px -10px rgba(0,0,0,0.12); box-sizing: border-box;
         }
         .login-split-card h2 { font-family: var(--font-heading); font-size: 28px; font-weight: 800; color: var(--text-bright); margin: 0 0 8px; text-align: left; }
@@ -207,7 +205,7 @@ export default function LoginView() {
         .cf-links a { font-size: 8px; color: var(--text-muted); text-decoration: underline; }
         .login-split-footer { text-align: center; margin-top: 24px; font-size: 13.5px; color: var(--text-muted); font-weight: 600; }
         .login-split-footer a { color: #ea580c; text-decoration: underline; font-weight: 700; }
-        .login-feature-chips { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 16px; }
+        .login-feature-chips { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 24px; }
         .login-feature-chip {
           background: var(--bg-card); border: 1.5px solid var(--border-color); border-radius: 20px;
           padding: 6px 14px; font-size: 13px; font-weight: 700; color: var(--text-bright);
@@ -235,19 +233,18 @@ export default function LoginView() {
           .login-split-nav .btn-back { padding: 6px 12px; font-size: 12.5px; white-space: nowrap; }
           .login-split-content {
             flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center;
-            padding: 16px 16px 80px; gap: 20px; max-width: 100%; box-sizing: border-box; width: 100%; min-height: auto;
+            padding: 16px 16px 80px; gap: 16px; max-width: 100%; box-sizing: border-box; width: 100%;
           }
           .login-split-left {
-            display: flex; flex-direction: column; align-items: center; text-align: center; max-width: 440px; margin-bottom: 8px;
+            display: flex; flex-direction: column; align-items: center; text-align: center; max-width: 440px; margin-bottom: 4px;
           }
           .login-split-left .badge { margin-bottom: 8px; padding: 4px 12px; font-size: 11px; }
-          .login-split-left h1 { font-size: 22px; margin-bottom: 6px; line-height: 1.3; }
-          .login-split-left p { font-size: 13px; line-height: 1.5; max-width: 380px; }
-          .login-mascot-img { max-width: 150px; margin-bottom: 10px; }
+          .login-split-left h1 { font-size: 20px; margin-bottom: 6px; line-height: 1.3; }
+          .login-split-left p { font-size: 12.5px; line-height: 1.45; max-width: 380px; }
           .login-feature-chips { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; margin-top: 10px; }
           .login-feature-chip { padding: 4px 10px; font-size: 11.5px; }
           .login-split-right { justify-content: center; width: 100%; max-width: 440px; }
-          .login-split-card { padding: 28px 22px; width: 100%; max-width: 100%; box-shadow: 0 15px 40px -5px rgba(0,0,0,0.15); border-radius: 24px; }
+          .login-split-card { padding: 24px 20px; width: 100%; max-width: 100%; box-shadow: 0 15px 40px -5px rgba(0,0,0,0.15); }
         }
         @media (max-width: 480px) {
           .login-split-header { padding: 10px 12px !important; }
@@ -262,24 +259,19 @@ export default function LoginView() {
       <ToastNotification />
 
       {/* Header */}
-      <header className="login-split-header" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%', padding: '10px 12px', flexWrap: 'nowrap', gap: '6px', boxSizing: 'border-box' }}>
-        <div className="login-split-logo" style={{ display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 1, minWidth: 0, whiteSpace: 'nowrap' }}>
-          <img src="/MAIN.png" alt="Logo" style={{ width: '32px', height: '32px', maxWidth: '32px', maxHeight: '32px', flexShrink: 0, objectFit: 'contain' }} />
-
-          <span className="login-logo-text" style={{ fontWeight: '800', lineHeight: 1, whiteSpace: 'nowrap', display: 'inline-flex', alignItems: 'center', letterSpacing: '0.2px' }}>
-            <span>28Symues&nbsp;</span>
-            <span style={{ color: '#f97316', whiteSpace: 'nowrap', display: 'inline' }}>Affiliate</span>
-          </span>
+      <header className="login-split-header">
+        <div className="login-split-logo">
+          <img src="/MAIN.png" alt="Logo" />
+          <span>28Symues <span style={{ color: '#f97316' }}>Affiliate</span></span>
         </div>
-        <div className="login-split-nav" style={{ display: 'flex', alignItems: 'center', gap: '6px', flexShrink: 0, whiteSpace: 'nowrap' }}>
+        <div className="login-split-nav">
           <ThemeToggle />
           <button 
             className="btn-back" 
             onClick={() => { setView('home'); window.history.pushState({}, '', '/'); }}
-            style={{ whiteSpace: 'nowrap', display: 'inline-flex', alignItems: 'center', gap: '4px', flexShrink: 0, cursor: 'pointer' }}
           >
-            <i className="fa-solid fa-house" style={{ color: '#ea580c', flexShrink: 0 }}></i>
-            <span className="btn-back-text" style={{ whiteSpace: 'nowrap', display: 'inline' }}>Trang chủ</span>
+            <i className="fa-solid fa-house" style={{ color: '#ea580c' }}></i>
+            <span>Trang chủ</span>
           </button>
         </div>
       </header>
@@ -287,9 +279,8 @@ export default function LoginView() {
       {/* Main Content split */}
       <div className="login-split-content">
         <div className="login-split-left">
-          <div className="badge" style={{ display: 'inline-flex', alignItems: 'center', gap: '10px', padding: '6px 18px', fontSize: '15px' }}>
-            <img src="/robot-icon.png" alt="AI Robot" style={{ width: '36px', height: '36px', objectFit: 'contain', display: 'inline-block', flexShrink: 0 }} />
-            <span style={{ fontWeight: '700' }}>28Symues <span style={{ color: '#ea580c' }}>Affiliate</span></span>
+          <div className="badge">
+            <span style={{ fontWeight: '700' }}>28Symues Affiliate</span>
           </div>
           <h1>Đăng nhập tài khoản</h1>
           <p>Đăng nhập để theo dõi trạng thái đơn hàng Shopee & TikTok Shop, xem thống kê hoa hồng và duyệt rút tiền tự động hệ thống.</p>

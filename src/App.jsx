@@ -2775,18 +2775,15 @@ function App() {
           <div className="login-split-left">
             <div className="badge" style={{ display: 'inline-flex', alignItems: 'center', gap: '10px', padding: '6px 18px', fontSize: '15px' }}>
               <img src="/robot-icon.png" alt="AI Robot" style={{ width: '32px', height: '32px', objectFit: 'contain', display: 'inline-block', flexShrink: 0 }} />
-              <span style={{ fontWeight: '700' }}>Cho Thuê Zalo Bot <span style={{ color: '#ea580c' }}>Affiliate</span></span>
+              <span style={{ fontWeight: '700' }}>28Symues <span style={{ color: '#ea580c' }}>Affiliate</span></span>
             </div>
-            <h1>Quản Lý Bot & Tra Cứu Hoa Hồng 24/7</h1>
-            <p>Đăng nhập để theo dõi trạng thái đơn hàng Shopee, TikTok Shop & Lazada, đối soát doanh số và phê duyệt rút tiền tự động hệ thống.</p>
-            
-            <img src="/anh2.png" alt="Zalo Bot Mascot" className="login-mascot-img" />
-
+            <h1>Đăng nhập tài khoản</h1>
+            <p>Đăng nhập để theo dõi trạng thái đơn hàng Shopee & TikTok Shop, xem thống kê hoa hồng và duyệt rút tiền tự động hệ thống.</p>
             <div className="login-feature-chips">
-              <span className="login-feature-chip"><i className="fa-solid fa-bolt" style={{ color: '#ea580c' }}></i> Tự động đổi link</span>
-              <span className="login-feature-chip">🛒 Shopee Affiliate</span>
+              <span className="login-feature-chip"><i className="fa-solid fa-bolt" style={{ color: '#ea580c', marginRight: '4px' }}></i> Hoàn tiền tự động</span>
+              <span className="login-feature-chip">🟠 Shopee Affiliate</span>
               <span className="login-feature-chip">🎵 TikTok Shop</span>
-              <span className="login-feature-chip">💸 Rút tiền 1-Click</span>
+              <span className="login-feature-chip">💸 Rút tiền 24/7</span>
             </div>
           </div>
 

@@ -402,9 +402,9 @@ export default function OrdersTab() {
                       )}
                     </td>
                     <td data-label="Trạng thái" style={{ textAlign: 'center' }}>
-                      <span className={`badge ${o.status === 'Hoàn thành' ? 'badge-completed' : o.status === 'Đã hủy' ? 'badge-cancelled' : 'badge-pending'}`}
+                      <span className={`badge ${o.status === 'Hoàn thành' || o.status === 'Đã chốt HH' || o.status === 'Đã chốt' || o.status === 2 ? 'badge-completed' : o.status === 'Đã hủy' || o.status === 3 ? 'badge-cancelled' : 'badge-pending'}`}
                         style={{ fontSize: '11px', padding: '4px 10px' }}>
-                        {o.status}
+                        {o.status === 2 || o.status === 'Hoàn thành' || o.status === 'Đã chốt HH' ? 'Hoàn thành (Đã chốt)' : o.status === 3 || o.status === 'Đã hủy' ? 'Đã hủy' : (typeof o.status === 'number' ? (o.status === 2 ? 'Hoàn thành' : o.status === 3 ? 'Đã hủy' : 'Chờ kiểm duyệt') : (o.status || 'Chờ kiểm duyệt'))}
                       </span>
                     </td>
                   </tr>

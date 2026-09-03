@@ -207,7 +207,7 @@ export function AppProvider({ children }) {
       }, 60000); // Tự động làm mới dữ liệu 1 phút / lần
       return () => clearInterval(intervalId);
     }
-  }, [token, user, view]);
+  }, [token, user, view, activeTab]);
 
   // SEO document title
   useEffect(() => {

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useApp } from '../../context/AppContext';
 import { formatDateTime, formatMoney } from '../../utils/formatters';
 
@@ -42,6 +42,20 @@ export default function OrdersTab() {
   const [syncLoading, setSyncLoading] = useState(false);
   const [activeDatePreset, setActiveDatePreset] = useState('ALL');
 
+  useEffect(() => {
+    if (token && user) {
+      fetchData(token, user);
+    }
+  }, [token, user]);
+
+  const getPlatformName = (o) => {
+    if (!o) return 'Shopee';
+    const p = (o.platform || '').trim().toLowerCase();
+    if (p.includes('tiktok')) return 'TikTok Shop';
+    if (p.includes('shopeefood') || (o.orderId && o.orderId.startsWith('SPF'))) return 'ShopeeFood';
+    return 'Shopee';
+  };
+
   // Real backend orders
   const combinedOrders = orders || [];
 
@@ -61,7 +75,7 @@ export default function OrdersTab() {
 
   const filteredOrders = combinedOrders.filter(o => {
     // 1. Platform filter
-    const itemPlatform = o.platform || (o.orderId?.startsWith('579') ? 'TikTok Shop' : o.orderId?.startsWith('SPF') ? 'ShopeeFood' : 'Shopee');
+    const itemPlatform = getPlatformName(o);
     if (itemPlatform !== platformFilter) return false;
 
     // 2. Keyword Search
@@ -155,9 +169,9 @@ export default function OrdersTab() {
           WebkitOverflowScrolling: 'touch'
         }}>
           {[
-            { key: 'Shopee', iconClass: 'fa-solid fa-bag-shopping', label: 'Shopee', count: combinedOrders.filter(o => !o.platform || o.platform === 'Shopee').length },
-            { key: 'TikTok Shop', iconClass: 'fa-brands fa-tiktok', label: 'TikTok Shop', count: combinedOrders.filter(o => o.platform === 'TikTok Shop' || o.orderId?.startsWith('579')).length },
-            { key: 'ShopeeFood', iconClass: 'fa-solid fa-utensils', label: 'ShopeeFood', count: combinedOrders.filter(o => o.platform === 'ShopeeFood' || o.orderId?.startsWith('SPF')).length }
+            { key: 'Shopee', iconClass: 'fa-solid fa-bag-shopping', label: 'Shopee', count: combinedOrders.filter(o => getPlatformName(o) === 'Shopee').length },
+            { key: 'TikTok Shop', iconClass: 'fa-brands fa-tiktok', label: 'TikTok Shop', count: combinedOrders.filter(o => getPlatformName(o) === 'TikTok Shop').length },
+            { key: 'ShopeeFood', iconClass: 'fa-solid fa-utensils', label: 'ShopeeFood', count: combinedOrders.filter(o => getPlatformName(o) === 'ShopeeFood').length }
           ].map(tab => {
             const isActive = platformFilter === tab.key;
             return (

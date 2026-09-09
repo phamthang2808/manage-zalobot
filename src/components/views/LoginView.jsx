@@ -247,36 +247,143 @@ export default function LoginView() {
         .modal-divider { display: flex; align-items: center; gap: 12px; margin: 24px 0; color: var(--text-muted); font-size: 13px; font-weight: 600; }
         .modal-divider::before, .modal-divider::after { content: ''; flex: 1; height: 1px; background: var(--border-color); }
         @media (max-width: 992px) {
-          .login-split-header { padding: 12px 16px; height: auto; flex-wrap: nowrap; gap: 8px; }
-          .login-split-logo { gap: 8px; flex-shrink: 1; min-width: 0; }
-          .login-split-logo img { width: 30px; height: 30px; flex-shrink: 0; }
-          .login-split-logo span { font-size: 16px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-          .login-split-nav { gap: 10px; flex-shrink: 0; }
-          .login-split-nav .btn-back { padding: 6px 12px; font-size: 12.5px; white-space: nowrap; }
+          .login-page-split {
+            height: 100vh;
+            height: 100dvh;
+            min-height: 100vh;
+            min-height: 100dvh;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+          }
+          .login-split-header {
+            padding: 10px 14px !important;
+            height: auto !important;
+            display: flex !important;
+            flex-wrap: nowrap !important;
+            align-items: center !important;
+            justify-content: space-between !important;
+            gap: 6px !important;
+            flex-shrink: 0 !important;
+          }
+          .login-split-logo {
+            gap: 6px !important;
+            flex-shrink: 1 !important;
+            min-width: 0 !important;
+          }
+          .login-split-logo img {
+            width: 28px !important;
+            height: 28px !important;
+            flex-shrink: 0 !important;
+          }
+          .login-split-logo span {
+            font-size: 14px !important;
+            white-space: nowrap !important;
+          }
+          .login-split-nav {
+            gap: 6px !important;
+            flex-shrink: 0 !important;
+          }
+          .login-split-nav .btn-back {
+            padding: 4px 8px !important;
+            font-size: 11.5px !important;
+            white-space: nowrap !important;
+          }
           .login-split-content {
-            flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center;
-            padding: 16px 16px 80px; gap: 16px; max-width: 100%; box-sizing: border-box; width: 100%;
+            flex-direction: column;
+            padding: 8px 16px 16px !important;
+            gap: 0 !important;
+            justify-content: center !important;
+            align-items: center !important;
+            flex: 1;
+            box-sizing: border-box;
           }
           .login-split-left {
-            display: flex; flex-direction: column; align-items: center; text-align: center; max-width: 440px; margin-bottom: 4px;
+            display: none !important;
           }
-          .login-split-left .badge { margin-bottom: 8px; padding: 4px 12px; font-size: 11px; }
-          .login-split-left h1 { font-size: 20px; margin-bottom: 6px; line-height: 1.3; }
-          .login-split-left p { font-size: 12.5px; line-height: 1.45; max-width: 380px; }
-          .login-illustration-box { max-width: 240px; max-height: 130px; margin: 10px auto; }
-          .login-illustration-img { max-height: 130px; }
-          .login-feature-chips { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; margin-top: 10px; }
-          .login-feature-chip { padding: 4px 10px; font-size: 11.5px; }
-          .login-split-right { justify-content: center; width: 100%; max-width: 440px; }
-          .login-split-card { padding: 24px 20px; width: 100%; max-width: 100%; box-shadow: 0 15px 40px -5px rgba(0,0,0,0.15); }
+          .login-split-right {
+            justify-content: center;
+            width: 100%;
+            max-width: 420px;
+          }
+          .login-split-card {
+            padding: 20px 18px !important;
+            width: 100%;
+            max-width: 100%;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1) !important;
+            border-radius: 20px !important;
+          }
+          .login-split-card h2 {
+            font-size: 22px !important;
+            margin-bottom: 4px !important;
+          }
+          .login-split-card .subtitle {
+            font-size: 12.5px !important;
+            margin-bottom: 12px !important;
+          }
+          .login-split-card .form-group {
+            margin-bottom: 10px !important;
+          }
+          .login-split-card .form-label {
+            font-size: 12px !important;
+            margin-bottom: 4px !important;
+          }
+          .login-split-card .form-input {
+            padding: 10px 14px !important;
+            font-size: 14px !important;
+            border-radius: 10px !important;
+          }
+          .login-split-card .cf-turnstile-sim {
+            margin: 8px 0 12px !important;
+            min-height: 48px !important;
+            padding: 8px 12px !important;
+          }
+          .login-split-card .modal-login-btn {
+            padding: 11px 16px !important;
+            font-size: 15px !important;
+            border-radius: 12px !important;
+          }
+          .login-split-card .modal-divider {
+            margin: 10px 0 !important;
+            font-size: 12px !important;
+          }
+          .login-split-card .btn-google-custom {
+            height: 40px !important;
+            font-size: 14px !important;
+            border-radius: 10px !important;
+          }
+          .login-split-card .login-split-footer {
+            margin-top: 10px !important;
+            font-size: 12px !important;
+          }
         }
         @media (max-width: 480px) {
-          .login-split-header { padding: 10px 12px !important; }
-          .login-split-logo img { width: 26px !important; height: 26px !important; }
-          .login-split-logo span { font-size: 14px !important; }
-          .login-split-nav .btn-back { padding: 4px 10px !important; font-size: 11.5px !important; }
-          .login-split-card h2 { font-size: 24px; }
-          .login-split-card { padding: 24px 18px; }
+          .login-split-header {
+            padding: 8px 10px !important;
+          }
+          .login-split-logo img {
+            width: 24px !important;
+            height: 24px !important;
+          }
+          .login-split-logo span {
+            font-size: 13px !important;
+            white-space: nowrap !important;
+          }
+          .login-split-nav .btn-back {
+            padding: 3px 7px !important;
+            font-size: 11px !important;
+            white-space: nowrap !important;
+          }
+          .login-split-content {
+            padding: 4px 12px 12px !important;
+          }
+          .login-split-card {
+            padding: 16px 14px !important;
+          }
+          .login-split-card h2 {
+            font-size: 20px !important;
+          }
         }
       `}} />
 
@@ -404,7 +511,6 @@ export default function LoginView() {
           </div>
         </div>
       </div>
-      <MobileBottomNav />
     </div>
   );
 }

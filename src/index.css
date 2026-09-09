@@ -2200,6 +2200,10 @@ tr:hover td {
   display: none;
 }
 
+.mobile-header-theme-toggle {
+  display: none !important;
+}
+
 /* Mobile overlay */
 .mobile-overlay {
   display: none;
@@ -2258,6 +2262,11 @@ tr:hover td {
   /* Show hamburger, hide desktop elements */
   .hamburger {
     display: flex;
+  }
+
+  .mobile-header-theme-toggle {
+    display: inline-flex !important;
+    z-index: 201;
   }
 
   .landing-header {

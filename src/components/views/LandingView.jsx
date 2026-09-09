@@ -55,10 +55,6 @@ export default function LandingView() {
             <i className="fa-thin fa-magnifying-glass" style={{ marginRight: '6px' }}></i>Tra cứu đơn hàng
           </a>
           <div className="mobile-nav-actions">
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '6px 12px', background: 'var(--bg-main)', borderRadius: '10px', marginBottom: '8px' }}>
-              <span style={{ fontSize: '13.5px', fontWeight: '600', color: 'var(--text-main)' }}>Giao diện Dark/Light</span>
-              <ThemeToggle />
-            </div>
             {token ? (
               <>
                 <div className="user-widget">
@@ -116,7 +112,8 @@ export default function LandingView() {
             <button className="btn btn-glow" onClick={() => { setView('login'); window.history.pushState({}, '', '/?view=login'); }}>Đăng nhập</button>
           )}
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexShrink: 0 }}>
+        <div className="mobile-header-actions" style={{ display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 0 }}>
+          <ThemeToggle className="mobile-header-theme-toggle" />
           <button className={`hamburger${mobileMenuOpen ? ' active' : ''}`} onClick={() => setMobileMenuOpen(!mobileMenuOpen)} aria-label="Toggle menu">
             <span></span><span></span><span></span>
           </button>

@@ -3004,10 +3004,6 @@ function App() {
             <a href="#" onClick={(e) => { e.preventDefault(); setView('lookup'); window.history.pushState({}, '', '/?view=lookup'); setMobileMenuOpen(false); }} style={{ color: '#ea580c', fontWeight: '700' }}><i className="fa-thin fa-magnifying-glass" style={{ marginRight: '6px' }}></i>Tra cứu đơn hàng</a>
             {/* Mobile-only actions inside nav */}
             <div className="mobile-nav-actions">
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '6px 12px', background: 'var(--bg-main)', borderRadius: '10px', marginBottom: '8px' }}>
-                <span style={{ fontSize: '13.5px', fontWeight: '600', color: 'var(--text-main)' }}>Giao diện Dark/Light</span>
-                <ThemeToggle />
-              </div>
               {token ? (
                 <>
                   <div className="user-widget">
@@ -3141,7 +3137,8 @@ function App() {
               </button>
             )}
           </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexShrink: 0 }}>
+          <div className="mobile-header-actions" style={{ display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 0 }}>
+            <ThemeToggle className="mobile-header-theme-toggle" />
             <button
               className={`hamburger${mobileMenuOpen ? ' active' : ''}`}
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}

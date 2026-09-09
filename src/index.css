@@ -6677,3 +6677,58 @@ body.dark .footer-bottom {
     text-align: center;
   }
 }
+
+/* ==========================================================================
+   User Detail Modal Enhanced Contrast & Dimensions
+   ========================================================================== */
+.user-detail-modal {
+  width: 95vw !important;
+  max-width: 1180px !important;
+  max-height: 92vh !important;
+  border-radius: 16px !important;
+  background: var(--bg-card, #ffffff) !important;
+  color: var(--text-main, #1e293b) !important;
+}
+
+html[data-theme="light"] .user-detail-modal,
+html:not([data-theme="dark"]) .user-detail-modal {
+  background: #ffffff !important;
+  color: #0f172a !important;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25) !important;
+}
+
+html[data-theme="light"] .user-detail-modal .detail-item,
+html:not([data-theme="dark"]) .user-detail-modal .detail-item {
+  background: #f8fafc !important;
+  border: 1.5px solid #e2e8f0 !important;
+}
+
+html[data-theme="light"] .user-detail-modal .detail-label,
+html:not([data-theme="dark"]) .user-detail-modal .detail-label {
+  color: #64748b !important;
+  font-weight: 700 !important;
+}
+
+html[data-theme="light"] .user-detail-modal .detail-value,
+html:not([data-theme="dark"]) .user-detail-modal .detail-value {
+  color: #0f172a !important;
+}
+
+html[data-theme="light"] .user-detail-modal thead tr,
+html:not([data-theme="dark"]) .user-detail-modal thead tr {
+  background: #f1f5f9 !important;
+}
+
+html[data-theme="light"] .user-detail-modal th,
+html:not([data-theme="dark"]) .user-detail-modal th {
+  color: #0f172a !important;
+  font-weight: 800 !important;
+  border-bottom: 2px solid #cbd5e1 !important;
+}
+
+html[data-theme="light"] .user-detail-modal td,
+html:not([data-theme="dark"]) .user-detail-modal td {
+  color: #1e293b !important;
+  border-bottom: 1px solid #f1f5f9 !important;
+}
+

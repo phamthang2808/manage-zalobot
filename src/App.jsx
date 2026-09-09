@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import ThemeToggle from './components/common/ThemeToggle';
 import RunningCatMascot from './components/common/RunningCatMascot';
 import OrdersTab from './components/dashboard/OrdersTab';
+import { UserDetailModal } from './components/dashboard/UsersTab';
 
 const API_URL_ROOT = import.meta.env.PROD ? "" : (import.meta.env.VITE_API_URL || 'http://localhost:8080');
 
@@ -4192,112 +4193,11 @@ function App() {
       </main>
 
       {selectedUser && (
-        <div className="modal-overlay" onClick={() => setSelectedUser(null)}>
-          <div className="modal-content user-detail-modal" onClick={(e) => e.stopPropagation()}>
-            <header className="modal-header" style={{ marginBottom: '20px' }}>
-              <h2 className="modal-title" style={{ fontSize: '24px' }}>👤 Chi Tiết Thành Viên</h2>
-              <button className="modal-close" onClick={() => setSelectedUser(null)} style={{ fontSize: '28px' }}>&times;</button>
-            </header>
-            <div className="modal-body">
-              <div className="member-detail-grid">
-                <div className="detail-item" style={{ padding: '20px', background: 'rgba(255,255,255,0.03)', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.05)' }}>
-                  <div className="detail-label" style={{ fontSize: '12px', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '8px', color: 'var(--text-muted)' }}>Tên thành viên</div>
-                  <div className="detail-value" style={{ color: 'var(--color-primary)', fontSize: '22px', fontWeight: '700' }}>{selectedUser.zaloName || 'Vô danh'}</div>
-                </div>
-                <div className="detail-item" style={{ padding: '20px', background: 'rgba(255,255,255,0.03)', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.05)' }}>
-                  <div className="detail-label" style={{ fontSize: '12px', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '8px', color: 'var(--text-muted)' }}>Zalo ID</div>
-                  <div className="detail-value" style={{ fontSize: '16px', wordBreak: 'break-all', fontFamily: 'monospace', color: '#fff' }}>{selectedUser.zaloId}</div>
-                </div>
-                <div className="detail-item" style={{ padding: '20px', background: 'rgba(255,255,255,0.03)', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.05)' }}>
-                  <div className="detail-label" style={{ fontSize: '12px', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '8px', color: 'var(--text-muted)' }}>Ngân hàng nhận tiền</div>
-                  <div className="detail-value" style={{ fontSize: '20px', fontWeight: '600', color: '#fff' }}>{getBankAndAccount(selectedUser).bankName || '⚠️ Chưa cập nhật'}</div>
-                </div>
-                <div className="detail-item" style={{ padding: '20px', background: 'rgba(255,255,255,0.03)', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.05)' }}>
-                  <div className="detail-label" style={{ fontSize: '12px', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '8px', color: 'var(--text-muted)' }}>Số tài khoản</div>
-                  <div className="detail-value"><code style={{ fontSize: '20px', letterSpacing: '2px', fontWeight: '700', color: 'var(--color-success)' }}>{getBankAndAccount(selectedUser).accountNumber || '⚠️ Chưa cập nhật'}</code></div>
-                </div>
-              </div>
-
-              {/* Mini user wallet stats */}
-              <div className="stats-grid modal-stats-grid">
-                <div className="stat-card" style={{ padding: '16px' }}>
-                  <span className="stat-label">Chờ xử lý</span>
-                  <span className="stat-val" style={{ fontSize: '22px' }}>{formatMoney(selectedUser.wallet?.pendingCommission)}</span>
-                </div>
-                <div className="stat-card success" style={{ padding: '16px' }}>
-                  <span className="stat-label">Đã hoàn thành</span>
-                  <span className="stat-val" style={{ fontSize: '22px' }}>{formatMoney(selectedUser.wallet?.completedCommission)}</span>
-                </div>
-                <div className="stat-card warning" style={{ padding: '16px' }}>
-                  <span className="stat-label">Sau thuế</span>
-                  <span className="stat-val" style={{ fontSize: '22px', color: 'var(--color-warning)' }}>{formatMoney((selectedUser.wallet?.completedCommission || 0) * 0.9)}</span>
-                </div>
-                <div className="stat-card success" style={{ padding: '16px' }}>
-                  <span className="stat-label">Thực nhận</span>
-                  <span className="stat-val" style={{ fontSize: '22px', color: 'var(--color-success)' }}>{formatMoney((selectedUser.wallet?.completedCommission || 0) * 0.9 * 0.8)}</span>
-                </div>
-                <div className="stat-card warning" style={{ padding: '16px' }}>
-                  <span className="stat-label">Có thể rút</span>
-                  <span className="stat-val" style={{ fontSize: '22px', color: 'var(--color-success)' }}>{formatMoney(selectedUser.wallet?.withdrawableCommission)}</span>
-                </div>
-                <div className="stat-card" style={{ padding: '16px' }}>
-                  <span className="stat-label">Đã rút</span>
-                  <span className="stat-val" style={{ fontSize: '22px' }}>{formatMoney(selectedUser.wallet?.receivedCommission)}</span>
-                </div>
-              </div>
-
-              {/* List of recent orders for this user */}
-              <h3 style={{ marginBottom: '12px', fontSize: '16px' }}>🛒 Đơn hàng gần đây</h3>
-              <div className="table-container" style={{ maxHeight: '240px', overflowY: 'auto' }}>
-                <table>
-                  <thead>
-                    <tr>
-                      <th>Mã đơn</th>
-                      <th>Sản phẩm</th>
-                      <th>HH Gốc</th>
-                      <th title="Sau thuế 10%">Sau thuế</th>
-                      <th title="Sau thuế & trừ 20%">Thực nhận</th>
-                      <th>Trạng thái</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {orders.filter(o => o.zaloId === selectedUser.zaloId).length === 0 ? (
-                      <tr className="empty-row">
-                        <td colSpan="6" style={{ textAlign: 'center', color: 'var(--text-muted)' }}>Chưa có đơn hàng nào.</td>
-                      </tr>
-                    ) : (
-                      orders.filter(o => o.zaloId === selectedUser.zaloId).slice(0, 10).map(o => {
-                        const isTiktok = o.platform === 'TikTok Shop' || (o.orderId && o.orderId.length > 15 && !o.orderId.startsWith('2608'));
-                        const afterTax = isTiktok ? (o.commission || 0) : (o.commission || 0) * 0.9;
-                        const afterDeduction = isTiktok ? (o.commission || 0) * 0.8 : afterTax * 0.8;
-                        return (
-                          <tr key={o.id}>
-                            <td data-label="Mã đơn" style={{ fontSize: '11px' }}>{o.orderId}</td>
-                            <td data-label="Sản phẩm" style={{ maxWidth: '160px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{o.productName}</td>
-                            <td data-label="HH Gốc" style={{ color: 'var(--text-muted)', fontSize: '12px' }}>{formatMoney(o.commission)}</td>
-                            <td data-label="Sau thuế" style={{ color: 'var(--color-warning)', fontSize: '12px' }}>{isTiktok ? '-' : formatMoney(afterTax)}</td>
-                            <td data-label="Thực nhận" style={{ color: 'var(--color-success)', fontWeight: '700', fontSize: '12px' }}>{formatMoney(afterDeduction)}</td>
-                            <td data-label="Trạng thái">
-                              <span className={`badge ${
-                                o.status === 'Hoàn thành' ? 'badge-completed' :
-                                o.status === 'Hủy' ? 'badge-cancelled' : 'badge-pending'
-                              }`} style={{ fontSize: '10px', padding: '2px 6px' }}>
-                                {o.status}
-                              </span>
-                            </td>
-                          </tr>
-                        );
-                      })
-                    )}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-            <footer className="modal-footer">
-              <button className="btn" onClick={() => setSelectedUser(null)}>Đóng lại</button>
-            </footer>
-          </div>
-        </div>
+        <UserDetailModal
+          selectedUser={selectedUser}
+          onClose={() => setSelectedUser(null)}
+          orders={orders}
+        />
       )}
       {renderMobileBottomNav()}
     </div>

@@ -5,6 +5,10 @@
       "destination": "http://221.132.21.35:8080/api/$1"
     },
     {
+      "source": "/s/(.*)",
+      "destination": "http://221.132.21.35:8080/s/$1"
+    },
+    {
       "source": "/(.*)",
       "destination": "/index.html"
     }

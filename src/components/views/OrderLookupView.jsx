@@ -301,7 +301,7 @@ export default function OrderLookupView() {
         body: JSON.stringify({ zaloId: lookupResult.zaloId, pin: inputPin })
       });
       const json = await res.json();
-      if (!res.ok || !json.data?.valid) throw new Error(json.message || 'Mã PIN không chính xác');
+      if (!res.ok || json.data === false) throw new Error(json.message || 'Mã PIN không chính xác');
       
       // Execute the pending action
       await executePendingActionWithPin(inputPin);

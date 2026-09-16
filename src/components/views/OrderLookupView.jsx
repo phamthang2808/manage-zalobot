@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useApp } from '../../context/AppContext';
 import { formatMoney, formatDateTime } from '../../utils/formatters';
 import MobileBottomNav from '../common/MobileBottomNav';
@@ -7,8 +7,7 @@ import ThemeToggle from '../common/ThemeToggle';
 import RunningCatMascot from '../common/RunningCatMascot';
 
 export default function OrderLookupView() {
-
-  const { view, setView, theme, showToast, API_URL_ROOT, windowWidth } = useApp();
+  const { setView, showToast, API_URL_ROOT } = useApp();
 
   // Search state
   const [lookupSearchType, setLookupSearchType] = useState('ORDER_ID');
@@ -37,13 +36,24 @@ export default function OrderLookupView() {
   const [payoutSaveError, setPayoutSaveError] = useState('');
   const [payoutSaveLoading, setPayoutSaveLoading] = useState(false);
 
-  // OTP state
-  const [otpModalOpen, setOtpModalOpen] = useState(false);
-  const [otpActionType, setOtpActionType] = useState('');
-  const [otpCode, setOtpCode] = useState('');
+  // PIN & Security Modal state
+  // Modes: 'ENTER_PIN' | 'CREATE_PIN' | 'RESET_PIN'
+  const [pinModalOpen, setPinModalOpen] = useState(false);
+  const [pinModalMode, setPinModalMode] = useState('ENTER_PIN'); 
+  const [pendingAction, setPendingAction] = useState(null); // 'BANK' | 'PAYOUT' | null
+
+  const [inputPin, setInputPin] = useState('');
+  const [newPin, setNewPin] = useState('');
+  const [confirmPin, setConfirmPin] = useState('');
+  const [securityOtp, setSecurityOtp] = useState('');
+  const [createStep, setCreateStep] = useState(1); // Step 1: Input PIN, Step 2: Input OTP
+  
+  const [pinLoading, setPinLoading] = useState(false);
+  const [pinError, setPinError] = useState('');
   const [otpSending, setOtpSending] = useState(false);
-  const [otpError, setOtpError] = useState('');
   const [otpCountdown, setOtpCountdown] = useState(0);
+
+  const pinInputRef = useRef(null);
 
   useEffect(() => {
     if (otpCountdown > 0) {
@@ -51,6 +61,17 @@ export default function OrderLookupView() {
       return () => clearTimeout(t);
     }
   }, [otpCountdown]);
+
+  // Focus input when modal opens
+  useEffect(() => {
+    if (pinModalOpen) {
+      setPinError('');
+      const t = setTimeout(() => {
+        if (pinInputRef.current) pinInputRef.current.focus();
+      }, 100);
+      return () => clearTimeout(t);
+    }
+  }, [pinModalOpen, pinModalMode, createStep]);
 
   // Auto lookup from URL params
   useEffect(() => {
@@ -115,68 +136,267 @@ export default function OrderLookupView() {
     });
   };
 
-  const sendOtpToUser = async (action) => {
-    if (otpCountdown > 0) { showToast(`Vui lòng đợi ${otpCountdown} giây trước khi yêu cầu gửi lại mã OTP mới!`, 'warning'); return; }
+  // Trigger PIN flow for actions
+  const initiateAction = (action) => {
     if (action === 'BANK') {
-      if (!editBankName.trim() || !editAccountNumber.trim()) { setBankSaveError('Vui lòng điền đầy đủ tên ngân hàng và số tài khoản'); return; }
+      if (!editBankName.trim() || !editAccountNumber.trim()) {
+        setBankSaveError('Vui lòng điền đầy đủ tên ngân hàng và số tài khoản');
+        return;
+      }
+      setBankSaveError('');
     } else if (action === 'PAYOUT') {
       const amountVal = parseFloat(payoutAmount.replace(/[^\d]/g, ''));
-      if (isNaN(amountVal) || amountVal <= 0) { setPayoutSaveError('Vui lòng nhập số tiền rút hợp lệ (lớn hơn 0đ)'); return; }
-      if (!lookupResult.bankName || !lookupResult.accountNumber) { setPayoutSaveError('Vui lòng thiết lập thông tin ngân hàng nhận tiền trước'); return; }
+      if (isNaN(amountVal) || amountVal <= 0) {
+        setPayoutSaveError('Vui lòng nhập số tiền rút hợp lệ (lớn hơn 0đ)');
+        return;
+      }
+      if (!lookupResult?.bankName || !lookupResult?.accountNumber) {
+        setPayoutSaveError('Vui lòng thiết lập thông tin ngân hàng nhận tiền trước');
+        return;
+      }
+      setPayoutSaveError('');
     }
-    setOtpSending(true); setOtpError('');
+
+    setPendingAction(action);
+    setInputPin('');
+    setPinError('');
+
+    if (!lookupResult?.hasPin) {
+      // User hasn't created a PIN yet -> Open CREATE_PIN mode
+      setPinModalMode('CREATE_PIN');
+      setCreateStep(1);
+      setNewPin('');
+      setConfirmPin('');
+      setSecurityOtp('');
+      setPinModalOpen(true);
+    } else {
+      // User has PIN -> Open ENTER_PIN mode
+      setPinModalMode('ENTER_PIN');
+      setPinModalOpen(true);
+    }
+  };
+
+  // Send OTP via Zalo
+  const requestZaloOtp = async () => {
+    if (otpCountdown > 0) {
+      showToast(`Vui lòng đợi ${otpCountdown}s trước khi gửi lại OTP!`, 'warning');
+      return;
+    }
+    setOtpSending(true);
+    setPinError('');
     try {
       const res = await fetch(`${API_URL_ROOT}/api/public/send-otp`, {
-        method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ zaloId: lookupResult.zaloId, zaloName: lookupResult.zaloName || 'Sếp' })
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          zaloId: lookupResult.zaloId,
+          zaloName: lookupResult.zaloName || 'Sếp'
+        })
       });
       const json = await res.json();
       if (!res.ok) throw new Error(json.message || 'Lỗi gửi mã OTP');
-      setOtpActionType(action); setOtpCode(''); setOtpModalOpen(true); setOtpCountdown(60);
-      showToast('Đã gửi mã xác thực OTP vào tin nhắn riêng Zalo!', 'success');
-    } catch (err) { showToast(err.message, 'error'); } finally { setOtpSending(false); }
+      setOtpCountdown(60);
+      showToast('Đã gửi mã xác thực OTP 6 số về tin nhắn Zalo của sếp!', 'success');
+    } catch (err) {
+      setPinError(err.message);
+      showToast(err.message, 'error');
+    } finally {
+      setOtpSending(false);
+    }
   };
 
-  const handleSaveBankInfo = async (code = '') => {
-    if (!editBankName.trim() || !editAccountNumber.trim()) { setBankSaveError('Vui lòng điền đầy đủ tên ngân hàng và số tài khoản'); showToast('Vui lòng điền đầy đủ thông tin', 'error'); return; }
-    setBankSaveLoading(true); setBankSaveError(''); setOtpError('');
-    try {
-      const res = await fetch(`${API_URL_ROOT}/api/public/bank-info`, {
-        method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ zaloId: lookupResult.zaloId, bankName: editBankName.trim(), accountNumber: editAccountNumber.trim(), otp: code })
-      });
-      const json = await res.json();
-      if (!res.ok) throw new Error(json.message || 'Lỗi khi lưu thông tin ngân hàng');
-      setLookupResult(prev => ({ ...prev, bankName: editBankName.trim(), accountNumber: editAccountNumber.trim() }));
-      setIsEditingBank(false); setOtpModalOpen(false); setOtpCountdown(0);
-      showToast('Đã cập nhật thông tin ngân hàng thành công!', 'success');
-    } catch (err) {
-      setBankSaveError(err.message);
-      if (otpModalOpen) setOtpError(err.message);
-      showToast(err.message, 'error');
-    } finally { setBankSaveLoading(false); }
+  // Execute the pending action (Bank Save or Payout) with verified PIN
+  const executePendingActionWithPin = async (pinToUse) => {
+    if (pendingAction === 'BANK') {
+      setBankSaveLoading(true);
+      setPinLoading(true);
+      try {
+        const res = await fetch(`${API_URL_ROOT}/api/public/bank-info`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            zaloId: lookupResult.zaloId,
+            bankName: editBankName.trim(),
+            accountNumber: editAccountNumber.trim(),
+            pin: pinToUse
+          })
+        });
+        const json = await res.json();
+        if (!res.ok) throw new Error(json.message || 'Lỗi khi lưu thông tin ngân hàng');
+        setLookupResult(prev => ({ ...prev, bankName: editBankName.trim(), accountNumber: editAccountNumber.trim() }));
+        setIsEditingBank(false);
+        setPinModalOpen(false);
+        showToast('✓ Đã cập nhật thông tin ngân hàng thành công!', 'success');
+      } catch (err) {
+        setPinError(err.message);
+        showToast(err.message, 'error');
+      } finally {
+        setBankSaveLoading(false);
+        setPinLoading(false);
+      }
+    } else if (pendingAction === 'PAYOUT') {
+      const amountVal = parseFloat(payoutAmount.replace(/[^\d]/g, ''));
+      setPayoutSaveLoading(true);
+      setPinLoading(true);
+      try {
+        const res = await fetch(`${API_URL_ROOT}/api/public/payout`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            zaloId: lookupResult.zaloId,
+            amount: amountVal,
+            pin: pinToUse
+          })
+        });
+        const json = await res.json();
+        if (!res.ok) throw new Error(json.message || 'Lỗi khi yêu cầu rút tiền');
+        setPayoutAmount('');
+        setPinModalOpen(false);
+        showToast('🎉 Yêu cầu rút tiền thành công! Trưởng nhóm sẽ duyệt và chuyển khoản sớm nhất!', 'success');
+        handlePublicLookup(lookupResult.zaloId, 'ZALO_ID');
+      } catch (err) {
+        setPinError(err.message);
+        showToast(err.message, 'error');
+      } finally {
+        setPayoutSaveLoading(false);
+        setPinLoading(false);
+      }
+    }
   };
 
-  const handleRequestPayout = async (code = '') => {
-    const amountVal = parseFloat(payoutAmount.replace(/[^\d]/g, ''));
-    if (isNaN(amountVal) || amountVal <= 0) { setPayoutSaveError('Vui lòng nhập số tiền rút hợp lệ (lớn hơn 0đ)'); showToast('Vui lòng nhập số tiền rút hợp lệ (lớn hơn 0đ)', 'error'); return; }
-    if (!lookupResult.bankName || !lookupResult.accountNumber) { setPayoutSaveError('Vui lòng thiết lập thông tin ngân hàng nhận tiền trước'); showToast('Vui lòng thiết lập thông tin ngân hàng nhận tiền trước', 'error'); return; }
-    setPayoutSaveLoading(true); setPayoutSaveError(''); setOtpError('');
+  // Submit Enter PIN
+  const handleConfirmEnterPin = async () => {
+    if (inputPin.length !== 6) {
+      setPinError('Vui lòng nhập đủ 6 chữ số mã PIN');
+      return;
+    }
+    setPinLoading(true);
+    setPinError('');
     try {
-      const res = await fetch(`${API_URL_ROOT}/api/public/payout`, {
-        method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ zaloId: lookupResult.zaloId, amount: amountVal, otp: code })
+      // Direct verify
+      const res = await fetch(`${API_URL_ROOT}/api/public/pin/verify`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ zaloId: lookupResult.zaloId, pin: inputPin })
       });
       const json = await res.json();
-      if (!res.ok) throw new Error(json.message || 'Lỗi khi yêu cầu rút tiền');
-      setPayoutAmount(''); setOtpModalOpen(false); setOtpCountdown(0);
-      showToast('🎉 Yêu cầu rút tiền thành công! Trưởng nhóm Phạm Thắng sẽ duyệt và chuyển khoản cho sếp sớm nhất!', 'success');
-      handlePublicLookup(lookupResult.zaloId, 'ZALO_ID');
+      if (!res.ok || !json.data?.valid) throw new Error(json.message || 'Mã PIN không chính xác');
+      
+      // Execute the pending action
+      await executePendingActionWithPin(inputPin);
     } catch (err) {
-      setPayoutSaveError(err.message);
-      if (otpModalOpen) setOtpError(err.message);
+      setPinError(err.message);
       showToast(err.message, 'error');
-    } finally { setPayoutSaveLoading(false); }
+      setPinLoading(false);
+    }
+  };
+
+  // Submit Create PIN - Step 1: validate PIN -> Request OTP -> Move to Step 2
+  const handleCreatePinStep1 = async () => {
+    if (!/^\d{6}$/.test(newPin)) {
+      setPinError('Mã PIN phải gồm đúng 6 chữ số');
+      return;
+    }
+    if (newPin !== confirmPin) {
+      setPinError('Mã PIN nhập lại không khớp. Vui lòng kiểm tra lại!');
+      return;
+    }
+    setPinError('');
+    await requestZaloOtp();
+    setCreateStep(2);
+  };
+
+  // Submit Create PIN - Step 2: verify OTP & create PIN -> execute action
+  const handleCreatePinComplete = async () => {
+    if (securityOtp.length !== 6) {
+      setPinError('Vui lòng nhập đủ 6 số mã OTP từ Zalo');
+      return;
+    }
+    setPinLoading(true);
+    setPinError('');
+    try {
+      const res = await fetch(`${API_URL_ROOT}/api/public/pin/create`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          zaloId: lookupResult.zaloId,
+          pin: newPin,
+          otp: securityOtp
+        })
+      });
+      const json = await res.json();
+      if (!res.ok) throw new Error(json.message || 'Lỗi khi kích hoạt mã PIN');
+      
+      setLookupResult(prev => ({ ...prev, hasPin: true }));
+      showToast('🎉 Đã tạo mã PIN rút tiền 6 số thành công!', 'success');
+
+      // Continue to execute pending action if any
+      if (pendingAction) {
+        await executePendingActionWithPin(newPin);
+      } else {
+        setPinModalOpen(false);
+      }
+    } catch (err) {
+      setPinError(err.message);
+      showToast(err.message, 'error');
+    } finally {
+      setPinLoading(false);
+    }
+  };
+
+  // Switch to Forgot PIN (Reset PIN mode)
+  const handleStartResetPin = async () => {
+    setPinModalMode('RESET_PIN');
+    setNewPin('');
+    setConfirmPin('');
+    setSecurityOtp('');
+    setPinError('');
+    await requestZaloOtp();
+  };
+
+  // Submit Reset PIN
+  const handleResetPinComplete = async () => {
+    if (securityOtp.length !== 6) {
+      setPinError('Vui lòng nhập đủ 6 số mã OTP từ Zalo');
+      return;
+    }
+    if (!/^\d{6}$/.test(newPin)) {
+      setPinError('Mã PIN mới phải gồm đúng 6 chữ số');
+      return;
+    }
+    if (newPin !== confirmPin) {
+      setPinError('Mã PIN nhập lại không khớp!');
+      return;
+    }
+    setPinLoading(true);
+    setPinError('');
+    try {
+      const res = await fetch(`${API_URL_ROOT}/api/public/pin/reset`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          zaloId: lookupResult.zaloId,
+          newPin: newPin,
+          otp: securityOtp
+        })
+      });
+      const json = await res.json();
+      if (!res.ok) throw new Error(json.message || 'Lỗi đặt lại mã PIN');
+      
+      setLookupResult(prev => ({ ...prev, hasPin: true }));
+      showToast('🎉 Đặt lại mã PIN thành công!', 'success');
+      
+      if (pendingAction) {
+        await executePendingActionWithPin(newPin);
+      } else {
+        setPinModalOpen(false);
+      }
+    } catch (err) {
+      setPinError(err.message);
+      showToast(err.message, 'error');
+    } finally {
+      setPinLoading(false);
+    }
   };
 
   const totalCommission = lookupResult ? (lookupResult.wallet.completedCommission + lookupResult.wallet.pendingCommission) : 0;
@@ -192,7 +412,6 @@ export default function OrderLookupView() {
     <div className="lookup-page-container">
       <RunningCatMascot />
       <style dangerouslySetInnerHTML={{__html: `
-
         .lookup-page-container { min-height: 100vh; width: 100%; background: var(--bg-main); color: var(--text-main); font-family: 'Inter', system-ui, sans-serif; padding: 16px; display: flex; flex-direction: column; align-items: center; position: relative; overflow: hidden; }
         .lookup-page-container::before { content: ''; position: absolute; top: -15%; left: -10%; width: 700px; height: 700px; background: radial-gradient(circle, rgba(249,115,22,0.1) 0%, rgba(234,88,12,0.03) 40%, transparent 70%); z-index: 1; pointer-events: none; animation: lookupFloatOrb1 8s ease-in-out infinite; }
         .lookup-page-container::after { content: ''; position: absolute; bottom: -20%; right: -10%; width: 600px; height: 600px; background: radial-gradient(circle, rgba(249,115,22,0.08) 0%, rgba(234,88,12,0.02) 40%, transparent 70%); z-index: 1; pointer-events: none; animation: lookupFloatOrb2 10s ease-in-out infinite; }
@@ -256,6 +475,10 @@ export default function OrderLookupView() {
         .lookup-banner-img-wrap img { width: 100%; display: block; }
         .lookup-banner-close { position: absolute; top: 6px; right: 6px; background: rgba(0,0,0,0.6); color: #fff; border: none; border-radius: 50%; width: 22px; height: 22px; font-size: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
         @keyframes banner-float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+        .pin-digit-dots { display: flex; justify-content: center; gap: 10px; margin: 16px 0; }
+        .pin-dot { width: 16px; height: 16px; border-radius: 50%; border: 2px solid var(--border-color); background: var(--bg-main); transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); }
+        .pin-dot.filled { background: #ea580c; border-color: #ea580c; transform: scale(1.15); box-shadow: 0 0 10px rgba(234,88,12,0.4); }
+        .pin-hidden-input { position: absolute; opacity: 0; pointer-events: auto; width: 100%; height: 100%; top: 0; left: 0; }
         @media (max-width: 480px) { .stats-cards-grid { grid-template-columns: 1fr; } .stats-cards-grid > :first-child { grid-column: span 1; } .lookup-card { padding: 16px; } .stat-card-value { font-size: 20px; } .lookup-banner-img-wrap { width: 100%; max-width: 280px; } }
       `}} />
 
@@ -333,17 +556,17 @@ export default function OrderLookupView() {
                 <div className="lookup-date-grid" style={{ marginBottom: '4px' }}>
                   <div className="lookup-input-group" style={{ marginBottom: 0 }}>
                     <label className="lookup-label">Tên Ngân Hàng</label>
-                    <input type="text" className="lookup-input" placeholder="Ví dụ: MB, Techcombank..." value={editBankName} onChange={e => setEditBankName(e.target.value)} />
+                    <input type="text" className="lookup-input" placeholder="Ví dụ: MB, Techcombank, Vietcombank..." value={editBankName} onChange={e => setEditBankName(e.target.value)} />
                   </div>
                   <div className="lookup-input-group" style={{ marginBottom: 0 }}>
                     <label className="lookup-label">Số Tài Khoản</label>
-                    <input type="text" className="lookup-input" placeholder="Số tài khoản..." value={editAccountNumber} onChange={e => setEditAccountNumber(e.target.value)} />
+                    <input type="text" className="lookup-input" placeholder="Số tài khoản ngân hàng..." value={editAccountNumber} onChange={e => setEditAccountNumber(e.target.value)} />
                   </div>
                 </div>
                 {bankSaveError && <div style={{ color: '#ef4444', fontSize: '12px' }}>⚠️ {bankSaveError}</div>}
                 <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end', marginTop: '4px' }}>
                   <button className="lookup-admin-link" style={{ padding: '6px 14px', background: 'var(--bg-main)', color: 'var(--text-muted)' }} onClick={() => setIsEditingBank(false)} disabled={bankSaveLoading}>Hủy</button>
-                  <button className="lookup-btn" style={{ width: 'auto', padding: '6px 16px', fontSize: '13px' }} onClick={() => sendOtpToUser('BANK')} disabled={bankSaveLoading}>
+                  <button className="lookup-btn" style={{ width: 'auto', padding: '6px 16px', fontSize: '13px' }} onClick={() => initiateAction('BANK')} disabled={bankSaveLoading}>
                     {bankSaveLoading ? 'Đang lưu...' : 'Lưu thông tin'}
                   </button>
                 </div>
@@ -362,68 +585,66 @@ export default function OrderLookupView() {
             )}
           </div>
 
-              {/* Wallet Stats */}
-              <div className="stats-container">
-                <h3 className="stats-section-title">💰 Thống Kê Hoa Hồng của: <span style={{ color: '#ea580c' }}>{lookupResult.zaloName}</span></h3>
-                <div className="stats-cards-grid">
-                  <div className="stat-card-item total">
-                    <span className="stat-card-label">Tổng tích lũy (Hoàn thành + Chờ)</span>
-                    <span className="stat-card-value primary">{formatMoney(totalCommission)}</span>
-                  </div>
-                  <div className="stat-card-item pending">
-                    <span className="stat-card-label">Đang chờ xử lý</span>
-                    <span style={{ fontSize: '11px', color: 'var(--text-muted)', marginBottom: '4px' }}>Đang vận chuyển hoặc chưa xác nhận</span>
-                    <span className="stat-card-value">{formatMoney(lookupResult.wallet.pendingCommission)}</span>
-                  </div>
-                  <div className="stat-card-item completed">
-                    <span className="stat-card-label">Đã hoàn thành</span>
-                    <span style={{ fontSize: '11px', color: 'var(--text-muted)', marginBottom: '4px' }}>Đã ấn giao hàng thành công</span>
-                    <span className="stat-card-value">{formatMoney(lookupResult.wallet.completedCommission)}</span>
-                  </div>
-                  <div className="stat-card-item withdrawable">
-                    <span className="stat-card-label">Có thể rút ngay (Khả dụng)</span>
-                    <span style={{ fontSize: '11px', color: '#ea580c', marginBottom: '4px' }}>Shopee sau 3 ngày • TikTok rút ngay khi xong • Đã trừ thuế & chia 8-2</span>
-                    <span className="stat-card-value" style={{ color: '#ea580c' }}>{formatMoney(lookupResult.wallet.withdrawableCommission)}</span>
-                  </div>
-                  <div className="stat-card-item received">
-                    <span className="stat-card-label">Đã nhận (Đã thanh toán)</span>
-                    <span style={{ fontSize: '11px', color: 'var(--text-muted)', marginBottom: '4px' }}>Tổng tiền đã rút về tài khoản</span>
-                    <span className="stat-card-value" style={{ color: '#16a34a' }}>{formatMoney(lookupResult.wallet.receivedCommission)}</span>
+          {/* Wallet Stats */}
+          <div className="stats-container">
+            <h3 className="stats-section-title">💰 Thống Kê Hoa Hồng của: <span style={{ color: '#ea580c' }}>{lookupResult.zaloName}</span></h3>
+            <div className="stats-cards-grid">
+              <div className="stat-card-item total">
+                <span className="stat-card-label">Tổng tích lũy (Hoàn thành + Chờ)</span>
+                <span className="stat-card-value primary">{formatMoney(totalCommission)}</span>
+              </div>
+              <div className="stat-card-item pending">
+                <span className="stat-card-label">Đang chờ xử lý</span>
+                <span style={{ fontSize: '11px', color: 'var(--text-muted)', marginBottom: '4px' }}>Đang vận chuyển hoặc chưa xác nhận</span>
+                <span className="stat-card-value">{formatMoney(lookupResult.wallet.pendingCommission)}</span>
+              </div>
+              <div className="stat-card-item completed">
+                <span className="stat-card-label">Đã hoàn thành</span>
+                <span style={{ fontSize: '11px', color: 'var(--text-muted)', marginBottom: '4px' }}>Đã ấn giao hàng thành công</span>
+                <span className="stat-card-value">{formatMoney(lookupResult.wallet.completedCommission)}</span>
+              </div>
+              <div className="stat-card-item withdrawable">
+                <span className="stat-card-label">Có thể rút ngay (Khả dụng)</span>
+                <span style={{ fontSize: '11px', color: '#ea580c', marginBottom: '4px' }}>Shopee sau 3 ngày • TikTok rút ngay khi xong • Đã trừ thuế & chia 8-2</span>
+                <span className="stat-card-value" style={{ color: '#ea580c' }}>{formatMoney(lookupResult.wallet.withdrawableCommission)}</span>
+              </div>
+              <div className="stat-card-item received">
+                <span className="stat-card-label">Đã nhận (Đã thanh toán)</span>
+                <span style={{ fontSize: '11px', color: 'var(--text-muted)', marginBottom: '4px' }}>Tổng tiền đã rút về tài khoản</span>
+                <span className="stat-card-value" style={{ color: '#16a34a' }}>{formatMoney(lookupResult.wallet.receivedCommission)}</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Payout Request */}
+          <div className="lookup-card" style={{ marginBottom: '24px' }}>
+            <h3 className="stats-section-title" style={{ margin: 0, marginBottom: '12px' }}>💸 Rút Tiền Hoa Hồng Khả Dụng</h3>
+            <p style={{ fontSize: '12.5px', color: 'var(--text-muted)', margin: '0 0 16px 0', lineHeight: '1.4' }}>
+              Tiền hoa hồng của đơn Shopee &quot;Hoàn thành&quot; sau 3 ngày (đơn TikTok rút ngay khi hoàn thành) sẽ tự động chuyển xuống ví khả dụng để rút (đã trừ thuế và chia 8-2). Lệnh rút tiền sau khi gửi sẽ được duyệt thủ công bởi Trưởng nhóm Phạm Thắng.
+            </p>
+            {lookupResult.wallet.withdrawableCommission > 0 ? (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                <div className="lookup-input-group" style={{ marginBottom: 0 }}>
+                  <label className="lookup-label">Số Tiền Muốn Rút (đ)</label>
+                  <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
+                    <input type="text" className="lookup-input" placeholder={`Tối đa: ${formatMoney(lookupResult.wallet.withdrawableCommission)}`}
+                      value={payoutAmount}
+                      onChange={e => { const val = e.target.value.replace(/[^\d]/g, ''); setPayoutAmount(val ? new Intl.NumberFormat('vi-VN').format(parseFloat(val)) : ''); }} />
+                    <button className="lookup-admin-link" style={{ position: 'absolute', right: '8px', fontSize: '11px', padding: '4px 8px', background: '#fff7ed', color: '#ea580c', borderColor: '#fed7aa' }}
+                      onClick={() => setPayoutAmount(new Intl.NumberFormat('vi-VN').format(lookupResult.wallet.withdrawableCommission))}>Rút hết</button>
                   </div>
                 </div>
+                {payoutSaveError && <div style={{ color: '#ef4444', fontSize: '12px' }}>⚠️ {payoutSaveError}</div>}
+                <button className="lookup-btn" onClick={() => initiateAction('PAYOUT')} disabled={payoutSaveLoading || !payoutAmount} style={{ marginTop: '4px' }}>
+                  {payoutSaveLoading ? (<><div className="lookup-spinner"></div>Đang gửi yêu cầu...</>) : 'Gửi yêu cầu rút tiền'}
+                </button>
               </div>
-
-              {/* Payout Request */}
-              <div className="lookup-card" style={{ marginBottom: '24px' }}>
-                <h3 className="stats-section-title" style={{ margin: 0, marginBottom: '12px' }}>💸 Rút Tiền Hoa Hồng Khả Dụng</h3>
-                <p style={{ fontSize: '12.5px', color: 'var(--text-muted)', margin: '0 0 16px 0', lineHeight: '1.4' }}>
-                  Tiền hoa hồng của đơn Shopee &quot;Hoàn thành&quot; sau 3 ngày (đơn TikTok rút ngay khi hoàn thành) sẽ tự động chuyển xuống ví khả dụng để rút (đã trừ thuế và chia 8-2). Lệnh rút tiền sau khi gửi sẽ được duyệt thủ công bởi Trưởng nhóm Phạm Thắng.
-                </p>
-                {lookupResult.wallet.withdrawableCommission > 0 ? (
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                    <div className="lookup-input-group" style={{ marginBottom: 0 }}>
-                      <label className="lookup-label">Số Tiền Muốn Rút (đ)</label>
-                      <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
-                        <input type="text" className="lookup-input" placeholder={`Tối đa: ${formatMoney(lookupResult.wallet.withdrawableCommission)}`}
-                          value={payoutAmount}
-                          onChange={e => { const val = e.target.value.replace(/[^\d]/g, ''); setPayoutAmount(val ? new Intl.NumberFormat('vi-VN').format(parseFloat(val)) : ''); }} />
-                        <button className="lookup-admin-link" style={{ position: 'absolute', right: '8px', fontSize: '11px', padding: '4px 8px', background: '#fff7ed', color: '#ea580c', borderColor: '#fed7aa' }}
-                          onClick={() => setPayoutAmount(new Intl.NumberFormat('vi-VN').format(lookupResult.wallet.withdrawableCommission))}>Rút hết</button>
-                      </div>
-                    </div>
-                    {payoutSaveError && <div style={{ color: '#ef4444', fontSize: '12px' }}>⚠️ {payoutSaveError}</div>}
-                    <button className="lookup-btn" onClick={() => sendOtpToUser('PAYOUT')} disabled={payoutSaveLoading || !payoutAmount} style={{ marginTop: '4px' }}>
-                      {payoutSaveLoading ? (<><div className="lookup-spinner"></div>Đang gửi yêu cầu...</>) : 'Gửi yêu cầu rút tiền'}
-                    </button>
-                  </div>
-                ) : (
-                  <div style={{ padding: '16px', background: '#fef2f2', border: '1px dashed #fca5a5', borderRadius: '8px', textAlign: 'center', color: '#b91c1c', fontSize: '13px' }}>
-                    🔒 Số dư khả dụng của sếp hiện đang là 0đ. Chưa thể rút tiền lúc này.
-                  </div>
-                )}
+            ) : (
+              <div style={{ padding: '16px', background: '#fef2f2', border: '1px dashed #fca5a5', borderRadius: '8px', textAlign: 'center', color: '#b91c1c', fontSize: '13px' }}>
+                🔒 Số dư khả dụng của sếp hiện đang là 0đ. Chưa thể rút tiền lúc này.
               </div>
-            </>
-          )}
+            )}
+          </div>
 
           {/* Orders List */}
           <div className="orders-container">
@@ -434,7 +655,6 @@ export default function OrderLookupView() {
               {lookupResult && lookupResult.orders && lookupResult.orders.length > 0 && (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', width: '100%', marginBottom: '4px' }}>
                   <div className="lookup-tabs" style={{ marginBottom: 0 }}>
-                    <button className={`lookup-tab ${platformFilter === 'ALL' ? 'active' : ''}`} onClick={() => setPlatformFilter('ALL')}>Tất cả ({lookupResult.orders.length})</button>
                     <button className={`lookup-tab ${platformFilter === 'ALL' ? 'active' : ''}`} onClick={() => setPlatformFilter('ALL')}>Tất cả ({lookupResult.orders.length})</button>
                     <button className={`lookup-tab ${platformFilter === 'Shopee' ? 'active' : ''}`} onClick={() => setPlatformFilter('Shopee')}>
                       <span style={{ display: 'inline-flex', alignItems: 'center', gap: '3px' }}>
@@ -493,42 +713,245 @@ export default function OrderLookupView() {
         </>
       )}
 
-      {/* OTP Modal */}
-      {otpModalOpen && (
-        <div style={{ position: 'fixed', inset: 0, background: 'rgba(15,23,42,0.65)', backdropFilter: 'blur(12px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 99999, padding: '16px' }}>
-          <div className="lookup-card" style={{ width: '100%', maxWidth: '400px', textAlign: 'center', border: '1px solid var(--border-color)', borderRadius: '24px', boxShadow: '0 25px 50px -12px rgba(0,0,0,0.15)', background: 'var(--bg-card)', padding: '32px 24px', position: 'relative', overflow: 'hidden' }}>
-            <div style={{ width: '76px', height: '76px', borderRadius: '50%', background: '#fff7ed', border: '1px solid #fed7aa', boxShadow: '0 0 25px rgba(249,115,22,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 18px', fontSize: '36px' }}>🔒</div>
-            <h3 style={{ fontSize: '20px', fontWeight: '800', color: 'var(--text-bright)', marginBottom: '8px', letterSpacing: '-0.3px' }}>Xác Thực Bảo Mật OTP</h3>
-            <p style={{ fontSize: '13.5px', color: 'var(--text-muted)', lineHeight: '1.5', marginBottom: '16px', padding: '0 8px' }}>
-              Mã xác thực 6 số vừa được gửi đến <span style={{ color: '#ea580c', fontWeight: '600' }}>tin nhắn riêng Zalo</span> của bạn.
-            </p>
-            <div style={{ background: '#fff7ed', border: '1px solid #fed7aa', borderRadius: '12px', padding: '10px 12px', fontSize: '12.5px', color: '#c2410c', marginBottom: '22px', lineHeight: '1.4', textAlign: 'left', display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <span style={{ fontSize: '16px' }}>💡</span>
-              <span>Chưa nhận được mã hoặc mã lỗi? Hãy bấm nút <b>Gửi lại mã OTP</b> bên dưới nhé!</span>
+      {/* ===================== PIN & SECURITY MODAL ===================== */}
+      {pinModalOpen && (
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(15,23,42,0.7)', backdropFilter: 'blur(12px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 99999, padding: '16px' }}>
+          <div className="lookup-card" style={{ width: '100%', maxWidth: '420px', textAlign: 'center', border: '1px solid var(--border-color)', borderRadius: '24px', boxShadow: '0 25px 50px -12px rgba(0,0,0,0.2)', background: 'var(--bg-card)', padding: '28px 24px', position: 'relative', overflow: 'hidden' }}>
+            
+            {/* Top Icon Badge */}
+            <div style={{ width: '68px', height: '68px', borderRadius: '50%', background: 'linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%)', border: '1.5px solid #fed7aa', boxShadow: '0 0 25px rgba(249,115,22,0.25)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px', fontSize: '30px' }}>
+              {pinModalMode === 'CREATE_PIN' ? '✨' : pinModalMode === 'RESET_PIN' ? '🔑' : '🔒'}
             </div>
-            <div style={{ marginBottom: '20px' }}>
-              <input type="text" maxLength="6" placeholder="• • • • • •" value={otpCode} onChange={e => setOtpCode(e.target.value.replace(/[^\d]/g, ''))}
-                style={{ width: '100%', padding: '14px 12px', fontSize: '22px', textAlign: 'center', letterSpacing: '12px', background: 'var(--bg-main)', border: '2px solid var(--border-color)', borderRadius: '12px', color: 'var(--text-bright)', outline: 'none', fontWeight: '700', boxSizing: 'border-box' }}
-                onFocus={e => { e.currentTarget.style.borderColor = '#f97316'; e.currentTarget.style.boxShadow = '0 0 12px rgba(249,115,22,0.25)'; }}
-                onBlur={e => { e.currentTarget.style.borderColor = 'var(--border-color)'; e.currentTarget.style.boxShadow = 'none'; }} />
-            </div>
-            {otpError && <div style={{ background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.3)', borderRadius: '8px', padding: '10px', fontSize: '13px', color: '#ef4444', marginBottom: '16px' }}>⚠️ {otpError}</div>}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-              <button className="lookup-btn" onClick={() => { if (otpActionType === 'BANK') handleSaveBankInfo(otpCode); else handleRequestPayout(otpCode); }}
-                disabled={otpCode.length !== 6 || bankSaveLoading || payoutSaveLoading}>
-                {(bankSaveLoading || payoutSaveLoading) ? (<><div className="lookup-spinner"></div>Đang xử lý...</>) : '✓ Xác nhận & Thực hiện'}
-              </button>
-              <button onClick={() => { setOtpModalOpen(false); setOtpCode(''); setOtpError(''); }}
-                style={{ background: 'var(--bg-main)', border: '1.5px solid var(--border-color)', color: 'var(--text-muted)', borderRadius: '12px', padding: '10px', fontSize: '14px', fontWeight: '600', cursor: 'pointer' }}>
-                Hủy bỏ
-              </button>
-              <button onClick={() => sendOtpToUser(otpActionType)}
-                disabled={otpSending || otpCountdown > 0}
-                style={{ background: 'transparent', border: '1.5px solid var(--border-color)', borderRadius: '20px', padding: '8px 18px', color: (otpSending || otpCountdown > 0) ? 'var(--text-muted)' : 'var(--text-main)', fontSize: '13px', fontWeight: '600', cursor: (otpSending || otpCountdown > 0) ? 'not-allowed' : 'pointer', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', transition: 'all 0.2s' }}>
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: '6px' }}><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/><path d="M16 16h5v5"/></svg>
-                {otpSending ? 'Đang gửi lại...' : (otpCountdown > 0 ? `Gửi lại mã sau (${otpCountdown}s)` : 'Gửi lại mã OTP (Miễn phí)')}
-              </button>
-            </div>
+
+            {/* MODE 1: ENTER PIN (Standard 6-digit confirmation) */}
+            {pinModalMode === 'ENTER_PIN' && (
+              <>
+                <h3 style={{ fontSize: '19px', fontWeight: '800', color: 'var(--text-bright)', marginBottom: '6px' }}>
+                  Xác Nhận Mã PIN Rút Tiền
+                </h3>
+                <p style={{ fontSize: '13px', color: 'var(--text-muted)', lineHeight: '1.5', marginBottom: '16px', padding: '0 4px' }}>
+                  Nhập mã PIN 6 số bảo mật của <strong style={{ color: '#ea580c' }}>{lookupResult?.zaloName || 'sếp'}</strong> để {pendingAction === 'BANK' ? 'cập nhật tài khoản ngân hàng' : 'gửi yêu cầu rút tiền'}.
+                </p>
+
+                {/* 6 Digit Box Display */}
+                <div style={{ position: 'relative', margin: '20px 0' }}>
+                  <div className="pin-digit-dots" onClick={() => pinInputRef.current?.focus()} style={{ cursor: 'pointer' }}>
+                    {[0, 1, 2, 3, 4, 5].map(idx => (
+                      <div key={idx} className={`pin-dot ${inputPin.length > idx ? 'filled' : ''}`} />
+                    ))}
+                  </div>
+
+                  <input
+                    ref={pinInputRef}
+                    type="password"
+                    inputMode="numeric"
+                    pattern="[0-9]*"
+                    maxLength={6}
+                    value={inputPin}
+                    onChange={e => {
+                      const val = e.target.value.replace(/[^\d]/g, '').slice(0, 6);
+                      setInputPin(val);
+                      if (val.length === 6) {
+                        setPinError('');
+                      }
+                    }}
+                    onKeyDown={e => {
+                      if (e.key === 'Enter' && inputPin.length === 6) handleConfirmEnterPin();
+                    }}
+                    className="pin-hidden-input"
+                    autoFocus
+                  />
+                  <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
+                    {inputPin.length === 6 ? '✓ Đã nhập đủ 6 số' : `Chạm để nhập (${inputPin.length}/6 số)`}
+                  </div>
+                </div>
+
+                {pinError && (
+                  <div style={{ background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.3)', borderRadius: '10px', padding: '10px', fontSize: '13px', color: '#ef4444', marginBottom: '16px', textAlign: 'left', fontWeight: '600' }}>
+                    ⚠️ {pinError}
+                  </div>
+                )}
+
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                  <button className="lookup-btn" onClick={handleConfirmEnterPin} disabled={inputPin.length !== 6 || pinLoading || bankSaveLoading || payoutSaveLoading}>
+                    {(pinLoading || bankSaveLoading || payoutSaveLoading) ? (<><div className="lookup-spinner"></div>Đang xác nhận...</>) : '✓ Xác nhận giao dịch'}
+                  </button>
+                  
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '4px' }}>
+                    <button onClick={handleStartResetPin} style={{ background: 'transparent', border: 'none', color: '#ea580c', fontSize: '13px', fontWeight: '700', cursor: 'pointer', textDecoration: 'underline' }}>
+                      Quên mã PIN?
+                    </button>
+                    <button onClick={() => { setPinModalOpen(false); setInputPin(''); setPinError(''); }} style={{ background: 'transparent', border: 'none', color: 'var(--text-muted)', fontSize: '13px', fontWeight: '600', cursor: 'pointer' }}>
+                      Hủy bỏ
+                    </button>
+                  </div>
+                </div>
+              </>
+            )}
+
+            {/* MODE 2: CREATE PIN (First-time user onboarding) */}
+            {pinModalMode === 'CREATE_PIN' && (
+              <>
+                <h3 style={{ fontSize: '19px', fontWeight: '800', color: 'var(--text-bright)', marginBottom: '6px' }}>
+                  Tạo Mã PIN Rút Tiền (6 Số)
+                </h3>
+                
+                {createStep === 1 ? (
+                  <>
+                    <p style={{ fontSize: '13px', color: 'var(--text-muted)', lineHeight: '1.5', marginBottom: '16px' }}>
+                      Để bảo vệ tài sản và rút tiền nhanh chóng không cần chờ OTP mỗi lần, vui lòng thiết lập mã PIN 6 số bí mật.
+                    </p>
+
+                    <div className="lookup-input-group" style={{ textAlign: 'left', marginBottom: '12px' }}>
+                      <label className="lookup-label">Mã PIN mới (6 chữ số)</label>
+                      <input
+                        ref={pinInputRef}
+                        type="password"
+                        inputMode="numeric"
+                        maxLength={6}
+                        placeholder="Nhập 6 số PIN..."
+                        className="lookup-input"
+                        value={newPin}
+                        onChange={e => setNewPin(e.target.value.replace(/[^\d]/g, '').slice(0, 6))}
+                      />
+                    </div>
+
+                    <div className="lookup-input-group" style={{ textAlign: 'left', marginBottom: '16px' }}>
+                      <label className="lookup-label">Xác nhận lại mã PIN (6 số)</label>
+                      <input
+                        type="password"
+                        inputMode="numeric"
+                        maxLength={6}
+                        placeholder="Nhập lại 6 số PIN..."
+                        className="lookup-input"
+                        value={confirmPin}
+                        onChange={e => setConfirmPin(e.target.value.replace(/[^\d]/g, '').slice(0, 6))}
+                      />
+                    </div>
+
+                    {pinError && (
+                      <div style={{ background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.3)', borderRadius: '10px', padding: '10px', fontSize: '13px', color: '#ef4444', marginBottom: '16px', textAlign: 'left' }}>
+                        ⚠️ {pinError}
+                      </div>
+                    )}
+
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                      <button className="lookup-btn" onClick={handleCreatePinStep1} disabled={newPin.length !== 6 || confirmPin.length !== 6 || otpSending}>
+                        {otpSending ? (<><div className="lookup-spinner"></div>Đang gửi OTP...</>) : 'Tiếp tục (Nhận OTP qua Zalo) →'}
+                      </button>
+                      <button onClick={() => { setPinModalOpen(false); setPinError(''); }} style={{ background: 'var(--bg-main)', border: '1.5px solid var(--border-color)', color: 'var(--text-muted)', borderRadius: '10px', padding: '10px', fontSize: '13px', fontWeight: '600', cursor: 'pointer' }}>
+                        Hủy bỏ
+                      </button>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <p style={{ fontSize: '13px', color: 'var(--text-muted)', lineHeight: '1.5', marginBottom: '16px' }}>
+                      Mã xác thực OTP 6 số đã được gửi tới tin nhắn Zalo của <strong style={{ color: '#ea580c' }}>{lookupResult?.zaloName}</strong> để kích hoạt mã PIN.
+                    </p>
+
+                    <div style={{ marginBottom: '16px' }}>
+                      <input
+                        type="text"
+                        maxLength={6}
+                        placeholder="• • • • • •"
+                        value={securityOtp}
+                        onChange={e => setSecurityOtp(e.target.value.replace(/[^\d]/g, '').slice(0, 6))}
+                        style={{ width: '100%', padding: '12px', fontSize: '22px', textAlign: 'center', letterSpacing: '10px', background: 'var(--bg-main)', border: '2px solid var(--border-color)', borderRadius: '12px', color: 'var(--text-bright)', outline: 'none', fontWeight: '800' }}
+                      />
+                    </div>
+
+                    {pinError && (
+                      <div style={{ background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.3)', borderRadius: '10px', padding: '10px', fontSize: '13px', color: '#ef4444', marginBottom: '16px', textAlign: 'left' }}>
+                        ⚠️ {pinError}
+                      </div>
+                    )}
+
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                      <button className="lookup-btn" onClick={handleCreatePinComplete} disabled={securityOtp.length !== 6 || pinLoading}>
+                        {pinLoading ? (<><div className="lookup-spinner"></div>Đang hoàn tất...</>) : '✓ Kích hoạt PIN & Tiếp tục'}
+                      </button>
+                      <button onClick={requestZaloOtp} disabled={otpSending || otpCountdown > 0} style={{ background: 'transparent', border: '1.5px solid var(--border-color)', borderRadius: '20px', padding: '6px 14px', color: (otpSending || otpCountdown > 0) ? 'var(--text-muted)' : 'var(--text-main)', fontSize: '12.5px', fontWeight: '600', cursor: (otpSending || otpCountdown > 0) ? 'not-allowed' : 'pointer' }}>
+                        {otpSending ? 'Đang gửi...' : (otpCountdown > 0 ? `Gửi lại OTP (${otpCountdown}s)` : 'Gửi lại OTP qua Zalo')}
+                      </button>
+                      <button onClick={() => setCreateStep(1)} style={{ background: 'transparent', border: 'none', color: 'var(--text-muted)', fontSize: '12.5px', cursor: 'pointer' }}>
+                        ← Sửa lại mã PIN
+                      </button>
+                    </div>
+                  </>
+                )}
+              </>
+            )}
+
+            {/* MODE 3: RESET PIN (Forgot PIN recovery) */}
+            {pinModalMode === 'RESET_PIN' && (
+              <>
+                <h3 style={{ fontSize: '19px', fontWeight: '800', color: 'var(--text-bright)', marginBottom: '6px' }}>
+                  Đặt Lại Mã PIN Rút Tiền
+                </h3>
+                <p style={{ fontSize: '13px', color: 'var(--text-muted)', lineHeight: '1.5', marginBottom: '16px' }}>
+                  Nhập mã OTP vừa gửi về Zalo của bạn và thiết lập lại mã PIN 6 số mới.
+                </p>
+
+                <div className="lookup-input-group" style={{ textAlign: 'left', marginBottom: '12px' }}>
+                  <label className="lookup-label">Mã OTP từ Zalo (6 số)</label>
+                  <input
+                    ref={pinInputRef}
+                    type="text"
+                    maxLength={6}
+                    placeholder="Mã OTP 6 số..."
+                    className="lookup-input"
+                    value={securityOtp}
+                    onChange={e => setSecurityOtp(e.target.value.replace(/[^\d]/g, '').slice(0, 6))}
+                  />
+                </div>
+
+                <div className="lookup-input-group" style={{ textAlign: 'left', marginBottom: '12px' }}>
+                  <label className="lookup-label">Mã PIN Mới (6 số)</label>
+                  <input
+                    type="password"
+                    inputMode="numeric"
+                    maxLength={6}
+                    placeholder="Nhập 6 số PIN mới..."
+                    className="lookup-input"
+                    value={newPin}
+                    onChange={e => setNewPin(e.target.value.replace(/[^\d]/g, '').slice(0, 6))}
+                  />
+                </div>
+
+                <div className="lookup-input-group" style={{ textAlign: 'left', marginBottom: '16px' }}>
+                  <label className="lookup-label">Xác nhận lại PIN Mới (6 số)</label>
+                  <input
+                    type="password"
+                    inputMode="numeric"
+                    maxLength={6}
+                    placeholder="Nhập lại 6 số PIN mới..."
+                    className="lookup-input"
+                    value={confirmPin}
+                    onChange={e => setConfirmPin(e.target.value.replace(/[^\d]/g, '').slice(0, 6))}
+                  />
+                </div>
+
+                {pinError && (
+                  <div style={{ background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.3)', borderRadius: '10px', padding: '10px', fontSize: '13px', color: '#ef4444', marginBottom: '16px', textAlign: 'left' }}>
+                    ⚠️ {pinError}
+                  </div>
+                )}
+
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                  <button className="lookup-btn" onClick={handleResetPinComplete} disabled={securityOtp.length !== 6 || newPin.length !== 6 || confirmPin.length !== 6 || pinLoading}>
+                    {pinLoading ? (<><div className="lookup-spinner"></div>Đang lưu PIN mới...</>) : '✓ Xác nhận & Đổi PIN mới'}
+                  </button>
+                  <button onClick={requestZaloOtp} disabled={otpSending || otpCountdown > 0} style={{ background: 'transparent', border: '1.5px solid var(--border-color)', borderRadius: '20px', padding: '6px 14px', color: (otpSending || otpCountdown > 0) ? 'var(--text-muted)' : 'var(--text-main)', fontSize: '12.5px', fontWeight: '600', cursor: (otpSending || otpCountdown > 0) ? 'not-allowed' : 'pointer' }}>
+                    {otpSending ? 'Đang gửi...' : (otpCountdown > 0 ? `Gửi lại OTP (${otpCountdown}s)` : 'Gửi lại OTP qua Zalo')}
+                  </button>
+                  <button onClick={() => { setPinModalMode('ENTER_PIN'); setPinError(''); }} style={{ background: 'transparent', border: 'none', color: 'var(--text-muted)', fontSize: '12.5px', cursor: 'pointer' }}>
+                    ← Quay lại nhập mã PIN
+                  </button>
+                </div>
+              </>
+            )}
+
           </div>
         </div>
       )}

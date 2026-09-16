@@ -10,19 +10,7 @@ export default function Sidebar() {
       <aside className={`sidebar${sidebarOpen ? ' open' : ''}`}>
         <div className="sidebar-header">
           <div className="sidebar-logo">
-<<<<<<< HEAD
             <img src="/28symueslogomanin.png?v=7" alt="28Symues Admin Logo" style={{ height: '64px', width: 'auto', maxWidth: '100%', objectFit: 'contain' }} />
-=======
-<<<<<<< HEAD
-            <img src="/28symueslogomanin.png?v=7" alt="28Symues Admin Logo" style={{ height: '64px', width: 'auto', maxWidth: '100%', objectFit: 'contain' }} />
-=======
-<<<<<<< HEAD
-            <img src="/28symueslogomanin.png?v=6" alt="28Symues Admin Logo" style={{ height: '56px', width: 'auto', maxWidth: '100%', objectFit: 'contain' }} />
-=======
-            <img src="/28symueslogomanin.png?v=5" alt="28Symues Admin Logo" style={{ height: '44px', width: 'auto', maxWidth: '100%', objectFit: 'contain' }} />
->>>>>>> 7845dd0ea1ec830089052126cfbb6d1a3552cf82
->>>>>>> f5ce3a09b6d019ebf66c6d1efa5ffe75cca4664d
->>>>>>> 5a620fc6746a4a870d539dbb941e5889f7cc8ba3
           </div>
         </div>
         <ul className="sidebar-menu">

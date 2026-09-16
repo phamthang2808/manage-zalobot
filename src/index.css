@@ -4793,10 +4793,10 @@ body.dark .sidebar-toggle span {
 .login-split-logo img,
 .landing-logo img,
 .lookup-logo img {
-  width: 34px;
-  height: 34px;
-  max-width: 34px;
-  max-height: 34px;
+  width: auto !important;
+  height: 48px !important;
+  max-width: 240px !important;
+  max-height: 54px !important;
   border-radius: 0 !important;
   object-fit: contain !important;
   flex-shrink: 0;
@@ -4806,14 +4806,11 @@ body.dark .sidebar-toggle span {
 
 .login-logo-text,
 .landing-logo-text,
-.lookup-logo-text {
-  font-size: 18px;
-  font-weight: 800;
-  line-height: 1;
-  white-space: nowrap;
-  display: inline-flex;
-  align-items: center;
-  letter-spacing: 0.3px;
+.lookup-logo-text,
+.login-split-logo span,
+.landing-logo span,
+.lookup-logo span {
+  display: none !important;
 }
 
 @media (max-width: 768px) {
@@ -4837,10 +4834,10 @@ body.dark .sidebar-toggle span {
   .login-split-logo img,
   .landing-logo img,
   .lookup-logo img {
-    width: 28px !important;
-    height: 28px !important;
-    max-width: 28px !important;
-    max-height: 28px !important;
+    width: auto !important;
+    height: 38px !important;
+    max-width: 180px !important;
+    max-height: 42px !important;
     flex-shrink: 0 !important;
   }
 
@@ -4850,12 +4847,7 @@ body.dark .sidebar-toggle span {
   .login-split-logo span,
   .landing-logo span,
   .lookup-logo span {
-    font-size: 14px !important;
-    font-weight: 800 !important;
-    line-height: 1 !important;
-    white-space: nowrap !important;
-    display: inline-flex !important;
-    align-items: center !important;
+    display: none !important;
   }
 
   .login-split-nav,
@@ -4881,13 +4873,21 @@ body.dark .sidebar-toggle span {
     gap: 4px !important;
   }
 
+  .login-split-logo img,
+  .landing-logo img,
+  .lookup-logo img {
+    width: auto !important;
+    height: 32px !important;
+    max-width: 150px !important;
+  }
+
   .login-logo-text,
   .landing-logo-text,
   .lookup-logo-text,
   .login-split-logo span,
   .landing-logo span,
   .lookup-logo span {
-    font-size: 13px !important;
+    display: none !important;
   }
 
   .btn-back,

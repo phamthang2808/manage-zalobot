@@ -496,10 +496,13 @@ export default function OrderLookupView() {
         .lookup-banner-img-wrap img { width: 100%; display: block; }
         .lookup-banner-close { position: absolute; top: 6px; right: 6px; background: rgba(0,0,0,0.6); color: #fff; border: none; border-radius: 50%; width: 22px; height: 22px; font-size: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
         @keyframes banner-float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
-        .pin-digit-dots { display: flex; justify-content: center; gap: 10px; margin: 16px 0; }
-        .pin-dot { width: 16px; height: 16px; border-radius: 50%; border: 2px solid var(--border-color); background: var(--bg-main); transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); }
-        .pin-dot.filled { background: #ea580c; border-color: #ea580c; transform: scale(1.15); box-shadow: 0 0 10px rgba(234,88,12,0.4); }
-        .pin-hidden-input { position: absolute; opacity: 0; pointer-events: auto; width: 100%; height: 100%; top: 0; left: 0; }
+        .pin-digit-dots { display: flex; justify-content: center; gap: 8px; margin: 12px 0; }
+        .pin-box-item { width: 44px; height: 50px; border-radius: 12px; border: 1.5px solid var(--border-color); background: var(--bg-main); display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: 800; color: var(--text-bright); transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); cursor: pointer; user-select: none; }
+        .pin-box-item.filled { border-color: #ea580c; background: rgba(249, 115, 22, 0.08); box-shadow: 0 0 12px rgba(234, 88, 12, 0.25); color: #ea580c; }
+        .pin-box-item.active { border-color: #f97316; box-shadow: 0 0 0 2px rgba(249, 115, 22, 0.2); }
+        .pin-dot-bullet { width: 12px; height: 12px; border-radius: 50%; background: #ea580c; box-shadow: 0 0 6px rgba(234, 88, 12, 0.5); }
+        .pin-hidden-input { position: absolute; opacity: 0; pointer-events: auto; width: calc(100% - 50px); height: 100%; top: 0; left: 0; z-index: 2; }
+        @media (max-width: 480px) { .pin-box-item { width: 36px; height: 44px; font-size: 17px; border-radius: 9px; } .pin-digit-dots { gap: 6px; } }
         @media (max-width: 480px) { .stats-cards-grid { grid-template-columns: 1fr; } .stats-cards-grid > :first-child { grid-column: span 1; } .lookup-card { padding: 16px; } .stat-card-value { font-size: 20px; } .lookup-banner-img-wrap { width: 100%; max-width: 280px; } }
       `}} />
 
@@ -757,47 +760,63 @@ export default function OrderLookupView() {
                 {/* 6 Digit Box Display */}
                 <div style={{ position: 'relative', margin: '20px 0' }}>
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px' }}>
-                    <div className="pin-digit-dots" onClick={() => pinInputRef.current?.focus()} style={{ cursor: 'pointer', margin: 0 }}>
-                      {[0, 1, 2, 3, 4, 5].map(idx => (
-                        <div 
-                          key={idx} 
-                          className={`pin-dot ${inputPin.length > idx ? 'filled' : ''}`}
-                          style={showEnterPin && inputPin.length > idx ? { 
-                            display: 'flex', 
-                            alignItems: 'center', 
-                            justifyContent: 'center', 
-                            fontSize: '12px', 
-                            fontWeight: '800', 
-                            color: '#ffffff' 
-                          } : {}}
-                        >
-                          {showEnterPin && inputPin.length > idx ? inputPin[idx] : ''}
-                        </div>
-                      ))}
+                    <div 
+                      className="pin-digit-dots" 
+                      onClick={() => pinInputRef.current?.focus()} 
+                      style={{ cursor: 'pointer', margin: 0, position: 'relative', zIndex: 1 }}
+                    >
+                      {[0, 1, 2, 3, 4, 5].map(idx => {
+                        const isFilled = inputPin.length > idx;
+                        const isActive = inputPin.length === idx;
+                        const digit = isFilled ? inputPin[idx] : '';
+                        return (
+                          <div 
+                            key={idx} 
+                            className={`pin-box-item ${isFilled ? 'filled' : ''} ${isActive ? 'active' : ''}`}
+                          >
+                            {isFilled ? (
+                              showEnterPin ? (
+                                <span style={{ animation: 'pinPopIn 0.15s ease-out' }}>{digit}</span>
+                              ) : (
+                                <div className="pin-dot-bullet" />
+                              )
+                            ) : null}
+                          </div>
+                        );
+                      })}
                     </div>
+
                     <button
                       type="button"
-                      onClick={(e) => { e.stopPropagation(); setShowEnterPin(!showEnterPin); }}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        setShowEnterPin(prev => !prev);
+                      }}
                       style={{
-                        background: 'transparent',
-                        border: 'none',
+                        position: 'relative',
+                        zIndex: 10,
+                        background: 'var(--bg-main)',
+                        border: '1.5px solid var(--border-color)',
+                        borderRadius: '10px',
                         color: showEnterPin ? '#ea580c' : 'var(--text-muted)',
                         cursor: 'pointer',
-                        padding: '6px',
+                        padding: '10px',
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        transition: 'color 0.2s'
+                        transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+                        boxShadow: showEnterPin ? '0 0 10px rgba(234,88,12,0.2)' : 'none'
                       }}
                       title={showEnterPin ? "Ẩn mã PIN" : "Hiện mã PIN"}
                     >
                       {showEnterPin ? (
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
                           <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24" />
                           <line x1="1" y1="1" x2="23" y2="23" />
                         </svg>
                       ) : (
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
                           <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
                           <circle cx="12" cy="12" r="3" />
                         </svg>

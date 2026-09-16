@@ -2368,11 +2368,12 @@ function App() {
             animation: floatOrb2 15s ease-in-out infinite;
           }
           .login-split-header {
-            height: 70px;
+            min-height: 80px;
+            height: auto;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 0 40px;
+            padding: 10px 40px;
             z-index: 10;
             width: 100%;
             box-sizing: border-box;
@@ -2381,20 +2382,20 @@ function App() {
             display: flex;
             align-items: center;
             gap: 12px;
+            cursor: pointer;
           }
           .login-split-logo img {
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            border: 1px solid rgba(249, 115, 22, 0.35);
-            object-fit: cover;
+            width: auto;
+            height: 90px;
+            max-width: 420px;
+            max-height: 100px;
+            border-radius: 0;
+            object-fit: contain;
+            border: none;
           }
-          .login-split-logo span {
-            font-family: var(--font-heading);
-            font-size: 20px;
-            font-weight: 800;
-            color: #0f172a;
-            letter-spacing: 0.5px;
+          .login-split-logo span,
+          .login-logo-text {
+            display: none !important;
           }
           .login-split-nav {
             display: flex;
@@ -2665,17 +2666,21 @@ function App() {
             }
             .login-split-logo {
               gap: 6px !important;
-              flex-shrink: 1 !important;
+              flex-shrink: 0 !important;
               min-width: 0 !important;
             }
             .login-split-logo img {
-              width: 28px !important;
-              height: 28px !important;
+              width: auto !important;
+              height: 85px !important;
+              max-width: 320px !important;
+              max-height: 95px !important;
               flex-shrink: 0 !important;
+              border-radius: 0 !important;
+              border: none !important;
+              object-fit: contain !important;
             }
             .login-logo-text {
-              font-size: 14px !important;
-              white-space: nowrap !important;
+              display: none !important;
             }
             .login-split-nav {
               gap: 6px !important;
@@ -2768,14 +2773,24 @@ function App() {
           @media (max-width: 480px) {
             .login-split-header {
               padding: 8px 10px !important;
+              min-height: 80px !important;
+              height: auto !important;
+            }
+            .login-split-logo {
+              flex-shrink: 0 !important;
             }
             .login-split-logo img {
-              width: 24px !important;
-              height: 24px !important;
+              width: auto !important;
+              height: 80px !important;
+              max-width: 260px !important;
+              max-height: 85px !important;
+              flex-shrink: 0 !important;
+              border-radius: 0 !important;
+              border: none !important;
+              object-fit: contain !important;
             }
             .login-logo-text {
-              font-size: 13px !important;
-              white-space: nowrap !important;
+              display: none !important;
             }
             .login-split-nav .btn-back {
               padding: 3px 7px !important;
@@ -2796,7 +2811,7 @@ function App() {
 
         {/* Header */}
         <header className="login-split-header" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%', padding: '10px 12px', flexWrap: 'nowrap', gap: '6px', boxSizing: 'border-box' }}>
-          <div className="login-split-logo" style={{ display: 'flex', alignItems: 'center', flexShrink: 1, minWidth: 0 }}>
+          <div className="login-split-logo" onClick={() => { setView('home'); window.history.pushState({}, '', '/'); }} style={{ display: 'flex', alignItems: 'center', flexShrink: 0, minWidth: 0, cursor: 'pointer' }}>
             <img src="/28symueslogomanin.png?v=7" alt="28Symues Affiliate Logo" style={{ height: 'clamp(80px, 18vw, 110px)', width: 'auto', maxWidth: '380px', flexShrink: 0, objectFit: 'contain' }} />
           </div>
           <div className="login-split-nav" style={{ display: 'flex', alignItems: 'center', gap: '6px', flexShrink: 0, whiteSpace: 'nowrap' }}>

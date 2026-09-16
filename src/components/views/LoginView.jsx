@@ -273,8 +273,8 @@ export default function LoginView() {
             min-width: 0 !important;
           }
           .login-split-logo img {
-            width: 28px !important;
-            height: 28px !important;
+            width: auto !important;
+            height: 85px !important;
             flex-shrink: 0 !important;
           }
           .login-split-logo span {

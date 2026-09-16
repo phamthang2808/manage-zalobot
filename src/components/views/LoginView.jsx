@@ -363,8 +363,8 @@ export default function LoginView() {
             padding: 8px 10px !important;
           }
           .login-split-logo img {
-            width: 24px !important;
-            height: 24px !important;
+            width: auto !important;
+            height: 80px !important;
           }
           .login-split-logo span {
             font-size: 13px !important;
@@ -392,19 +392,7 @@ export default function LoginView() {
       {/* Header */}
       <header className="login-split-header">
         <div className="login-split-logo" onClick={() => { setView('home'); window.history.pushState({}, '', '/'); }} style={{ cursor: 'pointer' }}>
-<<<<<<< HEAD
-          <img src="/28symueslogomanin.png?v=7" alt="28Symues Affiliate Logo" style={{ height: '76px', width: 'auto', maxWidth: '380px', objectFit: 'contain' }} />
-=======
-<<<<<<< HEAD
-          <img src="/28symueslogomanin.png?v=7" alt="28Symues Affiliate Logo" style={{ height: '76px', width: 'auto', maxWidth: '380px', objectFit: 'contain' }} />
-=======
-<<<<<<< HEAD
-          <img src="/28symueslogomanin.png?v=6" alt="28Symues Affiliate Logo" style={{ height: '64px', width: 'auto', maxWidth: '300px', objectFit: 'contain' }} />
-=======
-          <img src="/28symueslogomanin.png?v=5" alt="28Symues Affiliate Logo" style={{ height: '48px', width: 'auto', maxWidth: '240px', objectFit: 'contain' }} />
->>>>>>> 7845dd0ea1ec830089052126cfbb6d1a3552cf82
->>>>>>> f5ce3a09b6d019ebf66c6d1efa5ffe75cca4664d
->>>>>>> 5a620fc6746a4a870d539dbb941e5889f7cc8ba3
+          <img src="/28symueslogomanin.png?v=7" alt="28Symues Affiliate Logo" style={{ height: 'clamp(80px, 18vw, 110px)', width: 'auto', maxWidth: '380px', objectFit: 'contain' }} />
         </div>
         <div className="login-split-nav">
           <ThemeToggle />

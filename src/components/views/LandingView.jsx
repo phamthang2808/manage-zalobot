@@ -39,7 +39,15 @@ export default function LandingView() {
 
       <header className="landing-header" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%', padding: '14px 18px', flexWrap: 'nowrap', gap: '8px', boxSizing: 'border-box' }}>
         <div className="landing-logo" style={{ display: 'flex', alignItems: 'center', flexShrink: 1, minWidth: 0, cursor: 'pointer' }} onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
+<<<<<<< HEAD
           <img src="/28symueslogomanin.png?v=7" alt="28Symues Affiliate Logo" style={{ height: '84px', width: 'auto', maxWidth: '440px', flexShrink: 0, objectFit: 'contain' }} />
+=======
+<<<<<<< HEAD
+          <img src="/28symueslogomanin.png?v=6" alt="28Symues Affiliate Logo" style={{ height: '68px', width: 'auto', maxWidth: '340px', flexShrink: 0, objectFit: 'contain' }} />
+=======
+          <img src="/28symueslogomanin.png?v=5" alt="28Symues Affiliate Logo" style={{ height: '48px', width: 'auto', maxWidth: '240px', flexShrink: 0, objectFit: 'contain' }} />
+>>>>>>> 7845dd0ea1ec830089052126cfbb6d1a3552cf82
+>>>>>>> f5ce3a09b6d019ebf66c6d1efa5ffe75cca4664d
         </div>
         <nav className={`landing-nav${mobileMenuOpen ? ' open' : ''}`}>
           <a href="#home" onClick={() => setMobileMenuOpen(false)}>Trang chủ</a>
@@ -452,7 +460,15 @@ export default function LandingView() {
         <div className="footer-container">
           <div className="footer-info">
             <div className="footer-logo">
+<<<<<<< HEAD
               <img src="/28symueslogomanin.png?v=7" alt="28Symues Affiliate Logo" style={{ height: '90px', width: 'auto', maxWidth: '450px', objectFit: 'contain' }} />
+=======
+<<<<<<< HEAD
+              <img src="/28symueslogomanin.png?v=6" alt="28Symues Affiliate Logo" style={{ height: '76px', width: 'auto', maxWidth: '360px', objectFit: 'contain' }} />
+=======
+              <img src="/28symueslogomanin.png?v=5" alt="28Symues Affiliate Logo" style={{ height: '52px', width: 'auto', maxWidth: '260px', objectFit: 'contain' }} />
+>>>>>>> 7845dd0ea1ec830089052126cfbb6d1a3552cf82
+>>>>>>> f5ce3a09b6d019ebf66c6d1efa5ffe75cca4664d
             </div>
             <p className="footer-slogan">
               Giải pháp cho thuê Chatbot Zalo tự động nhận diện và chuyển đổi liên kết mua sắm Shopee, TikTok Shop & Lazada 24/7, gắn SubID chuẩn xác và quản lý ví hoa hồng tích lũy minh bạch cho chủ nhóm.

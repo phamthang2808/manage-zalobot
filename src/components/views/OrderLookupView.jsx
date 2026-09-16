@@ -263,13 +263,8 @@ export default function OrderLookupView() {
 
       {/* Header */}
       <div className="lookup-header" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%', padding: '10px 12px', flexWrap: 'nowrap', gap: '6px', boxSizing: 'border-box' }}>
-        <div className="lookup-logo" onClick={() => { setView('home'); window.history.pushState({}, '', '/'); }} style={{ display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 1, minWidth: 0, whiteSpace: 'nowrap', cursor: 'pointer' }}>
-          <img src="/1111.png" alt="Logo" style={{ width: '32px', height: '32px', maxWidth: '32px', maxHeight: '32px', flexShrink: 0, objectFit: 'contain' }} />
-
-          <span className="lookup-logo-text" style={{ fontWeight: '800', lineHeight: 1, whiteSpace: 'nowrap', display: 'inline-flex', alignItems: 'center', letterSpacing: '0.2px' }}>
-            <span>28Symues&nbsp;</span>
-            <span style={{ color: '#f97316', whiteSpace: 'nowrap', display: 'inline' }}>Affiliate</span>
-          </span>
+        <div className="lookup-logo" onClick={() => { setView('home'); window.history.pushState({}, '', '/'); }} style={{ display: 'flex', alignItems: 'center', flexShrink: 1, minWidth: 0, cursor: 'pointer' }}>
+          <img src="/logomain.png" alt="28Symues Affiliate Logo" style={{ height: '40px', width: 'auto', maxWidth: '220px', flexShrink: 0, objectFit: 'contain' }} />
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexShrink: 0, whiteSpace: 'nowrap' }}>
           <ThemeToggle />
@@ -387,7 +382,7 @@ export default function OrderLookupView() {
                   </div>
                   <div className="stat-card-item withdrawable">
                     <span className="stat-card-label">Có thể rút ngay (Khả dụng)</span>
-                    <span style={{ fontSize: '11px', color: '#ea580c', marginBottom: '4px' }}>Sau 3 ngày • Đã trừ thuế & chia 8-2</span>
+                    <span style={{ fontSize: '11px', color: '#ea580c', marginBottom: '4px' }}>Shopee sau 3 ngày • TikTok rút ngay khi xong • Đã trừ thuế & chia 8-2</span>
                     <span className="stat-card-value" style={{ color: '#ea580c' }}>{formatMoney(lookupResult.wallet.withdrawableCommission)}</span>
                   </div>
                   <div className="stat-card-item received">
@@ -402,7 +397,7 @@ export default function OrderLookupView() {
               <div className="lookup-card" style={{ marginBottom: '24px' }}>
                 <h3 className="stats-section-title" style={{ margin: 0, marginBottom: '12px' }}>💸 Rút Tiền Hoa Hồng Khả Dụng</h3>
                 <p style={{ fontSize: '12.5px', color: 'var(--text-muted)', margin: '0 0 16px 0', lineHeight: '1.4' }}>
-                  Tiền hoa hồng của đơn &quot;Hoàn thành&quot; sau 3 ngày sẽ tự động chuyển xuống ví khả dụng để rút (đã trừ thuế Shopee và chia 8-2). Lệnh rút tiền sau khi gửi sẽ được duyệt thủ công bởi Trưởng nhóm Phạm Thắng.
+                  Tiền hoa hồng của đơn Shopee &quot;Hoàn thành&quot; sau 3 ngày (đơn TikTok rút ngay khi hoàn thành) sẽ tự động chuyển xuống ví khả dụng để rút (đã trừ thuế và chia 8-2). Lệnh rút tiền sau khi gửi sẽ được duyệt thủ công bởi Trưởng nhóm Phạm Thắng.
                 </p>
                 {lookupResult.wallet.withdrawableCommission > 0 ? (
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>

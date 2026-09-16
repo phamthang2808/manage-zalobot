@@ -10,9 +10,7 @@ export default function Sidebar() {
       <aside className={`sidebar${sidebarOpen ? ' open' : ''}`}>
         <div className="sidebar-header">
           <div className="sidebar-logo">
-            <img src="/1111.png" alt="Logo" style={{ width: '34px', height: '34px', objectFit: 'contain' }} />
-
-            <span>28Symues Admin</span>
+            <img src="/logomain.png" alt="28Symues Admin Logo" style={{ height: '42px', width: 'auto', maxWidth: '100%', objectFit: 'contain' }} />
           </div>
         </div>
         <ul className="sidebar-menu">

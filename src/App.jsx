@@ -761,25 +761,14 @@ function App() {
           <span className="nav-label">Tra cứu</span>
         </button>
 
-<<<<<<< HEAD
-=======
-        {/* Nút 3 (Nút Nổi Ở Giữa - Floating Action Button): Mở Bot Zalo Group */}
->>>>>>> 5a620fc6746a4a870d539dbb941e5889f7cc8ba3
         <a 
           href="https://zalo.me/g/0p083nqqoordpki9zgvy" 
           target="_blank" 
           rel="noreferrer"
-<<<<<<< HEAD
           className="mobile-bottom-nav-item"
           title="Nhắn tin với Bot Zalo hoàn tiền"
         >
           <div className="nav-icon-wrap">
-=======
-          className="mobile-bottom-nav-item mobile-nav-fab"
-          title="Nhắn tin với Bot Zalo hoàn tiền"
-        >
-          <div className="fab-circle">
->>>>>>> 5a620fc6746a4a870d539dbb941e5889f7cc8ba3
             <i className="fa-solid fa-comment-dots"></i>
           </div>
           <span className="nav-label">Bot Zalo</span>
@@ -1830,19 +1819,7 @@ function App() {
         {/* Lookup Header Bar */}
         <header className="lookup-header" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%', padding: '10px 12px', flexWrap: 'nowrap', gap: '6px', boxSizing: 'border-box' }}>
           <div className="lookup-logo" onClick={() => setView('home')} style={{ display: 'flex', alignItems: 'center', flexShrink: 1, minWidth: 0, cursor: 'pointer' }}>
-<<<<<<< HEAD
             <img src="/28symueslogomanin.png?v=7" alt="28Symues Affiliate Logo" style={{ height: '76px', width: 'auto', maxWidth: '380px', flexShrink: 0, objectFit: 'contain' }} />
-=======
-<<<<<<< HEAD
-            <img src="/28symueslogomanin.png?v=7" alt="28Symues Affiliate Logo" style={{ height: '76px', width: 'auto', maxWidth: '380px', flexShrink: 0, objectFit: 'contain' }} />
-=======
-<<<<<<< HEAD
-            <img src="/28symueslogomanin.png?v=6" alt="28Symues Affiliate Logo" style={{ height: '64px', width: 'auto', maxWidth: '300px', flexShrink: 0, objectFit: 'contain' }} />
-=======
-            <img src="/28symueslogomanin.png?v=5" alt="28Symues Affiliate Logo" style={{ height: '44px', width: 'auto', maxWidth: '220px', flexShrink: 0, objectFit: 'contain' }} />
->>>>>>> 7845dd0ea1ec830089052126cfbb6d1a3552cf82
->>>>>>> f5ce3a09b6d019ebf66c6d1efa5ffe75cca4664d
->>>>>>> 5a620fc6746a4a870d539dbb941e5889f7cc8ba3
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexShrink: 0, whiteSpace: 'nowrap' }}>
             <ThemeToggle />
@@ -2820,19 +2797,7 @@ function App() {
         {/* Header */}
         <header className="login-split-header" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%', padding: '10px 12px', flexWrap: 'nowrap', gap: '6px', boxSizing: 'border-box' }}>
           <div className="login-split-logo" style={{ display: 'flex', alignItems: 'center', flexShrink: 1, minWidth: 0 }}>
-<<<<<<< HEAD
             <img src="/28symueslogomanin.png?v=7" alt="28Symues Affiliate Logo" style={{ height: '76px', width: 'auto', maxWidth: '380px', flexShrink: 0, objectFit: 'contain' }} />
-=======
-<<<<<<< HEAD
-            <img src="/28symueslogomanin.png?v=7" alt="28Symues Affiliate Logo" style={{ height: '76px', width: 'auto', maxWidth: '380px', flexShrink: 0, objectFit: 'contain' }} />
-=======
-<<<<<<< HEAD
-            <img src="/28symueslogomanin.png?v=6" alt="28Symues Affiliate Logo" style={{ height: '64px', width: 'auto', maxWidth: '300px', flexShrink: 0, objectFit: 'contain' }} />
-=======
-            <img src="/28symueslogomanin.png?v=5" alt="28Symues Affiliate Logo" style={{ height: '48px', width: 'auto', maxWidth: '240px', flexShrink: 0, objectFit: 'contain' }} />
->>>>>>> 7845dd0ea1ec830089052126cfbb6d1a3552cf82
->>>>>>> f5ce3a09b6d019ebf66c6d1efa5ffe75cca4664d
->>>>>>> 5a620fc6746a4a870d539dbb941e5889f7cc8ba3
           </div>
           <div className="login-split-nav" style={{ display: 'flex', alignItems: 'center', gap: '6px', flexShrink: 0, whiteSpace: 'nowrap' }}>
             <ThemeToggle />
@@ -3014,19 +2979,7 @@ function App() {
 
         <header className="landing-header" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%', padding: '14px 18px', flexWrap: 'nowrap', gap: '8px', boxSizing: 'border-box' }}>
           <div className="landing-logo" style={{ display: 'flex', alignItems: 'center', flexShrink: 1, minWidth: 0, cursor: 'pointer' }} onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
-<<<<<<< HEAD
             <img src="/28symueslogomanin.png?v=7" alt="28Symues Affiliate Logo" style={{ height: '84px', width: 'auto', maxWidth: '440px', flexShrink: 0, objectFit: 'contain' }} />
-=======
-<<<<<<< HEAD
-            <img src="/28symueslogomanin.png?v=7" alt="28Symues Affiliate Logo" style={{ height: '84px', width: 'auto', maxWidth: '440px', flexShrink: 0, objectFit: 'contain' }} />
-=======
-<<<<<<< HEAD
-            <img src="/28symueslogomanin.png?v=6" alt="28Symues Affiliate Logo" style={{ height: '68px', width: 'auto', maxWidth: '340px', flexShrink: 0, objectFit: 'contain' }} />
-=======
-            <img src="/28symueslogomanin.png?v=5" alt="28Symues Affiliate Logo" style={{ height: '48px', width: 'auto', maxWidth: '240px', flexShrink: 0, objectFit: 'contain' }} />
->>>>>>> 7845dd0ea1ec830089052126cfbb6d1a3552cf82
->>>>>>> f5ce3a09b6d019ebf66c6d1efa5ffe75cca4664d
->>>>>>> 5a620fc6746a4a870d539dbb941e5889f7cc8ba3
           </div>
           <nav className={`landing-nav${mobileMenuOpen ? ' open' : ''}`}>
             <a href="#home" onClick={() => setMobileMenuOpen(false)}>Trang chủ</a>
@@ -3184,14 +3137,7 @@ function App() {
         </header>
         {mobileMenuOpen && <div className="mobile-overlay" onClick={() => setMobileMenuOpen(false)}></div>}
         <section id="home" className="landing-block-container hero-showcase-container reveal-on-scroll" style={{ marginTop: '12px', marginBottom: '0px', paddingBottom: '0px', paddingTop: '10px', textAlign: 'center' }}>
-<<<<<<< HEAD
 
-=======
-          <div className="section-badge" style={{ display: 'inline-flex', alignItems: 'center', gap: '10px', padding: '8px 20px', borderRadius: '30px', background: 'rgba(249, 115, 22, 0.12)', color: '#ea580c', fontSize: '13px', fontWeight: '800', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '14px' }}>
-            <img src="/robot-icon.png" alt="AI Robot" style={{ width: '32px', height: '32px', objectFit: 'contain', flexShrink: 0 }} />
-            <span>HỆ THỐNG AUTOMATION AFFILIATE 4.0</span>
-          </div>
->>>>>>> 5a620fc6746a4a870d539dbb941e5889f7cc8ba3
           <h1 className="hero-title" style={{ fontSize: '38px', fontWeight: '900', color: 'var(--text-bright)', marginBottom: '14px', lineHeight: '1.2' }}>
             Cho Thuê Zalo Bot Affiliate - Tự Động Đổi Link Shopee, TikTok Shop & Lazada 24/7
           </h1>
@@ -3222,7 +3168,7 @@ function App() {
               </div>
             </div>
             <div className="zigzag-content">
-              <span className="zigzag-category-badge">AUTOMATION AFFILIATE 24/7</span>
+
               <h3 className="zigzag-title">Tự Động Đổi Link Shopee, TikTok Shop & Lazada</h3>
               <p className="zigzag-desc">
                 Thành viên trong nhóm chat Zalo chỉ cần dán link mua sắm sản phẩm. Zalo Bot tự động nhận biết người gửi, chuyển đổi thành link affiliate có gắn SubID chuẩn xác và phản hồi lại ngay lập tức.
@@ -3246,7 +3192,7 @@ function App() {
               </div>
             </div>
             <div className="zigzag-content">
-              <span className="zigzag-category-badge">MINH BẠCH & TIỆN LỢI</span>
+              <span className="zigzag-category-badge">MINH BẠCH &amp; TIỆN LỢI</span>
               <h3 className="zigzag-title">Trang Web Tra Cứu Đơn Hàng & Hoa Hồng Tự Động</h3>
               <p className="zigzag-desc">
                 Cung cấp trang Tra Cứu Web Portal riêng cho từng nhóm săn sale. Thành viên chủ động truy cập kiểm tra danh sách đơn hàng đã mua, số tiền hoa hồng được cộng dồn và trạng thái đơn minh bạch.
@@ -3658,19 +3604,7 @@ function App() {
           <div className="footer-container">
             <div className="footer-info">
               <div className="footer-logo">
-<<<<<<< HEAD
                 <img src="/28symueslogomanin.png?v=7" alt="28Symues Affiliate Logo" style={{ height: '90px', width: 'auto', maxWidth: '450px', objectFit: 'contain' }} />
-=======
-<<<<<<< HEAD
-                <img src="/28symueslogomanin.png?v=7" alt="28Symues Affiliate Logo" style={{ height: '90px', width: 'auto', maxWidth: '450px', objectFit: 'contain' }} />
-=======
-<<<<<<< HEAD
-                <img src="/28symueslogomanin.png?v=6" alt="28Symues Affiliate Logo" style={{ height: '76px', width: 'auto', maxWidth: '360px', objectFit: 'contain' }} />
-=======
-                <img src="/28symueslogomanin.png?v=5" alt="28Symues Affiliate Logo" style={{ height: '52px', width: 'auto', maxWidth: '260px', objectFit: 'contain' }} />
->>>>>>> 7845dd0ea1ec830089052126cfbb6d1a3552cf82
->>>>>>> f5ce3a09b6d019ebf66c6d1efa5ffe75cca4664d
->>>>>>> 5a620fc6746a4a870d539dbb941e5889f7cc8ba3
               </div>
               <p className="footer-slogan">
                 Giải pháp cho thuê Chatbot Zalo tự động nhận diện và chuyển đổi liên kết mua sắm Shopee, TikTok Shop & Lazada 24/7, gắn SubID chuẩn xác và quản lý ví hoa hồng tích lũy minh bạch cho chủ nhóm.
@@ -3697,11 +3631,7 @@ function App() {
               <div className="footer-contact-list">
                 <div className="footer-contact-item">
                   <i className="fa-solid fa-user-gear" style={{ color: '#f97316' }}></i>
-<<<<<<< HEAD
                   <span>Zalo Admin: Phạm Thắng - SĐT 0888728256</span>
-=======
-                  <span>Zalo Admin: <a href="http://zaloapp.com/qr/p/fd2gcjcjfuof" target="_blank" rel="noopener noreferrer">Phạm Thắng (Kích hoạt 24/7)</a></span>
->>>>>>> 5a620fc6746a4a870d539dbb941e5889f7cc8ba3
                 </div>
                 <div className="footer-contact-item">
                   <i className="fa-solid fa-comments" style={{ color: '#059669' }}></i>
@@ -3742,19 +3672,7 @@ function App() {
       <aside className={`sidebar${sidebarOpen ? ' open' : ''}`}>
         <div className="sidebar-header">
           <div className="sidebar-logo">
-<<<<<<< HEAD
             <img src="/28symueslogomanin.png?v=7" alt="28Symues Admin Logo" style={{ height: '64px', width: 'auto', maxWidth: '100%', objectFit: 'contain' }} />
-=======
-<<<<<<< HEAD
-            <img src="/28symueslogomanin.png?v=7" alt="28Symues Admin Logo" style={{ height: '64px', width: 'auto', maxWidth: '100%', objectFit: 'contain' }} />
-=======
-<<<<<<< HEAD
-            <img src="/28symueslogomanin.png?v=6" alt="28Symues Admin Logo" style={{ height: '56px', width: 'auto', maxWidth: '100%', objectFit: 'contain' }} />
-=======
-            <img src="/28symueslogomanin.png?v=5" alt="28Symues Admin Logo" style={{ height: '44px', width: 'auto', maxWidth: '100%', objectFit: 'contain' }} />
->>>>>>> 7845dd0ea1ec830089052126cfbb6d1a3552cf82
->>>>>>> f5ce3a09b6d019ebf66c6d1efa5ffe75cca4664d
->>>>>>> 5a620fc6746a4a870d539dbb941e5889f7cc8ba3
           </div>
         </div>
         <ul className="sidebar-menu">

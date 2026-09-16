@@ -1819,13 +1819,8 @@ function App() {
 
         {/* Lookup Header Bar */}
         <header className="lookup-header" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%', padding: '10px 12px', flexWrap: 'nowrap', gap: '6px', boxSizing: 'border-box' }}>
-          <div className="lookup-logo" onClick={() => setView('home')} style={{ display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 1, minWidth: 0, whiteSpace: 'nowrap', cursor: 'pointer' }}>
-            <img src="/1111.png" alt="Logo" style={{ width: '32px', height: '32px', maxWidth: '32px', maxHeight: '32px', flexShrink: 0, objectFit: 'contain' }} />
-
-            <span className="lookup-logo-text" style={{ fontWeight: '800', lineHeight: 1, whiteSpace: 'nowrap', display: 'inline-flex', alignItems: 'center', letterSpacing: '0.2px' }}>
-              <span>28Symues&nbsp;</span>
-              <span style={{ color: '#f97316', whiteSpace: 'nowrap', display: 'inline' }}>Affiliate</span>
-            </span>
+          <div className="lookup-logo" onClick={() => setView('home')} style={{ display: 'flex', alignItems: 'center', flexShrink: 1, minWidth: 0, cursor: 'pointer' }}>
+            <img src="/28symueslogomanin.png?v=5" alt="28Symues Affiliate Logo" style={{ height: '44px', width: 'auto', maxWidth: '220px', flexShrink: 0, objectFit: 'contain' }} />
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexShrink: 0, whiteSpace: 'nowrap' }}>
             <ThemeToggle />
@@ -2802,13 +2797,8 @@ function App() {
 
         {/* Header */}
         <header className="login-split-header" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%', padding: '10px 12px', flexWrap: 'nowrap', gap: '6px', boxSizing: 'border-box' }}>
-          <div className="login-split-logo" style={{ display: 'flex', alignItems: 'center', gap: '6px', flexShrink: 1, minWidth: 0, whiteSpace: 'nowrap' }}>
-            <img src="/1111.png" alt="Logo" style={{ width: '32px', height: '32px', maxWidth: '32px', maxHeight: '32px', flexShrink: 0, objectFit: 'contain' }} />
-
-            <span className="login-logo-text" style={{ fontWeight: '800', lineHeight: 1, whiteSpace: 'nowrap', display: 'inline-flex', alignItems: 'center', letterSpacing: '0.2px' }}>
-              <span>28Symues&nbsp;</span>
-              <span style={{ color: '#f97316', whiteSpace: 'nowrap', display: 'inline' }}>Affiliate</span>
-            </span>
+          <div className="login-split-logo" style={{ display: 'flex', alignItems: 'center', flexShrink: 1, minWidth: 0 }}>
+            <img src="/28symueslogomanin.png?v=5" alt="28Symues Affiliate Logo" style={{ height: '48px', width: 'auto', maxWidth: '240px', flexShrink: 0, objectFit: 'contain' }} />
           </div>
           <div className="login-split-nav" style={{ display: 'flex', alignItems: 'center', gap: '6px', flexShrink: 0, whiteSpace: 'nowrap' }}>
             <ThemeToggle />
@@ -2989,13 +2979,8 @@ function App() {
 
 
         <header className="landing-header" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%', padding: '14px 18px', flexWrap: 'nowrap', gap: '8px', boxSizing: 'border-box' }}>
-          <div className="landing-logo" style={{ display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 1, minWidth: 0, whiteSpace: 'nowrap' }}>
-            <img src="/1111.png" alt="Logo" style={{ width: '32px', height: '32px', maxWidth: '32px', maxHeight: '32px', flexShrink: 0, objectFit: 'contain' }} />
-
-            <span className="landing-logo-text" style={{ fontWeight: '800', lineHeight: 1, whiteSpace: 'nowrap', display: 'inline-flex', alignItems: 'center', letterSpacing: '0.2px' }}>
-              <span>28Symues&nbsp;</span>
-              <span style={{ color: '#f97316', whiteSpace: 'nowrap', display: 'inline' }}>Affiliate</span>
-            </span>
+          <div className="landing-logo" style={{ display: 'flex', alignItems: 'center', flexShrink: 1, minWidth: 0, cursor: 'pointer' }} onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
+            <img src="/28symueslogomanin.png?v=5" alt="28Symues Affiliate Logo" style={{ height: '48px', width: 'auto', maxWidth: '240px', flexShrink: 0, objectFit: 'contain' }} />
           </div>
           <nav className={`landing-nav${mobileMenuOpen ? ' open' : ''}`}>
             <a href="#home" onClick={() => setMobileMenuOpen(false)}>Trang chủ</a>
@@ -3623,8 +3608,7 @@ function App() {
           <div className="footer-container">
             <div className="footer-info">
               <div className="footer-logo">
-                <img src="/MAIN.png" alt="28Symues Affiliate Logo" />
-                <span>Cho Thuê Zalo Bot Affiliate</span>
+                <img src="/28symueslogomanin.png?v=5" alt="28Symues Affiliate Logo" style={{ height: '52px', width: 'auto', maxWidth: '260px', objectFit: 'contain' }} />
               </div>
               <p className="footer-slogan">
                 Giải pháp cho thuê Chatbot Zalo tự động nhận diện và chuyển đổi liên kết mua sắm Shopee, TikTok Shop & Lazada 24/7, gắn SubID chuẩn xác và quản lý ví hoa hồng tích lũy minh bạch cho chủ nhóm.
@@ -3692,8 +3676,7 @@ function App() {
       <aside className={`sidebar${sidebarOpen ? ' open' : ''}`}>
         <div className="sidebar-header">
           <div className="sidebar-logo">
-            <img src="/logo.jpg" alt="Logo" style={{ width: '34px', height: '34px', borderRadius: '50%', objectFit: 'cover', border: '2px solid #fed7aa' }} />
-            <span>28Symues Admin</span>
+            <img src="/28symueslogomanin.png?v=5" alt="28Symues Admin Logo" style={{ height: '44px', width: 'auto', maxWidth: '100%', objectFit: 'contain' }} />
           </div>
         </div>
         <ul className="sidebar-menu">

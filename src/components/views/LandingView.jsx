@@ -39,7 +39,7 @@ export default function LandingView() {
 
       <header className="landing-header" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%', padding: '14px 18px', flexWrap: 'nowrap', gap: '8px', boxSizing: 'border-box' }}>
         <div className="landing-logo" style={{ display: 'flex', alignItems: 'center', flexShrink: 1, minWidth: 0, cursor: 'pointer' }} onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
-          <img src="/logomain.png?v=3" alt="28Symues Affiliate Logo" style={{ height: '48px', width: 'auto', maxWidth: '240px', flexShrink: 0, objectFit: 'contain' }} />
+          <img src="/28symueslogomanin.png?v=5" alt="28Symues Affiliate Logo" style={{ height: '48px', width: 'auto', maxWidth: '240px', flexShrink: 0, objectFit: 'contain' }} />
         </div>
         <nav className={`landing-nav${mobileMenuOpen ? ' open' : ''}`}>
           <a href="#home" onClick={() => setMobileMenuOpen(false)}>Trang chủ</a>
@@ -452,8 +452,7 @@ export default function LandingView() {
         <div className="footer-container">
           <div className="footer-info">
             <div className="footer-logo">
-              <img src="/MAIN.png" alt="28Symues Affiliate Logo" />
-              <span>Cho Thuê Zalo Bot Affiliate</span>
+              <img src="/28symueslogomanin.png?v=5" alt="28Symues Affiliate Logo" style={{ height: '52px', width: 'auto', maxWidth: '260px', objectFit: 'contain' }} />
             </div>
             <p className="footer-slogan">
               Giải pháp cho thuê Chatbot Zalo tự động nhận diện và chuyển đổi liên kết mua sắm Shopee, TikTok Shop & Lazada 24/7, gắn SubID chuẩn xác và quản lý ví hoa hồng tích lũy minh bạch cho chủ nhóm.

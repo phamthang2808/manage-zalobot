@@ -264,7 +264,7 @@ export default function OrderLookupView() {
       {/* Header */}
       <div className="lookup-header" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%', padding: '10px 12px', flexWrap: 'nowrap', gap: '6px', boxSizing: 'border-box' }}>
         <div className="lookup-logo" onClick={() => { setView('home'); window.history.pushState({}, '', '/'); }} style={{ display: 'flex', alignItems: 'center', flexShrink: 1, minWidth: 0, cursor: 'pointer' }}>
-          <img src="/logomain.png?v=3" alt="28Symues Affiliate Logo" style={{ height: '44px', width: 'auto', maxWidth: '220px', flexShrink: 0, objectFit: 'contain' }} />
+          <img src="/28symueslogomanin.png?v=5" alt="28Symues Affiliate Logo" style={{ height: '44px', width: 'auto', maxWidth: '220px', flexShrink: 0, objectFit: 'contain' }} />
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexShrink: 0, whiteSpace: 'nowrap' }}>
           <ThemeToggle />

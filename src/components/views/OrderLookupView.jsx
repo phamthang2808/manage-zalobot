@@ -48,6 +48,11 @@ export default function OrderLookupView() {
   const [securityOtp, setSecurityOtp] = useState('');
   const [createStep, setCreateStep] = useState(1); // Step 1: Input PIN, Step 2: Input OTP
   
+  // Toggle show/hide PIN digits
+  const [showNewPin, setShowNewPin] = useState(false);
+  const [showConfirmPin, setShowConfirmPin] = useState(false);
+  const [showEnterPin, setShowEnterPin] = useState(false);
+  
   const [pinLoading, setPinLoading] = useState(false);
   const [pinError, setPinError] = useState('');
   const [otpSending, setOtpSending] = useState(false);
@@ -751,10 +756,53 @@ export default function OrderLookupView() {
 
                 {/* 6 Digit Box Display */}
                 <div style={{ position: 'relative', margin: '20px 0' }}>
-                  <div className="pin-digit-dots" onClick={() => pinInputRef.current?.focus()} style={{ cursor: 'pointer' }}>
-                    {[0, 1, 2, 3, 4, 5].map(idx => (
-                      <div key={idx} className={`pin-dot ${inputPin.length > idx ? 'filled' : ''}`} />
-                    ))}
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px' }}>
+                    <div className="pin-digit-dots" onClick={() => pinInputRef.current?.focus()} style={{ cursor: 'pointer', margin: 0 }}>
+                      {[0, 1, 2, 3, 4, 5].map(idx => (
+                        <div 
+                          key={idx} 
+                          className={`pin-dot ${inputPin.length > idx ? 'filled' : ''}`}
+                          style={showEnterPin && inputPin.length > idx ? { 
+                            display: 'flex', 
+                            alignItems: 'center', 
+                            justifyContent: 'center', 
+                            fontSize: '12px', 
+                            fontWeight: '800', 
+                            color: '#ffffff' 
+                          } : {}}
+                        >
+                          {showEnterPin && inputPin.length > idx ? inputPin[idx] : ''}
+                        </div>
+                      ))}
+                    </div>
+                    <button
+                      type="button"
+                      onClick={(e) => { e.stopPropagation(); setShowEnterPin(!showEnterPin); }}
+                      style={{
+                        background: 'transparent',
+                        border: 'none',
+                        color: showEnterPin ? '#ea580c' : 'var(--text-muted)',
+                        cursor: 'pointer',
+                        padding: '6px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        transition: 'color 0.2s'
+                      }}
+                      title={showEnterPin ? "Ẩn mã PIN" : "Hiện mã PIN"}
+                    >
+                      {showEnterPin ? (
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24" />
+                          <line x1="1" y1="1" x2="23" y2="23" />
+                        </svg>
+                      ) : (
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                          <circle cx="12" cy="12" r="3" />
+                        </svg>
+                      )}
+                    </button>
                   </div>
 
                   <input
@@ -777,7 +825,7 @@ export default function OrderLookupView() {
                     className="pin-hidden-input"
                     autoFocus
                   />
-                  <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
+                  <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginTop: '8px' }}>
                     {inputPin.length === 6 ? '✓ Đã nhập đủ 6 số' : `Chạm để nhập (${inputPin.length}/6 số)`}
                   </div>
                 </div>
@@ -820,29 +868,95 @@ export default function OrderLookupView() {
 
                     <div className="lookup-input-group" style={{ textAlign: 'left', marginBottom: '12px' }}>
                       <label className="lookup-label">Mã PIN mới (6 chữ số)</label>
-                      <input
-                        ref={pinInputRef}
-                        type="password"
-                        inputMode="numeric"
-                        maxLength={6}
-                        placeholder="Nhập 6 số PIN..."
-                        className="lookup-input"
-                        value={newPin}
-                        onChange={e => setNewPin(e.target.value.replace(/[^\d]/g, '').slice(0, 6))}
-                      />
+                      <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
+                        <input
+                          ref={pinInputRef}
+                          type={showNewPin ? "text" : "password"}
+                          inputMode="numeric"
+                          maxLength={6}
+                          placeholder="Nhập 6 số PIN..."
+                          className="lookup-input"
+                          style={{ paddingRight: '42px' }}
+                          value={newPin}
+                          onChange={e => setNewPin(e.target.value.replace(/[^\d]/g, '').slice(0, 6))}
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setShowNewPin(!showNewPin)}
+                          style={{
+                            position: 'absolute',
+                            right: '12px',
+                            background: 'none',
+                            border: 'none',
+                            color: showNewPin ? '#ea580c' : 'var(--text-muted)',
+                            cursor: 'pointer',
+                            padding: '4px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            transition: 'color 0.2s'
+                          }}
+                          title={showNewPin ? "Ẩn mã PIN" : "Hiện mã PIN"}
+                        >
+                          {showNewPin ? (
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                              <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24" />
+                              <line x1="1" y1="1" x2="23" y2="23" />
+                            </svg>
+                          ) : (
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                              <circle cx="12" cy="12" r="3" />
+                            </svg>
+                          )}
+                        </button>
+                      </div>
                     </div>
 
                     <div className="lookup-input-group" style={{ textAlign: 'left', marginBottom: '16px' }}>
                       <label className="lookup-label">Xác nhận lại mã PIN (6 số)</label>
-                      <input
-                        type="password"
-                        inputMode="numeric"
-                        maxLength={6}
-                        placeholder="Nhập lại 6 số PIN..."
-                        className="lookup-input"
-                        value={confirmPin}
-                        onChange={e => setConfirmPin(e.target.value.replace(/[^\d]/g, '').slice(0, 6))}
-                      />
+                      <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
+                        <input
+                          type={showConfirmPin ? "text" : "password"}
+                          inputMode="numeric"
+                          maxLength={6}
+                          placeholder="Nhập lại 6 số PIN..."
+                          className="lookup-input"
+                          style={{ paddingRight: '42px' }}
+                          value={confirmPin}
+                          onChange={e => setConfirmPin(e.target.value.replace(/[^\d]/g, '').slice(0, 6))}
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setShowConfirmPin(!showConfirmPin)}
+                          style={{
+                            position: 'absolute',
+                            right: '12px',
+                            background: 'none',
+                            border: 'none',
+                            color: showConfirmPin ? '#ea580c' : 'var(--text-muted)',
+                            cursor: 'pointer',
+                            padding: '4px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            transition: 'color 0.2s'
+                          }}
+                          title={showConfirmPin ? "Ẩn mã PIN" : "Hiện mã PIN"}
+                        >
+                          {showConfirmPin ? (
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                              <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24" />
+                              <line x1="1" y1="1" x2="23" y2="23" />
+                            </svg>
+                          ) : (
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                              <circle cx="12" cy="12" r="3" />
+                            </svg>
+                          )}
+                        </button>
+                      </div>
                     </div>
 
                     {pinError && (
@@ -885,13 +999,81 @@ export default function OrderLookupView() {
 
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
                       <button className="lookup-btn" onClick={handleCreatePinComplete} disabled={securityOtp.length !== 6 || pinLoading}>
-                        {pinLoading ? (<><div className="lookup-spinner"></div>Đang hoàn tất...</>) : '✓ Kích hoạt PIN & Tiếp tục'}
+                        {pinLoading ? (<><div className="lookup-spinner"></div>Đang hoàn tất...</>) : (
+                          <>
+                            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                              <polyline points="20 6 9 17 4 12" />
+                            </svg>
+                            <span>Kích hoạt PIN & Tiếp tục</span>
+                          </>
+                        )}
                       </button>
-                      <button onClick={requestZaloOtp} disabled={otpSending || otpCountdown > 0} style={{ background: 'transparent', border: '1.5px solid var(--border-color)', borderRadius: '20px', padding: '6px 14px', color: (otpSending || otpCountdown > 0) ? 'var(--text-muted)' : 'var(--text-main)', fontSize: '12.5px', fontWeight: '600', cursor: (otpSending || otpCountdown > 0) ? 'not-allowed' : 'pointer' }}>
-                        {otpSending ? 'Đang gửi...' : (otpCountdown > 0 ? `Gửi lại OTP (${otpCountdown}s)` : 'Gửi lại OTP qua Zalo')}
+
+                      <button 
+                        onClick={requestZaloOtp} 
+                        disabled={otpSending || otpCountdown > 0} 
+                        style={{ 
+                          background: 'var(--bg-main)', 
+                          border: '1.5px solid var(--border-color)', 
+                          borderRadius: '12px', 
+                          padding: '11px 16px', 
+                          color: (otpSending || otpCountdown > 0) ? 'var(--text-muted)' : 'var(--text-bright)', 
+                          fontSize: '13px', 
+                          fontWeight: '700', 
+                          cursor: (otpSending || otpCountdown > 0) ? 'not-allowed' : 'pointer',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          gap: '8px',
+                          transition: 'all 0.2s'
+                        }}
+                      >
+                        {otpSending ? (
+                          <><div className="lookup-spinner" style={{ width: '14px', height: '14px', borderWidth: '2px', borderTopColor: '#ea580c' }}></div>Đang gửi mã...</>
+                        ) : otpCountdown > 0 ? (
+                          <>
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ color: '#ea580c' }}>
+                              <circle cx="12" cy="12" r="10" />
+                              <polyline points="12 6 12 12 16 14" />
+                            </svg>
+                            <span>Gửi lại OTP sau ({otpCountdown}s)</span>
+                          </>
+                        ) : (
+                          <>
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ color: '#0284c7' }}>
+                              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+                            </svg>
+                            <span>Gửi lại OTP qua Zalo</span>
+                          </>
+                        )}
                       </button>
-                      <button onClick={() => setCreateStep(1)} style={{ background: 'transparent', border: 'none', color: 'var(--text-muted)', fontSize: '12.5px', cursor: 'pointer' }}>
-                        ← Sửa lại mã PIN
+
+                      <button 
+                        onClick={() => setCreateStep(1)} 
+                        style={{ 
+                          background: 'rgba(249, 115, 22, 0.06)', 
+                          border: '1.5px solid rgba(249, 115, 22, 0.3)', 
+                          borderRadius: '12px', 
+                          padding: '10px 16px', 
+                          color: '#ea580c', 
+                          fontSize: '13px', 
+                          fontWeight: '700', 
+                          cursor: 'pointer',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          gap: '8px',
+                          transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+                          marginTop: '2px'
+                        }}
+                        onMouseEnter={e => { e.currentTarget.style.background = 'rgba(249, 115, 22, 0.14)'; e.currentTarget.style.borderColor = '#ea580c'; }}
+                        onMouseLeave={e => { e.currentTarget.style.background = 'rgba(249, 115, 22, 0.06)'; e.currentTarget.style.borderColor = 'rgba(249, 115, 22, 0.3)'; }}
+                      >
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+                          <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+                        </svg>
+                        <span>Sửa lại mã PIN</span>
                       </button>
                     </div>
                   </>
@@ -924,28 +1106,94 @@ export default function OrderLookupView() {
 
                 <div className="lookup-input-group" style={{ textAlign: 'left', marginBottom: '12px' }}>
                   <label className="lookup-label">Mã PIN Mới (6 số)</label>
-                  <input
-                    type="password"
-                    inputMode="numeric"
-                    maxLength={6}
-                    placeholder="Nhập 6 số PIN mới..."
-                    className="lookup-input"
-                    value={newPin}
-                    onChange={e => setNewPin(e.target.value.replace(/[^\d]/g, '').slice(0, 6))}
-                  />
+                  <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
+                    <input
+                      type={showNewPin ? "text" : "password"}
+                      inputMode="numeric"
+                      maxLength={6}
+                      placeholder="Nhập 6 số PIN mới..."
+                      className="lookup-input"
+                      style={{ paddingRight: '42px' }}
+                      value={newPin}
+                      onChange={e => setNewPin(e.target.value.replace(/[^\d]/g, '').slice(0, 6))}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowNewPin(!showNewPin)}
+                      style={{
+                        position: 'absolute',
+                        right: '12px',
+                        background: 'none',
+                        border: 'none',
+                        color: showNewPin ? '#ea580c' : 'var(--text-muted)',
+                        cursor: 'pointer',
+                        padding: '4px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        transition: 'color 0.2s'
+                      }}
+                      title={showNewPin ? "Ẩn mã PIN" : "Hiện mã PIN"}
+                    >
+                      {showNewPin ? (
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24" />
+                          <line x1="1" y1="1" x2="23" y2="23" />
+                        </svg>
+                      ) : (
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                          <circle cx="12" cy="12" r="3" />
+                        </svg>
+                      )}
+                    </button>
+                  </div>
                 </div>
 
                 <div className="lookup-input-group" style={{ textAlign: 'left', marginBottom: '16px' }}>
                   <label className="lookup-label">Xác nhận lại PIN Mới (6 số)</label>
-                  <input
-                    type="password"
-                    inputMode="numeric"
-                    maxLength={6}
-                    placeholder="Nhập lại 6 số PIN mới..."
-                    className="lookup-input"
-                    value={confirmPin}
-                    onChange={e => setConfirmPin(e.target.value.replace(/[^\d]/g, '').slice(0, 6))}
-                  />
+                  <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
+                    <input
+                      type={showConfirmPin ? "text" : "password"}
+                      inputMode="numeric"
+                      maxLength={6}
+                      placeholder="Nhập lại 6 số PIN mới..."
+                      className="lookup-input"
+                      style={{ paddingRight: '42px' }}
+                      value={confirmPin}
+                      onChange={e => setConfirmPin(e.target.value.replace(/[^\d]/g, '').slice(0, 6))}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowConfirmPin(!showConfirmPin)}
+                      style={{
+                        position: 'absolute',
+                        right: '12px',
+                        background: 'none',
+                        border: 'none',
+                        color: showConfirmPin ? '#ea580c' : 'var(--text-muted)',
+                        cursor: 'pointer',
+                        padding: '4px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        transition: 'color 0.2s'
+                      }}
+                      title={showConfirmPin ? "Ẩn mã PIN" : "Hiện mã PIN"}
+                    >
+                      {showConfirmPin ? (
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24" />
+                          <line x1="1" y1="1" x2="23" y2="23" />
+                        </svg>
+                      ) : (
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                          <circle cx="12" cy="12" r="3" />
+                        </svg>
+                      )}
+                    </button>
+                  </div>
                 </div>
 
                 {pinError && (
@@ -958,11 +1206,53 @@ export default function OrderLookupView() {
                   <button className="lookup-btn" onClick={handleResetPinComplete} disabled={securityOtp.length !== 6 || newPin.length !== 6 || confirmPin.length !== 6 || pinLoading}>
                     {pinLoading ? (<><div className="lookup-spinner"></div>Đang lưu PIN mới...</>) : '✓ Xác nhận & Đổi PIN mới'}
                   </button>
-                  <button onClick={requestZaloOtp} disabled={otpSending || otpCountdown > 0} style={{ background: 'transparent', border: '1.5px solid var(--border-color)', borderRadius: '20px', padding: '6px 14px', color: (otpSending || otpCountdown > 0) ? 'var(--text-muted)' : 'var(--text-main)', fontSize: '12.5px', fontWeight: '600', cursor: (otpSending || otpCountdown > 0) ? 'not-allowed' : 'pointer' }}>
+                  <button 
+                    onClick={requestZaloOtp} 
+                    disabled={otpSending || otpCountdown > 0} 
+                    style={{ 
+                      background: 'var(--bg-main)', 
+                      border: '1.5px solid var(--border-color)', 
+                      borderRadius: '12px', 
+                      padding: '11px 16px', 
+                      color: (otpSending || otpCountdown > 0) ? 'var(--text-muted)' : 'var(--text-bright)', 
+                      fontSize: '13px', 
+                      fontWeight: '700', 
+                      cursor: (otpSending || otpCountdown > 0) ? 'not-allowed' : 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '8px',
+                      transition: 'all 0.2s'
+                    }}
+                  >
                     {otpSending ? 'Đang gửi...' : (otpCountdown > 0 ? `Gửi lại OTP (${otpCountdown}s)` : 'Gửi lại OTP qua Zalo')}
                   </button>
-                  <button onClick={() => { setPinModalMode('ENTER_PIN'); setPinError(''); }} style={{ background: 'transparent', border: 'none', color: 'var(--text-muted)', fontSize: '12.5px', cursor: 'pointer' }}>
-                    ← Quay lại nhập mã PIN
+                  <button 
+                    onClick={() => { setPinModalMode('ENTER_PIN'); setPinError(''); }} 
+                    style={{ 
+                      background: 'rgba(249, 115, 22, 0.06)', 
+                      border: '1.5px solid rgba(249, 115, 22, 0.3)', 
+                      borderRadius: '12px', 
+                      padding: '10px 16px', 
+                      color: '#ea580c', 
+                      fontSize: '13px', 
+                      fontWeight: '700', 
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '8px',
+                      transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+                      marginTop: '2px'
+                    }}
+                    onMouseEnter={e => { e.currentTarget.style.background = 'rgba(249, 115, 22, 0.14)'; e.currentTarget.style.borderColor = '#ea580c'; }}
+                    onMouseLeave={e => { e.currentTarget.style.background = 'rgba(249, 115, 22, 0.06)'; e.currentTarget.style.borderColor = 'rgba(249, 115, 22, 0.3)'; }}
+                  >
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                      <line x1="19" y1="12" x2="5" y2="12" />
+                      <polyline points="12 19 5 12 12 5" />
+                    </svg>
+                    <span>Quay lại nhập mã PIN</span>
                   </button>
                 </div>
               </>

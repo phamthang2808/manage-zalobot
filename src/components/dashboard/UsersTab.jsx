@@ -36,6 +36,21 @@ export function UserDetailModal({ selectedUser, onClose, orders }) {
   const safePage = Math.min(currentPage, totalPages);
   const paginatedOrders = filteredOrders.slice((safePage - 1) * pageSize, safePage * pageSize);
 
+  // Helper check trạng thái hủy
+  const isOrderCancelled = (o) => {
+    return o.status === 'Hủy' || o.status === 'Đã hủy' || o.status === 3 || o.status === 'CANCELLED' || o.status === 'REFUNDED';
+  };
+
+  const getCommission = (o) => {
+    if (isOrderCancelled(o)) return 0;
+    return (o.commission != null ? o.commission : (o.actualCommission != null ? o.actualCommission : (o.estCommission != null ? o.estCommission : 0)));
+  };
+
+  // Tính tổng cộng theo trang hiện tại (safePage)
+  const pageTotalGross = paginatedOrders.reduce((acc, o) => acc + getCommission(o), 0);
+  const pageTotalAfterTax = pageTotalGross * 0.9;
+  const pageTotalNet = pageTotalAfterTax * 0.8;
+
   const bankAndAcc = getBankAndAccount(selectedUser);
 
   const handleFilterChange = (filter) => {
@@ -205,8 +220,8 @@ export function UserDetailModal({ selectedUser, onClose, orders }) {
           </div>
 
           {/* Bảng đơn hàng */}
-          <div className="table-container" style={{ maxHeight: '420px', overflowY: 'auto', border: '1px solid var(--border-color, #e2e8f0)', borderRadius: '12px' }}>
-            <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
+          <div className="table-container" style={{ maxHeight: '420px', overflowY: 'auto', overflowX: 'auto', WebkitOverflowScrolling: 'touch', border: '1px solid var(--border-color, #e2e8f0)', borderRadius: '12px' }}>
+            <table style={{ width: '100%', minWidth: '700px', borderCollapse: 'collapse', textAlign: 'left' }}>
               <thead style={{ position: 'sticky', top: 0, zIndex: 5 }}>
                 <tr style={{ background: 'var(--bg-main, #f1f5f9)', borderBottom: '2px solid var(--border-color, #cbd5e1)' }}>
                   <th style={{ padding: '12px 14px', color: 'var(--text-bright, #0f172a)', fontWeight: '800', fontSize: '12.5px', whiteSpace: 'nowrap', width: '140px' }}>Mã đơn</th>
@@ -214,7 +229,7 @@ export function UserDetailModal({ selectedUser, onClose, orders }) {
                   <th style={{ padding: '12px 14px', color: 'var(--text-bright, #0f172a)', fontWeight: '800', fontSize: '12.5px' }}>Sản phẩm</th>
                   <th style={{ padding: '12px 14px', color: 'var(--text-bright, #0f172a)', fontWeight: '800', fontSize: '12.5px', whiteSpace: 'nowrap', width: '110px' }}>HH Gốc</th>
                   <th style={{ padding: '12px 14px', color: 'var(--text-bright, #0f172a)', fontWeight: '800', fontSize: '12.5px', whiteSpace: 'nowrap', width: '110px' }} title="Sau thuế 10%">Sau thuế</th>
-                  <th style={{ padding: '12px 14px', color: 'var(--text-bright, #0f172a)', fontWeight: '800', fontSize: '12.5px', whiteSpace: 'nowrap', width: '120px' }} title="Sau thuế & trừ 20%">Thực nhận</th>
+                  <th style={{ padding: '12px 14px', color: 'var(--text-bright, #0f172a)', fontWeight: '800', fontSize: '12.5px', whiteSpace: 'nowrap', width: '120px' }} title="Sau thuế 10% & trừ 20% chia sẻ">Thực nhận</th>
                   <th style={{ padding: '12px 14px', color: 'var(--text-bright, #0f172a)', fontWeight: '800', fontSize: '12.5px', whiteSpace: 'nowrap', width: '120px' }}>Thời gian</th>
                   <th style={{ padding: '12px 14px', color: 'var(--text-bright, #0f172a)', fontWeight: '800', fontSize: '12.5px', textAlign: 'center', whiteSpace: 'nowrap', width: '100px' }}>Trạng thái</th>
                 </tr>
@@ -229,11 +244,12 @@ export function UserDetailModal({ selectedUser, onClose, orders }) {
                 ) : (
                   paginatedOrders.map(o => {
                     const isTiktok = getPlatform(o) === 'TikTok Shop';
-                    const afterTax = isTiktok ? (o.commission || 0) : (o.commission || 0) * 0.9;
-                    const afterDeduction = isTiktok ? (o.commission || 0) * 0.8 : afterTax * 0.8;
+                    const isCancelled = isOrderCancelled(o);
+                    const isCompleted = o.status === 'Hoàn thành' || o.status === 'Đã chốt HH' || o.status === 'Đã chốt' || o.status === 2 || o.status === 'SETTLED';
+                    const rawCommission = getCommission(o);
+                    const afterTax = rawCommission * 0.9;
+                    const afterDeduction = afterTax * 0.8;
                     const rawTime = o.purchaseTime || o.orderDate || o.createdTime || o.completeTime;
-                    const isCompleted = o.status === 'Hoàn thành' || o.status === 'Đã chốt HH' || o.status === 'Đã chốt' || o.status === 2;
-                    const isCancelled = o.status === 'Hủy' || o.status === 'Đã hủy' || o.status === 3;
                     return (
                       <tr key={o.id || o.orderId} style={{ borderBottom: '1px solid var(--border-color)' }}>
                         <td data-label="Mã đơn" style={{ fontSize: '12px', fontWeight: '600', color: 'var(--text-bright, #0f172a)', fontFamily: 'monospace', whiteSpace: 'nowrap' }}>
@@ -254,10 +270,10 @@ export function UserDetailModal({ selectedUser, onClose, orders }) {
                           {o.productName || 'Không có tên sản phẩm'}
                         </td>
                         <td data-label="HH Gốc" style={{ color: 'var(--text-muted, #475569)', fontSize: '12.5px', fontWeight: '600', whiteSpace: 'nowrap' }}>
-                          {formatMoney(o.commission)}
+                          {formatMoney(rawCommission)}
                         </td>
                         <td data-label="Sau thuế" style={{ color: 'var(--color-warning, #d97706)', fontSize: '12.5px', fontWeight: '600', whiteSpace: 'nowrap' }}>
-                          {isTiktok ? '-' : formatMoney(afterTax)}
+                          {formatMoney(afterTax)}
                         </td>
                         <td data-label="Thực nhận" style={{ color: 'var(--color-success, #16a34a)', fontWeight: '800', fontSize: '13px', whiteSpace: 'nowrap' }}>
                           {formatMoney(afterDeduction)}
@@ -275,6 +291,32 @@ export function UserDetailModal({ selectedUser, onClose, orders }) {
                   })
                 )}
               </tbody>
+              {paginatedOrders.length > 0 && (
+                <tfoot style={{ position: 'sticky', bottom: 0, zIndex: 4, background: 'var(--bg-main, #f8fafc)', borderTop: '2px solid var(--border-color, #cbd5e1)', boxShadow: '0 -2px 8px rgba(0,0,0,0.06)' }}>
+                  <tr style={{ background: 'var(--bg-main, #f1f5f9)', fontWeight: '800' }}>
+                    <td colSpan="3" style={{ padding: '12px 14px', color: 'var(--text-bright, #0f172a)', fontSize: '13px' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                        <span style={{ fontSize: '15px' }}>📊</span>
+                        <span>
+                          Tổng cộng trang {safePage} <span style={{ fontWeight: '600', color: 'var(--text-muted)' }}>({paginatedOrders.length} đơn{platformFilter !== 'ALL' ? ` ${platformFilter}` : ''})</span>
+                        </span>
+                      </div>
+                    </td>
+                    <td data-label="Tổng HH Gốc" style={{ padding: '12px 14px', color: 'var(--text-bright, #0f172a)', fontSize: '13px', fontWeight: '800', whiteSpace: 'nowrap' }}>
+                      {formatMoney(pageTotalGross)}
+                    </td>
+                    <td data-label="Tổng Sau thuế" style={{ padding: '12px 14px', color: 'var(--color-warning, #d97706)', fontSize: '13px', fontWeight: '800', whiteSpace: 'nowrap' }}>
+                      {formatMoney(pageTotalAfterTax)}
+                    </td>
+                    <td data-label="Tổng Thực nhận" style={{ padding: '12px 14px', color: 'var(--color-success, #16a34a)', fontSize: '13.5px', fontWeight: '900', whiteSpace: 'nowrap' }}>
+                      {formatMoney(pageTotalNet)}
+                    </td>
+                    <td colSpan="2" style={{ padding: '12px 14px', textAlign: 'center', fontSize: '12px', color: 'var(--text-muted)', whiteSpace: 'nowrap' }}>
+                      Trang {safePage}/{totalPages}
+                    </td>
+                  </tr>
+                </tfoot>
+              )}
             </table>
           </div>
 

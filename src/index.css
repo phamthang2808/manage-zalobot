@@ -6737,3 +6737,92 @@ html:not([data-theme="dark"]) .user-detail-modal td {
   border-bottom: 1px solid #f1f5f9 !important;
 }
 
+html[data-theme="light"] .user-detail-modal tfoot tr,
+html:not([data-theme="dark"]) .user-detail-modal tfoot tr {
+  background: #f1f5f9 !important;
+  border-top: 2px solid #cbd5e1 !important;
+}
+
+html[data-theme="dark"] .user-detail-modal tfoot tr,
+html.dark .user-detail-modal tfoot tr {
+  background: #1e293b !important;
+  border-top: 2px solid #334155 !important;
+}
+
+/* User Detail Modal Responsive Styles */
+@media (max-width: 768px) {
+  .user-detail-modal {
+    width: 96vw !important;
+    max-width: 96vw !important;
+    max-height: 94vh !important;
+    padding: 16px 14px !important;
+    margin: 6px auto !important;
+  }
+  .user-detail-modal .modal-header {
+    margin-bottom: 14px !important;
+    padding-bottom: 12px !important;
+  }
+  .user-detail-modal .modal-title {
+    font-size: 17px !important;
+  }
+  .user-detail-modal .member-detail-grid {
+    grid-template-columns: 1fr 1fr !important;
+    gap: 8px !important;
+    margin-bottom: 14px !important;
+  }
+  .user-detail-modal .detail-item {
+    padding: 10px 12px !important;
+  }
+  .user-detail-modal .detail-label {
+    font-size: 11px !important;
+    margin-bottom: 3px !important;
+  }
+  .user-detail-modal .detail-value {
+    font-size: 14px !important;
+  }
+  .user-detail-modal .detail-value code {
+    font-size: 13.5px !important;
+    letter-spacing: 0.5px !important;
+  }
+  .user-detail-modal .modal-stats-grid {
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 8px !important;
+    margin-bottom: 14px !important;
+  }
+  .user-detail-modal .stat-card {
+    padding: 8px 10px !important;
+  }
+  .user-detail-modal .stat-label {
+    font-size: 11px !important;
+  }
+  .user-detail-modal .stat-val {
+    font-size: 15px !important;
+  }
+  .user-detail-modal .table-container {
+    max-height: 340px !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+  }
+  .user-detail-modal table {
+    min-width: 680px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .user-detail-modal {
+    padding: 12px 10px !important;
+  }
+  .user-detail-modal .member-detail-grid {
+    grid-template-columns: 1fr !important;
+    gap: 6px !important;
+  }
+  .user-detail-modal .modal-stats-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 6px !important;
+  }
+  .user-detail-modal .modal-title {
+    font-size: 15px !important;
+  }
+}
+
+

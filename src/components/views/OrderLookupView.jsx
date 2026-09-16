@@ -77,33 +77,49 @@ export default function OrderLookupView() {
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const urlToken = params.get('token');
-    const urlQuery = urlToken || params.get('query') || params.get('q') || params.get('orderId') || params.get('zaloId');
+    const urlZaloId = params.get('zaloId');
+    const urlOrderId = params.get('orderId') || params.get('query') || params.get('q');
     const urlStartDate = params.get('startDate');
     const urlEndDate = params.get('endDate');
-    if (urlQuery) {
-      setLookupQuery(urlQuery);
+
+    if (urlStartDate) setLookupStartDate(urlStartDate);
+    if (urlEndDate) setLookupEndDate(urlEndDate);
+
+    if (urlToken || urlZaloId) {
+      const target = (urlToken || urlZaloId).trim();
+      setLookupSearchType('ZALO_ID');
+      setLookupQuery('');
+      handlePublicLookup(target, 'ZALO_ID');
+    } else if (urlOrderId) {
+      const target = urlOrderId.trim();
       setLookupSearchType('ORDER_ID');
-      if (urlStartDate) setLookupStartDate(urlStartDate);
-      if (urlEndDate) setLookupEndDate(urlEndDate);
-      handlePublicLookup(urlQuery, 'ORDER_ID');
+      setLookupQuery(target);
+      handlePublicLookup(target, 'ORDER_ID');
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handlePublicLookup = async (overrideQuery = null, overrideType = null) => {
-    const q = overrideQuery !== null ? overrideQuery : lookupQuery;
-    const type = overrideType !== null ? overrideType : lookupSearchType;
-    if (overrideType !== null) setLookupSearchType(overrideType);
-    if (!q || !q.trim()) {
+    const rawQ = overrideQuery !== null ? overrideQuery : lookupQuery;
+    if (!rawQ || !rawQ.trim()) {
       setLookupError('Vui lòng nhập từ khóa tìm kiếm');
       showToast('Vui lòng nhập từ khóa tìm kiếm', 'error');
       return;
     }
+    const q = rawQ.trim();
+    let type = overrideType !== null ? overrideType : lookupSearchType;
+
+    // Tự động nhận diện nếu query là token Base64 hoặc Zalo ID dạng chuỗi số 15-20 số
+    if (type === 'ORDER_ID' && (q.length > 25 || /^[0-9]{15,25}$/.test(q))) {
+      type = 'ZALO_ID';
+    }
+
+    if (overrideType !== null) setLookupSearchType(type);
     setLookupLoading(true);
     setLookupError('');
     setLookupResult(null);
     try {
-      let url = `${API_URL_ROOT}/api/public/lookup?searchType=${type}&query=${encodeURIComponent(q.trim())}`;
+      let url = `${API_URL_ROOT}/api/public/lookup?searchType=${type}&query=${encodeURIComponent(q)}`;
       if (lookupStartDate) url += `&startDate=${lookupStartDate}`;
       if (lookupEndDate) url += `&endDate=${lookupEndDate}`;
       const res = await fetch(url);
@@ -112,7 +128,7 @@ export default function OrderLookupView() {
       setLookupResult(json.data);
       if (type === 'ORDER_ID') {
         setLookupRecentSearches(prev => {
-          const item = { query: q.trim(), searchType: type };
+          const item = { query: q, searchType: type };
           const filtered = prev.filter(x => !(x.query.toLowerCase() === item.query.toLowerCase() && x.searchType === item.searchType));
           const updated = [item, ...filtered].slice(0, 5);
           localStorage.setItem('recentLookups', JSON.stringify(updated));

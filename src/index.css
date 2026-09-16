@@ -918,7 +918,11 @@ tr:hover td {
   display: flex;
   align-items: center;
   justify-content: space-between;
+<<<<<<< HEAD
   padding: 10px 48px;
+=======
+  padding: 0 48px;
+>>>>>>> 7845dd0ea1ec830089052126cfbb6d1a3552cf82
   max-width: 1336px;
   margin: 0 auto;
   border-bottom: 1px solid #e2e8f0;
@@ -4795,9 +4799,15 @@ body.dark .sidebar-toggle span {
 .landing-logo img,
 .lookup-logo img {
   width: auto !important;
+<<<<<<< HEAD
   height: 68px !important;
   max-width: 340px !important;
   max-height: 80px !important;
+=======
+  height: 52px !important;
+  max-width: 260px !important;
+  max-height: 60px !important;
+>>>>>>> 7845dd0ea1ec830089052126cfbb6d1a3552cf82
   border-radius: 0 !important;
   object-fit: contain !important;
   flex-shrink: 0;
@@ -4818,14 +4828,23 @@ body.dark .sidebar-toggle span {
   .login-split-header,
   .landing-header,
   .lookup-header {
+<<<<<<< HEAD
     padding: 10px 14px !important;
     gap: 8px !important;
+=======
+    padding: 10px 12px !important;
+    gap: 6px !important;
+>>>>>>> 7845dd0ea1ec830089052126cfbb6d1a3552cf82
   }
 
   .login-split-logo,
   .landing-logo,
   .lookup-logo {
+<<<<<<< HEAD
     gap: 8px !important;
+=======
+    gap: 6px !important;
+>>>>>>> 7845dd0ea1ec830089052126cfbb6d1a3552cf82
     flex-shrink: 0 !important;
     min-width: 0 !important;
     display: flex !important;
@@ -4836,9 +4855,15 @@ body.dark .sidebar-toggle span {
   .landing-logo img,
   .lookup-logo img {
     width: auto !important;
+<<<<<<< HEAD
     height: 48px !important;
     max-width: 240px !important;
     max-height: 56px !important;
+=======
+    height: 38px !important;
+    max-width: 180px !important;
+    max-height: 42px !important;
+>>>>>>> 7845dd0ea1ec830089052126cfbb6d1a3552cf82
     flex-shrink: 0 !important;
   }
 
@@ -4859,8 +4884,13 @@ body.dark .sidebar-toggle span {
 
   .btn-back,
   .lookup-admin-link {
+<<<<<<< HEAD
     padding: 5px 12px !important;
     font-size: 12px !important;
+=======
+    padding: 4px 9px !important;
+    font-size: 11.5px !important;
+>>>>>>> 7845dd0ea1ec830089052126cfbb6d1a3552cf82
     white-space: nowrap !important;
     border-radius: 14px !important;
   }
@@ -4871,15 +4901,24 @@ body.dark .sidebar-toggle span {
   .landing-header,
   .lookup-header {
     padding: 8px 10px !important;
+<<<<<<< HEAD
     gap: 6px !important;
+=======
+    gap: 4px !important;
+>>>>>>> 7845dd0ea1ec830089052126cfbb6d1a3552cf82
   }
 
   .login-split-logo img,
   .landing-logo img,
   .lookup-logo img {
     width: auto !important;
+<<<<<<< HEAD
     height: 42px !important;
     max-width: 190px !important;
+=======
+    height: 32px !important;
+    max-width: 150px !important;
+>>>>>>> 7845dd0ea1ec830089052126cfbb6d1a3552cf82
   }
 
   .login-logo-text,
@@ -4893,7 +4932,11 @@ body.dark .sidebar-toggle span {
 
   .btn-back,
   .lookup-admin-link {
+<<<<<<< HEAD
     padding: 4px 8px !important;
+=======
+    padding: 4px 7px !important;
+>>>>>>> 7845dd0ea1ec830089052126cfbb6d1a3552cf82
     font-size: 11px !important;
   }
 }

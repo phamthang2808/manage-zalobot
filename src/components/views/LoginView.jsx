@@ -392,7 +392,11 @@ export default function LoginView() {
       {/* Header */}
       <header className="login-split-header">
         <div className="login-split-logo" onClick={() => { setView('home'); window.history.pushState({}, '', '/'); }} style={{ cursor: 'pointer' }}>
+<<<<<<< HEAD
           <img src="/28symueslogomanin.png?v=6" alt="28Symues Affiliate Logo" style={{ height: '64px', width: 'auto', maxWidth: '300px', objectFit: 'contain' }} />
+=======
+          <img src="/28symueslogomanin.png?v=5" alt="28Symues Affiliate Logo" style={{ height: '48px', width: 'auto', maxWidth: '240px', objectFit: 'contain' }} />
+>>>>>>> 7845dd0ea1ec830089052126cfbb6d1a3552cf82
         </div>
         <div className="login-split-nav">
           <ThemeToggle />

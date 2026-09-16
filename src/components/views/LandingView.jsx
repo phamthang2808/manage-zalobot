@@ -39,7 +39,7 @@ export default function LandingView() {
 
       <header className="landing-header" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%', padding: '14px 18px', flexWrap: 'nowrap', gap: '8px', boxSizing: 'border-box' }}>
         <div className="landing-logo" style={{ display: 'flex', alignItems: 'center', flexShrink: 1, minWidth: 0, cursor: 'pointer' }} onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
-          <img src="/logomain.png?v=2" alt="28Symues Affiliate Logo" style={{ height: '48px', width: 'auto', maxWidth: '240px', flexShrink: 0, objectFit: 'contain' }} />
+          <img src="/logomain.png?v=3" alt="28Symues Affiliate Logo" style={{ height: '48px', width: 'auto', maxWidth: '240px', flexShrink: 0, objectFit: 'contain' }} />
         </div>
         <nav className={`landing-nav${mobileMenuOpen ? ' open' : ''}`}>
           <a href="#home" onClick={() => setMobileMenuOpen(false)}>Trang chủ</a>

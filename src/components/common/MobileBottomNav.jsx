@@ -66,8 +66,13 @@ export default function MobileBottomNav() {
         <span className="nav-label">Tra cứu</span>
       </button>
       <a href="https://zalo.me/g/0p083nqqoordpki9zgvy" target="_blank" rel="noreferrer"
+<<<<<<< HEAD
         className="mobile-bottom-nav-item" title="Nhắn tin với Bot Zalo hoàn tiền">
         <div className="nav-icon-wrap"><i className="fa-solid fa-comment-dots"></i></div>
+=======
+        className="mobile-bottom-nav-item mobile-nav-fab" title="Nhắn tin với Bot Zalo hoàn tiền">
+        <div className="fab-circle"><i className="fa-solid fa-comment-dots"></i></div>
+>>>>>>> 5a620fc6746a4a870d539dbb941e5889f7cc8ba3
         <span className="nav-label">Bot Zalo</span>
       </a>
       <button type="button" className="mobile-bottom-nav-item" onClick={() => scrollToSection('steps')}>

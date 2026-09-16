@@ -1,6 +1,11 @@
-﻿import { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
+import ThemeToggle from './components/common/ThemeToggle';
+import RunningCatMascot from './components/common/RunningCatMascot';
+import OrdersTab from './components/dashboard/OrdersTab';
+import { UserDetailModal } from './components/dashboard/UsersTab';
 
 const API_URL_ROOT = import.meta.env.PROD ? "" : (import.meta.env.VITE_API_URL || 'http://localhost:8080');
+
 const API_BASE = `${API_URL_ROOT}/api/admin`;
 
 function App() {
@@ -26,7 +31,7 @@ function App() {
       return 'lookup';
     }
     if (path.includes('/login') || window.location.search.includes('view=login') || window.location.hash.includes('login')) {
-      return 'login';
+       return 'login';
     }
     return sessionStorage.getItem('adminView') || 'home';
   });
@@ -37,6 +42,50 @@ function App() {
   const [lookupStartDate, setLookupStartDate] = useState('');
   const [lookupEndDate, setLookupEndDate] = useState('');
   const [lookupLoading, setLookupLoading] = useState(false);
+
+  useEffect(() => {
+    const path = window.location.pathname;
+    if (path.includes('/s/')) {
+      const code = path.split('/s/')[1]?.split('?')[0]?.trim();
+      if (code) {
+        fetch(`${API_URL_ROOT}/api/public/short-link/${code}`)
+          .then(res => res.json())
+          .then(resData => {
+            if (resData && resData.data) {
+              window.location.replace(resData.data);
+            } else {
+              window.location.replace('https://www.28symues.id.vn/lookup');
+            }
+          })
+          .catch(() => {
+            window.location.replace('https://www.28symues.id.vn/lookup');
+          });
+      }
+    }
+  }, []);
+
+  useEffect(() => {
+    if (view === 'home') {
+      const observerCallback = (entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('revealed');
+          }
+        });
+      };
+
+      const observerOptions = {
+        threshold: 0.1,
+        rootMargin: '0px 0px -30px 0px'
+      };
+
+      const observer = new IntersectionObserver(observerCallback, observerOptions);
+      const elements = document.querySelectorAll('.reveal-on-scroll, .scroll-reveal, .zigzag-row, .zalo-pc-live-card, .pricing-card');
+      elements.forEach(el => observer.observe(el));
+
+      return () => observer.disconnect();
+    }
+  }, [view]);
   const [lookupError, setLookupError] = useState('');
   const [lookupResult, setLookupResult] = useState(null);
   const [lookupRecentSearches, setLookupRecentSearches] = useState(() => {
@@ -48,6 +97,7 @@ function App() {
     }
   });
   const [lookupLocalFilter, setLookupLocalFilter] = useState('');
+  const [platformFilter, setPlatformFilter] = useState('ALL');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [cfStatus, setCfStatus] = useState('verifying');
   const [windowWidth, setWindowWidth] = useState(() => typeof window !== 'undefined' ? window.innerWidth : 1200);
@@ -605,6 +655,185 @@ function App() {
     }
   };
 
+  function renderMobileBottomNav() {
+    const isNavAdminMode = view === 'admin';
+
+    if (isNavAdminMode) {
+      return (
+        <nav className="mobile-bottom-nav">
+          <button 
+            type="button"
+            className={`mobile-bottom-nav-item${activeTab === 'dashboard' ? ' active' : ''}`}
+            onClick={() => { setActiveTab('dashboard'); sessionStorage.setItem('adminTab','dashboard'); window.scrollTo(0,0); }}
+          >
+            <div className="nav-icon-wrap">
+              <i className="fa-solid fa-chart-pie"></i>
+            </div>
+            <span className="nav-label">Tổng quan</span>
+          </button>
+
+          <button 
+            type="button"
+            className={`mobile-bottom-nav-item${activeTab === 'users' ? ' active' : ''}`}
+            onClick={() => { setActiveTab('users'); sessionStorage.setItem('adminTab','users'); window.scrollTo(0,0); }}
+          >
+            <div className="nav-icon-wrap">
+              <i className="fa-solid fa-users"></i>
+            </div>
+            <span className="nav-label">Thành viên</span>
+          </button>
+
+          <button 
+            type="button"
+            className={`mobile-bottom-nav-item${activeTab === 'orders' ? ' active' : ''}`}
+            onClick={() => { setActiveTab('orders'); sessionStorage.setItem('adminTab','orders'); window.scrollTo(0,0); }}
+          >
+            <div className="nav-icon-wrap">
+              <i className="fa-solid fa-boxes-stacked"></i>
+            </div>
+            <span className="nav-label">Đơn hàng</span>
+          </button>
+
+          <button 
+            type="button"
+            className={`mobile-bottom-nav-item${activeTab === 'payouts' ? ' active' : ''}`}
+            onClick={() => { setActiveTab('payouts'); sessionStorage.setItem('adminTab','payouts'); window.scrollTo(0,0); }}
+          >
+            <div className="nav-icon-wrap">
+              <i className="fa-solid fa-wallet"></i>
+              {stats?.pendingPayoutsCount > 0 && (
+                <span className="mobile-nav-badge">{stats.pendingPayoutsCount}</span>
+              )}
+            </div>
+            <span className="nav-label">Rút tiền</span>
+          </button>
+
+          <button 
+            type="button"
+            className="mobile-bottom-nav-item"
+            onClick={() => { setView('home'); sessionStorage.removeItem('adminView'); window.scrollTo(0,0); }}
+          >
+            <div className="nav-icon-wrap">
+              <i className="fa-solid fa-house"></i>
+            </div>
+            <span className="nav-label">Trang chủ</span>
+          </button>
+        </nav>
+      );
+    }
+
+    const scrollToSection = (id) => {
+      if (view !== 'home') {
+        setView('home');
+        setTimeout(() => {
+          const elem = document.getElementById(id);
+          if (elem) elem.scrollIntoView({ behavior: 'smooth' });
+        }, 100);
+      } else {
+        const elem = document.getElementById(id);
+        if (elem) elem.scrollIntoView({ behavior: 'smooth' });
+      }
+    };
+
+    return (
+      <nav className="mobile-bottom-nav">
+        {/* Nút 1: Trang chủ */}
+        <button 
+          type="button"
+          className={`mobile-bottom-nav-item${view === 'home' ? ' active' : ''}`}
+          onClick={() => { setView('home'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+        >
+          <div className="nav-icon-wrap">
+            <i className="fa-solid fa-house"></i>
+          </div>
+          <span className="nav-label">Trang chủ</span>
+        </button>
+
+        {/* Nút 2: Tra cứu (khi từ Zalo /tracuu tới sẽ active) */}
+        <button 
+          type="button"
+          className={`mobile-bottom-nav-item${view === 'lookup' ? ' active' : ''}`}
+          onClick={() => { setView('lookup'); window.history.pushState({}, '', '/?view=lookup'); window.scrollTo(0,0); }}
+        >
+          <div className="nav-icon-wrap">
+            <i className="fa-solid fa-magnifying-glass"></i>
+          </div>
+          <span className="nav-label">Tra cứu</span>
+        </button>
+
+        {/* Nút 3 (Nút Nổi Ở Giữa - Floating Action Button): Mở Bot Zalo Group */}
+        <a 
+          href="https://zalo.me/g/0p083nqqoordpki9zgvy" 
+          target="_blank" 
+          rel="noreferrer"
+          className="mobile-bottom-nav-item mobile-nav-fab"
+          title="Nhắn tin với Bot Zalo hoàn tiền"
+        >
+          <div className="fab-circle">
+            <i className="fa-solid fa-comment-dots"></i>
+          </div>
+          <span className="nav-label">Bot Zalo</span>
+        </a>
+
+        {/* Nút 4: Hướng dẫn */}
+        <button 
+          type="button"
+          className="mobile-bottom-nav-item"
+          onClick={() => scrollToSection('steps')}
+        >
+          <div className="nav-icon-wrap">
+            <i className="fa-solid fa-circle-question"></i>
+          </div>
+          <span className="nav-label">Hướng dẫn</span>
+        </button>
+
+        {/* Nút 5: Quản trị / Tài khoản */}
+        {isAdmin ? (
+          <button 
+            type="button"
+            className={`mobile-bottom-nav-item${view === 'admin' ? ' active' : ''}`}
+            onClick={() => { setView('admin'); sessionStorage.setItem('adminView','admin'); window.scrollTo(0,0); }}
+          >
+            <div className="nav-icon-wrap">
+              <i className="fa-solid fa-user-gear"></i>
+            </div>
+            <span className="nav-label">Quản trị</span>
+          </button>
+        ) : token ? (
+          <button 
+            type="button"
+            className="mobile-bottom-nav-item"
+            onClick={() => {
+              if (window.confirm('Bạn có muốn đăng xuất không?')) {
+                handleLogout();
+              }
+            }}
+          >
+            <div className="nav-icon-wrap">
+              {user?.avatarUrl ? (
+                <img src={user.avatarUrl} alt="User" referrerPolicy="no-referrer" style={{ width: '22px', height: '22px', borderRadius: '50%', objectFit: 'cover' }} />
+              ) : (
+                <i className="fa-solid fa-user"></i>
+              )}
+            </div>
+            <span className="nav-label">{user?.fullName?.split(' ')[0] || 'Tài khoản'}</span>
+          </button>
+        ) : (
+          <button 
+            type="button"
+            className={`mobile-bottom-nav-item${view === 'login' ? ' active' : ''}`}
+            onClick={() => { setView('login'); window.history.pushState({}, '', '/?view=login'); window.scrollTo(0,0); }}
+          >
+            <div className="nav-icon-wrap">
+              <i className="fa-solid fa-right-to-bracket"></i>
+            </div>
+            <span className="nav-label">Đăng nhập</span>
+          </button>
+        )}
+      </nav>
+    );
+  }
+
   // Auto-run lookup if search params are present in the URL on load
   useEffect(() => {
     if (view === 'lookup') {
@@ -757,20 +986,56 @@ function App() {
   };
 
   // Format DateTime string
-  const formatDateTime = (dateStr) => {
-    if (!dateStr) return '-';
+  const formatDateTime = (val) => {
+    if (!val) return '-';
     try {
-      const d = new Date(dateStr);
-      if (isNaN(d.getTime())) {
-        return dateStr.replace('T', ' ').substring(0, 16);
+      if (Array.isArray(val)) {
+        const [year, month, day, hour = 0, minute = 0] = val;
+        const dStr = String(day).padStart(2, '0');
+        const mStr = String(month).padStart(2, '0');
+        const hStr = String(hour).padStart(2, '0');
+        const minStr = String(minute).padStart(2, '0');
+        return `${dStr}/${mStr} ${hStr}:${minStr}`;
       }
-      const day = String(d.getDate()).padStart(2, '0');
-      const month = String(d.getMonth() + 1).padStart(2, '0');
-      const hours = String(d.getHours()).padStart(2, '0');
-      const minutes = String(d.getMinutes()).padStart(2, '0');
-      return `${day}/${month} ${hours}:${minutes}`;
+      const strVal = String(val).trim();
+      if (strVal.includes(',')) {
+        const parts = strVal.split(',').map(n => parseInt(n.trim(), 10));
+        if (parts.length >= 3 && !parts.some(isNaN)) {
+          const [year, month, day, hour = 0, minute = 0] = parts;
+          const dStr = String(day).padStart(2, '0');
+          const mStr = String(month).padStart(2, '0');
+          const hStr = String(hour).padStart(2, '0');
+          const minStr = String(minute).padStart(2, '0');
+          return `${dStr}/${mStr} ${hStr}:${minStr}`;
+        }
+      }
+      if (/^\d{10,14}$/.test(strVal) && strVal.startsWith('2026')) {
+        const year = strVal.substring(0, 4);
+        const rest = strVal.substring(4);
+        if (rest.startsWith('8')) {
+          const month = '08';
+          const dayRest = rest.substring(1);
+          if (dayRest.length >= 6) {
+            const day = dayRest.length === 7 ? dayRest.substring(0, 2) : '0' + dayRest.substring(0, 1);
+            const timeRest = dayRest.length === 7 ? dayRest.substring(2) : dayRest.substring(1);
+            const hour = timeRest.length >= 4 ? timeRest.substring(0, 2) : '0' + timeRest.substring(0, 1);
+            const minRest = timeRest.length >= 4 ? timeRest.substring(2) : timeRest.substring(1);
+            const min = minRest.substring(0, 2);
+            return `${day}/${month} ${hour}:${min}`;
+          }
+        }
+      }
+      const d = new Date(val);
+      if (!isNaN(d.getTime())) {
+        const day = String(d.getDate()).padStart(2, '0');
+        const month = String(d.getMonth() + 1).padStart(2, '0');
+        const hours = String(d.getHours()).padStart(2, '0');
+        const minutes = String(d.getMinutes()).padStart(2, '0');
+        return `${day}/${month} ${hours}:${minutes}`;
+      }
+      return strVal.replace('T', ' ').substring(0, 16);
     } catch (e) {
-      return dateStr;
+      return String(val);
     }
   };
 
@@ -984,15 +1249,18 @@ function App() {
 
     // Local filter of orders
     const searchedOrders = lookupResult
-      ? lookupResult.orders.filter(o => 
-          o.orderId?.toLowerCase().includes(lookupLocalFilter.toLowerCase()) ||
-          o.productName?.toLowerCase().includes(lookupLocalFilter.toLowerCase())
-        )
+      ? lookupResult.orders.filter(o => {
+          const matchesQuery = o.orderId?.toLowerCase().includes(lookupLocalFilter.toLowerCase()) || o.productName?.toLowerCase().includes(lookupLocalFilter.toLowerCase());
+          const matchesPlatform = platformFilter === 'ALL' || o.platform === platformFilter || (platformFilter === 'Shopee' && (!o.platform || o.platform === 'Shopee'));
+          return matchesQuery && matchesPlatform;
+        })
       : [];
 
     return (
       <div className="lookup-page-container">
+        <RunningCatMascot />
         <style dangerouslySetInnerHTML={{__html: `
+
           .lookup-page-container {
             min-height: 100vh;
             width: 100%;
@@ -1106,7 +1374,7 @@ function App() {
             font-size: 22px;
             font-weight: 800;
             text-align: center;
-            color: #0f172a;
+            color: var(--text-bright);
             margin-bottom: 8px;
             display: flex;
             align-items: center;
@@ -1115,35 +1383,49 @@ function App() {
           }
           .lookup-subtitle {
             font-size: 13.5px;
-            color: #334155;
+            color: var(--text-muted);
             font-weight: 600;
             text-align: center;
             margin-bottom: 24px;
           }
           .lookup-tabs {
             display: flex;
-            background: #e2e8f0;
-            border: 1.5px solid #cbd5e1;
-            padding: 4px;
-            border-radius: 8px;
+            background: var(--bg-main);
+            border: 1.5px solid var(--border-color);
+            padding: 3px;
+            border-radius: 10px;
             margin-bottom: 16px;
+            gap: 2px;
+            width: 100%;
+            box-sizing: border-box;
           }
           .lookup-tab {
             flex: 1;
+            min-width: 0;
             text-align: center;
-            padding: 10px;
-            font-size: 13.5px;
+            padding: 8px 4px;
+            font-size: 12px;
             font-weight: 700;
-            border-radius: 6px;
+            border-radius: 7px;
             cursor: pointer;
             background: transparent;
             border: none;
-            color: #475569;
+            color: var(--text-muted);
             transition: all 0.2s ease;
+            white-space: nowrap;
+          }
+          @media (max-width: 480px) {
+            .lookup-tab {
+              font-size: 11.5px;
+              padding: 7px 2px;
+            }
+          }
+          .lookup-tab:hover {
+            color: var(--text-bright);
           }
           .lookup-tab.active {
             background: linear-gradient(135deg, #f97316, #ea580c);
-            color: #ffffff;
+            color: #ffffff !important;
             box-shadow: 0 4px 14px rgba(249, 115, 22, 0.35);
           }
           .lookup-input-group {
@@ -1156,7 +1438,7 @@ function App() {
             display: block;
             font-size: 12px;
             font-weight: 700;
-            color: #1e293b;
+            color: var(--text-bright);
             margin-bottom: 6px;
             text-transform: uppercase;
             letter-spacing: 0.5px;
@@ -1166,11 +1448,11 @@ function App() {
             min-width: 100% !important;
             max-width: 100% !important;
             box-sizing: border-box !important;
-            background: #ffffff;
-            border: 1.5px solid #94a3b8;
-            border-radius: 8px;
+            background: var(--bg-main);
+            border: 1.5px solid var(--border-color);
+            border-radius: 10px;
             padding: 12px 14px;
-            color: #0f172a;
+            color: var(--text-bright);
             font-size: 15px;
             font-weight: 600;
             outline: none;
@@ -1314,35 +1596,36 @@ function App() {
           .stat-card-item {
             border-radius: 12px;
             padding: 16px;
-            border: 1.5px solid #cbd5e1;
+            border: 1.5px solid var(--border-color, #cbd5e1);
             display: flex;
             flex-direction: column;
             box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+            background: var(--bg-card, #ffffff);
           }
           .stat-card-item.total {
-            background: linear-gradient(135deg, #ffedd5 0%, #ffffff 100%);
+            background: linear-gradient(135deg, rgba(254,215,170,0.4) 0%, var(--bg-card, #ffffff) 100%);
             border-color: #fdba74;
           }
           .stat-card-item.pending {
-            background: linear-gradient(135deg, #fef3c7 0%, #ffffff 100%);
+            background: linear-gradient(135deg, rgba(253,230,138,0.4) 0%, var(--bg-card, #ffffff) 100%);
             border-color: #fcd34d;
           }
           .stat-card-item.completed {
-            background: linear-gradient(135deg, #d1fae5 0%, #ffffff 100%);
+            background: linear-gradient(135deg, rgba(167,243,208,0.4) 0%, var(--bg-card, #ffffff) 100%);
             border-color: #6ee7b7;
           }
           .stat-card-item.withdrawable {
-            background: linear-gradient(135deg, #ffedd5 0%, #ffffff 100%);
+            background: linear-gradient(135deg, rgba(254,215,170,0.4) 0%, var(--bg-card, #ffffff) 100%);
             border-color: #fdba74;
           }
           .stat-card-item.received {
-            background: linear-gradient(135deg, #dcfce7 0%, #ffffff 100%);
+            background: linear-gradient(135deg, rgba(187,247,208,0.4) 0%, var(--bg-card, #ffffff) 100%);
             border-color: #86efac;
           }
           .stat-card-label {
             font-size: 11.5px;
             text-transform: uppercase;
-            color: #334155;
+            color: var(--text-muted, #334155);
             margin-bottom: 4px;
             font-weight: 700;
             letter-spacing: 0.5px;
@@ -1350,18 +1633,18 @@ function App() {
           .stat-card-value {
             font-size: 24px;
             font-weight: 900;
-            color: #0f172a;
+            color: var(--text-bright, #0f172a);
           }
           .stat-card-value.primary {
-            color: #c2410c;
+            color: #ea580c;
           }
           .orders-container {
             width: 100%;
             max-width: 600px;
           }
           .order-card-item {
-            background: #ffffff;
-            border: 1.5px solid #cbd5e1;
+            background: var(--bg-card, #ffffff);
+            border: 1.5px solid var(--border-color, #cbd5e1);
             border-radius: 12px;
             padding: 16px;
             margin-bottom: 12px;
@@ -1373,7 +1656,7 @@ function App() {
             align-items: center;
             margin-bottom: 8px;
             font-size: 12.5px;
-            color: #334155;
+            color: var(--text-muted, #334155);
             font-weight: 600;
           }
           .order-id-badge {
@@ -1385,7 +1668,7 @@ function App() {
           .order-card-title {
             font-size: 14.5px;
             font-weight: 700;
-            color: #0f172a;
+            color: var(--text-bright, #0f172a);
             margin-bottom: 10px;
             line-height: 1.4;
             overflow: hidden;
@@ -1534,41 +1817,41 @@ function App() {
         {/* Custom Toast Notification Top-Right */}
         {toastElement}
 
-        {/* Top Navbar */}
-        <header className="lookup-header">
-          <div className="lookup-logo">
-            <img src="/logo.jpg" alt="Logo" style={{ width: '32px', height: '32px', borderRadius: '50%', objectFit: 'cover' }} />
-            <span>28Symues <span style={{ color: '#f97316' }}>Affiliate</span></span>
+        {/* Lookup Header Bar */}
+        <header className="lookup-header" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%', padding: '10px 12px', flexWrap: 'nowrap', gap: '6px', boxSizing: 'border-box' }}>
+          <div className="lookup-logo" onClick={() => setView('home')} style={{ display: 'flex', alignItems: 'center', flexShrink: 1, minWidth: 0, cursor: 'pointer' }}>
+            <img src="/28symueslogomanin.png?v=7" alt="28Symues Affiliate Logo" style={{ height: '76px', width: 'auto', maxWidth: '380px', flexShrink: 0, objectFit: 'contain' }} />
           </div>
-          <button 
-            className="lookup-admin-link" 
-            onClick={() => {
-              setView('home');
-              sessionStorage.setItem('adminView', 'home');
-              window.location.hash = '';
-            }}
-          >
-            <i className="fa-solid fa-house" style={{ marginRight: '6px' }}></i> Về Trang Chủ
-          </button>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexShrink: 0, whiteSpace: 'nowrap' }}>
+            <ThemeToggle />
+            <button
+              className="lookup-admin-link"
+              onClick={() => { setView('home'); window.history.pushState({}, '', '/'); }}
+              style={{ whiteSpace: 'nowrap', display: 'inline-flex', alignItems: 'center', gap: '4px', flexShrink: 0, cursor: 'pointer' }}
+            >
+              <i className="fa-solid fa-house" style={{ color: '#ea580c', flexShrink: 0 }}></i>
+              <span style={{ whiteSpace: 'nowrap', display: 'inline' }}>Trang chủ</span>
+            </button>
+          </div>
         </header>
 
         {/* Search Panel Card */}
         <div className="lookup-card">
           <h2 className="lookup-title">
-            <i className="fa-thin fa-magnifying-glass" style={{ marginRight: '8px' }}></i> Tra Cứu Đơn Hàng Shopee
+            <i className="fa-thin fa-magnifying-glass" style={{ marginRight: '8px' }}></i> Tra Cứu Đơn Hàng Shopee & TikTok Shop
           </h2>
-          <p className="lookup-subtitle">Nhập mã đơn hàng để kiểm tra trạng thái và hoa hồng</p>
+          <p className="lookup-subtitle">Nhập mã đơn hàng Shopee hoặc TikTok Shop để kiểm tra trạng thái và hoa hồng</p>
 
           <div className="lookup-input-group">
             <label className="lookup-label">
-              Nhập mã đơn hàng (Shopee)
+              Mã đơn hàng (Shopee / TikTok Shop)
             </label>
             <input 
               type="text"
               className="lookup-input"
               value={lookupQuery}
               onChange={(e) => setLookupQuery(e.target.value)}
-              placeholder="Ví dụ: 260606C8W7YARK..."
+              placeholder="Ví dụ: 260606C8W7YARK (Shopee) hoặc 585592697583797863 (TikTok)..."
               onKeyDown={(e) => e.key === 'Enter' && handlePublicLookup(null, 'ORDER_ID')}
             />
           </div>
@@ -1584,7 +1867,7 @@ function App() {
                 Đang tìm kiếm...
               </>
             ) : (
-              'Tra cứu ngay'
+              'Tra cứu đơn hàng'
             )}
           </button>
 
@@ -1613,24 +1896,25 @@ function App() {
         {/* Results Panel */}
         {lookupResult && (
           <>
-            {lookupSearchType !== 'ORDER_ID' && (
-              <>
-                {/* 0. Bank Info Card                     {!isEditingBank && (
-                      <button 
-                        className="lookup-admin-link" 
-                        style={{ fontSize: '12px', padding: '4px 10px', background: '#fff7ed', color: '#ea580c', border: '1px solid #fed7aa', display: 'flex', alignItems: 'center', gap: '6px' }}
-                        onClick={() => {
-                          setEditBankName(lookupResult.bankName || '');
-                          setEditAccountNumber(lookupResult.accountNumber || '');
-                          setBankSaveError('');
-                          setIsEditingBank(true);
-                        }}
-                      >
-                        <i className="fa-regular fa-pen-to-square" style={{ fontSize: '14px' }}></i>
-                        <span>{lookupResult.bankName ? 'Sửa' : 'Cài đặt'}</span>
-                      </button>
-                    )}
-                  </h3>
+            {/* 0. Bank Info Card */}
+            <div className="lookup-card" style={{ marginBottom: '24px' }}>
+              <h3 className="stats-section-title bank-card-header-title">
+                <span className="bank-card-title-text">🏦 Thông Tin Ngân Hàng Nhận Tiền</span>
+                {!isEditingBank && (
+                  <button 
+                    className="bank-edit-btn" 
+                    onClick={() => {
+                      setEditBankName(lookupResult.bankName || '');
+                      setEditAccountNumber(lookupResult.accountNumber || '');
+                      setBankSaveError('');
+                      setIsEditingBank(true);
+                    }}
+                  >
+                    <i className="fa-regular fa-pen-to-square" style={{ fontSize: '12px' }}></i>
+                    <span>{lookupResult.bankName ? 'Sửa' : 'Cài đặt'}</span>
+                  </button>
+                )}
+              </h3>
                   
                   {isEditingBank ? (
                     <div style={{ marginTop: '16px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
@@ -1660,7 +1944,7 @@ function App() {
                       <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end', marginTop: '4px' }}>
                         <button 
                           className="lookup-admin-link" 
-                          style={{ padding: '6px 14px', background: '#f1f5f9', color: '#64748b' }}
+                          style={{ padding: '6px 14px', background: 'var(--bg-main)', color: 'var(--text-muted)' }}
                           onClick={() => setIsEditingBank(false)}
                           disabled={bankSaveLoading}
                         >
@@ -1677,14 +1961,14 @@ function App() {
                       </div>
                     </div>
                   ) : (
-                    <div style={{ marginTop: '16px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', background: '#f8fafc', padding: '12px 16px', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
+                    <div className="bank-info-display-box">
                       <div>
-                        <span className="lookup-label" style={{ fontSize: '10px', color: '#64748b' }}>Ngân Hàng</span>
-                        <strong style={{ fontSize: '15px', color: '#0f172a' }}>{lookupResult.bankName || 'Chưa thiết lập'}</strong>
+                        <span className="bank-info-label">NGÂN HÀNG</span>
+                        <strong className="bank-info-val">{lookupResult.bankName || 'Chưa thiết lập'}</strong>
                       </div>
                       <div>
-                        <span className="lookup-label" style={{ fontSize: '10px', color: '#64748b' }}>Số Tài Khoản</span>
-                        <strong style={{ fontSize: '15px', color: '#0f172a' }}>{lookupResult.accountNumber || 'Chưa thiết lập'}</strong>
+                        <span className="bank-info-label">SỐ TÀI KHOẢN</span>
+                        <strong className="bank-info-val">{lookupResult.accountNumber || 'Chưa thiết lập'}</strong>
                       </div>
                     </div>
                   )}
@@ -1785,24 +2069,43 @@ function App() {
                     </div>
                   )}
                 </div>
-              </>
-            )}
 
             {/* 2. Orders Cards List */}
             <div className="orders-container">
               <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '10px', marginBottom: '16px', width: '100%' }}>
-                <h3 className="stats-section-title" style={{ marginBottom: 0, width: '100%', fontSize: '16px', fontWeight: '700', color: '#0f172a' }}>
-                  {lookupSearchType === 'ORDER_ID' ? '🛒 Kết Quả Tra Cứu Đơn Hàng' : `🛒 Đơn hàng đã mua (${searchedOrders.length})`}
+                <h3 className="stats-section-title" style={{ marginBottom: 0, width: '100%', fontSize: '16px', fontWeight: '700', color: 'var(--text-bright)' }}>
+                  {`🛒 Đơn hàng đã mua (${searchedOrders.length})`}
                 </h3>
-                {lookupSearchType !== 'ORDER_ID' && (
-                  <input 
-                    type="text" 
-                    placeholder="Lọc nhanh đơn hàng..." 
-                    className="lookup-input"
-                    style={{ width: '100%', maxWidth: '100%', padding: '8px 12px', fontSize: '13px', borderRadius: '8px', margin: 0 }}
-                    value={lookupLocalFilter}
-                    onChange={(e) => setLookupLocalFilter(e.target.value)}
-                  />
+                {lookupResult && lookupResult.orders && lookupResult.orders.length > 0 && (
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', width: '100%', marginBottom: '4px' }}>
+                    <div className="lookup-tabs" style={{ marginBottom: 0 }}>
+                      <button className={`lookup-tab ${platformFilter === 'ALL' ? 'active' : ''}`} onClick={() => setPlatformFilter('ALL')}>Tất cả ({lookupResult.orders.length})</button>
+                      <button className={`lookup-tab ${platformFilter === 'Shopee' ? 'active' : ''}`} onClick={() => setPlatformFilter('Shopee')}>
+                        <span style={{ display: 'inline-flex', alignItems: 'center', gap: '3px' }}>
+                          <svg viewBox="0 0 109.59 122.88" style={{ width: '13px', height: '13px', fill: platformFilter === 'Shopee' ? '#ffffff' : '#ee4d2d', flexShrink: 0 }}>
+                            <path d="M74.98,91.98C76.15,82.36,69.96,76.22,53.6,71c-7.92-2.7-11.66-6.24-11.57-11.12 c0.33-5.4,5.36-9.34,12.04-9.47c4.63,0.09,9.77,1.22,14.76,4.56c0.59,0.37,1.01,0.32,1.35-0.2c0.46-0.74,1.61-2.53,2-3.17 c0.26-0.42,0.31-0.96-0.35-1.44c-0.95-0.7-3.6-2.13-5.03-2.72c-3.88-1.62-8.23-2.64-12.86-2.63c-9.77,0.04-17.47,6.22-18.12,14.47 c-0.42,5.95,2.53,10.79,8.86,14.47c1.34,0.78,8.6,3.67,11.49,4.57c9.08,2.83,13.8,7.9,12.69,13.81c-1.01,5.36-6.65,8.83-14.43,8.93 c-6.17-0.24-11.71-2.75-16.02-6.1c-0.11-0.08-0.65-0.5-0.72-0.56c-0.53-0.42-1.11-0.39-1.47,0.15c-0.26,0.4-1.92,2.8-2.34,3.43 c-0.39,0.55-0.18,0.86,0.23,1.2c1.8,1.5,4.18,3.14,5.81,3.97c4.47,2.28,9.32,3.53,14.48,3.72c3.32,0.22,7.5-0.49,10.63-1.81 C70.63,102.67,74.25,97.92,74.98,91.98L74.98,91.98z M54.79,7.18c-10.59,0-19.22,9.98-19.62,22.47h39.25 C74.01,17.16,65.38,7.18,54.79,7.18z M94.99,122.88l-0.41,0l-80.82-0.01h0c-5.5-0.21-9.54-4.66-10.09-10.19l-0.05-1 l-3.61-79.5v0C0,32.12,0,32.06,0,32c0-1.28,1.03-2.33,2.3-2.35l0,0h25.48C28.41,13.15,40.26,0,54.79,0s26.39,13.15,27.01,29.65 h25.4h0.04c1.3,0,2.35,1.05,2.35,2.35c0,0.04,0,0.08,0,0.12v0l-3.96,79.81l-0.04,0.68C105.12,118.21,100.59,122.73,94.99,122.88 L94.99,122.88z" />
+                          </svg>
+                          <span>Shopee ({lookupResult.orders.filter(o => !o.platform || o.platform === 'Shopee').length})</span>
+                        </span>
+                      </button>
+                      <button className={`lookup-tab ${platformFilter === 'TikTok Shop' ? 'active' : ''}`} onClick={() => setPlatformFilter('TikTok Shop')}>
+                        <span style={{ display: 'inline-flex', alignItems: 'center', gap: '3px' }}>
+                          <svg viewBox="0 0 1024 1024" style={{ width: '13px', height: '13px', fill: 'currentColor', flexShrink: 0 }}>
+                            <path d="M800 112.962C800 50.575 749.425 0 687.038 0H112.962C50.575 0 0 50.575 0 112.962v574.076C0 749.426 50.575 800 112.962 800h574.076C749.425 800 800 749.426 800 687.038zM662.759 348.916c-51.615.577-99.71-15.027-141.938-43.927v202.874c0 90.166-61.72 167.62-148.996 187.848-119.068 27.165-219.864-58.954-232.577-161.835-13.294-102.884 52.322-193.051 152.892-213.281 19.651-4.045 49.209-4.045 64.458-.577v108.661c-4.692-1.153-9.086-2.31-13.709-2.888-39.304-6.937-77.371 12.715-92.977 48.55-15.605 35.838-5.16 77.451 26.629 101.73 26.586 20.806 56.085 23.694 86.14 9.822 30.057-13.291 46.21-37.567 49.676-70.512.578-4.622.546-9.826.546-15.028V110.206c0-10.981.086-10.502 11.068-10.502h86.12c6.36 0 8.673.915 9.25 8.433 4.621 67.047 55.526 124.147 120.838 132.818 6.937 1.155 14.369 1.613 22.58 2.19z" transform="translate(112 112)"/>
+                          </svg>
+                          <span>TikTok ({lookupResult.orders.filter(o => o.platform === 'TikTok Shop').length})</span>
+                        </span>
+                      </button>
+                    </div>
+                    <input 
+                      type="text" 
+                      placeholder="Lọc nhanh theo tên / mã đơn..." 
+                      className="lookup-input"
+                      style={{ width: '100%', maxWidth: '100%', padding: '8px 12px', fontSize: '13px', borderRadius: '8px', margin: 0 }}
+                      value={lookupLocalFilter}
+                      onChange={(e) => setLookupLocalFilter(e.target.value)}
+                    />
+                  </div>
                 )}
               </div>
 
@@ -2010,6 +2313,7 @@ function App() {
             </div>
           </div>
         )}
+        {renderMobileBottomNav()}
       </div>
     );
   }
@@ -2341,72 +2645,173 @@ function App() {
 
           @media (max-width: 992px) {
             .login-page-split {
-              height: auto;
+              height: 100vh;
+              height: 100dvh;
               min-height: 100vh;
-              overflow-y: visible;
+              min-height: 100dvh;
+              overflow-y: auto;
               display: flex;
               flex-direction: column;
+              justify-content: flex-start;
             }
             .login-split-header {
-              padding: 15px 20px;
-              height: auto;
+              padding: 10px 14px !important;
+              height: auto !important;
+              display: flex !important;
+              flex-wrap: nowrap !important;
+              align-items: center !important;
+              justify-content: space-between !important;
+              gap: 6px !important;
+              flex-shrink: 0 !important;
             }
-            .login-split-logo span {
-              font-size: 18px;
+            .login-split-logo {
+              gap: 6px !important;
+              flex-shrink: 1 !important;
+              min-width: 0 !important;
+            }
+            .login-split-logo img {
+              width: 28px !important;
+              height: 28px !important;
+              flex-shrink: 0 !important;
+            }
+            .login-logo-text {
+              font-size: 14px !important;
+              white-space: nowrap !important;
+            }
+            .login-split-nav {
+              gap: 6px !important;
+              flex-shrink: 0 !important;
+            }
+            .login-split-nav .btn-back {
+              padding: 4px 8px !important;
+              font-size: 11.5px !important;
+              white-space: nowrap !important;
+            }
+            .btn-back-text {
+              white-space: nowrap !important;
             }
             .login-split-content {
               flex-direction: column;
-              padding: 20px 20px 60px;
-              gap: 30px;
-              justify-content: center;
+              padding: 8px 16px 16px !important;
+              gap: 0 !important;
+              justify-content: center !important;
+              align-items: center !important;
               flex: 1;
+              box-sizing: border-box;
             }
             .login-split-left {
-              text-align: center;
-              max-width: 100%;
-            }
-            .login-split-left h1 {
-              font-size: 28px;
-              margin-bottom: 12px;
-            }
-            .login-split-left p {
-              font-size: 14px;
+              display: none !important;
             }
             .login-split-right {
               justify-content: center;
               width: 100%;
+              max-width: 420px;
             }
             .login-split-card {
-              padding: 24px 20px;
+              padding: 20px 18px !important;
               width: 100%;
               max-width: 100%;
+              box-shadow: 0 10px 30px rgba(0,0,0,0.1) !important;
+              border-radius: 20px !important;
+            }
+            .login-split-card h2 {
+              font-size: 22px !important;
+              margin-bottom: 4px !important;
+            }
+            .login-split-card .subtitle {
+              font-size: 12.5px !important;
+              margin-bottom: 12px !important;
+            }
+            .login-split-card .form-group {
+              margin-bottom: 10px !important;
+            }
+            .login-split-card .form-label {
+              font-size: 12px !important;
+              margin-bottom: 4px !important;
+            }
+            .login-split-card .form-input {
+              padding: 10px 14px !important;
+              font-size: 14px !important;
+              border-radius: 10px !important;
+            }
+            .login-split-card .terms-checkbox-wrapper {
+              margin: 8px 0 6px !important;
+              font-size: 12px !important;
+            }
+            .login-split-card .cf-turnstile-sim {
+              margin: 8px 0 12px !important;
+              min-height: 48px !important;
+              padding: 8px 12px !important;
+            }
+            .login-split-card .modal-login-btn {
+              padding: 11px 16px !important;
+              font-size: 15px !important;
+              border-radius: 12px !important;
+            }
+            .login-split-card .modal-divider {
+              margin: 10px 0 !important;
+              font-size: 12px !important;
+            }
+            .login-split-card .modal-google-container {
+              margin: 0 auto 8px auto !important;
+              min-height: 40px !important;
+            }
+            .login-split-card .btn-google-custom {
+              height: 40px !important;
+              font-size: 14px !important;
+              border-radius: 10px !important;
+            }
+            .login-split-card .login-split-footer {
+              margin-top: 10px !important;
+              font-size: 12px !important;
             }
           }
           @media (max-width: 480px) {
-            .login-split-left h1 {
-              font-size: 24px;
+            .login-split-header {
+              padding: 8px 10px !important;
+            }
+            .login-split-logo img {
+              width: 24px !important;
+              height: 24px !important;
+            }
+            .login-logo-text {
+              font-size: 13px !important;
+              white-space: nowrap !important;
+            }
+            .login-split-nav .btn-back {
+              padding: 3px 7px !important;
+              font-size: 11px !important;
+              white-space: nowrap !important;
+            }
+            .login-split-content {
+              padding: 4px 12px 12px !important;
+            }
+            .login-split-card {
+              padding: 16px 14px !important;
             }
             .login-split-card h2 {
-              font-size: 22px;
+              font-size: 20px !important;
             }
           }
         `}} />
 
         {/* Header */}
-        <header className="login-split-header">
-          <div className="login-split-logo">
-            <img src="/logo.jpg" alt="Logo" />
-            <span>28Symues <span style={{ color: '#f97316' }}>Affiliate</span></span>
+        <header className="login-split-header" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%', padding: '10px 12px', flexWrap: 'nowrap', gap: '6px', boxSizing: 'border-box' }}>
+          <div className="login-split-logo" style={{ display: 'flex', alignItems: 'center', flexShrink: 1, minWidth: 0 }}>
+            <img src="/28symueslogomanin.png?v=7" alt="28Symues Affiliate Logo" style={{ height: '76px', width: 'auto', maxWidth: '380px', flexShrink: 0, objectFit: 'contain' }} />
           </div>
-          <div className="login-split-nav">
+          <div className="login-split-nav" style={{ display: 'flex', alignItems: 'center', gap: '6px', flexShrink: 0, whiteSpace: 'nowrap' }}>
+            <ThemeToggle />
             <button 
               className="btn-back" 
               onClick={() => {
                 setView('home');
                 window.history.pushState({}, '', '/');
               }}
+              style={{ whiteSpace: 'nowrap', display: 'inline-flex', alignItems: 'center', gap: '4px', flexShrink: 0, cursor: 'pointer' }}
             >
-              <i className="fa-solid fa-house"></i> Trang chủ
+              <i className="fa-solid fa-house" style={{ color: '#ea580c', flexShrink: 0 }}></i>
+              <span className="btn-back-text" style={{ whiteSpace: 'nowrap', display: 'inline' }}>Trang chủ</span>
             </button>
           </div>
         </header>
@@ -2414,13 +2819,16 @@ function App() {
         {/* Main Content split */}
         <div className="login-split-content">
           <div className="login-split-left">
-            <div className="badge">
-              <i className="fa-thin fa-robot" style={{ fontSize: '14px' }}></i> 28Symues <span style={{ color: '#ea580c' }}>Affiliate</span>
-            </div>
             <h1>Đăng nhập tài khoản</h1>
-            <p>
-              Đăng nhập để theo dõi trạng thái đơn hàng Shopee, xem thống kê doanh số hoa hồng tạm tính và duyệt yêu cầu rút tiền tự động của các thành viên trong hệ thống.
-            </p>
+            <p>Đăng nhập để theo dõi trạng thái đơn hàng Shopee & TikTok Shop, xem thống kê hoa hồng và duyệt rút tiền tự động hệ thống.</p>
+            
+            <div className="login-illustration-box">
+              <img 
+                src="/111.png" 
+                alt="Minh họa Zalo Bot Affiliate" 
+                className="login-illustration-img" 
+              />
+            </div>
           </div>
 
           <div className="login-split-right">
@@ -2566,10 +2974,13 @@ function App() {
   if (view === 'home') {
     return (
       <div className="landing-container">
-        <header className="landing-header">
-          <div className="landing-logo">
-            <img src="/logo.jpg" alt="Logo" style={{ width: '32px', height: '32px', borderRadius: '50%', objectFit: 'cover' }} />
-            <span>28Symues <span style={{ color: '#f97316' }}>Affiliate</span></span>
+        {/* Global Fixed Running Cat Mascot Screen Animation */}
+        <RunningCatMascot />
+
+
+        <header className="landing-header" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%', padding: '14px 18px', flexWrap: 'nowrap', gap: '8px', boxSizing: 'border-box' }}>
+          <div className="landing-logo" style={{ display: 'flex', alignItems: 'center', flexShrink: 1, minWidth: 0, cursor: 'pointer' }} onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
+            <img src="/28symueslogomanin.png?v=7" alt="28Symues Affiliate Logo" style={{ height: '84px', width: 'auto', maxWidth: '440px', flexShrink: 0, objectFit: 'contain' }} />
           </div>
           <nav className={`landing-nav${mobileMenuOpen ? ' open' : ''}`}>
             <a href="#home" onClick={() => setMobileMenuOpen(false)}>Trang chủ</a>
@@ -2646,6 +3057,7 @@ function App() {
             </div>
           </nav>
           <div className="landing-actions">
+            <ThemeToggle style={{ marginRight: '8px' }} />
             {token ? (
               <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
                 <div className="user-widget">
@@ -2697,7 +3109,6 @@ function App() {
                     Trang Quản Trị
                   </button>
                 )}
-                
                 <button className="btn" onClick={handleLogout} style={{ border: '1px solid #cbd5e1' }}>
                   Đăng xuất
                 </button>
@@ -2712,193 +3123,240 @@ function App() {
               </button>
             )}
           </div>
-          {/* Hamburger button - mobile only */}
-          <button
-            className={`hamburger${mobileMenuOpen ? ' active' : ''}`}
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            aria-label="Toggle menu"
-          >
-            <span></span>
-            <span></span>
-            <span></span>
-          </button>
+          <div className="mobile-header-actions" style={{ display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 0 }}>
+            <ThemeToggle className="mobile-header-theme-toggle" />
+            <button
+              className={`hamburger${mobileMenuOpen ? ' active' : ''}`}
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              aria-label="Toggle menu"
+            >
+              <span></span>
+              <span></span>
+              <span></span>
+            </button>
+          </div>
         </header>
-        {/* Mobile menu overlay */}
         {mobileMenuOpen && <div className="mobile-overlay" onClick={() => setMobileMenuOpen(false)}></div>}
-
-        {/* Hero Section */}
-        <section id="home" className="hero-section">
-          <div className="hero-grid-split">
-            <div className="hero-content-left">
-              <div className="hero-badge">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" style={{ color: '#ea580c', flexShrink: 0 }}>
-                  <rect x="3" y="11" width="18" height="10" rx="2" />
-                  <circle cx="12" cy="5" r="2" />
-                  <path d="M12 7v4" />
-                  <line x1="8" y1="16" x2="8.01" y2="16" strokeWidth="3" />
-                  <line x1="16" y1="16" x2="16.01" y2="16" strokeWidth="3" />
-                  <path d="M9 16h6" />
-                </svg>
-                HỆ THỐNG AUTOMATION AFFILIATE
-              </div>
-              <h1 className="hero-title">Tự Động Hóa Shopee Affiliate<br />Với 28Symues</h1>
-              <p className="hero-subtitle">
-                Biến mọi liên kết mua sắm trong nhóm chat Zalo của bạn thành nguồn thu nhập thụ động chỉ trong vài giây. Tiện lợi, tự động và hoàn toàn minh bạch.
-              </p>
-              <div className="hero-buttons">
-                <a href="#steps" className="btn btn-hero-1">
-                  Bắt đầu ngay
-                </a>
-                <button onClick={() => { setView('lookup'); window.history.pushState({}, '', '/?view=lookup'); }} className="btn btn-hero-2">
-                  <i className="fa-thin fa-magnifying-glass"></i> Tra cứu đơn hàng
-                </button>
-                <a href="#features" className="btn btn-hero-3">
-                  Tìm hiểu tính năng
-                </a>
+        <section id="home" className="landing-block-container hero-showcase-container reveal-on-scroll" style={{ marginTop: '12px', marginBottom: '0px', paddingBottom: '0px', paddingTop: '10px', textAlign: 'center' }}>
+          <div className="section-badge" style={{ display: 'inline-flex', alignItems: 'center', gap: '10px', padding: '8px 20px', borderRadius: '30px', background: 'rgba(249, 115, 22, 0.12)', color: '#ea580c', fontSize: '13px', fontWeight: '800', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '14px' }}>
+            <img src="/robot-icon.png" alt="AI Robot" style={{ width: '32px', height: '32px', objectFit: 'contain', flexShrink: 0 }} />
+            <span>HỆ THỐNG AUTOMATION AFFILIATE 4.0</span>
+          </div>
+          <h1 className="hero-title" style={{ fontSize: '38px', fontWeight: '900', color: 'var(--text-bright)', marginBottom: '14px', lineHeight: '1.2' }}>
+            Cho Thuê Zalo Bot Affiliate - Tự Động Đổi Link Shopee, TikTok Shop & Lazada 24/7
+          </h1>
+          <p className="hero-subtitle" style={{ color: 'var(--text-muted)', fontSize: '16px', maxWidth: '780px', margin: '0 auto 16px', lineHeight: '1.6' }}>
+            Biến mọi liên kết mua sắm trong nhóm chat Zalo của bạn thành nguồn thu nhập thụ động chỉ trong vài giây. Tiện lợi, tự động, ghi nhận sub_id chuẩn xác và hoàn toàn minh bạch.
+          </p>
+          <div className="hero-buttons" style={{ justifyContent: 'center', marginBottom: '0px' }}>
+            <a href="#automation-features" className="btn btn-hero-1">Bắt đầu ngay</a>
+            <button onClick={() => { setView('lookup'); window.history.pushState({}, '', '/?view=lookup'); }} className="btn btn-hero-2">
+              <i className="fa-thin fa-magnifying-glass"></i> Tra cứu đơn hàng
+            </button>
+            <a href="#pricing" className="btn btn-hero-3">Xem bảng giá</a>
+          </div>
+        </section>
+        <section id="automation-features" className="landing-block-container reveal-on-scroll" style={{ padding: '0px 20px 24px', marginTop: '0px', marginBottom: '16px' }}>
+          <div style={{ textAlign: 'center', marginBottom: '20px', marginTop: '0px' }}>
+            <div className="section-badge" style={{ display: 'inline-flex', alignItems: 'center', gap: '10px', padding: '8px 20px', borderRadius: '30px', background: 'rgba(13, 148, 136, 0.12)', color: '#0d9488', fontSize: '13px', fontWeight: '800', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '12px' }}>
+              <i className="fa-solid fa-sparkles"></i>
+              <span>KHÁM PHÁ CÁC TÍNH NĂNG ĐỘC BẢN</span>
+            </div>
+            <h2 className="section-title" style={{ fontSize: '32px', fontWeight: '800', marginBottom: '12px' }}>Hệ Thống Tự Động Hóa Affiliate Toàn Diện</h2>
+            <p className="section-subtitle" style={{ fontSize: '15px' }}>Giải pháp mượt mà, tối ưu nhất giúp sếp quản lý nhóm săn sale nhàn hạ 100%</p>
+          </div>
+          <div className="zigzag-row">
+            <div className="zigzag-media">
+              <div className="zigzag-img-card">
+                <img src="/anh1.png" alt="Tự Động Đổi Link" style={{ width: '100%', height: 'auto', display: 'block', borderRadius: '24px' }} />
               </div>
             </div>
-
-            {/* Live Interactive Zalo Bot Chat Mockup */}
-            <div className="hero-mockup-right">
-              {/* Floating Badges */}
-              <div className="floating-badge badge-top-right">
-                <span className="badge-icon">⚡</span>
-                <span className="badge-text">Tốc độ &lt; 0.5s</span>
+            <div className="zigzag-content">
+              <span className="zigzag-category-badge">AUTOMATION AFFILIATE 24/7</span>
+              <h3 className="zigzag-title">Tự Động Đổi Link Shopee, TikTok Shop & Lazada</h3>
+              <p className="zigzag-desc">
+                Thành viên trong nhóm chat Zalo chỉ cần dán link mua sắm sản phẩm. Zalo Bot tự động nhận biết người gửi, chuyển đổi thành link affiliate có gắn SubID chuẩn xác và phản hồi lại ngay lập tức.
+              </p>
+              <a href="#zalo-demo" className="zigzag-btn">
+                <span>Trải nghiệm ngay</span>
+                <i className="fa-solid fa-arrow-right"></i>
+              </a>
+            </div>
+          </div>
+          {/* Dashed Curved Line 1: Connects Image 1 (left) to Image 2 (right) */}
+          <svg className="zigzag-connector-svg" viewBox="0 0 1000 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M 220 2 C 220 50, 780 30, 780 78" stroke="#2dd4bf" strokeWidth="3" strokeDasharray="7 7" fill="none" opacity="0.85" />
+            <circle cx="220" cy="2" r="5" fill="#2dd4bf" />
+            <circle cx="780" cy="78" r="5" fill="#2dd4bf" />
+          </svg>
+          <div className="zigzag-row reverse">
+            <div className="zigzag-media">
+              <div className="zigzag-img-card" style={{ background: 'transparent', border: 'none', boxShadow: 'none' }}>
+                <img src="/anh2.png" alt="Trang Web Tra Cứu Đơn Hàng" style={{ width: '100%', height: 'auto', display: 'block', borderRadius: '24px', filter: 'drop-shadow(0 15px 30px rgba(0,0,0,0.08))' }} />
               </div>
-              <div className="floating-badge badge-mid-left">
-                <span className="badge-icon">💰</span>
-                <span className="badge-text">+18.500đ Vừa ghi nhận</span>
+            </div>
+            <div className="zigzag-content">
+              <span className="zigzag-category-badge">MINH BẠCH & TIỆN LỢI</span>
+              <h3 className="zigzag-title">Trang Web Tra Cứu Đơn Hàng & Hoa Hồng Tự Động</h3>
+              <p className="zigzag-desc">
+                Cung cấp trang Tra Cứu Web Portal riêng cho từng nhóm săn sale. Thành viên chủ động truy cập kiểm tra danh sách đơn hàng đã mua, số tiền hoa hồng được cộng dồn và trạng thái đơn minh bạch.
+              </p>
+              <button onClick={() => { setView('lookup'); window.history.pushState({}, '', '/?view=lookup'); }} className="zigzag-btn">
+                <span>Xem demo tra cứu</span>
+                <i className="fa-solid fa-arrow-right"></i>
+              </button>
+            </div>
+          </div>
+          {/* Dashed Curved Line 2: Connects Image 2 (right) to Image 3 (left) */}
+          <svg className="zigzag-connector-svg" viewBox="0 0 1000 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M 780 2 C 780 50, 220 30, 220 78" stroke="#2dd4bf" strokeWidth="3" strokeDasharray="7 7" fill="none" opacity="0.85" />
+            <circle cx="780" cy="2" r="5" fill="#2dd4bf" />
+            <circle cx="220" cy="78" r="5" fill="#2dd4bf" />
+          </svg>
+          <div className="zigzag-row">
+            <div className="zigzag-media">
+              <div className="zigzag-img-card" style={{ background: 'transparent', border: 'none', boxShadow: 'none' }}>
+                <img src="/anh3.png" alt="Ví Tích Lũy Hoa Hồng & Yêu Cầu Rút Tiền Siêu Tốc" style={{ width: '100%', height: 'auto', display: 'block', borderRadius: '24px', filter: 'drop-shadow(0 15px 30px rgba(0,0,0,0.08))' }} />
               </div>
-              <div className="floating-badge badge-bot-right">
-                <span className="badge-icon">🤖</span>
-                <span className="badge-text">AI GPT-4o Tự Động</span>
-              </div>
-
-              {/* iPhone / Zalo App Mockup */}
-              <div className="zalo-phone-mockup">
-                <div className="zalo-phone-header">
-                  <div className="zalo-avatar">
-                    <img src="/logo.jpg" alt="Bot Logo" />
-                    <span className="online-dot"></span>
-                  </div>
-                  <div className="zalo-header-info">
-                    <div className="zalo-group-name">Nhiệt Huyết Săn Sale 🚀</div>
-                    <div className="zalo-group-sub">850 thành viên • Bot đang hoạt động</div>
+            </div>
+            <div className="zigzag-content">
+              <span className="zigzag-category-badge">RÚT TIỀN TỰ ĐỘNG</span>
+              <h3 className="zigzag-title">Ví Tích Lũy Hoa Hồng & Yêu Cầu Rút Tiền Siêu Tốc</h3>
+              <p className="zigzag-desc">
+                Tích hợp hệ thống ví điện tử nội bộ tự động cộng dồn hoa hồng khi đơn hoàn thành. Thành viên dễ dàng gửi yêu cầu rút tiền qua lệnh chat hoặc trang Web, Admin nhận thông báo và phê duyệt 1-click nhàn hạ.
+              </p>
+              <a href="#pricing" className="zigzag-btn">
+                <span>Xem bảng giá dịch vụ</span>
+                <i className="fa-solid fa-arrow-right"></i>
+              </a>
+            </div>
+          </div>
+        </section>
+        <section id="zalo-demo" className="landing-block-container hero-section reveal-on-scroll">
+          <div style={{ textAlign: 'center', marginBottom: '28px' }}>
+            <div className="section-badge" style={{ display: 'inline-flex', alignItems: 'center', gap: '10px', padding: '8px 20px', borderRadius: '30px', background: 'rgba(249, 115, 22, 0.12)', color: '#ea580c', fontSize: '13px', fontWeight: '800', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '10px' }}>
+              <i className="fa-regular fa-envelope" style={{ fontSize: '18px', flexShrink: 0 }}></i>
+              <span>TRẢI NGHIỆM CHATBOT ZALO REALTIME</span>
+            </div>
+            <h2 className="section-title" style={{ fontSize: '30px', fontWeight: '800', marginBottom: '8px' }}>Tương Tác & Chuyển Đổi Link Tự Động</h2>
+            <p className="section-subtitle" style={{ fontSize: '15px' }}>Giao diện đối soát đơn hàng và tự động phản hồi link hoa hồng trực tiếp trên Zalo Desktop</p>
+          </div>
+          <div style={{ position: 'relative', width: '100%', maxWidth: '1360px', margin: '0 auto' }}>
+            <div className="floating-badge badge-top-right">
+              <span className="badge-icon"><i className="fa-solid fa-bolt" style={{ color: '#fb923c' }}></i></span>
+              <span className="badge-text" style={{ color: '#fb923c', fontSize: '15px', fontWeight: '800' }}>Tốc độ &lt; 0.5s</span>
+            </div>
+            <div className="floating-badge badge-mid-left">
+              <span className="badge-icon">💰</span>
+              <span className="badge-text" style={{ color: '#34d399', fontSize: '15px', fontWeight: '800' }}>+18.500đ Vừa ghi nhận</span>
+            </div>
+            <div className="floating-badge badge-bot-right">
+              <span className="badge-icon">
+                <img src="/robot-icon.png" alt="AI Robot" style={{ width: '24px', height: '24px', objectFit: 'contain' }} />
+              </span>
+              <span className="badge-text" style={{ color: '#38bdf8', fontSize: '15px', fontWeight: '800' }}>AI GPT-4o Tự Động</span>
+            </div>
+            <div className="zalo-pc-live-card">
+              <div className="zalo-pc-topbar">
+                <div className="zalo-pc-topbar-left">
+                  <img src="/MAIN.png" alt="Group Logo" className="zalo-pc-topbar-avatar" />
+                  <div>
+                    <div className="zalo-pc-topbar-title">HOÀN TIỀN HOA HỒNG SHOPPE + ĐẶT ĐƠN NGƯỜI MỚI</div>
+                    <div className="zalo-pc-topbar-sub">Cộng đồng • 👤 87 thành viên • Bot 28Symues đang hoạt động</div>
                   </div>
                 </div>
-
-                <div className="zalo-chat-body">
-                  <div className="chat-date-divider">Hôm nay</div>
-
-                  {/* Customer Message */}
-                  <div className="chat-msg customer-msg">
-                    <div className="msg-sender">Nguyễn Mai (Thành viên)</div>
-                    <div className="msg-bubble">
-                      Sếp ơi check giúp em link váy này trên Shopee với nè!
-                      <div className="msg-link-preview">shopee.vn/dam-du-tiec-sang-trong-i.1284920</div>
-                    </div>
-                    <div className="msg-time">08:32 AM</div>
-                  </div>
-
-                  {/* Bot Reply Message */}
-                  <div className="chat-msg bot-msg">
-                    <div className="msg-sender bot-sender">
-                      <span>28Symues Bot</span>
-                      <span className="bot-tag">BOT</span>
-                    </div>
-                    <div className="msg-bubble bot-bubble">
-                      Dạ link mua sắm săn sale có gắn hoa hồng cho chị Mai đây ạ 👇
-                      <div className="converted-link-card">
-                        <div className="link-title">Đầm Dự Tiệc Dáng Xòe Sang Trọng</div>
-                        <div className="link-url">https://s.shopee.vn/aff_829103</div>
-                        <div className="link-meta">
-                          <span className="subid-tag">SubID: Mai_Zalo98</span>
-                          <span className="cashback-tag">+18.500đ Hoa hồng</span>
-                        </div>
+                <div style={{ display: 'flex', gap: '16px', color: '#94a3b8', fontSize: '15px', alignItems: 'center' }}>
+                  <i className="fa-regular fa-user-plus" title="Thêm thành viên"></i>
+                  <i className="fa-regular fa-magnifying-glass" title="Tìm kiếm"></i>
+                  <i className="fa-regular fa-sidebar" title="Menu nhóm"></i>
+                </div>
+              </div>
+              <div className="zalo-pc-pin-strip">
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <span style={{ color: '#f97316', fontWeight: 'bold' }}>📌 Ghi chú:</span>
+                  <span style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '680px' }}>
+                    📌 CÁCH THỰC HIỆN MUA SẮM & NHẬN HOÀN TIỀN TỰ ĐỘNG Bước 1: Gửi link sản phẩm hoặc...
+                  </span>
+                </div>
+                <div style={{ background: 'rgba(255,255,255,0.08)', padding: '2px 10px', borderRadius: '6px', fontSize: '11px', color: '#94a3b8' }}>+1 ghim ▾</div>
+              </div>
+              <div className="zalo-pc-chat-main">
+                <div className="zalo-pc-divider">04:50 13/08/2026</div>
+                <div className="zalo-pc-msg-item">
+                  <img src="/MAIN.png" alt="Phạm Thắng Avatar" className="zalo-pc-msg-avatar-img" />
+                  <div className="zalo-pc-msg-body">
+                    <div className="zalo-pc-author">Phạm Thắng</div>
+                    <div className="zalo-pc-bubble">
+                      <div style={{ color: '#0284c7', wordBreak: 'break-all', marginBottom: '8px', fontWeight: '600' }}>https://s.shopee.vn/2qTix9i9pp</div>
+                      <div className="zalo-pc-link-preview-box">
+                        <div className="zalo-pc-link-preview-title">gói lẻ 1kg Phân nền thủy sinh Senda công nghệ Nhật...</div>
+                        <div className="zalo-pc-link-preview-desc">Mua gói lẻ 1kg Phân nền thủy sinh Senda công nghệ Nhật, phân nền thủy sinh cá tép cảnh, phụ kiện thủy sinh giá tốt...</div>
+                        <div style={{ fontSize: '11.5px', color: '#0284c7' }}>s.shopee.vn</div>
                       </div>
+                      <div style={{ fontSize: '10px', color: '#94a3b8', marginTop: '6px', textAlign: 'right' }}>04:50</div>
                     </div>
-                    <div className="msg-time">08:32 AM</div>
                   </div>
+                </div>
+                <div className="zalo-pc-msg-item">
+                  <img src="/MAIN.png" alt="28Symues Bot Avatar" className="zalo-pc-msg-avatar-img" style={{ border: '1px solid #f97316' }} />
+                  <div className="zalo-pc-msg-body" style={{ maxWidth: '92%' }}>
+                    <div className="zalo-pc-author" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                      <span style={{ color: '#ea580c' }}>28Symues Bot</span>
+                      <span style={{ background: '#ea580c', color: '#ffffff', fontSize: '9.5px', padding: '1px 5px', borderRadius: '4px', fontWeight: '800' }}>BOT</span>
+                    </div>
+                    <div className="zalo-pc-bubble" style={{ borderLeft: '4px solid #ea580c' }}>
+                      <div className="zalo-pc-quote">
+                        <div className="zalo-pc-quote-name">Phạm Thắng</div>
+                        <div style={{ color: '#64748b' }}>[Link] https://s.shopee.vn/2qTix9i9pp</div>
+                      </div>
+                      <div style={{ fontWeight: '600', marginBottom: '8px' }}>Hi <span style={{ color: '#0284c7' }}>@Phạm Thắng</span>, link của bạn đây ạ:</div>
+                      <div style={{ marginBottom: '6px' }}>📦 <b>Gói lẻ 1kg Phân nền thủy sinh Senda công nghệ Nhật, phân nền thủy sinh cá tép cảnh, phụ kiện thủy sinh giá tốt</b></div>
+                      <div style={{ marginBottom: '6px' }}>💵 <b>Giá tham khảo:</b> <span style={{ color: '#10b981' }}>đ34.000</span></div>
+                      <div style={{ marginBottom: '6px', wordBreak: 'break-all' }}>🔗 <b>Link:</b> <span style={{ color: '#0284c7' }}>https://s.shopee.vn/an_redir?origin_link=https%3A%2F%2Fshop...d=17361610405&sub_id=PhamThang_99&deep_and_deferred=1</span></div>
+                      <div style={{ marginBottom: '6px' }}>💵 <b>Tổng hoa hồng:</b> <span style={{ color: '#ea580c', fontWeight: 'bold' }}>3% (đ1.020)</span> [Shop: 3% (đ1.020)]</div>
+                      <div className="zalo-pc-warning-note">
+                        ⚠️ <b>Lưu ý:</b> Click xong mua ngay trong ngày (nếu bấm link lần 2 trước khi đặt hàng để tăng tỷ lệ chuyển đổi), không xem Video/Live, xóa giỏ trước khi click.
+                      </div>
+                      <div style={{ fontSize: '10px', color: '#64748b', marginTop: '6px', textAlign: 'right' }}>04:50</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="zalo-pc-bottom-bar">
+                <div className="zalo-pc-icons-mobile-hide" style={{ display: 'flex', gap: '14px', color: '#94a3b8', fontSize: '16px' }}>
+                  <i className="fa-regular fa-smile"></i>
+                  <i className="fa-regular fa-image"></i>
+                  <i className="fa-regular fa-paperclip"></i>
+                  <i className="fa-regular fa-address-card"></i>
+                  <i className="fa-regular fa-crop-simple"></i>
+                  <i className="fa-regular fa-font"></i>
+                </div>
+                <div className="zalo-pc-input-placeholder">
+                  Nhập @, tin nhắn tới HOÀN TIỀN HOA HỒNG SHOPPE + ĐẶT ĐƠN NGƯỜI MỚI...
+                </div>
+                <div style={{ display: 'flex', gap: '12px', color: '#f97316', fontSize: '18px' }}>
+                  <i className="fa-regular fa-face-smile"></i>
+                  <i className="fa-solid fa-thumbs-up"></i>
                 </div>
               </div>
             </div>
           </div>
         </section>
-
-        {/* Features Section */}
-        <section id="features" className="features-section">
-          <h2 className="section-title">Tính Năng Nổi Bật</h2>
-          <p className="section-subtitle">Mọi thứ bạn cần để vận hành hệ thống săn sale hoa hồng tự động</p>
-          <div className="features-grid">
-            <div className="feature-card">
-              <div className="feature-icon"><i className="fa-regular fa-link"></i></div>
-              <h3 className="feature-title">Chuyển Đổi Link Tự Động</h3>
-              <p className="feature-desc">
-                Tự động nhận diện link Shopee, Lazada, TikTok Shop và chuyển đổi thành link affiliate có gắn Zalo ID của người gửi làm sub_id.
-              </p>
-            </div>
-            <div className="feature-card success">
-              <div className="feature-icon"><i className="fa-brands fa-bots"></i></div>
-              <h3 className="feature-title">Tương Tác Bằng AI</h3>
-              <p className="feature-desc">
-                Sử dụng mô hình AI GPT-4o để tự động soạn thảo lời phản hồi vui nhộn, hấp dẫn, nâng cao tỷ lệ nhấn click mua sản phẩm.
-              </p>
-            </div>
-            <div className="feature-card warning">
-              <div className="feature-icon"><i className="fa-regular fa-chart-area"></i></div>
-              <h3 className="feature-title">Thống Kê Chi Tiết</h3>
-              <p className="feature-desc">
-                Theo dõi đầy đủ lịch sử đơn hàng đã mua, phần trăm hoa hồng tạm tính và doanh số rút tiền của từng thành viên trong hệ thống.
-              </p>
-            </div>
-            <div className="feature-card">
-              <div className="feature-icon"><i className="fa-brands fa-cc-apple-pay"></i></div>
-              <h3 className="feature-title">Rút Tiền Tự Động</h3>
-              <p className="feature-desc">
-                Thành viên yêu cầu rút tiền trực tiếp bằng cú pháp `/rut-tien` trong nhóm Zalo. Admin phê duyệt nhanh chóng trên Dashboard.
-              </p>
-            </div>
-          </div>
-        </section>
-
-        {/* Steps Section */}
-        <section id="steps" className="instructions-section" style={{ borderTop: '1px solid #e2e8f0', borderBottom: '1px solid #e2e8f0' }}>
-          <h2 className="section-title">3 Bước Bắt Đầu Đơn Giản</h2>
-          <p className="section-subtitle">Chỉ mất 5 phút để thiết lập và khởi chạy chatbot trong nhóm của bạn</p>
-          <div className="instructions-grid">
-            <div className="instruction-step">
-              <div className="step-num">1</div>
-              <h3 className="step-title">Quét QR Kết Nối</h3>
-              <p className="step-desc">Quét mã QR Zalo từ client bot để kết nối tài khoản phụ làm bot săn sale tự động.</p>
-            </div>
-            <div className="instruction-step">
-              <div className="step-num">2</div>
-              <h3 className="step-title">Thêm Vào Nhóm Chat</h3>
-              <p className="step-desc">Thêm Bot vào nhóm săn sale của bạn. Bot sẽ tự động chào và lắng nghe các link sản phẩm.</p>
-            </div>
-            <div className="instruction-step">
-              <div className="step-num">3</div>
-              <h3 className="step-title">Mua Sắm & Nhận Tiền</h3>
-              <p className="step-desc">Mọi đơn hàng thành công sẽ được đối soát và cộng dồn ví hoa hồng, rút nhanh qua lệnh chat.</p>
-            </div>
-          </div>
-        </section>
-
-        {/* Pricing Section */}
-        <section id="pricing" className="pricing-section" style={{ padding: '80px 20px', textAlign: 'center', position: 'relative', zIndex: 10 }}>
-          <h2 className="section-title" style={{ fontSize: '36px', fontWeight: '800', color: '#0f172a', marginBottom: '12px' }}>Bảng Giá Dịch Vụ</h2>
-          <p className="section-subtitle" style={{ color: '#475569', fontSize: '16px', marginBottom: '48px' }}>Chi phí tối ưu, hiệu quả tối đa cho nhóm Zalo săn sale của bạn</p>
+        {/* Pricing Section Container */}
+        <section id="pricing" className="landing-block-container pricing-section reveal-on-scroll" style={{ textAlign: 'center' }}>
+          <h2 className="section-title" style={{ fontSize: '36px', fontWeight: '800', color: 'var(--text-bright)', marginBottom: '12px' }}>Bảng Giá Dịch Vụ</h2>
+          <p className="section-subtitle" style={{ color: 'var(--text-muted)', fontSize: '16px', marginBottom: '48px' }}>Chi phí tối ưu, hiệu quả tối đa cho nhóm Zalo săn sale của bạn</p>
           
           <div style={{
             display: 'flex',
             flexWrap: 'wrap',
             justifyContent: 'center',
             gap: '24px',
-            maxWidth: '1200px',
+            width: '100%',
             margin: '0 auto'
           }}>
             
-            {/* Gói Thường */}
+            {/* Gói Cơ Bản 199k */}
             <div className="pricing-card" style={{
               background: '#ffffff',
               border: '1px solid #e2e8f0',
@@ -2917,7 +3375,7 @@ function App() {
             }}>
               <div>
                 <h3 style={{ fontSize: '22px', color: '#0f172a', marginBottom: '8px', fontWeight: '700' }}>Zalo Bot Affiliate</h3>
-                <p style={{ color: '#64748b', fontSize: '14px', marginBottom: '24px' }}>Tự động chuyển đổi link mua sắm cơ bản trong nhóm chat</p>
+                <p style={{ color: '#64748b', fontSize: '14px', marginBottom: '24px' }}>Tự động chuyển đổi link tiếp thị liên kết 24/7 trực tiếp trong nhóm Zalo</p>
                 
                 <div style={{ marginBottom: '32px' }}>
                   <span style={{ fontSize: '42px', fontWeight: '800', color: '#0f172a', fontFamily: 'var(--font-heading)' }}>199.000đ</span>
@@ -2926,16 +3384,19 @@ function App() {
                 
                 <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 32px 0', textAlign: 'left', display: 'flex', flexDirection: 'column', gap: '16px' }}>
                   <li style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', color: '#334155', fontSize: '14px' }}>
-                    <span style={{ color: '#10b981', fontWeight: 'bold' }}>✓</span> Tự động đổi link nhận hoa hồng: Khách gửi link Shopee, Lazada... bot tự đổi thành link của sếp ngay lập tức.
+                    <span style={{ color: '#10b981', fontWeight: 'bold' }}>✓</span> Tự động đổi link mua sắm Shopee, Lazada, TikTok Shop sang link nhận hoa hồng của bạn.
                   </li>
                   <li style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', color: '#334155', fontSize: '14px' }}>
-                    <span style={{ color: '#10b981', fontWeight: 'bold' }}>✓</span> Tự nhận biết người gửi: Ghi nhận chính xác ai gửi link để sếp tính doanh số cho họ.
+                    <span style={{ color: '#10b981', fontWeight: 'bold' }}>✓</span> Hoạt động 24/7 trong nhóm chat, tự động trả lời tin nhắn ngay lập tức không cần trực máy.
                   </li>
                   <li style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', color: '#334155', fontSize: '14px' }}>
-                    <span style={{ color: '#10b981', fontWeight: 'bold' }}>✓</span> Hoạt động liên tục 24/7: Tự trả lời tin nhắn trong nhóm chat bất kể ngày đêm, sếp không cần trực máy.
+                    <span style={{ color: '#10b981', fontWeight: 'bold' }}>✓</span> Tự nhận biết người gửi link: Ghi nhận chính xác ai gửi link trong nhóm để bạn theo dõi doanh số.
                   </li>
                   <li style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', color: '#334155', fontSize: '14px' }}>
-                    <span style={{ color: '#10b981', fontWeight: 'bold' }}>✓</span> Tin nhắn phản hồi lịch sự: Mẫu tin nhắn ngắn gọn, rõ ràng, kích thích người mua bấm link.
+                    <span style={{ color: '#10b981', fontWeight: 'bold' }}>✓</span> Phản hồi siêu tốc 24/7: Bot trả lời tin nhắn tức thì, bạn không cần túc trực máy tính.
+                  </li>
+                  <li style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', color: '#334155', fontSize: '14px' }}>
+                    <span style={{ color: '#10b981', fontWeight: 'bold' }}>✓</span> Tin nhắn tối ưu mua hàng: Mẫu phản hồi lịch sự, ngắn gọn, gắn thẻ khách hàng kích thích bấm mua.
                   </li>
                 </ul>
               </div>
@@ -2990,28 +3451,25 @@ function App() {
               </div>
               <div>
                 <h3 style={{ fontSize: '22px', color: '#0f172a', marginBottom: '8px', fontWeight: '700', marginTop: '10px' }}>Zalo Bot Affiliate Pro</h3>
-                <p style={{ color: '#64748b', fontSize: '14px', marginBottom: '24px' }}>Có trang quản trị riêng cho sếp và trang tự tra cứu cho khách</p>
+                <p style={{ color: '#64748b', fontSize: '14px', marginBottom: '24px' }}>Gồm Bot tự đổi link + Trang Web tra cứu đơn cho khách & Trang quản trị cho chủ nhóm</p>
                 
                 <div style={{ marginBottom: '32px' }}>
-                  <span style={{ fontSize: '42px', fontWeight: '800', color: '#0f172a', fontFamily: 'var(--font-heading)' }}>399.000đ</span>
+                  <span style={{ fontSize: '42px', fontWeight: '800', color: '#0f172a', fontFamily: 'var(--font-heading)' }}>299.000đ</span>
                   <span style={{ color: '#64748b', fontSize: '15px' }}> / tháng</span>
                 </div>
                 
                 <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 32px 0', textAlign: 'left', display: 'flex', flexDirection: 'column', gap: '16px' }}>
                   <li style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', color: '#334155', fontSize: '14px' }}>
-                    <span style={{ color: '#10b981', fontWeight: 'bold' }}>✓</span> Tự động đổi link mua sắm Shopee, Lazada, TikTok Shop mượt mà.
+                    <span style={{ color: '#10b981', fontWeight: 'bold' }}>✓</span> Bao gồm toàn bộ tính năng của bản Cơ Bản.
                   </li>
                   <li style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', color: '#334155', fontSize: '14px' }}>
-                    <span style={{ color: '#10b981', fontWeight: 'bold' }}>✓</span> Trang quản trị doanh thu riêng: Theo dõi toàn bộ đơn hàng và quản lý cực kỳ nhàn hạ.
+                    <span style={{ color: '#10b981', fontWeight: 'bold' }}>✓</span> Trang Web Tra Cứu riêng: Khách hàng tự mở Web xem danh sách đơn hàng & hoa hồng tích lũy.
                   </li>
                   <li style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', color: '#334155', fontSize: '14px' }}>
-                    <span style={{ color: '#10b981', fontWeight: 'bold' }}>✓</span> Khách tự tra cứu trên Web: Thành viên có thể tự vào xem đơn và hoa hồng mình tích lũy.
+                    <span style={{ color: '#10b981', fontWeight: 'bold' }}>✓</span> Trang Web Quản Trị Doanh Thu: Chủ nhóm đăng nhập xem toàn bộ đơn hàng và bấm duyệt thanh toán 1-click.
                   </li>
                   <li style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', color: '#334155', fontSize: '14px' }}>
-                    <span style={{ color: '#10b981', fontWeight: 'bold' }}>✓</span> Chạy cùng lúc nhiều nhóm: Bot hoạt động trên nhiều nhóm chat và gom số liệu về một nơi.
-                  </li>
-                  <li style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', color: '#334155', fontSize: '14px' }}>
-                    <span style={{ color: '#10b981', fontWeight: 'bold' }}>✓</span> Báo cáo hoa hồng chính xác: Tự tính tiền chuẩn sau thuế và lọc bỏ các đơn trùng lặp.
+                    <span style={{ color: '#10b981', fontWeight: 'bold' }}>✓</span> Tra cứu hoa hồng qua Zalo: Khách hàng gõ lệnh `/vitien` hoặc `/donhang` ngay trong nhóm để xem số dư.
                   </li>
                 </ul>
               </div>
@@ -3049,28 +3507,31 @@ function App() {
             }}>
               <div>
                 <h3 style={{ fontSize: '22px', color: '#0f172a', marginBottom: '8px', fontWeight: '700' }}>Zalo Bot Affiliate Pro Max</h3>
-                <p style={{ color: '#64748b', fontSize: '14px', marginBottom: '24px' }}>Hệ thống ví tiền tự động và rút tiền qua tin nhắn chat</p>
+                <p style={{ color: '#64748b', fontSize: '14px', marginBottom: '24px' }}>Hệ thống Trang Web riêng biệt + Ví tích lũy hoa hồng tự động & Khách tự đặt lệnh rút tiền</p>
                 
                 <div style={{ marginBottom: '32px' }}>
-                  <span style={{ fontSize: '42px', fontWeight: '800', color: '#0f172a', fontFamily: 'var(--font-heading)' }}>599.000đ</span>
+                  <span style={{ fontSize: '42px', fontWeight: '800', color: '#0f172a', fontFamily: 'var(--font-heading)' }}>399.000đ</span>
                   <span style={{ color: '#64748b', fontSize: '15px' }}> / tháng</span>
                 </div>
                 
                 <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 32px 0', textAlign: 'left', display: 'flex', flexDirection: 'column', gap: '16px' }}>
                   <li style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', color: '#334155', fontSize: '14px' }}>
-                    <span style={{ color: '#10b981', fontWeight: 'bold' }}>✓</span> Đầy đủ toàn bộ tính năng cao cấp của bản Pro.
+                    <span style={{ color: '#10b981', fontWeight: 'bold' }}>✓</span> Bao gồm toàn bộ tính năng cao cấp của bản Pro.
                   </li>
                   <li style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', color: '#334155', fontSize: '14px' }}>
-                    <span style={{ color: '#10b981', fontWeight: 'bold' }}>✓</span> Ví tích lũy tiền tự động: Tự động cộng dồn tiền hoa hồng sau khi đơn hàng thành công.
+                    <span style={{ color: '#10b981', fontWeight: 'bold' }}>✓</span> Hệ thống Trang Web riêng biệt: Giao diện hiện đại, tra cứu ví hoa hồng và lịch sử dòng tiền minh bạch.
                   </li>
                   <li style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', color: '#334155', fontSize: '14px' }}>
-                    <span style={{ color: '#10b981', fontWeight: 'bold' }}>✓</span> Rút tiền nhanh bằng tin nhắn: Khách tự gõ lệnh `/rut-tien` trong nhóm để yêu cầu thanh toán.
+                    <span style={{ color: '#10b981', fontWeight: 'bold' }}>✓</span> Ví hoa hồng & Lịch sử rút tiền: Tự động cộng dồn hoa hồng khi đơn hoàn thành, theo dõi dòng tiền rõ ràng.
                   </li>
                   <li style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', color: '#334155', fontSize: '14px' }}>
-                    <span style={{ color: '#10b981', fontWeight: 'bold' }}>✓</span> Đường truyền riêng siêu tốc: Chạy trên máy chủ VPS riêng, phản hồi ngay lập tức không trễ lag.
+                    <span style={{ color: '#10b981', fontWeight: 'bold' }}>✓</span> Khách tự đặt lệnh rút tiền: Thành viên chủ động tạo yêu cầu rút tiền trên Web hoặc gõ lệnh rút tiền trong nhóm.
                   </li>
                   <li style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', color: '#334155', fontSize: '14px' }}>
-                    <span style={{ color: '#10b981', fontWeight: 'bold' }}>✓</span> Hỗ trợ kỹ thuật ưu tiên 24/7: Xử lý nhanh chóng mọi yêu cầu và sự cố phát sinh.
+                    <span style={{ color: '#10b981', fontWeight: 'bold' }}>✓</span> Duyệt rút tiền siêu nhanh: Chủ nhóm nhận thông báo và bấm duyệt thanh toán cho khách hàng chỉ với 1 bấm.
+                  </li>
+                  <li style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', color: '#334155', fontSize: '14px' }}>
+                    <span style={{ color: '#10b981', fontWeight: 'bold' }}>✓</span> Tốc độ xử lý siêu tốc 24/7: Vận hành riêng biệt, phản hồi tức thì, bảo mật và ổn định tuyệt đối.
                   </li>
                 </ul>
               </div>
@@ -3094,13 +3555,14 @@ function App() {
 
         {/* QR Banner Section trên Trang Chủ */}
         {showBanner && (
-          <section style={{
+          <section className="landing-block-container community-container reveal-on-scroll" style={{
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
-            margin: '40px 0 20px',
+            margin: '24px auto',
             position: 'relative',
-            zIndex: 2
+            zIndex: 2,
+            textAlign: 'center'
           }}>
             <h3 style={{ fontSize: '18px', color: '#0f172a', marginBottom: '16px', fontWeight: '800', textAlign: 'center', padding: '0 16px', lineHeight: '1.4' }}>
               🌟 Quét QR Tham Gia Nhóm Zalo Nhận Hoàn Tiền Ngay
@@ -3146,49 +3608,59 @@ function App() {
           <div className="footer-container">
             <div className="footer-info">
               <div className="footer-logo">
-                <img src="/logo.jpg" alt="Logo" />
-                <span>28Symues Affiliate</span>
+                <img src="/28symueslogomanin.png?v=7" alt="28Symues Affiliate Logo" style={{ height: '90px', width: 'auto', maxWidth: '450px', objectFit: 'contain' }} />
               </div>
               <p className="footer-slogan">
-                Hệ thống Zalo Bot chuyên nghiệp hỗ trợ tăng doanh số affiliate tự động 24/7 trên Shopee, Lazada và TikTok Shop.
+                Giải pháp cho thuê Chatbot Zalo tự động nhận diện và chuyển đổi liên kết mua sắm Shopee, TikTok Shop & Lazada 24/7, gắn SubID chuẩn xác và quản lý ví hoa hồng tích lũy minh bạch cho chủ nhóm.
               </p>
+              <div className="footer-platform-badges">
+                <span className="footer-platform-chip">🛒 Shopee Affiliate</span>
+                <span className="footer-platform-chip">🎵 TikTok Shop</span>
+                <span className="footer-platform-chip">🛍️ Lazada Affiliate</span>
+              </div>
             </div>
-            
+
             <div className="footer-links">
-              <h4>Liên Kết Nhanh</h4>
+              <h4>Điều Hướng Nhanh</h4>
               <ul>
-                <li><a href="#features">Tính Năng</a></li>
-                <li><a href="#steps">Cách Hoạt Động</a></li>
-                <li><a href="#pricing">Bảng Giá</a></li>
-                <li><a href="http://zaloapp.com/qr/p/fd2gcjcjfuof" target="_blank" rel="noopener noreferrer">Hỗ Trợ Kỹ Thuật</a></li>
+                <li><a href="#automation-features">✨ Tính Năng Độc Bản</a></li>
+                <li><a href="#zalo-demo">💬 Trải Nghiệm Zalo Bot</a></li>
+                <li><button onClick={() => { setView('lookup'); window.history.pushState({}, '', '/?view=lookup'); }} style={{ background: 'none', border: 'none', padding: 0, color: 'var(--text-muted)', cursor: 'pointer', fontSize: '14px', fontWeight: 500, fontFamily: 'inherit' }}>📊 Tra Cứu Đơn Hàng Web</button></li>
+                <li><a href="#pricing">💎 Bảng Giá Dịch Vụ</a></li>
               </ul>
             </div>
-            
+
             <div className="footer-contact">
-              <h4>Liên Hệ Đăng Ký</h4>
+              <h4>Liên Hệ & Hỗ Trợ Kỹ Thuật</h4>
               <div className="footer-contact-list">
                 <div className="footer-contact-item">
-                  <span style={{ color: '#f97316' }}>💬</span>
-                  <span>Zalo Admin: <a href="http://zaloapp.com/qr/p/fd2gcjcjfuof" target="_blank" rel="noopener noreferrer">Phạm Thắng</a></span>
+                  <i className="fa-solid fa-user-gear" style={{ color: '#f97316' }}></i>
+                  <span>Zalo Admin: <a href="http://zaloapp.com/qr/p/fd2gcjcjfuof" target="_blank" rel="noopener noreferrer">Phạm Thắng (Kích hoạt 24/7)</a></span>
                 </div>
                 <div className="footer-contact-item">
-                  <span style={{ color: '#f97316' }}>🌐</span>
-                  <span>Cộng đồng hỗ trợ & hướng dẫn kiếm tiền</span>
+                  <i className="fa-solid fa-comments" style={{ color: '#059669' }}></i>
+                  <span>Cộng đồng hỗ trợ & Hướng dẫn sử dụng Zalo Bot</span>
+                </div>
+                <div className="footer-contact-item">
+                  <i className="fa-solid fa-shield-check" style={{ color: '#0284c7' }}></i>
+                  <span>Bảo mật dữ liệu & Đương quyền SubID chuẩn 100%</span>
                 </div>
               </div>
             </div>
           </div>
-          
+
           <div className="footer-bottom">
-            <p>© 2026 28Symues Affiliate. All rights reserved.</p>
+            <p>© 2026 Cho Thuê Zalo Bot Affiliate - 28Symues. All rights reserved.</p>
             <div className="footer-bottom-links">
               <a href="#privacy">Chính Sách Bảo Mật</a>
               <a href="#terms">Điều Khoản Sử Dụng</a>
+              <button onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="btn-back-to-top">
+                <i className="fa-solid fa-arrow-up"></i> Lên Đầu Trang
+              </button>
             </div>
           </div>
         </footer>
-
-
+        {renderMobileBottomNav()}
       </div>
     );
   }
@@ -3204,8 +3676,7 @@ function App() {
       <aside className={`sidebar${sidebarOpen ? ' open' : ''}`}>
         <div className="sidebar-header">
           <div className="sidebar-logo">
-            <img src="/logo.jpg" alt="Logo" style={{ width: '34px', height: '34px', borderRadius: '50%', objectFit: 'cover', border: '2px solid #fed7aa' }} />
-            <span>28Symues Admin</span>
+            <img src="/28symueslogomanin.png?v=7" alt="28Symues Admin Logo" style={{ height: '64px', width: 'auto', maxWidth: '100%', objectFit: 'contain' }} />
           </div>
         </div>
         <ul className="sidebar-menu">
@@ -3338,10 +3809,11 @@ function App() {
           <h1 className="header-title">
             {activeTab === 'dashboard' && 'Bảng Điều Khiển Tổng Quan'}
             {activeTab === 'users' && 'Quản Lý Thành Viên'}
-            {activeTab === 'orders' && 'Danh Sách Đơn Hàng Shopee'}
+            {activeTab === 'orders' && 'Danh Sách Đơn Hàng Tiếp Thị'}
             {activeTab === 'payouts' && 'Danh Sách Yêu Cầu Rút Tiền'}
           </h1>
           <div className="admin-profile">
+            <ThemeToggle style={{ marginRight: '8px' }} />
             <span className="admin-name">{user?.fullName || 'Admin'}</span>
             {user?.avatarUrl ? (
               <img 
@@ -3422,12 +3894,36 @@ function App() {
                       <span className="stat-label">Tổng thành viên</span>
                       <span className="stat-val">{stats.totalMembers}</span>
                     </div>
-                    <div className="stat-card success">
-                      <div className="stat-icon success">
-                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+                    {/* Shopee Orders Card */}
+                    <div className="stat-card success" style={{ borderLeft: '4px solid #ee4d2d' }}>
+                      <div className="stat-icon" style={{ background: 'rgba(238, 77, 45, 0.12)', color: '#ee4d2d' }}>
+                        <svg viewBox="0 0 109.59 122.88" style={{ width: '18px', height: '18px', fill: '#ee4d2d' }}>
+                          <path d="M74.98,91.98C76.15,82.36,69.96,76.22,53.6,71c-7.92-2.7-11.66-6.24-11.57-11.12 c0.33-5.4,5.36-9.34,12.04-9.47c4.63,0.09,9.77,1.22,14.76,4.56c0.59,0.37,1.01,0.32,1.35-0.2c0.46-0.74,1.61-2.53,2-3.17 c0.26-0.42,0.31-0.96-0.35-1.44c-0.95-0.7-3.6-2.13-5.03-2.72c-3.88-1.62-8.23-2.64-12.86-2.63c-9.77,0.04-17.47,6.22-18.12,14.47 c-0.42,5.95,2.53,10.79,8.86,14.47c1.34,0.78,8.6,3.67,11.49,4.57c9.08,2.83,13.8,7.9,12.69,13.81c-1.01,5.36-6.65,8.83-14.43,8.93 c-6.17-0.24-11.71-2.75-16.02-6.1c-0.11-0.08-0.65-0.5-0.72-0.56c-0.53-0.42-1.11-0.39-1.47,0.15c-0.26,0.4-1.92,2.8-2.34,3.43 c-0.39,0.55-0.18,0.86,0.23,1.2c1.8,1.5,4.18,3.14,5.81,3.97c4.47,2.28,9.32,3.53,14.48,3.72c3.32,0.22,7.5-0.49,10.63-1.81 C70.63,102.67,74.25,97.92,74.98,91.98L74.98,91.98z M54.79,7.18c-10.59,0-19.22,9.98-19.62,22.47h39.25 C74.01,17.16,65.38,7.18,54.79,7.18z M94.99,122.88l-0.41,0l-80.82-0.01h0c-5.5-0.21-9.54-4.66-10.09-10.19l-0.05-1 l-3.61-79.5v0C0,32.12,0,32.06,0,32c0-1.28,1.03-2.33,2.3-2.35l0,0h25.48C28.41,13.15,40.26,0,54.79,0s26.39,13.15,27.01,29.65 h25.4h0.04c1.3,0,2.35,1.05,2.35,2.35c0,0.04,0,0.08,0,0.12v0l-3.96,79.81l-0.04,0.68C105.12,118.21,100.59,122.73,94.99,122.88 L94.99,122.88z" />
+                        </svg>
                       </div>
-                      <span className="stat-label">Tổng đơn hàng</span>
-                      <span className="stat-val">{stats.totalOrders}</span>
+                      <span className="stat-label">Đơn Hàng Shopee</span>
+                      <span className="stat-val" style={{ color: '#ee4d2d' }}>
+                        {stats.shopeeOrdersCount !== undefined ? stats.shopeeOrdersCount : (orders || []).filter(o => !o.platform || o.platform === 'Shopee').length}{' '}
+                        <small style={{ fontSize: '13px', fontWeight: '400', opacity: 0.85 }}>
+                          ({formatMoney(stats.shopeeCommission !== undefined ? stats.shopeeCommission : (orders || []).filter(o => !o.platform || o.platform === 'Shopee').reduce((sum, o) => sum + (o.commission || 0), 0))})
+                        </small>
+                      </span>
+                    </div>
+
+                    {/* TikTok Orders Card */}
+                    <div className="stat-card info" style={{ borderLeft: '4px solid #00f2fe' }}>
+                      <div className="stat-icon" style={{ background: 'rgba(0, 242, 254, 0.12)', color: '#00f2fe' }}>
+                        <svg viewBox="0 0 1024 1024" style={{ width: '18px', height: '18px', fill: 'currentColor' }}>
+                          <path d="M800 112.962C800 50.575 749.425 0 687.038 0H112.962C50.575 0 0 50.575 0 112.962v574.076C0 749.426 50.575 800 112.962 800h574.076C749.425 800 800 749.426 800 687.038zM662.759 348.916c-51.615.577-99.71-15.027-141.938-43.927v202.874c0 90.166-61.72 167.62-148.996 187.848-119.068 27.165-219.864-58.954-232.577-161.835-13.294-102.884 52.322-193.051 152.892-213.281 19.651-4.045 49.209-4.045 64.458-.577v108.661c-4.692-1.153-9.086-2.31-13.709-2.888-39.304-6.937-77.371 12.715-92.977 48.55-15.605 35.838-5.16 77.451 26.629 101.73 26.586 20.806 56.085 23.694 86.14 9.822 30.057-13.291 46.21-37.567 49.676-70.512.578-4.622.546-9.826.546-15.028V110.206c0-10.981.086-10.502 11.068-10.502h86.12c6.36 0 8.673.915 9.25 8.433 4.621 67.047 55.526 124.147 120.838 132.818 6.937 1.155 14.369 1.613 22.58 2.19z" transform="translate(112 112)"/>
+                        </svg>
+                      </div>
+                      <span className="stat-label">Đơn Hàng TikTok</span>
+                      <span className="stat-val" style={{ color: '#38bdf8' }}>
+                        {stats.tiktokOrdersCount !== undefined ? stats.tiktokOrdersCount : (orders || []).filter(o => o.platform === 'TikTok Shop').length}{' '}
+                        <small style={{ fontSize: '13px', fontWeight: '400', opacity: 0.85 }}>
+                          ({formatMoney(stats.tiktokCommission !== undefined ? stats.tiktokCommission : (orders || []).filter(o => o.platform === 'TikTok Shop').reduce((sum, o) => sum + (o.commission || 0), 0))})
+                        </small>
+                      </span>
                     </div>
                     <div className="stat-card">
                       <div className="stat-icon info">
@@ -3457,7 +3953,9 @@ function App() {
                   {/* Quick table of recent pending payouts */}
                   <div className="data-card">
                     <div className="card-header">
-                      <h2 className="card-title">🚨 Yêu Cầu Rút Tiền Chờ Duyệt Gần Đây</h2>
+                      <h2 className="card-title">
+                        <i className="fa-solid fa-money-check-dollar" style={{ color: '#f97316', marginRight: '8px' }}></i> Yêu Cầu Rút Tiền Chờ Duyệt Gần Đây
+                      </h2>
                     </div>
                     <div className="table-container">
                       <table>
@@ -3474,9 +3972,11 @@ function App() {
                         </thead>
                         <tbody>
                           {payouts.filter(p => p.status === 'PENDING').length === 0 ? (
-                            <tr>
+                            <tr className="empty-row">
                               <td colSpan="7" style={{ textAlign: 'center', color: 'var(--text-muted)', padding: '24px' }}>
-                                🎉 Không có yêu cầu rút tiền nào đang chờ duyệt!
+                                <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', justifyContent: 'center' }}>
+                                  <i className="fa-solid fa-money-check-dollar" style={{ fontSize: '1.2em', color: '#f97316' }}></i> Không có yêu cầu rút tiền nào đang chờ duyệt!
+                                </span>
                               </td>
                             </tr>
                           ) : (
@@ -3485,13 +3985,13 @@ function App() {
                               const bankAndAcc = getBankAndAccount(p);
                               return (
                                 <tr key={p.id}>
-                                  <td><strong>PT_{p.id}</strong></td>
-                                  <td>{user ? user.zaloName : p.zaloId}</td>
-                                  <td>{bankAndAcc.bankName || 'Chưa cấu hình'}</td>
-                                  <td><code>{bankAndAcc.accountNumber || 'Chưa cấu hình'}</code></td>
-                                  <td style={{ color: 'var(--color-primary)', fontWeight: 'bold' }}>{formatMoney(p.amount)}</td>
-                                  <td>{formatDateTime(p.createdAt)}</td>
-                                  <td>
+                                  <td data-label="Mã GD"><strong>PT_{p.id}</strong></td>
+                                  <td data-label="Thành viên">{user ? user.zaloName : p.zaloId}</td>
+                                  <td data-label="Ngân hàng">{bankAndAcc.bankName || 'Chưa cấu hình'}</td>
+                                  <td data-label="Số tài khoản"><code>{bankAndAcc.accountNumber || 'Chưa cấu hình'}</code></td>
+                                  <td data-label="Số tiền" style={{ color: 'var(--color-primary)', fontWeight: 'bold' }}>{formatMoney(p.amount)}</td>
+                                  <td data-label="Thời gian gửi">{formatDateTime(p.createdAt)}</td>
+                                  <td data-label="Hành động">
                                     <button 
                                       className="btn btn-success"
                                       onClick={() => handleApprovePayout(p.id)}
@@ -3526,8 +4026,8 @@ function App() {
                     <table style={{ tableLayout: 'fixed', width: '100%' }}>
                       <thead>
                         <tr>
-                          <th style={{ width: '110px' }}>Zalo ID</th>
                           <th style={{ width: '130px' }}>Tên thành viên</th>
+                          <th style={{ width: '110px' }}>Zalo ID</th>
                           <th style={{ width: '150px' }}>Tài khoản nhận tiền</th>
                           <th style={{ width: '95px', textAlign: 'right' }} title="Đơn đang chờ Shopee đối soát">Chờ xử lý</th>
                           <th style={{ width: '150px', textAlign: 'right' }}>Tích lũy hoàn thành</th>
@@ -3538,7 +4038,7 @@ function App() {
                       </thead>
                       <tbody>
                         {filteredUsers.length === 0 ? (
-                          <tr>
+                          <tr className="empty-row">
                             <td colSpan="8" style={{ textAlign: 'center', color: 'var(--text-muted)' }}>
                               Không tìm thấy thành viên phù hợp
                             </td>
@@ -3548,37 +4048,37 @@ function App() {
                             const bankAndAcc = getBankAndAccount(u);
                             return (
                               <tr key={u.zaloId}>
-                                <td style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                                  <code style={{ color: 'var(--text-muted)', fontSize: '11.5px' }} title={u.zaloId}>{u.zaloId}</code>
-                                </td>
-                                <td style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                                <td data-label="Tên thành viên" style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                                   <strong title={u.zaloName}>{u.zaloName || 'Vô danh (Chờ đồng bộ)'}</strong>
                                 </td>
-                                <td>
+                                <td data-label="Zalo ID" style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                                  <code style={{ color: 'var(--text-muted)', fontSize: '11.5px' }} title={u.zaloId}>{u.zaloId}</code>
+                                </td>
+                                <td data-label="Tài khoản nhận tiền">
                                   <div style={{ fontSize: '13px', fontWeight: '500' }}>{bankAndAcc.bankName || '⚠️ Chưa cập nhật'}</div>
                                   {bankAndAcc.accountNumber && <div style={{ fontSize: '11.5px', color: 'var(--text-muted)', marginTop: '2px' }}><code>{bankAndAcc.accountNumber}</code></div>}
                                 </td>
-                                <td style={{ color: 'var(--color-warning)', textAlign: 'right', fontWeight: '500' }}>
+                                <td data-label="Chờ xử lý" style={{ color: 'var(--color-warning)', textAlign: 'right', fontWeight: '500' }}>
                                   {formatMoney(u.wallet?.pendingCommission)}
                                 </td>
-                                <td style={{ textAlign: 'right' }}>
+                                <td data-label="Tích lũy hoàn thành" style={{ textAlign: 'right' }}>
                                   <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>Gốc: {formatMoney(u.wallet?.completedCommission)}</div>
                                   <div style={{ fontSize: '11.5px', color: 'var(--color-warning)', marginTop: '2px' }}>Sau thuế: {formatMoney((u.wallet?.completedCommission || 0) * 0.9)}</div>
                                   <div style={{ fontSize: '11.5px', color: 'var(--color-success)', marginTop: '2px', fontWeight: '600' }}>Khách: {formatMoney((u.wallet?.completedCommission || 0) * 0.9 * 0.8)}</div>
                                 </td>
-                                <td style={{ color: 'var(--color-success)', fontWeight: '700', textAlign: 'right' }}>
+                                <td data-label="Khả dụng rút" style={{ color: 'var(--color-success)', fontWeight: '700', textAlign: 'right' }}>
                                   {formatMoney(u.wallet?.withdrawableCommission)}
                                 </td>
-                                <td style={{ textAlign: 'right', color: 'var(--text-muted)' }}>
+                                <td data-label="Đã rút" style={{ textAlign: 'right', color: 'var(--text-muted)' }}>
                                   {formatMoney(u.wallet?.receivedCommission)}
                                 </td>
-                                <td style={{ textAlign: 'center' }}>
+                                <td data-label="Chi tiết" style={{ textAlign: 'center' }}>
                                   <button
                                     className="btn"
                                     onClick={() => setSelectedUser(u)}
-                                    style={{ padding: '4px 8px', fontSize: '12px' }}
+                                    style={{ padding: '4px 10px', fontSize: '12px', display: 'inline-flex', alignItems: 'center', gap: '4px' }}
                                   >
-                                    👁 Xem
+                                    <i className="fa-regular fa-eye"></i> Xem
                                   </button>
                                 </td>
                               </tr>
@@ -3592,123 +4092,8 @@ function App() {
               )}
 
               {/* Tab 3: ORDERS LIST */}
-              {activeTab === 'orders' && (
-                <div className="data-card">
-                  {/* Upload file import */}
-                  <div style={{ padding: '16px 0 20px', borderBottom: '1px solid rgba(255,255,255,0.06)', marginBottom: '20px' }}>
-                    <h3 style={{ marginBottom: '12px', fontSize: '15px' }}>📥 Import báo cáo đối soát Shopee (CSV/Excel)</h3>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
-                      <input
-                        type="file"
-                        accept=".csv,.xlsx,.xls"
-                        onChange={(e) => { setImportFile(e.target.files[0]); setImportResult(null); }}
-                        style={{ color: 'var(--text-muted)', fontSize: '13px' }}
-                      />
-                      <button
-                        className="btn btn-success"
-                        onClick={handleImportFile}
-                        disabled={!importFile || importLoading}
-                        style={{ minWidth: '120px' }}
-                      >
-                        {importLoading ? '⏳ Đang import...' : '⬆️ Import'}
-                      </button>
-                      {importFile && <span style={{ fontSize: '13px', color: 'var(--text-muted)' }}>{importFile.name}</span>}
-                    </div>
-                    {importResult && (
-                      <div style={{
-                        marginTop: '10px',
-                        padding: '10px 14px',
-                        borderRadius: '8px',
-                        fontSize: '13px',
-                        background: importResult.success ? 'rgba(74, 222, 128, 0.1)' : 'rgba(248, 113, 113, 0.1)',
-                        border: `1px solid ${importResult.success ? 'var(--color-success)' : 'var(--color-danger)'}`,
-                        color: importResult.success ? 'var(--color-success)' : 'var(--color-danger)'
-                      }}>
-                        {importResult.success ? '✅ ' : '❌ '}{importResult.message}
-                      </div>
-                    )}
-                  </div>
+              {activeTab === 'orders' && <OrdersTab />}
 
-                  <div className="search-container">
-                    <input
-                      type="text"
-                      className="form-control"
-                      placeholder="Tìm kiếm đơn hàng (ID/Sản phẩm/Zalo ID)..."
-                      value={orderSearch}
-                      onChange={(e) => setOrderSearch(e.target.value)}
-                    />
-                  </div>
-
-                  <div className="table-container">
-                    <table style={{ tableLayout: 'fixed', width: '100%' }}>
-                      <thead>
-                        <tr>
-                          <th style={{ width: '135px' }}>Mã đơn hàng</th>
-                          <th style={{ width: '240px' }}>Tên sản phẩm</th>
-                          <th style={{ width: '160px' }}>Thành viên / Zalo ID</th>
-                          <th style={{ width: '140px', textAlign: 'right' }}>Tích lũy hoa hồng</th>
-                          <th style={{ width: '145px' }}>Thời gian</th>
-                          <th style={{ width: '100px', textAlign: 'center' }}>Trạng thái</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {filteredOrders.length === 0 ? (
-                          <tr>
-                            <td colSpan="6" style={{ textAlign: 'center', color: 'var(--text-muted)' }}>
-                              Không tìm thấy đơn hàng nào
-                            </td>
-                          </tr>
-                        ) : (
-                          filteredOrders.map(o => {
-                            const orderUser = users.find(u => u.zaloId === o.zaloId);
-                            const afterTax = (o.commission || 0) * 0.9;
-                            const afterDeduction = afterTax * 0.8;
-                            return (
-                              <tr key={o.id}>
-                                <td>
-                                  <code style={{ fontWeight: 'bold', fontSize: '12.5px', color: '#fff' }}>{o.orderId}</code>
-                                </td>
-                                <td title={o.productName} style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                                  {o.productName}
-                                </td>
-                                <td style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                                  <div style={{ fontWeight: '600', fontSize: '13.5px' }} title={orderUser ? orderUser.zaloName : (o.zaloId || 'UNKNOWN')}>
-                                    {orderUser ? orderUser.zaloName : <code style={{ color: 'var(--color-danger)', fontSize: '11px' }}>{o.zaloId || 'UNKNOWN'}</code>}
-                                  </div>
-                                  <div style={{ marginTop: '4px' }}>
-                                    <code style={{ fontSize: '11.5px', color: 'var(--color-primary)' }} title={o.subId}>{o.subId || '-'}</code>
-                                  </div>
-                                </td>
-                                <td style={{ textAlign: 'right' }}>
-                                  <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>Gốc: {formatMoney(o.commission)}</div>
-                                  <div style={{ fontSize: '11.5px', color: 'var(--color-warning)', marginTop: '2px' }}>Sau thuế: {formatMoney(afterTax)}</div>
-                                  <div style={{ fontSize: '11.5px', color: 'var(--color-success)', marginTop: '2px', fontWeight: '600' }}>Khách: {formatMoney(afterDeduction)}</div>
-                                </td>
-                                <td>
-                                  <div style={{ fontSize: '12px' }} title={`Đặt mua: ${formatDateTime(o.purchaseTime)}`}>Đặt: {formatDateTime(o.purchaseTime)}</div>
-                                  {o.completeTime && (
-                                    <div style={{ fontSize: '11px', color: 'var(--text-muted)', marginTop: '2px' }} title={`Hoàn thành: ${formatDateTime(o.completeTime)}`}>
-                                      Xong: {formatDateTime(o.completeTime)}
-                                    </div>
-                                  )}
-                                </td>
-                                <td style={{ textAlign: 'center' }}>
-                                  <span className={`badge ${
-                                    o.status === 'Hoàn thành' ? 'badge-completed' :
-                                    o.status === 'Đã hủy' ? 'badge-cancelled' : 'badge-pending'
-                                  }`} style={{ fontSize: '11px', padding: '3px 8px' }}>
-                                    {o.status}
-                                  </span>
-                                </td>
-                              </tr>
-                            );
-                          })
-                        )}
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-              )}
 
               {/* Tab 4: PAYOUTS LIST */}
               {activeTab === 'payouts' && (
@@ -3739,7 +4124,7 @@ function App() {
                       </thead>
                       <tbody>
                         {filteredPayouts.length === 0 ? (
-                          <tr>
+                          <tr className="empty-row">
                             <td colSpan="9" style={{ textAlign: 'center', color: 'var(--text-muted)' }}>
                               Không tìm thấy yêu cầu rút tiền nào
                             </td>
@@ -3750,21 +4135,21 @@ function App() {
                             const bankAndAcc = getBankAndAccount(p);
                             return (
                               <tr key={p.id}>
-                                <td><strong>PT_{p.id}</strong></td>
-                                <td>{user ? user.zaloName : p.zaloId}</td>
-                                <td>{bankAndAcc.bankName || 'Chưa cấu hình'}</td>
-                                <td style={{ fontSize: '13px' }}><code>{bankAndAcc.accountNumber || 'Chưa cấu hình'}</code></td>
-                                <td style={{ color: 'var(--color-primary)', fontWeight: 'bold' }}>{formatMoney(p.amount)}</td>
-                                <td>{formatDateTime(p.createdAt)}</td>
-                                <td>{formatDateTime(p.completedAt)}</td>
-                                <td>
+                                <td data-label="Mã GD"><strong>PT_{p.id}</strong></td>
+                                <td data-label="Thành viên">{user ? user.zaloName : p.zaloId}</td>
+                                <td data-label="Ngân hàng">{bankAndAcc.bankName || 'Chưa cấu hình'}</td>
+                                <td data-label="Số tài khoản" style={{ fontSize: '13px' }}><code>{bankAndAcc.accountNumber || 'Chưa cấu hình'}</code></td>
+                                <td data-label="Số tiền" style={{ color: 'var(--color-primary)', fontWeight: 'bold' }}>{formatMoney(p.amount)}</td>
+                                <td data-label="Ngày gửi">{formatDateTime(p.createdAt)}</td>
+                                <td data-label="Phê duyệt">{formatDateTime(p.completedAt)}</td>
+                                <td data-label="Trạng thái">
                                   <span className={`badge ${
                                     p.status === 'COMPLETED' ? 'badge-completed' : 'badge-pending'
                                   }`}>
                                     {p.status === 'COMPLETED' ? 'Đã thanh toán' : 'Chờ duyệt'}
                                   </span>
                                 </td>
-                                <td>
+                                <td data-label="Thao tác">
                                   {p.status === 'PENDING' ? (
                                     <button 
                                       className="btn btn-success"
@@ -3791,112 +4176,13 @@ function App() {
       </main>
 
       {selectedUser && (
-        <div className="modal-overlay" onClick={() => setSelectedUser(null)}>
-          <div className="modal-content user-detail-modal" onClick={(e) => e.stopPropagation()}>
-            <header className="modal-header" style={{ marginBottom: '20px' }}>
-              <h2 className="modal-title" style={{ fontSize: '24px' }}>👤 Chi Tiết Thành Viên</h2>
-              <button className="modal-close" onClick={() => setSelectedUser(null)} style={{ fontSize: '28px' }}>&times;</button>
-            </header>
-            <div className="modal-body">
-              <div className="member-detail-grid">
-                <div className="detail-item" style={{ padding: '20px', background: 'rgba(255,255,255,0.03)', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.05)' }}>
-                  <div className="detail-label" style={{ fontSize: '12px', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '8px', color: 'var(--text-muted)' }}>Tên thành viên</div>
-                  <div className="detail-value" style={{ color: 'var(--color-primary)', fontSize: '22px', fontWeight: '700' }}>{selectedUser.zaloName || 'Vô danh'}</div>
-                </div>
-                <div className="detail-item" style={{ padding: '20px', background: 'rgba(255,255,255,0.03)', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.05)' }}>
-                  <div className="detail-label" style={{ fontSize: '12px', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '8px', color: 'var(--text-muted)' }}>Zalo ID</div>
-                  <div className="detail-value" style={{ fontSize: '16px', wordBreak: 'break-all', fontFamily: 'monospace', color: '#fff' }}>{selectedUser.zaloId}</div>
-                </div>
-                <div className="detail-item" style={{ padding: '20px', background: 'rgba(255,255,255,0.03)', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.05)' }}>
-                  <div className="detail-label" style={{ fontSize: '12px', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '8px', color: 'var(--text-muted)' }}>Ngân hàng nhận tiền</div>
-                  <div className="detail-value" style={{ fontSize: '20px', fontWeight: '600', color: '#fff' }}>{getBankAndAccount(selectedUser).bankName || '⚠️ Chưa cập nhật'}</div>
-                </div>
-                <div className="detail-item" style={{ padding: '20px', background: 'rgba(255,255,255,0.03)', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.05)' }}>
-                  <div className="detail-label" style={{ fontSize: '12px', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '8px', color: 'var(--text-muted)' }}>Số tài khoản</div>
-                  <div className="detail-value"><code style={{ fontSize: '20px', letterSpacing: '2px', fontWeight: '700', color: 'var(--color-success)' }}>{getBankAndAccount(selectedUser).accountNumber || '⚠️ Chưa cập nhật'}</code></div>
-                </div>
-              </div>
-
-              {/* Mini user wallet stats */}
-              <div className="stats-grid modal-stats-grid">
-                <div className="stat-card" style={{ padding: '16px' }}>
-                  <span className="stat-label">Chờ xử lý</span>
-                  <span className="stat-val" style={{ fontSize: '22px' }}>{formatMoney(selectedUser.wallet?.pendingCommission)}</span>
-                </div>
-                <div className="stat-card success" style={{ padding: '16px' }}>
-                  <span className="stat-label">Đã hoàn thành</span>
-                  <span className="stat-val" style={{ fontSize: '22px' }}>{formatMoney(selectedUser.wallet?.completedCommission)}</span>
-                </div>
-                <div className="stat-card warning" style={{ padding: '16px' }}>
-                  <span className="stat-label">Sau thuế</span>
-                  <span className="stat-val" style={{ fontSize: '22px', color: 'var(--color-warning)' }}>{formatMoney((selectedUser.wallet?.completedCommission || 0) * 0.9)}</span>
-                </div>
-                <div className="stat-card success" style={{ padding: '16px' }}>
-                  <span className="stat-label">Thực nhận</span>
-                  <span className="stat-val" style={{ fontSize: '22px', color: 'var(--color-success)' }}>{formatMoney((selectedUser.wallet?.completedCommission || 0) * 0.9 * 0.8)}</span>
-                </div>
-                <div className="stat-card warning" style={{ padding: '16px' }}>
-                  <span className="stat-label">Có thể rút</span>
-                  <span className="stat-val" style={{ fontSize: '22px', color: 'var(--color-success)' }}>{formatMoney(selectedUser.wallet?.withdrawableCommission)}</span>
-                </div>
-                <div className="stat-card" style={{ padding: '16px' }}>
-                  <span className="stat-label">Đã rút</span>
-                  <span className="stat-val" style={{ fontSize: '22px' }}>{formatMoney(selectedUser.wallet?.receivedCommission)}</span>
-                </div>
-              </div>
-
-              {/* List of recent orders for this user */}
-              <h3 style={{ marginBottom: '12px', fontSize: '16px' }}>🛒 Đơn hàng gần đây</h3>
-              <div className="table-container" style={{ maxHeight: '240px', overflowY: 'auto' }}>
-                <table>
-                  <thead>
-                    <tr>
-                      <th>Mã đơn</th>
-                      <th>Sản phẩm</th>
-                      <th>HH Gốc</th>
-                      <th title="Sau thuế 10%">Sau thuế</th>
-                      <th title="Sau thuế & trừ 20%">Thực nhận</th>
-                      <th>Trạng thái</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {orders.filter(o => o.zaloId === selectedUser.zaloId).length === 0 ? (
-                      <tr>
-                        <td colSpan="6" style={{ textAlign: 'center', color: 'var(--text-muted)' }}>Chưa có đơn hàng nào.</td>
-                      </tr>
-                    ) : (
-                      orders.filter(o => o.zaloId === selectedUser.zaloId).slice(0, 10).map(o => {
-                        const afterTax = (o.commission || 0) * 0.9;
-                        const afterDeduction = afterTax * 0.8;
-                        return (
-                          <tr key={o.id}>
-                            <td style={{ fontSize: '11px' }}>{o.orderId}</td>
-                            <td style={{ maxWidth: '160px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{o.productName}</td>
-                            <td style={{ color: 'var(--text-muted)', fontSize: '12px' }}>{formatMoney(o.commission)}</td>
-                            <td style={{ color: 'var(--color-warning)', fontSize: '12px' }}>{formatMoney(afterTax)}</td>
-                            <td style={{ color: 'var(--color-success)', fontWeight: '700', fontSize: '12px' }}>{formatMoney(afterDeduction)}</td>
-                            <td>
-                              <span className={`badge ${
-                                o.status === 'Hoàn thành' ? 'badge-completed' :
-                                o.status === 'Hủy' ? 'badge-cancelled' : 'badge-pending'
-                              }`} style={{ fontSize: '10px', padding: '2px 6px' }}>
-                                {o.status}
-                              </span>
-                            </td>
-                          </tr>
-                        );
-                      })
-                    )}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-            <footer className="modal-footer">
-              <button className="btn" onClick={() => setSelectedUser(null)}>Đóng lại</button>
-            </footer>
-          </div>
-        </div>
+        <UserDetailModal
+          selectedUser={selectedUser}
+          onClose={() => setSelectedUser(null)}
+          orders={orders}
+        />
       )}
+      {renderMobileBottomNav()}
     </div>
   );
 }

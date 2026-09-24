@@ -118,31 +118,31 @@ export function UserDetailModal({ selectedUser, onClose, orders }) {
             </div>
           </div>
 
-          {/* 6 thẻ ví hoa hồng */}
-          <div className="stats-grid modal-stats-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: '12px', marginBottom: '24px' }}>
+          {/* Thẻ thống kê ví hoa hồng thành viên */}
+          <div className="stats-grid modal-stats-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: '12px', marginBottom: '24px' }}>
+            <div className="stat-card" style={{ padding: '14px 16px', background: 'var(--bg-card)', border: '1.5px solid var(--border-color)', borderRadius: '12px' }}>
+              <span className="stat-label" style={{ fontSize: '12px', fontWeight: '600', color: 'var(--text-muted, #475569)' }}>Tổng đơn hàng (Xử lý + Hoàn thành)</span>
+              <span className="stat-val" style={{ fontSize: '20px', fontWeight: '800', color: 'var(--color-primary, #ea580c)' }}>
+                {formatMoney((selectedUser.wallet?.pendingCommission || 0) + (selectedUser.wallet?.rawCompletedCommission != null ? selectedUser.wallet.rawCompletedCommission : (selectedUser.wallet?.completedCommission || 0)))}
+              </span>
+            </div>
             <div className="stat-card" style={{ padding: '14px 16px', background: 'var(--bg-card)', border: '1.5px solid var(--border-color)', borderRadius: '12px' }}>
               <span className="stat-label" style={{ fontSize: '12px', fontWeight: '600', color: 'var(--text-muted, #475569)' }}>Chờ xử lý</span>
               <span className="stat-val" style={{ fontSize: '20px', fontWeight: '800', color: 'var(--text-bright)' }}>{formatMoney(selectedUser.wallet?.pendingCommission)}</span>
             </div>
             <div className="stat-card success" style={{ padding: '14px 16px', background: 'var(--bg-card)', border: '1.5px solid var(--border-color)', borderRadius: '12px' }}>
-              <span className="stat-label" style={{ fontSize: '12px', fontWeight: '600', color: 'var(--text-muted, #475569)' }}>Đã hoàn thành</span>
-              <span className="stat-val" style={{ fontSize: '20px', fontWeight: '800', color: 'var(--text-bright)' }}>{formatMoney(selectedUser.wallet?.completedCommission)}</span>
+              <span className="stat-label" style={{ fontSize: '12px', fontWeight: '600', color: 'var(--text-muted, #475569)' }}>Đã hoàn thành (Chưa đủ 3 ngày)</span>
+              <span className="stat-val" style={{ fontSize: '20px', fontWeight: '800', color: '#059669' }}>
+                {formatMoney(selectedUser.wallet?.completedNotYetWithdrawable != null ? selectedUser.wallet.completedNotYetWithdrawable : selectedUser.wallet?.completedCommission)}
+              </span>
             </div>
             <div className="stat-card warning" style={{ padding: '14px 16px', background: 'var(--bg-card)', border: '1.5px solid var(--border-color)', borderRadius: '12px' }}>
-              <span className="stat-label" style={{ fontSize: '12px', fontWeight: '600', color: 'var(--text-muted, #475569)' }}>Sau thuế (10%)</span>
-              <span className="stat-val" style={{ fontSize: '20px', fontWeight: '800', color: 'var(--color-warning, #d97706)' }}>{formatMoney((selectedUser.wallet?.completedCommission || 0) * 0.9)}</span>
-            </div>
-            <div className="stat-card success" style={{ padding: '14px 16px', background: 'var(--bg-card)', border: '1.5px solid var(--border-color)', borderRadius: '12px' }}>
-              <span className="stat-label" style={{ fontSize: '12px', fontWeight: '600', color: 'var(--text-muted, #475569)' }}>Thực nhận (80%)</span>
-              <span className="stat-val" style={{ fontSize: '20px', fontWeight: '800', color: 'var(--color-success, #16a34a)' }}>{formatMoney((selectedUser.wallet?.completedCommission || 0) * 0.9 * 0.8)}</span>
-            </div>
-            <div className="stat-card warning" style={{ padding: '14px 16px', background: 'var(--bg-card)', border: '1.5px solid var(--border-color)', borderRadius: '12px' }}>
-              <span className="stat-label" style={{ fontSize: '12px', fontWeight: '600', color: 'var(--text-muted, #475569)' }}>Có thể rút</span>
-              <span className="stat-val" style={{ fontSize: '20px', fontWeight: '800', color: 'var(--color-success, #16a34a)' }}>{formatMoney(selectedUser.wallet?.withdrawableCommission)}</span>
+              <span className="stat-label" style={{ fontSize: '12px', fontWeight: '600', color: 'var(--text-muted, #475569)' }}>Có thể rút (Khả dụng)</span>
+              <span className="stat-val" style={{ fontSize: '20px', fontWeight: '800', color: '#ea580c' }}>{formatMoney(selectedUser.wallet?.withdrawableCommission)}</span>
             </div>
             <div className="stat-card" style={{ padding: '14px 16px', background: 'var(--bg-card)', border: '1.5px solid var(--border-color)', borderRadius: '12px' }}>
-              <span className="stat-label" style={{ fontSize: '12px', fontWeight: '600', color: 'var(--text-muted, #475569)' }}>Đã rút</span>
-              <span className="stat-val" style={{ fontSize: '20px', fontWeight: '800', color: 'var(--text-bright)' }}>{formatMoney(selectedUser.wallet?.receivedCommission)}</span>
+              <span className="stat-label" style={{ fontSize: '12px', fontWeight: '600', color: 'var(--text-muted, #475569)' }}>Đã rút (Đã thanh toán)</span>
+              <span className="stat-val" style={{ fontSize: '20px', fontWeight: '800', color: '#16a34a' }}>{formatMoney(selectedUser.wallet?.receivedCommission)}</span>
             </div>
           </div>
 

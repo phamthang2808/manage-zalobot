@@ -612,29 +612,33 @@ export default function OrderLookupView() {
           {/* Wallet Stats */}
           <div className="stats-container">
             <h3 className="stats-section-title">💰 Thống Kê Hoa Hồng của: <span style={{ color: '#ea580c' }}>{lookupResult.zaloName}</span></h3>
-            <div className="stats-cards-grid">
-              <div className="stat-card-item total">
-                <span className="stat-card-label">Tổng tích lũy (Hoàn thành + Chờ)</span>
-                <span className="stat-card-value primary">{formatMoney(totalCommission)}</span>
-              </div>
+            <div className="stats-cards-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))' }}>
               <div className="stat-card-item pending">
-                <span className="stat-card-label">Đang chờ xử lý</span>
-                <span style={{ fontSize: '11px', color: 'var(--text-muted)', marginBottom: '4px' }}>Đang vận chuyển hoặc chưa xác nhận</span>
+                <span className="stat-card-label">ĐANG CHỜ XỬ LÝ</span>
+                <span style={{ fontSize: '11px', color: 'var(--text-muted)', marginBottom: '4px' }}>(Đang vận chuyển / chưa xác nhận)</span>
                 <span className="stat-card-value">{formatMoney(lookupResult.wallet.pendingCommission)}</span>
               </div>
               <div className="stat-card-item completed">
-                <span className="stat-card-label">Đã hoàn thành</span>
-                <span style={{ fontSize: '11px', color: 'var(--text-muted)', marginBottom: '4px' }}>Đã ấn giao hàng thành công</span>
-                <span className="stat-card-value">{formatMoney(lookupResult.wallet.completedCommission)}</span>
+                <span className="stat-card-label">ĐÃ HOÀN THÀNH</span>
+                <span style={{ fontSize: '11px', color: 'var(--text-muted)', marginBottom: '4px' }}>(Hoàn thành • Chưa đủ 3 ngày để rút)</span>
+                <span className="stat-card-value">{formatMoney(lookupResult.wallet.completedNotYetWithdrawable != null ? lookupResult.wallet.completedNotYetWithdrawable : lookupResult.wallet.completedCommission)}</span>
               </div>
               <div className="stat-card-item withdrawable">
-                <span className="stat-card-label">Có thể rút ngay (Khả dụng)</span>
-                <span style={{ fontSize: '11px', color: '#ea580c', marginBottom: '4px' }}>Shopee sau 3 ngày • TikTok rút ngay khi xong • Đã trừ thuế & chia 8-2</span>
+                <span className="stat-card-label">SỐ DƯ KHẢ DỤNG</span>
+                {lookupResult.wallet.pendingWithdrawn > 0 ? (
+                  <span style={{ fontSize: '11px', color: '#d97706', fontWeight: 'bold', marginBottom: '4px' }}>
+                    (Đang chờ duyệt rút: {formatMoney(lookupResult.wallet.pendingWithdrawn)})
+                  </span>
+                ) : (
+                  <span style={{ fontSize: '11px', color: '#ea580c', marginBottom: '4px' }}>
+                    (Sau 3 ngày • Trừ thuế & chia 8-2)
+                  </span>
+                )}
                 <span className="stat-card-value" style={{ color: '#ea580c' }}>{formatMoney(lookupResult.wallet.withdrawableCommission)}</span>
               </div>
               <div className="stat-card-item received">
-                <span className="stat-card-label">Đã nhận (Đã thanh toán)</span>
-                <span style={{ fontSize: '11px', color: 'var(--text-muted)', marginBottom: '4px' }}>Tổng tiền đã rút về tài khoản</span>
+                <span className="stat-card-label">ĐÃ NHẬN (ĐÃ THANH TOÁN)</span>
+                <span style={{ fontSize: '11px', color: 'var(--text-muted)', marginBottom: '4px' }}>(Tổng tiền đã rút về bank)</span>
                 <span className="stat-card-value" style={{ color: '#16a34a' }}>{formatMoney(lookupResult.wallet.receivedCommission)}</span>
               </div>
             </div>

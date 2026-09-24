@@ -2970,7 +2970,7 @@ function App() {
                           <th style={{ width: '110px' }}>Zalo ID</th>
                           <th style={{ width: '150px' }}>Tài khoản nhận tiền</th>
                           <th style={{ width: '95px', textAlign: 'right' }} title="Đơn đang chờ Shopee đối soát">Chờ xử lý</th>
-                          <th style={{ width: '150px', textAlign: 'right' }}>Tích lũy hoàn thành</th>
+                          <th style={{ width: '120px', textAlign: 'right' }}>Tổng đơn hàng</th>
                           <th style={{ width: '105px', textAlign: 'right' }} title="Số tiền có thể rút ngay (đơn hoàn thành quá 3 ngày, trừ đã rút)">Khả dụng rút</th>
                           <th style={{ width: '90px', textAlign: 'right' }}>Đã rút</th>
                           <th style={{ width: '70px', textAlign: 'center' }}>Chi tiết</th>
@@ -3001,10 +3001,8 @@ function App() {
                                 <td data-label="Chờ xử lý" style={{ color: 'var(--color-warning)', textAlign: 'right', fontWeight: '500' }}>
                                   {formatMoney(u.wallet?.pendingCommission)}
                                 </td>
-                                <td data-label="Tích lũy hoàn thành" style={{ textAlign: 'right' }}>
-                                  <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>Gốc: {formatMoney(u.wallet?.completedCommission)}</div>
-                                  <div style={{ fontSize: '11.5px', color: 'var(--color-warning)', marginTop: '2px' }}>Sau thuế: {formatMoney((u.wallet?.completedCommission || 0) * 0.9)}</div>
-                                  <div style={{ fontSize: '11.5px', color: 'var(--color-success)', marginTop: '2px', fontWeight: '600' }}>Khách: {formatMoney((u.wallet?.completedCommission || 0) * 0.9 * 0.8)}</div>
+                                <td data-label="Tổng đơn hàng" style={{ textAlign: 'right', fontWeight: '700', color: 'var(--color-primary, #ea580c)' }}>
+                                  {formatMoney((u.wallet?.pendingCommission || 0) + (u.wallet?.rawCompletedCommission != null ? u.wallet.rawCompletedCommission : (u.wallet?.completedCommission || 0)))}
                                 </td>
                                 <td data-label="Khả dụng rút" style={{ color: 'var(--color-success)', fontWeight: '700', textAlign: 'right' }}>
                                   {formatMoney(u.wallet?.withdrawableCommission)}

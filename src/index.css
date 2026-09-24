@@ -3007,17 +3007,11 @@ tr:hover td {
    LIGHT THEME OVERRIDES FOR LANDING PAGE
    ========================================================================== */
 .landing-page {
-  background: #f8fafc !important; /* light slate background */
-  color: #1e293b !important; /* dark slate text */
+  background: #ffffff !important;
 }
-
-/* Animated gradient orbs for light theme */
-.landing-page::before {
-  background: radial-gradient(circle, rgba(245, 158, 11, 0.08) 0%, rgba(251, 191, 36, 0.03) 40%, transparent 70%) !important;
-}
-
+.landing-page::before,
 .landing-page::after {
-  background: radial-gradient(circle, rgba(245, 158, 11, 0.06) 0%, rgba(251, 191, 36, 0.02) 40%, transparent 70%) !important;
+  display: none !important;
 }
 
 /* Typography & Titles */
@@ -3775,7 +3769,7 @@ body.dark .lookup-card,
 html[data-theme="dark"] .lookup-header,
 html.dark .lookup-header,
 body.dark .lookup-header {
-  background-color: #1c1c1e !important;
+  background-color: #0c0c0e !important;
   border-color: rgba(255, 255, 255, 0.12) !important;
   color: #ffffff !important;
 }
@@ -3783,7 +3777,7 @@ body.dark .lookup-header {
 html[data-theme="dark"] .table-container table thead th,
 html.dark .table-container table thead th,
 body.dark .table-container table thead th {
-  background-color: #161618 !important;
+  background-color: #141416 !important;
   border-bottom: 1px solid rgba(255, 255, 255, 0.12) !important;
   color: #8e8e93 !important;
 }
@@ -3804,7 +3798,7 @@ body.dark .table-container table tbody tr td {
 html[data-theme="dark"] .table-container table tbody tr:hover td,
 html.dark .table-container table tbody tr:hover td,
 body.dark .table-container table tbody tr:hover td {
-  background-color: #2c2c2e !important;
+  background-color: #18181b !important;
   color: #ffffff !important;
 }
 
@@ -4549,26 +4543,26 @@ body.dark {
 
   /* Admin Dashboard Stat Cards (Clean & Refined) */
   .stat-card.primary {
-    background: linear-gradient(145deg, rgba(59, 130, 246, 0.08), #111827 85%) !important;
+    background: linear-gradient(145deg, rgba(59, 130, 246, 0.08), #0c0c0e 85%) !important;
     border: 1px solid rgba(59, 130, 246, 0.28) !important;
   }
   .stat-card.primary .stat-val { color: #60a5fa !important; }
 
   .stat-card.success {
-    background: linear-gradient(145deg, rgba(16, 185, 129, 0.08), #111827 85%) !important;
+    background: linear-gradient(145deg, rgba(16, 185, 129, 0.08), #0c0c0e 85%) !important;
     border: 1px solid rgba(16, 185, 129, 0.28) !important;
   }
   .stat-card.success .stat-val { color: #34d399 !important; }
 
   .stat-card.warning {
-    background: linear-gradient(145deg, rgba(249, 115, 22, 0.08), #111827 85%) !important;
+    background: linear-gradient(145deg, rgba(249, 115, 22, 0.08), #0c0c0e 85%) !important;
     border: 1px solid rgba(249, 115, 22, 0.3) !important;
   }
   .stat-card.warning .stat-val { color: #fb923c !important; }
 
   /* Order Lookup 5 Stat Cards (Restored Gorgeous Glowing Neon Styles) */
   .stat-card-item.total {
-    background: linear-gradient(145deg, rgba(59, 130, 246, 0.22), #0f172a 90%) !important;
+    background: linear-gradient(145deg, rgba(59, 130, 246, 0.22), #0c0c0e 90%) !important;
     border: 1.5px solid rgba(96, 165, 250, 0.65) !important;
     box-shadow: 0 4px 20px rgba(59, 130, 246, 0.25), inset 0 0 12px rgba(96, 165, 250, 0.12) !important;
   }
@@ -4578,7 +4572,7 @@ body.dark {
   }
 
   .stat-card-item.pending {
-    background: linear-gradient(145deg, rgba(245, 158, 11, 0.22), #0f172a 90%) !important;
+    background: linear-gradient(145deg, rgba(245, 158, 11, 0.22), #0c0c0e 90%) !important;
     border: 1.5px solid rgba(251, 191, 36, 0.65) !important;
     box-shadow: 0 4px 20px rgba(245, 158, 11, 0.22), inset 0 0 12px rgba(251, 191, 36, 0.12) !important;
   }
@@ -4588,7 +4582,7 @@ body.dark {
   }
 
   .stat-card-item.completed {
-    background: linear-gradient(145deg, rgba(16, 185, 129, 0.22), #0f172a 90%) !important;
+    background: linear-gradient(145deg, rgba(16, 185, 129, 0.22), #0c0c0e 90%) !important;
     border: 1.5px solid rgba(52, 211, 153, 0.65) !important;
     box-shadow: 0 4px 20px rgba(16, 185, 129, 0.22), inset 0 0 12px rgba(52, 211, 153, 0.12) !important;
   }
@@ -4598,7 +4592,7 @@ body.dark {
   }
 
   .stat-card-item.withdrawable {
-    background: linear-gradient(145deg, rgba(249, 115, 22, 0.22), #0f172a 90%) !important;
+    background: linear-gradient(145deg, rgba(249, 115, 22, 0.22), #0c0c0e 90%) !important;
     border: 1.5px solid rgba(251, 146, 60, 0.65) !important;
     box-shadow: 0 4px 20px rgba(249, 115, 22, 0.25), inset 0 0 12px rgba(251, 146, 60, 0.12) !important;
   }
@@ -4608,7 +4602,7 @@ body.dark {
   }
 
   .stat-card-item.received {
-    background: linear-gradient(145deg, rgba(168, 85, 247, 0.22), #0f172a 90%) !important;
+    background: linear-gradient(145deg, rgba(168, 85, 247, 0.22), #0c0c0e 90%) !important;
     border: 1.5px solid rgba(192, 132, 252, 0.65) !important;
     box-shadow: 0 4px 20px rgba(168, 85, 247, 0.25), inset 0 0 12px rgba(192, 132, 252, 0.12) !important;
   }
@@ -4620,7 +4614,7 @@ body.dark {
   /* Make inner inputs, code badges, and highlight boxes shine in Dark Mode */
   .table-container table tbody tr td[data-label="Khả dụng rút"],
   .table-container table tbody tr td[data-label="Số tiền"] {
-    background: linear-gradient(135deg, rgba(34, 197, 94, 0.2), rgba(15, 23, 42, 0.85)) !important;
+    background: linear-gradient(135deg, rgba(34, 197, 94, 0.2), rgba(12, 12, 14, 0.95)) !important;
     border: 1.5px solid rgba(74, 222, 128, 0.55) !important;
     box-shadow: 0 0 18px rgba(74, 222, 128, 0.25) !important;
     color: #4ade80 !important;
@@ -5268,7 +5262,7 @@ body.dark .user-view-btn:hover {
 html[data-theme="dark"] .landing-container,
 html.dark .landing-container,
 body.dark .landing-container {
-  background-color: #0b1120;
+  background-color: #000000 !important;
 }
 
 html[data-theme="dark"] .banner-badge-item,
@@ -5292,7 +5286,7 @@ body.dark .banner-badge-icon {
 html[data-theme="dark"] .landing-container,
 html.dark .landing-container,
 body.dark .landing-container {
-  background: #0b1120 !important;
+  background: #000000 !important;
   color: #f8fafc !important;
 }
 
@@ -5318,7 +5312,7 @@ body.dark .landing-nav a {
 html[data-theme="dark"] .landing-block-container,
 html.dark .landing-block-container,
 body.dark .landing-block-container {
-  background: #1e293b !important;
+  background: #0c0c0e !important;
   border: 1px solid rgba(255, 255, 255, 0.1) !important;
   box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4) !important;
 }
@@ -5611,7 +5605,7 @@ body.dark .banner-showcase-card:hover .banner-showcase-img {
 html[data-theme="dark"] .zalo-pc-live-card,
 html.dark .zalo-pc-live-card,
 body.dark .zalo-pc-live-card {
-  background: #1e293b !important;
+  background: #0c0c0e !important;
   border-color: rgba(255, 255, 255, 0.12) !important;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35) !important;
   color: #f1f5f9 !important;
@@ -5666,7 +5660,7 @@ body.dark .zalo-pc-author {
 html[data-theme="dark"] .zalo-pc-bubble,
 html.dark .zalo-pc-bubble,
 body.dark .zalo-pc-bubble {
-  background: #1e293b !important;
+  background: #0c0c0e !important;
   border-color: rgba(255, 255, 255, 0.1) !important;
   color: #f8fafc !important;
 }
@@ -5687,7 +5681,7 @@ body.dark .zalo-pc-bottom-bar {
 html[data-theme="dark"] .zalo-pc-input-placeholder,
 html.dark .zalo-pc-input-placeholder,
 body.dark .zalo-pc-input-placeholder {
-  background: #1e293b !important;
+  background: #0c0c0e !important;
   border-color: rgba(255, 255, 255, 0.1) !important;
   color: #94a3b8 !important;
 }
@@ -6308,26 +6302,17 @@ body.dark .zigzag-demo-card {
    VIBRANT WARM GOLD/ORANGE GRADIENT PAGE BACKGROUND & GLASSMORPHISM
    ========================================================= */
 
-/* Default / Light Mode Gradient Background (Vàng / Cam Hổ Phách Nổi Bật & Sang Trọng cho Trang Chủ) */
+/* Default / Light Mode: Clean Pure White Background */
 .landing-container {
-  background: 
-    radial-gradient(circle at 10% 15%, rgba(249, 115, 22, 0.15) 0%, transparent 45%),
-    radial-gradient(circle at 90% 75%, rgba(245, 158, 11, 0.18) 0%, transparent 45%),
-    radial-gradient(circle at 50% 50%, rgba(251, 146, 60, 0.10) 0%, transparent 60%),
-    linear-gradient(135deg, #fffbeb 0%, #ffedd5 35%, #fef3c7 70%, #fff7ed 100%) !important;
-  background-attachment: fixed !important;
+  background: #ffffff !important;
   min-height: 100vh;
 }
 
-/* Dark Mode Gradient Background (Nền Tối Vàng Cam Sunset Rực Rỡ cho Trang Chủ) */
+/* Dark Mode: Pure Black Background for Landing */
 html[data-theme="dark"] .landing-container,
 html.dark .landing-container,
 body.dark .landing-container {
-  background: 
-    radial-gradient(circle at 15% 15%, rgba(249, 115, 22, 0.22) 0%, transparent 45%),
-    radial-gradient(circle at 85% 80%, rgba(217, 119, 6, 0.20) 0%, transparent 45%),
-    linear-gradient(135deg, #0d0905 0%, #1a0e04 35%, #261406 70%, #0c0915 100%) !important;
-  background-attachment: fixed !important;
+  background: #000000 !important;
 }
 
 /* Section Containers styling - Seamless, Borderless & Standard 1440px Max Width */
@@ -6835,7 +6820,7 @@ html:not([data-theme="dark"]) .user-detail-modal tfoot tr {
 
 html[data-theme="dark"] .user-detail-modal tfoot tr,
 html.dark .user-detail-modal tfoot tr {
-  background: #1e293b !important;
+  background: #0c0c0e !important;
   border-top: 2px solid #334155 !important;
 }
 
@@ -6953,7 +6938,7 @@ html.dark .user-detail-modal tfoot tr {
 
   html[data-theme="dark"] .user-order-mobile-card,
   html.dark .user-order-mobile-card {
-    background: #1e293b !important;
+    background: #0c0c0e !important;
     border-color: #334155 !important;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
   }
@@ -7140,39 +7125,40 @@ html.dark .user-detail-modal tfoot tr {
 }
 
 /* ==========================================================================
-   PREMIUM MODERN LUXURY DARK THEME PALETTE
+   ADMIN MANAGEMENT PANEL - PURE BLACK TRUE OLED DARK MODE
+   Pure Deep Black #000000 | Surface #0c0c0e | Header/Hover #141416 | Border rgba(255,255,255,0.1)
    ========================================================================== */
 html[data-theme="dark"],
 html.dark,
 body.dark {
-  --bg-main: #090d16;
-  --bg-card: #111827;
-  --bg-sidebar: #0d121f;
-  --bg-hover: #161f30;
-  --border-color: rgba(255, 255, 255, 0.08);
+  --bg-main: #000000;
+  --bg-card: #0c0c0e;
+  --bg-sidebar: #000000;
+  --bg-hover: #18181b;
+  --border-color: rgba(255, 255, 255, 0.1);
 
-  --navy-950: #f8fafc;
-  --navy-900: #ffffff;
-  --navy-800: #e2e8f0;
-  --navy-700: #cbd5e1;
-  --navy-600: #94a3b8;
+  --navy-950: #ffffff;
+  --navy-900: #f4f4f5;
+  --navy-800: #e4e4e7;
+  --navy-700: #d4d4d8;
+  --navy-600: #a1a1aa;
 
-  --gray-600: #94a3b8;
-  --gray-500: #64748b;
-  --gray-400: #475569;
-  --gray-300: #334155;
-  --gray-200: rgba(255, 255, 255, 0.08);
-  --gray-100: #161f30;
-  --gray-50:  #090d16;
+  --gray-600: #a1a1aa;
+  --gray-500: #71717a;
+  --gray-400: #52525b;
+  --gray-300: #3f3f46;
+  --gray-200: rgba(255, 255, 255, 0.1);
+  --gray-100: #141416;
+  --gray-50:  #000000;
 
-  --text-main:    #e2e8f0;
-  --text-muted:   #94a3b8;
-  --text-subtle:  #64748b;
+  --text-main:    #ffffff;
+  --text-muted:   #8e8e93;
+  --text-subtle:  #71717a;
   --text-bright:  #ffffff;
-  --text-inverse: #090d16;
+  --text-inverse: #000000;
 
-  background-color: #090d16 !important;
-  color: #e2e8f0 !important;
+  background-color: #000000 !important;
+  color: #ffffff !important;
 }
 
 html[data-theme="dark"] .app-container,
@@ -7190,8 +7176,8 @@ body.dark .modal-content,
 html[data-theme="dark"] .user-detail-modal,
 html.dark .user-detail-modal,
 body.dark .user-detail-modal {
-  background-color: #090d16 !important;
-  color: #e2e8f0 !important;
+  background-color: #000000 !important;
+  color: #ffffff !important;
 }
 
 html[data-theme="dark"] .data-card,
@@ -7203,33 +7189,43 @@ body.dark .table-container,
 html[data-theme="dark"] .lookup-card,
 html.dark .lookup-card,
 body.dark .lookup-card {
-  background-color: #111827 !important;
-  color: #e2e8f0 !important;
-  border: 1px solid rgba(255, 255, 255, 0.08) !important;
-  box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.45) !important;
+  background-color: #0c0c0e !important;
+  color: #ffffff !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.8) !important;
 }
 
+html[data-theme="dark"] table thead th,
 html[data-theme="dark"] table th,
+html.dark table thead th,
 html.dark table th,
+body.dark table thead th,
 body.dark table th {
-  background-color: #0d1322 !important;
-  color: #94a3b8 !important;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
-  font-weight: 600 !important;
+  background-color: #141416 !important;
+  color: #8e8e93 !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12) !important;
+  font-weight: 700 !important;
 }
 
+html[data-theme="dark"] table tbody tr td,
 html[data-theme="dark"] table td,
+html.dark table tbody tr td,
 html.dark table td,
+body.dark table tbody tr td,
 body.dark table td {
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06) !important;
-  color: #e2e8f0 !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+  color: #ffffff !important;
   background-color: transparent !important;
 }
 
 html[data-theme="dark"] tr:hover td,
+html[data-theme="dark"] table tbody tr:hover td,
 html.dark tr:hover td,
-body.dark tr:hover td {
-  background-color: rgba(255, 255, 255, 0.03) !important;
+html.dark table tbody tr:hover td,
+body.dark tr:hover td,
+body.dark table tbody tr:hover td {
+  background-color: #18181b !important;
+  color: #ffffff !important;
 }
 
 html[data-theme="dark"] input,
@@ -7240,10 +7236,32 @@ html.dark select,
 body.dark select,
 html[data-theme="dark"] textarea,
 html.dark textarea,
-body.dark textarea {
-  background-color: #0a0e17 !important;
-  color: #f8fafc !important;
-  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+body.dark textarea,
+html[data-theme="dark"] .form-control,
+html.dark .form-control,
+body.dark .form-control {
+  background-color: #141416 !important;
+  color: #ffffff !important;
+  border: 1px solid rgba(255, 255, 255, 0.14) !important;
+}
+
+html[data-theme="dark"] input:focus,
+html.dark input:focus,
+body.dark input:focus,
+html[data-theme="dark"] .form-control:focus,
+html.dark .form-control:focus,
+body.dark .form-control:focus {
+  border-color: #f97316 !important;
+  box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.2) !important;
+}
+
+html[data-theme="dark"] input::placeholder,
+html.dark input::placeholder,
+body.dark input::placeholder,
+html[data-theme="dark"] .form-control::placeholder,
+html.dark .form-control::placeholder,
+body.dark .form-control::placeholder {
+  color: #71717a !important;
 }
 
 html[data-theme="dark"] .sidebar,
@@ -7261,15 +7279,15 @@ body.dark .admin-header,
 html[data-theme="dark"] .dashboard-header,
 html.dark .dashboard-header,
 body.dark .dashboard-header {
-  background-color: #0d121f !important;
-  border-color: rgba(255, 255, 255, 0.08) !important;
+  background-color: #000000 !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
 }
 
 html[data-theme="dark"] code,
 html.dark code,
 body.dark code {
-  background-color: rgba(255, 255, 255, 0.06) !important;
-  color: #38bdf8 !important;
+  background-color: rgba(255, 255, 255, 0.08) !important;
+  color: #ff9f0a !important;
 }
 
 body.dark .order-complete-time-badge {
@@ -7277,6 +7295,7 @@ body.dark .order-complete-time-badge {
   background: rgba(16, 185, 129, 0.15) !important;
   border-color: rgba(52, 211, 153, 0.35) !important;
 }
+
 
 /* =========================================================
    ADMIN MANAGEMENT PANEL - HARMONIOUS MODERN SAAS DESIGN
@@ -7505,8 +7524,7 @@ body.dark .main-content {
 html[data-theme="dark"] .sidebar,
 html.dark .sidebar,
 body.dark .sidebar {
-  background-color: #121214 !important;
-  border-right-color: rgba(255, 255, 255, 0.1) !important;
+  background-color: #000000 !important; border-right-color: rgba(255, 255, 255, 0.1) !important;
 }
 
 html[data-theme="dark"] .sidebar-header,
@@ -7518,8 +7536,7 @@ body.dark .sidebar-header {
 html[data-theme="dark"] .dashboard-header,
 html.dark .dashboard-header,
 body.dark .dashboard-header {
-  background-color: #121214 !important;
-  border-bottom-color: rgba(255, 255, 255, 0.1) !important;
+  background-color: #000000 !important; border-bottom-color: rgba(255, 255, 255, 0.1) !important;
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.6) !important;
 }
 
@@ -7603,7 +7620,7 @@ body.dark .btn-refresh-header:hover {
 html[data-theme="dark"] .stat-card,
 html.dark .stat-card,
 body.dark .stat-card {
-  background-color: #1c1c1e !important;
+  background-color: #0c0c0e !important;
   border-color: rgba(255, 255, 255, 0.12) !important;
   border-radius: 16px !important;
   box-shadow: 0 4px 24px rgba(0, 0, 0, 0.6) !important;
@@ -7633,7 +7650,7 @@ body.dark .stat-val {
 html[data-theme="dark"] .data-card,
 html.dark .data-card,
 body.dark .data-card {
-  background-color: #1c1c1e !important;
+  background-color: #0c0c0e !important;
   border-color: rgba(255, 255, 255, 0.12) !important;
   border-radius: 16px !important;
   box-shadow: 0 4px 24px rgba(0, 0, 0, 0.6) !important;
@@ -7654,7 +7671,7 @@ body.dark .card-title {
 html[data-theme="dark"] .table-container table thead th,
 html.dark .table-container table thead th,
 body.dark .table-container table thead th {
-  background-color: #161618 !important;
+  background-color: #141416 !important;
   border-bottom: 1px solid rgba(255, 255, 255, 0.12) !important;
   color: #8e8e93 !important;
 }
@@ -7675,7 +7692,7 @@ body.dark .table-container table tbody tr td {
 html[data-theme="dark"] .table-container table tbody tr:hover td,
 html.dark .table-container table tbody tr:hover td,
 body.dark .table-container table tbody tr:hover td {
-  background-color: #2c2c2e !important;
+  background-color: #18181b !important;
   color: #ffffff !important;
 }
 
@@ -7695,7 +7712,7 @@ body.dark .table-container table tbody tr td code {
 html[data-theme="dark"] .form-control,
 html.dark .form-control,
 body.dark .form-control {
-  background-color: #2c2c2e !important;
+  background-color: #18181b !important;
   border-color: rgba(255, 255, 255, 0.12) !important;
   color: #ffffff !important;
   border-radius: 10px !important;

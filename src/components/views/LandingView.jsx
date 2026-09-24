@@ -418,7 +418,7 @@ export default function LandingView() {
                   ))}
                 </ul>
               </div>
-              <a href="http://zaloapp.com/qr/p/fd2gcjcjfuof" target="_blank" rel="noopener noreferrer" className="btn btn-glow-active"
+              <a href="https://zalo.me/0888728256" target="_blank" rel="noopener noreferrer" className="btn btn-glow-active"
                 onClick={() => showToast("Đang kết nối tới Zalo Phạm Thắng...", 'info')}
                 style={{ width: '100%', padding: '14px', borderRadius: '12px', fontSize: '15px', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', textDecoration: 'none', boxSizing: 'border-box' }}>
                 Mua Ngay

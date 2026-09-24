@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-const ZALO_CONTACT_URL = "http://zaloapp.com/qr/p/fd2gcjcjfuof";
+const ZALO_CONTACT_URL = "https://zalo.me/0888728256";
 
 export default function FloatingZaloContact() {
   const [hovered, setHovered] = useState(false);
@@ -17,7 +17,7 @@ export default function FloatingZaloContact() {
         className="floating-zalo-link"
         onMouseEnter={() => setHovered(true)}
         onMouseLeave={() => setHovered(false)}
-        title="Chat trực tiếp qua Zalo với Admin (Phạm Thắng)"
+        title="Chat trực tiếp qua Zalo với Admin Phạm Thắng (0888728256)"
       >
         {/* Dual Ripple Animation */}
         <span className="zalo-pulse-wave" aria-hidden="true"></span>

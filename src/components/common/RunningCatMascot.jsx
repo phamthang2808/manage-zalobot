@@ -158,7 +158,7 @@ export default function RunningCatMascot() {
       >
 
         <img
-          src="/1111.png"
+          src="/fvc.png?v=20260924_1"
           alt="Running Mascot"
           className="running-cat-img"
           style={{ transform: shouldFlipHorizontally ? 'scaleX(-1)' : 'none' }}

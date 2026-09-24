@@ -83,8 +83,8 @@
   /* ============================================
      TYPOGRAPHY
      ============================================ */
-  --font-sans:    'Inter', system-ui, -apple-system, sans-serif;
-  --font-heading: 'Outfit', 'Inter', system-ui, sans-serif;
+  --font-sans:    'Be Vietnam Pro', 'Inter', system-ui, -apple-system, sans-serif;
+  --font-heading: 'Plus Jakarta Sans', 'Outfit', system-ui, sans-serif;
 
   --text-xs:   11px;
   --text-sm:   13px;
@@ -4485,91 +4485,83 @@ wa-icon {
 }
 
 /* =========================================================
-   ENHANCED GLOWING DARK MODE CARDS (SÁNG ĐẸP NỔI BẬT)
+   REFINED LUXURY DARK MODE CARDS & UNIFIED BORDERS
    ========================================================= */
 
 html[data-theme="dark"],
 html.dark,
 body.dark {
-  /* Glowing bright cards in Dark Mode */
+  /* Unified Cards in Dark Mode */
   .stat-card,
   .data-card,
   .lookup-card,
   .stat-card-item,
   .order-card-item,
   .table-container table tbody tr {
-    background: linear-gradient(145deg, #1e293b 0%, #0f172a 100%) !important;
-    border: 1.5px solid rgba(255, 255, 255, 0.14) !important;
-    box-shadow: 0 8px 24px -4px rgba(0, 0, 0, 0.4), 0 0 16px rgba(249, 115, 22, 0.08) !important;
+    background: #111827 !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.45) !important;
     backdrop-filter: blur(12px);
-    transition: all 0.3s ease !important;
+    transition: all 0.25s ease !important;
   }
 
   .stat-card:hover,
-  .data-card:hover,
   .lookup-card:hover,
-  .stat-card-item:hover,
-  .order-card-item:hover,
-  .table-container table tbody tr:hover {
-    border-color: rgba(249, 115, 22, 0.5) !important;
-    box-shadow: 0 10px 28px -4px rgba(0, 0, 0, 0.5), 0 0 22px rgba(249, 115, 22, 0.25) !important;
+  .order-card-item:hover {
+    border-color: rgba(255, 255, 255, 0.16) !important;
+    box-shadow: 0 6px 24px -2px rgba(0, 0, 0, 0.55) !important;
   }
 
-  /* Specific glowing variants for stat cards & lookup stat items */
+  /* Specific tasteful tinted variants for stat cards (refined 1px border, soft ambient glow) */
   .stat-card.primary,
   .stat-card-item.total {
-    background: linear-gradient(145deg, rgba(59, 130, 246, 0.22), #0f172a 90%) !important;
-    border: 1.5px solid rgba(96, 165, 250, 0.65) !important;
-    box-shadow: 0 4px 20px rgba(59, 130, 246, 0.25), inset 0 0 12px rgba(96, 165, 250, 0.12) !important;
+    background: linear-gradient(145deg, rgba(59, 130, 246, 0.08), #111827 85%) !important;
+    border: 1px solid rgba(59, 130, 246, 0.28) !important;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3) !important;
   }
   .stat-card.primary .stat-val,
   .stat-card-item.total .stat-card-value {
     color: #60a5fa !important;
-    text-shadow: 0 0 12px rgba(96, 165, 250, 0.4);
   }
 
   .stat-card-item.pending {
-    background: linear-gradient(145deg, rgba(245, 158, 11, 0.22), #0f172a 90%) !important;
-    border: 1.5px solid rgba(251, 191, 36, 0.65) !important;
-    box-shadow: 0 4px 20px rgba(245, 158, 11, 0.22), inset 0 0 12px rgba(251, 191, 36, 0.12) !important;
+    background: linear-gradient(145deg, rgba(245, 158, 11, 0.08), #111827 85%) !important;
+    border: 1px solid rgba(245, 158, 11, 0.28) !important;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3) !important;
   }
   .stat-card-item.pending .stat-card-value {
     color: #fbbf24 !important;
-    text-shadow: 0 0 12px rgba(251, 191, 36, 0.4);
   }
 
   .stat-card.success,
   .stat-card-item.completed {
-    background: linear-gradient(145deg, rgba(16, 185, 129, 0.22), #0f172a 90%) !important;
-    border: 1.5px solid rgba(52, 211, 153, 0.65) !important;
-    box-shadow: 0 4px 20px rgba(16, 185, 129, 0.22), inset 0 0 12px rgba(52, 211, 153, 0.12) !important;
+    background: linear-gradient(145deg, rgba(16, 185, 129, 0.08), #111827 85%) !important;
+    border: 1px solid rgba(16, 185, 129, 0.28) !important;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3) !important;
   }
   .stat-card.success .stat-val,
   .stat-card-item.completed .stat-card-value {
     color: #34d399 !important;
-    text-shadow: 0 0 12px rgba(52, 211, 153, 0.4);
   }
 
   .stat-card.warning,
   .stat-card-item.withdrawable {
-    background: linear-gradient(145deg, rgba(249, 115, 22, 0.22), #0f172a 90%) !important;
-    border: 1.5px solid rgba(251, 146, 60, 0.65) !important;
-    box-shadow: 0 4px 20px rgba(249, 115, 22, 0.25), inset 0 0 12px rgba(251, 146, 60, 0.12) !important;
+    background: linear-gradient(145deg, rgba(249, 115, 22, 0.08), #111827 85%) !important;
+    border: 1px solid rgba(249, 115, 22, 0.3) !important;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3) !important;
   }
   .stat-card.warning .stat-val,
   .stat-card-item.withdrawable .stat-card-value {
     color: #fb923c !important;
-    text-shadow: 0 0 12px rgba(251, 146, 60, 0.4);
   }
 
   .stat-card-item.received {
-    background: linear-gradient(145deg, rgba(168, 85, 247, 0.22), #0f172a 90%) !important;
-    border: 1.5px solid rgba(192, 132, 252, 0.65) !important;
-    box-shadow: 0 4px 20px rgba(168, 85, 247, 0.25), inset 0 0 12px rgba(192, 132, 252, 0.12) !important;
+    background: linear-gradient(145deg, rgba(168, 85, 247, 0.08), #111827 85%) !important;
+    border: 1px solid rgba(168, 85, 247, 0.28) !important;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3) !important;
   }
   .stat-card-item.received .stat-card-value {
     color: #c084fc !important;
-    text-shadow: 0 0 12px rgba(192, 132, 252, 0.4);
   }
 
   /* Make inner inputs, code badges, and highlight boxes shine in Dark Mode */
@@ -7098,17 +7090,19 @@ html.dark .user-detail-modal tfoot tr {
 }
 
 /* ==========================================================================
-   PREMIUM MODERN DARK MODE STYLES
+   PREMIUM MODERN LUXURY DARK THEME PALETTE
    ========================================================================== */
+html[data-theme="dark"],
+html.dark,
 body.dark {
-  --bg-main: #0b0f19;
+  --bg-main: #090d16;
   --bg-card: #111827;
-  --bg-sidebar: #0f172a;
-  --bg-hover: #1e293b;
-  --border-color: #1e293b;
+  --bg-sidebar: #0d121f;
+  --bg-hover: #161f30;
+  --border-color: rgba(255, 255, 255, 0.08);
 
   --navy-950: #f8fafc;
-  --navy-900: #f1f5f9;
+  --navy-900: #ffffff;
   --navy-800: #e2e8f0;
   --navy-700: #cbd5e1;
   --navy-600: #94a3b8;
@@ -7117,67 +7111,121 @@ body.dark {
   --gray-500: #64748b;
   --gray-400: #475569;
   --gray-300: #334155;
-  --gray-200: #1e293b;
-  --gray-100: #1e293b;
-  --gray-50:  #0b0f19;
+  --gray-200: rgba(255, 255, 255, 0.08);
+  --gray-100: #161f30;
+  --gray-50:  #090d16;
 
   --text-main:    #e2e8f0;
   --text-muted:   #94a3b8;
   --text-subtle:  #64748b;
-  --text-bright:  #f8fafc;
-  --text-inverse: #0f172a;
+  --text-bright:  #ffffff;
+  --text-inverse: #090d16;
 
-  background-color: #0b0f19 !important;
+  background-color: #090d16 !important;
   color: #e2e8f0 !important;
 }
 
+html[data-theme="dark"] .app-container,
+html.dark .app-container,
 body.dark .app-container,
+html[data-theme="dark"] .admin-main-content,
+html.dark .admin-main-content,
 body.dark .admin-main-content,
+html[data-theme="dark"] .main-content,
+html.dark .main-content,
 body.dark .main-content,
-body.dark .table-container,
+html[data-theme="dark"] .modal-content,
+html.dark .modal-content,
 body.dark .modal-content,
-body.dark .user-detail-modal,
+html[data-theme="dark"] .user-detail-modal,
+html.dark .user-detail-modal,
+body.dark .user-detail-modal {
+  background-color: #090d16 !important;
+  color: #e2e8f0 !important;
+}
+
+html[data-theme="dark"] .data-card,
+html.dark .data-card,
+body.dark .data-card,
+html[data-theme="dark"] .table-container,
+html.dark .table-container,
+body.dark .table-container,
+html[data-theme="dark"] .lookup-card,
+html.dark .lookup-card,
 body.dark .lookup-card {
   background-color: #111827 !important;
   color: #e2e8f0 !important;
-  border-color: #1e293b !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.45) !important;
 }
 
+html[data-theme="dark"] table th,
+html.dark table th,
 body.dark table th {
-  background-color: #0f172a !important;
+  background-color: #0d1322 !important;
   color: #94a3b8 !important;
-  border-bottom-color: #1e293b !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+  font-weight: 600 !important;
 }
 
+html[data-theme="dark"] table td,
+html.dark table td,
 body.dark table td {
-  border-bottom-color: #1e293b !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06) !important;
   color: #e2e8f0 !important;
   background-color: transparent !important;
 }
 
+html[data-theme="dark"] tr:hover td,
+html.dark tr:hover td,
 body.dark tr:hover td {
-  background-color: rgba(30, 41, 59, 0.5) !important;
+  background-color: rgba(255, 255, 255, 0.03) !important;
 }
 
+html[data-theme="dark"] input,
+html.dark input,
 body.dark input,
+html[data-theme="dark"] select,
+html.dark select,
 body.dark select,
+html[data-theme="dark"] textarea,
+html.dark textarea,
 body.dark textarea {
-  background-color: #0f172a !important;
+  background-color: #0a0e17 !important;
   color: #f8fafc !important;
-  border-color: #334155 !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
 }
 
+html[data-theme="dark"] .sidebar,
+html.dark .sidebar,
 body.dark .sidebar,
+html[data-theme="dark"] .admin-sidebar,
+html.dark .admin-sidebar,
 body.dark .admin-sidebar,
+html[data-theme="dark"] .header,
+html.dark .header,
 body.dark .header,
-body.dark .admin-header {
-  background-color: #0f172a !important;
-  border-color: #1e293b !important;
+html[data-theme="dark"] .admin-header,
+html.dark .admin-header,
+body.dark .admin-header,
+html[data-theme="dark"] .dashboard-header,
+html.dark .dashboard-header,
+body.dark .dashboard-header {
+  background-color: #0d121f !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
 }
 
+html[data-theme="dark"] code,
+html.dark code,
 body.dark code {
-  background-color: rgba(30, 41, 59, 0.7) !important;
+  background-color: rgba(255, 255, 255, 0.06) !important;
   color: #38bdf8 !important;
+}
+
+body.dark .order-complete-time-badge {
+  color: #34d399 !important;
+  background: rgba(16, 185, 129, 0.15) !important;
+  border-color: rgba(52, 211, 153, 0.35) !important;
 }
 
 

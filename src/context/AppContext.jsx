@@ -20,6 +20,24 @@ export function AppProvider({ children }) {
     if (path.includes('/login') || window.location.search.includes('view=login') || window.location.hash.includes('login')) return 'login';
     return sessionStorage.getItem('adminView') || 'home';
   });
+
+  useEffect(() => {
+    const handlePopState = () => {
+      const path = window.location.pathname;
+      if (path.includes('/lookup') || path.includes('/tra-cuu') || window.location.search.includes('view=lookup') || window.location.hash.includes('lookup')) {
+        setView('lookup');
+      } else if (path.includes('/login') || window.location.search.includes('view=login') || window.location.hash.includes('login')) {
+        setView('login');
+      } else if (path.includes('/admin') || window.location.search.includes('view=admin') || window.location.hash.includes('admin')) {
+        setView('admin');
+      } else {
+        setView(sessionStorage.getItem('adminView') || 'home');
+      }
+    };
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, []);
+
   const [activeTab, setActiveTab] = useState(() => sessionStorage.getItem('adminTab') || 'dashboard');
 
   // Theme

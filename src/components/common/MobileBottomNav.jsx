@@ -56,7 +56,7 @@ export default function MobileBottomNav() {
   return (
     <nav className="mobile-bottom-nav">
       <button type="button" className={`mobile-bottom-nav-item${view === 'home' ? ' active' : ''}`}
-        onClick={() => { setView('home'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}>
+        onClick={() => { setView('home'); window.history.pushState({}, '', '/'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}>
         <div className="nav-icon-wrap"><i className="fa-solid fa-house"></i></div>
         <span className="nav-label">Trang chủ</span>
       </button>

@@ -6,8 +6,19 @@ import ToastNotification from '../common/ToastNotification';
 import ThemeToggle from '../common/ThemeToggle';
 import RunningCatMascot from '../common/RunningCatMascot';
 
-export default function OrderLookupView() {
-  const { setView, showToast, API_URL_ROOT } = useApp();
+export default function OrderLookupView({ setView: propSetView } = {}) {
+  const { setView: contextSetView, showToast, API_URL_ROOT } = useApp();
+  const setView = propSetView || contextSetView;
+
+  const handleGoHome = (e) => {
+    if (e) e.preventDefault();
+    if (propSetView) propSetView('home');
+    if (contextSetView) contextSetView('home');
+    sessionStorage.removeItem('adminView');
+    window.history.pushState({}, '', '/');
+    window.dispatchEvent(new PopStateEvent('popstate'));
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
   // Search state
   const [lookupSearchType, setLookupSearchType] = useState('ORDER_ID');
@@ -433,77 +444,78 @@ export default function OrderLookupView() {
     <div className="lookup-page-container">
       <RunningCatMascot />
       <style dangerouslySetInnerHTML={{__html: `
-        .lookup-page-container { min-height: 100vh; width: 100%; background: var(--bg-main); color: var(--text-main); font-family: 'Inter', system-ui, sans-serif; padding: 16px; display: flex; flex-direction: column; align-items: center; position: relative; overflow: hidden; }
-        .lookup-page-container::before { content: ''; position: absolute; top: -15%; left: -10%; width: 700px; height: 700px; background: radial-gradient(circle, rgba(249,115,22,0.1) 0%, rgba(234,88,12,0.03) 40%, transparent 70%); z-index: 1; pointer-events: none; animation: lookupFloatOrb1 8s ease-in-out infinite; }
-        .lookup-page-container::after { content: ''; position: absolute; bottom: -20%; right: -10%; width: 600px; height: 600px; background: radial-gradient(circle, rgba(249,115,22,0.08) 0%, rgba(234,88,12,0.02) 40%, transparent 70%); z-index: 1; pointer-events: none; animation: lookupFloatOrb2 10s ease-in-out infinite; }
+        .lookup-page-container { min-height: 100vh; width: 100%; background: var(--bg-main); color: var(--text-main); font-family: var(--font-sans); padding: 16px; display: flex; flex-direction: column; align-items: center; position: relative; overflow: hidden; }
+        .lookup-page-container::before { content: ''; position: absolute; top: -15%; left: -10%; width: 700px; height: 700px; background: radial-gradient(circle, rgba(249,115,22,0.08) 0%, rgba(234,88,12,0.02) 40%, transparent 70%); z-index: 1; pointer-events: none; animation: lookupFloatOrb1 8s ease-in-out infinite; }
+        .lookup-page-container::after { content: ''; position: absolute; bottom: -20%; right: -10%; width: 600px; height: 600px; background: radial-gradient(circle, rgba(249,115,22,0.06) 0%, rgba(234,88,12,0.015) 40%, transparent 70%); z-index: 1; pointer-events: none; animation: lookupFloatOrb2 10s ease-in-out infinite; }
         @keyframes lookupFloatOrb1 { 0%, 100% { transform: translate(0,0) scale(1); } 50% { transform: translate(40px,30px) scale(1.1); } }
         @keyframes lookupFloatOrb2 { 0%, 100% { transform: translate(0,0) scale(1); } 50% { transform: translate(-30px,-40px) scale(1.05); } }
         .lookup-card, .lookup-card * { box-sizing: border-box !important; }
         .lookup-header, .lookup-card, .stats-container, .orders-container, .lookup-error { position: relative; z-index: 2; }
         .lookup-header { width: 100%; max-width: 600px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; padding-bottom: 12px; border-bottom: 1px solid var(--border-color); }
-        .lookup-logo { font-size: 18px; font-weight: 800; color: var(--text-bright); display: flex; align-items: center; gap: 8px; }
-        .lookup-logo img { border: 1px solid var(--border-color); }
-        .lookup-admin-link { font-size: 13px; color: var(--text-bright); text-decoration: none; background: var(--bg-card); padding: 6px 14px; border-radius: 20px; border: 1.5px solid var(--border-color); font-weight: 700; transition: all 0.2s ease; cursor: pointer; }
-        .lookup-admin-link:hover { background: #fff7ed; color: #ea580c; border-color: #f97316; }
-        .lookup-card { width: 100%; max-width: 600px; box-sizing: border-box !important; background: var(--bg-card); border: 1.5px solid var(--border-color); backdrop-filter: blur(16px); border-radius: 16px; padding: 24px; box-shadow: 0 10px 30px -5px rgba(0,0,0,0.1); margin-bottom: 24px; overflow: hidden; }
-        .lookup-title { font-size: 22px; font-weight: 800; text-align: center; color: var(--text-bright); margin-bottom: 8px; display: flex; align-items: center; justify-content: center; gap: 8px; }
-        .lookup-subtitle { font-size: 13.5px; color: var(--text-muted); font-weight: 600; text-align: center; margin-bottom: 24px; }
-        .lookup-tabs { display: flex; background: var(--bg-main); border: 1.5px solid var(--border-color); padding: 3px; border-radius: 10px; margin-bottom: 16px; gap: 2px; width: 100%; box-sizing: border-box; }
-        .lookup-tab { flex: 1; min-width: 0; text-align: center; padding: 8px 4px; font-size: 12px; font-weight: 700; border-radius: 7px; cursor: pointer; background: transparent; border: none; color: var(--text-muted); transition: all 0.2s ease; white-space: nowrap; }
+        .lookup-logo { font-size: 18px; font-weight: 800; color: var(--text-bright); display: flex; align-items: center; gap: 8px; font-family: var(--font-heading); }
+        .lookup-logo img { border: none; }
+        .lookup-admin-link { font-size: 13px; color: var(--text-bright); text-decoration: none; background: var(--bg-card); padding: 7px 16px; border-radius: 20px; border: 1px solid var(--border-color); font-weight: 600; transition: all 0.2s ease; cursor: pointer; }
+        .lookup-admin-link:hover { background: rgba(249,115,22,0.08); color: #ea580c; border-color: rgba(249,115,22,0.4); }
+        .lookup-card { width: 100%; max-width: 600px; box-sizing: border-box !important; background: var(--bg-card); border: 1px solid var(--border-color); backdrop-filter: blur(16px); border-radius: 16px; padding: 24px; box-shadow: 0 4px 20px -2px rgba(0,0,0,0.06); margin-bottom: 20px; overflow: hidden; }
+        .lookup-title { font-family: var(--font-heading); font-size: 21px; font-weight: 800; text-align: center; color: var(--text-bright); margin-bottom: 8px; display: flex; align-items: center; justify-content: center; gap: 8px; letter-spacing: -0.3px; }
+        .lookup-subtitle { font-size: 13.5px; color: var(--text-muted); font-weight: 500; text-align: center; margin-bottom: 24px; }
+        .lookup-tabs { display: flex; background: var(--bg-main); border: 1px solid var(--border-color); padding: 3px; border-radius: 12px; margin-bottom: 16px; gap: 2px; width: 100%; box-sizing: border-box; }
+        .lookup-tab { flex: 1; min-width: 0; text-align: center; padding: 8px 4px; font-size: 12px; font-weight: 600; border-radius: 9px; cursor: pointer; background: transparent; border: none; color: var(--text-muted); transition: all 0.2s ease; white-space: nowrap; }
         @media (max-width: 480px) { .lookup-tab { font-size: 11.5px; padding: 7px 2px; } }
         .lookup-tab:hover { color: var(--text-bright); }
-        .lookup-tab.active { background: linear-gradient(135deg, #f97316, #ea580c); color: #ffffff !important; box-shadow: 0 4px 14px rgba(249,115,22,0.35); }
+        .lookup-tab.active { background: linear-gradient(135deg, #f97316, #ea580c); color: #ffffff !important; box-shadow: 0 2px 10px rgba(249,115,22,0.3); font-weight: 700; }
         .lookup-input-group { margin-bottom: 16px; width: 100% !important; max-width: 100% !important; box-sizing: border-box !important; }
-        .lookup-label { display: block; font-size: 12px; font-weight: 700; color: var(--text-bright); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; }
-        .lookup-input { width: 100% !important; min-width: 100% !important; max-width: 100% !important; box-sizing: border-box !important; background: var(--bg-main); border: 1.5px solid var(--border-color); border-radius: 10px; padding: 12px 14px; color: var(--text-bright); font-size: 15px; font-weight: 600; outline: none; transition: all 0.2s ease; display: block !important; -webkit-appearance: none; appearance: none; }
+        .lookup-label { display: block; font-size: 11.5px; font-weight: 700; color: var(--text-muted); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .lookup-input { width: 100% !important; min-width: 100% !important; max-width: 100% !important; box-sizing: border-box !important; background: var(--bg-main); border: 1px solid var(--border-color); border-radius: 12px; padding: 12px 14px; color: var(--text-bright); font-size: 14.5px; font-weight: 600; font-family: var(--font-sans); outline: none; transition: all 0.2s ease; display: block !important; -webkit-appearance: none; appearance: none; }
         input[type="date"].lookup-input { width: 100% !important; min-width: 100% !important; max-width: 100% !important; box-sizing: border-box !important; display: block !important; }
-        .lookup-input:focus { border-color: #ea580c; background: var(--bg-card); box-shadow: 0 0 12px rgba(249,115,22,0.25); }
+        .lookup-input:focus { border-color: #f97316; background: var(--bg-card); box-shadow: 0 0 0 3px rgba(249,115,22,0.18); }
         .lookup-date-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; width: 100% !important; max-width: 100% !important; box-sizing: border-box !important; }
         @media (max-width: 768px) { .lookup-date-grid { display: flex !important; flex-direction: column !important; gap: 16px !important; } }
-        .lookup-btn { width: 100%; max-width: 100% !important; box-sizing: border-box !important; background: linear-gradient(135deg, #f97316, #ea580c); color: #ffffff; font-size: 15px; font-weight: 800; border: none; border-radius: 8px; padding: 14px; cursor: pointer; transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 15px rgba(249,115,22,0.35); }
-        .lookup-btn:hover { box-shadow: 0 6px 20px rgba(249,115,22,0.5); transform: translateY(-1px); }
+        .lookup-btn { width: 100%; max-width: 100% !important; box-sizing: border-box !important; background: linear-gradient(135deg, #f97316, #ea580c); color: #ffffff; font-size: 15px; font-weight: 700; font-family: var(--font-heading); border: none; border-radius: 12px; padding: 13px; cursor: pointer; transition: all 0.25s ease; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 14px rgba(249,115,22,0.28); }
+        .lookup-btn:hover { box-shadow: 0 6px 20px rgba(249,115,22,0.4); transform: translateY(-1px); }
         .lookup-btn:disabled { background: #94a3b8; cursor: not-allowed; box-shadow: none; transform: none; }
-        .recent-searches { margin-top: 16px; display: flex; flex-wrap: wrap; align-items: center; gap: 8px; font-size: 12.5px; color: var(--text-main); font-weight: 600; }
-        .recent-tag { background: var(--bg-card); border: 1.5px solid var(--border-color); border-radius: 12px; padding: 4px 10px; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: all 0.2s ease; color: var(--text-bright); font-weight: 700; }
-        .recent-tag:hover { border-color: #ea580c; background: #fff7ed; color: #ea580c; }
+        .recent-searches { margin-top: 16px; display: flex; flex-wrap: wrap; align-items: center; gap: 8px; font-size: 12px; color: var(--text-muted); font-weight: 500; }
+        .recent-tag { background: var(--bg-main); border: 1px solid var(--border-color); border-radius: 10px; padding: 4px 10px; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: all 0.2s ease; color: var(--text-bright); font-weight: 600; }
+        .recent-tag:hover { border-color: rgba(249,115,22,0.5); background: rgba(249,115,22,0.06); color: #ea580c; }
         .recent-close { font-size: 12px; color: #dc2626; font-weight: bold; }
-        .lookup-error { width: 100%; max-width: 600px; background: var(--bg-main); border: 1.5px solid #f87171; color: #991b1b; padding: 12px 16px; border-radius: 8px; margin-bottom: 20px; font-size: 14px; font-weight: 700; }
+        .lookup-error { width: 100%; max-width: 600px; background: rgba(239,68,68,0.08); border: 1px solid rgba(239,68,68,0.3); color: #ef4444; padding: 12px 16px; border-radius: 12px; margin-bottom: 20px; font-size: 13.5px; font-weight: 600; }
         .stats-container { width: 100%; max-width: 600px; margin-bottom: 24px; }
-        .stats-section-title { font-size: 17px; font-weight: 800; margin-bottom: 12px; color: var(--text-bright); display: flex; align-items: center; gap: 8px; }
-        .stats-cards-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+        .stats-section-title { font-family: var(--font-heading); font-size: 16.5px; font-weight: 700; margin-bottom: 12px; color: var(--text-bright); display: flex; align-items: center; gap: 8px; letter-spacing: -0.2px; }
+        .stats-cards-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
         .stats-cards-grid > :first-child { grid-column: span 2; }
-        .stat-card-item { border-radius: 12px; padding: 16px; border: 1.5px solid var(--border-color); display: flex; flex-direction: column; box-shadow: 0 4px 12px rgba(0,0,0,0.04); background: var(--bg-card); transition: all 0.2s ease; }
-        .stat-card-item.total { background: linear-gradient(135deg, rgba(219,234,254,0.5) 0%, var(--bg-card) 100%); border-color: #93c5fd; }
-        .stat-card-item.pending { background: linear-gradient(135deg, rgba(254,243,199,0.5) 0%, var(--bg-card) 100%); border-color: #fcd34d; }
-        .stat-card-item.completed { background: linear-gradient(135deg, rgba(209,250,229,0.5) 0%, var(--bg-card) 100%); border-color: #6ee7b7; }
-        .stat-card-item.withdrawable { background: linear-gradient(135deg, rgba(255,237,213,0.5) 0%, var(--bg-card) 100%); border-color: #fdba74; }
-        .stat-card-item.received { background: linear-gradient(135deg, rgba(243,232,255,0.5) 0%, var(--bg-card) 100%); border-color: #c084fc; }
-        html[data-theme="dark"] .stat-card-item.total, body.dark .stat-card-item.total { background: linear-gradient(135deg, rgba(37,99,235,0.2) 0%, var(--bg-card) 100%); border-color: rgba(59,130,246,0.5); }
-        html[data-theme="dark"] .stat-card-item.pending, body.dark .stat-card-item.pending { background: linear-gradient(135deg, rgba(217,119,6,0.2) 0%, var(--bg-card) 100%); border-color: rgba(245,158,11,0.5); }
-        html[data-theme="dark"] .stat-card-item.completed, body.dark .stat-card-item.completed { background: linear-gradient(135deg, rgba(5,150,105,0.2) 0%, var(--bg-card) 100%); border-color: rgba(16,185,129,0.5); }
-        html[data-theme="dark"] .stat-card-item.withdrawable, body.dark .stat-card-item.withdrawable { background: linear-gradient(135deg, rgba(234,88,12,0.2) 0%, var(--bg-card) 100%); border-color: rgba(249,115,22,0.5); }
-        html[data-theme="dark"] .stat-card-item.received, body.dark .stat-card-item.received { background: linear-gradient(135deg, rgba(139,92,246,0.2) 0%, var(--bg-card) 100%); border-color: rgba(168,85,247,0.5); }
-        .stat-card-label { font-size: 11.5px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 4px; font-weight: 700; letter-spacing: 0.5px; }
-        .stat-card-value { font-size: 24px; font-weight: 900; color: var(--text-bright); }
+        .stat-card-item { border-radius: 14px; padding: 15px 16px; border: 1px solid var(--border-color); display: flex; flex-direction: column; background: var(--bg-card); transition: all 0.2s ease; }
+        .stat-card-item.total { border-color: rgba(59, 130, 246, 0.25); background: linear-gradient(135deg, rgba(59, 130, 246, 0.05) 0%, var(--bg-card) 100%); }
+        .stat-card-item.pending { border-color: rgba(245, 158, 11, 0.25); background: linear-gradient(135deg, rgba(245, 158, 11, 0.05) 0%, var(--bg-card) 100%); }
+        .stat-card-item.completed { border-color: rgba(16, 185, 129, 0.25); background: linear-gradient(135deg, rgba(16, 185, 129, 0.05) 0%, var(--bg-card) 100%); }
+        .stat-card-item.withdrawable { border-color: rgba(249, 115, 22, 0.3); background: linear-gradient(135deg, rgba(249, 115, 22, 0.06) 0%, var(--bg-card) 100%); }
+        .stat-card-item.received { border-color: rgba(168, 85, 247, 0.25); background: linear-gradient(135deg, rgba(168, 85, 247, 0.05) 0%, var(--bg-card) 100%); }
+        html[data-theme="dark"] .stat-card-item, body.dark .stat-card-item { background: #111827; border: 1px solid rgba(255, 255, 255, 0.08); }
+        html[data-theme="dark"] .stat-card-item.total, body.dark .stat-card-item.total { border-color: rgba(59, 130, 246, 0.35); background: linear-gradient(145deg, rgba(59, 130, 246, 0.1) 0%, #111827 100%); }
+        html[data-theme="dark"] .stat-card-item.pending, body.dark .stat-card-item.pending { border-color: rgba(245, 158, 11, 0.35); background: linear-gradient(145deg, rgba(245, 158, 11, 0.1) 0%, #111827 100%); }
+        html[data-theme="dark"] .stat-card-item.completed, body.dark .stat-card-item.completed { border-color: rgba(16, 185, 129, 0.35); background: linear-gradient(145deg, rgba(16, 185, 129, 0.1) 0%, #111827 100%); }
+        html[data-theme="dark"] .stat-card-item.withdrawable, body.dark .stat-card-item.withdrawable { border-color: rgba(249, 115, 22, 0.4); background: linear-gradient(145deg, rgba(249, 115, 22, 0.1) 0%, #111827 100%); }
+        html[data-theme="dark"] .stat-card-item.received, body.dark .stat-card-item.received { border-color: rgba(168, 85, 247, 0.35); background: linear-gradient(145deg, rgba(168, 85, 247, 0.1) 0%, #111827 100%); }
+        .stat-card-label { font-size: 11px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 4px; font-weight: 700; letter-spacing: 0.5px; }
+        .stat-card-value { font-family: var(--font-heading); font-size: 23px; font-weight: 800; color: var(--text-bright); letter-spacing: -0.3px; }
         .stat-card-value.primary { color: #2563eb; }
         .orders-container { width: 100%; max-width: 600px; }
-        .order-card-item { background: var(--bg-card); border: 1.5px solid var(--border-color); border-radius: 12px; padding: 16px; margin-bottom: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.04); }
-        .order-card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; font-size: 12.5px; color: var(--text-muted); font-weight: 600; }
-        .order-id-badge { font-family: monospace; font-weight: 800; color: #c2410c; font-size: 13px; }
-        .order-card-title { font-size: 14.5px; font-weight: 700; color: var(--text-bright); margin-bottom: 10px; line-height: 1.4; overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+        .order-card-item { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 14px; padding: 16px; margin-bottom: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.03); }
+        .order-card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; font-size: 12.5px; color: var(--text-muted); font-weight: 500; }
+        .order-id-badge { font-family: monospace; font-weight: 700; color: #ea580c; font-size: 12.5px; }
+        .order-card-title { font-size: 14px; font-weight: 600; color: var(--text-bright); margin-bottom: 10px; line-height: 1.45; overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
         .order-card-commission-row { display: flex; justify-content: space-between; align-items: center; border-top: 1px dashed var(--border-color); padding-top: 10px; }
-        .order-commission-label { font-size: 12.5px; color: var(--text-muted); font-weight: 600; }
-        .order-commission-val { font-size: 16px; font-weight: 800; color: #047857; }
-        .lookup-spinner { width: 20px; height: 20px; border: 3px solid rgba(255,255,255,0.3); border-top-color: #fff; border-radius: 50%; animation: lookup-spin 1s linear infinite; }
+        .order-commission-label { font-size: 12.5px; color: var(--text-muted); font-weight: 500; }
+        .order-commission-val { font-family: var(--font-heading); font-size: 16px; font-weight: 800; color: #047857; }
+        .lookup-spinner { width: 20px; height: 20px; border: 2.5px solid rgba(255,255,255,0.3); border-top-color: #fff; border-radius: 50%; animation: lookup-spin 1s linear infinite; }
         @keyframes lookup-spin { to { transform: rotate(360deg); } }
-        .lookup-banner-section { position: relative; width: 100%; max-width: 600px; margin: 32px 0 8px; display: flex; flex-direction: column; align-items: center; z-index: 2; }
-        .lookup-banner-img-wrap { position: relative; width: 260px; border-radius: 16px; overflow: hidden; box-shadow: 0 8px 32px rgba(0,0,0,0.08), 0 0 20px rgba(249,115,22,0.15); border: 2px solid #fed7aa; animation: banner-float 4s ease-in-out infinite; }
+        .lookup-banner-section { position: relative; width: 100%; max-width: 600px; margin: 28px 0 8px; display: flex; flex-direction: column; align-items: center; z-index: 2; }
+        .lookup-banner-img-wrap { position: relative; width: 260px; border-radius: 16px; overflow: hidden; box-shadow: 0 8px 30px rgba(0,0,0,0.1); border: 1px solid var(--border-color); animation: banner-float 4s ease-in-out infinite; }
         .lookup-banner-img-wrap img { width: 100%; display: block; }
         .lookup-banner-close { position: absolute; top: 6px; right: 6px; background: rgba(0,0,0,0.6); color: #fff; border: none; border-radius: 50%; width: 22px; height: 22px; font-size: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
         @keyframes banner-float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
         .pin-digit-dots { display: flex; justify-content: center; gap: 8px; margin: 12px 0; }
-        .pin-box-item { width: 44px; height: 50px; border-radius: 12px; border: 1.5px solid var(--border-color); background: var(--bg-main); display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: 800; color: var(--text-bright); transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); cursor: pointer; user-select: none; }
-        .pin-box-item.filled { border-color: #ea580c; background: rgba(249, 115, 22, 0.08); box-shadow: 0 0 12px rgba(234, 88, 12, 0.25); color: #ea580c; }
+        .pin-box-item { width: 44px; height: 50px; border-radius: 12px; border: 1px solid var(--border-color); background: var(--bg-main); display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: 800; color: var(--text-bright); transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); cursor: pointer; user-select: none; }
+        .pin-box-item.filled { border-color: #ea580c; background: rgba(249, 115, 22, 0.08); box-shadow: 0 0 10px rgba(234, 88, 12, 0.2); color: #ea580c; }
         .pin-box-item.active { border-color: #f97316; box-shadow: 0 0 0 2px rgba(249, 115, 22, 0.2); }
         .pin-dot-bullet { width: 12px; height: 12px; border-radius: 50%; background: #ea580c; box-shadow: 0 0 6px rgba(234, 88, 12, 0.5); }
         .pin-hidden-input { position: absolute; opacity: 0; pointer-events: auto; width: calc(100% - 50px); height: 100%; top: 0; left: 0; z-index: 2; }
@@ -515,14 +527,14 @@ export default function OrderLookupView() {
 
       {/* Header */}
       <div className="lookup-header" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%', padding: '10px 12px', flexWrap: 'nowrap', gap: '6px', boxSizing: 'border-box' }}>
-        <div className="lookup-logo" onClick={() => { setView('home'); window.history.pushState({}, '', '/'); }} style={{ display: 'flex', alignItems: 'center', flexShrink: 1, minWidth: 0, cursor: 'pointer' }}>
+        <div className="lookup-logo" onClick={handleGoHome} style={{ display: 'flex', alignItems: 'center', flexShrink: 1, minWidth: 0, cursor: 'pointer' }}>
           <img src="/28symueslogomanin.png?v=7" alt="28Symues Affiliate Logo" style={{ height: 'clamp(80px, 18vw, 110px)', width: 'auto', maxWidth: '380px', flexShrink: 0, objectFit: 'contain' }} />
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexShrink: 0, whiteSpace: 'nowrap' }}>
           <ThemeToggle />
           <button 
             className="lookup-admin-link" 
-            onClick={() => { setView('home'); window.history.pushState({}, '', '/'); }} 
+            onClick={handleGoHome} 
             style={{ whiteSpace: 'nowrap', display: 'inline-flex', alignItems: 'center', gap: '4px', flexShrink: 0, cursor: 'pointer' }}
           >
             <i className="fa-solid fa-house" style={{ color: '#ea580c', flexShrink: 0 }}></i>
@@ -541,7 +553,6 @@ export default function OrderLookupView() {
         <div className="lookup-input-group">
           <label className="lookup-label">Mã đơn hàng (Shopee / TikTok Shop)</label>
           <input type="text" className="lookup-input" value={lookupQuery} onChange={e => setLookupQuery(e.target.value)}
-            placeholder="Ví dụ: 260606C8W7YARK (Shopee) hoặc 585592697583797863 (TikTok)..."
             onKeyDown={e => e.key === 'Enter' && handlePublicLookup(null, 'ORDER_ID')} />
         </div>
 
@@ -736,15 +747,34 @@ export default function OrderLookupView() {
                     <span>Mã đơn: <span className="order-id-badge">{o.orderId}</span></span>
                   </div>
                   <div className="order-card-title" title={o.productName}>{o.productName}</div>
-                  <div className="order-card-commission-row">
-                    <span style={{
-                      background: o.status === 'Hoàn thành' ? '#ecfdf5' : o.status === 'Hủy' ? '#fef2f2' : '#fff7ed',
-                      color: o.status === 'Hoàn thành' ? '#059669' : o.status === 'Hủy' ? '#dc2626' : '#ea580c',
-                      border: `1px solid ${o.status === 'Hoàn thành' ? '#a7f3d0' : o.status === 'Hủy' ? '#fca5a5' : '#fed7aa'}`,
-                      fontSize: '11.5px', padding: '4px 10px', borderRadius: '20px', fontWeight: '800'
-                    }}>
-                      {o.status}
-                    </span>
+                  <div className="order-card-commission-row" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px', flexWrap: 'wrap', marginTop: '10px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+                      <span style={{
+                        background: o.status === 'Hoàn thành' ? '#ecfdf5' : o.status === 'Hủy' ? '#fef2f2' : '#fff7ed',
+                        color: o.status === 'Hoàn thành' ? '#059669' : o.status === 'Hủy' ? '#dc2626' : '#ea580c',
+                        border: `1px solid ${o.status === 'Hoàn thành' ? '#a7f3d0' : o.status === 'Hủy' ? '#fca5a5' : '#fed7aa'}`,
+                        fontSize: '11.5px', padding: '4px 10px', borderRadius: '20px', fontWeight: '800'
+                      }}>
+                        {o.status}
+                      </span>
+                      {o.status === 'Hoàn thành' && o.completeTime && (
+                        <span className="order-complete-time-badge" style={{
+                          fontSize: '11.5px',
+                          color: '#059669',
+                          fontWeight: '600',
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: '4px',
+                          background: 'rgba(5, 150, 105, 0.08)',
+                          padding: '3px 8px',
+                          borderRadius: '12px',
+                          border: '1px solid rgba(5, 150, 105, 0.2)'
+                        }} title="Thời điểm đơn hàng hoàn thành">
+                          <i className="fa-regular fa-calendar-check" style={{ fontSize: '11px' }}></i>
+                          <span>Hoàn thành: {formatDateTime(o.completeTime)}</span>
+                        </span>
+                      )}
+                    </div>
                     <div style={{ textAlign: 'right' }}>
                       <span className="order-commission-label">Hoa hồng: </span>
                       <span className="order-commission-val">{formatMoney(o.commission)}</span>

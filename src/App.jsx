@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useApp } from './context/AppContext';
 import ThemeToggle from './components/common/ThemeToggle';
 import RunningCatMascot from './components/common/RunningCatMascot';
 import OrdersTab from './components/dashboard/OrdersTab';
@@ -10,6 +11,7 @@ const API_URL_ROOT = import.meta.env.PROD ? "" : (import.meta.env.VITE_API_URL |
 const API_BASE = `${API_URL_ROOT}/api/admin`;
 
 function App() {
+  const { view, setView } = useApp();
   const [token, setToken] = useState(() => sessionStorage.getItem('adminToken') || '');
   const [user, setUser] = useState(() => {
     const saved = sessionStorage.getItem('adminUser');
@@ -26,16 +28,6 @@ function App() {
   const [loginLoading, setLoginLoading] = useState(false);
 
   const [activeTab, setActiveTab] = useState(() => sessionStorage.getItem('adminTab') || 'dashboard');
-  const [view, setView] = useState(() => {
-    const path = window.location.pathname;
-    if (path.includes('/lookup') || path.includes('/tra-cuu') || window.location.search.includes('view=lookup') || window.location.hash.includes('lookup')) {
-      return 'lookup';
-    }
-    if (path.includes('/login') || window.location.search.includes('view=login') || window.location.hash.includes('login')) {
-       return 'login';
-    }
-    return sessionStorage.getItem('adminView') || 'home';
-  });
 
   // Public Lookup States
   const [lookupSearchType, setLookupSearchType] = useState('ORDER_ID');
@@ -1243,7 +1235,7 @@ function App() {
   );
 
   if (view === 'lookup') {
-    return <OrderLookupView />;
+    return <OrderLookupView setView={setView} />;
   }
 
   if (view === 'login') {
@@ -2098,10 +2090,6 @@ function App() {
         </section>
         <section id="automation-features" className="landing-block-container reveal-on-scroll" style={{ padding: '0px 20px 24px', marginTop: '0px', marginBottom: '16px' }}>
           <div style={{ textAlign: 'center', marginBottom: '20px', marginTop: '0px' }}>
-            <div className="section-badge" style={{ display: 'inline-flex', alignItems: 'center', gap: '10px', padding: '8px 20px', borderRadius: '30px', background: 'rgba(13, 148, 136, 0.12)', color: '#0d9488', fontSize: '13px', fontWeight: '800', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '12px' }}>
-              <i className="fa-solid fa-sparkles"></i>
-              <span>KHÁM PHÁ CÁC TÍNH NĂNG ĐỘC BẢN</span>
-            </div>
             <h2 className="section-title" style={{ fontSize: '32px', fontWeight: '800', marginBottom: '12px' }}>Hệ Thống Tự Động Hóa Affiliate Toàn Diện</h2>
             <p className="section-subtitle" style={{ fontSize: '15px' }}>Giải pháp mượt mà, tối ưu nhất giúp sếp quản lý nhóm săn sale nhàn hạ 100%</p>
           </div>
@@ -2391,10 +2379,10 @@ function App() {
               </div>
               <div>
                 <h3 style={{ fontSize: '22px', color: '#0f172a', marginBottom: '8px', fontWeight: '700', marginTop: '10px' }}>Zalo Bot Affiliate Pro</h3>
-                <p style={{ color: '#64748b', fontSize: '14px', marginBottom: '24px' }}>Gồm Bot tự đổi link + Trang Web tra cứu đơn cho khách & Trang quản trị cho chủ nhóm</p>
+                <p style={{ color: '#64748b', fontSize: '14px', marginBottom: '24px' }}>Bot Zalo + Nền tảng SaaS: Trang tra cứu ví hoa hồng cho khách & Dashboard quản trị cho chủ nhóm</p>
                 
                 <div style={{ marginBottom: '32px' }}>
-                  <span style={{ fontSize: '42px', fontWeight: '800', color: '#0f172a', fontFamily: 'var(--font-heading)' }}>299.000đ</span>
+                  <span style={{ fontSize: '42px', fontWeight: '800', color: '#0f172a', fontFamily: 'var(--font-heading)' }}>399.000đ</span>
                   <span style={{ color: '#64748b', fontSize: '15px' }}> / tháng</span>
                 </div>
                 
@@ -2403,13 +2391,16 @@ function App() {
                     <span style={{ color: '#10b981', fontWeight: 'bold' }}>✓</span> Bao gồm toàn bộ tính năng của bản Cơ Bản.
                   </li>
                   <li style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', color: '#334155', fontSize: '14px' }}>
-                    <span style={{ color: '#10b981', fontWeight: 'bold' }}>✓</span> Trang Web Tra Cứu riêng: Khách hàng tự mở Web xem danh sách đơn hàng & hoa hồng tích lũy.
+                    <span style={{ color: '#10b981', fontWeight: 'bold' }}>✓</span> Trang Tra Cứu Khách Hàng (SaaS): Khách tự tra cứu đơn hàng, ví tích lũy, số dư khả dụng và tạo lệnh rút tiền.
                   </li>
                   <li style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', color: '#334155', fontSize: '14px' }}>
-                    <span style={{ color: '#10b981', fontWeight: 'bold' }}>✓</span> Trang Web Quản Trị Doanh Thu: Chủ nhóm đăng nhập xem toàn bộ đơn hàng và bấm duyệt thanh toán 1-click.
+                    <span style={{ color: '#10b981', fontWeight: 'bold' }}>✓</span> Dashboard Quản Trị Trưởng Nhóm: Đăng nhập xem toàn bộ đơn hàng, quản lý thành viên và duyệt thanh toán 1-click.
                   </li>
                   <li style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', color: '#334155', fontSize: '14px' }}>
-                    <span style={{ color: '#10b981', fontWeight: 'bold' }}>✓</span> Tra cứu hoa hồng qua Zalo: Khách hàng gõ lệnh `/vitien` hoặc `/donhang` ngay trong nhóm để xem số dư.
+                    <span style={{ color: '#10b981', fontWeight: 'bold' }}>✓</span> Tùy Chỉnh Kênh SaaS Riêng: Tự cài đặt tỷ lệ chia hoa hồng (%), thuế TNCN (%) và số ngày giữ tiền (Holding days).
+                  </li>
+                  <li style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', color: '#334155', fontSize: '14px' }}>
+                    <span style={{ color: '#10b981', fontWeight: 'bold' }}>✓</span> Tra cứu hoa hồng qua Zalo: Khách hàng gõ lệnh `/vitien` hoặc `/donhang` ngay trong nhóm để xem số dư tự động.
                   </li>
                 </ul>
               </div>
@@ -2447,31 +2438,31 @@ function App() {
             }}>
               <div>
                 <h3 style={{ fontSize: '22px', color: '#0f172a', marginBottom: '8px', fontWeight: '700' }}>Zalo Bot Affiliate Pro Max</h3>
-                <p style={{ color: '#64748b', fontSize: '14px', marginBottom: '24px' }}>Hệ thống Trang Web riêng biệt + Ví tích lũy hoa hồng tự động & Khách tự đặt lệnh rút tiền</p>
+                <p style={{ color: '#64748b', fontSize: '14px', marginBottom: '24px' }}>Giải pháp độc quyền: Sở hữu Website riêng biệt, tên miền riêng & bản sắc thương hiệu riêng cho chủ nhóm</p>
                 
                 <div style={{ marginBottom: '32px' }}>
-                  <span style={{ fontSize: '42px', fontWeight: '800', color: '#0f172a', fontFamily: 'var(--font-heading)' }}>399.000đ</span>
+                  <span style={{ fontSize: '42px', fontWeight: '800', color: '#0f172a', fontFamily: 'var(--font-heading)' }}>499.000đ</span>
                   <span style={{ color: '#64748b', fontSize: '15px' }}> / tháng</span>
                 </div>
                 
                 <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 32px 0', textAlign: 'left', display: 'flex', flexDirection: 'column', gap: '16px' }}>
                   <li style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', color: '#334155', fontSize: '14px' }}>
-                    <span style={{ color: '#10b981', fontWeight: 'bold' }}>✓</span> Bao gồm toàn bộ tính năng cao cấp của bản Pro.
+                    <span style={{ color: '#10b981', fontWeight: 'bold' }}>✓</span> Bao gồm toàn bộ tính năng cao cấp của gói Pro (SaaS).
                   </li>
                   <li style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', color: '#334155', fontSize: '14px' }}>
-                    <span style={{ color: '#10b981', fontWeight: 'bold' }}>✓</span> Hệ thống Trang Web riêng biệt: Giao diện hiện đại, tra cứu ví hoa hồng và lịch sử dòng tiền minh bạch.
+                    <span style={{ color: '#10b981', fontWeight: 'bold' }}>✓</span> Website Riêng Biệt & Tên Miền Riêng: Cài đặt Web chạy trên tên miền thương hiệu riêng của bạn (VD: domaincuaban.com).
                   </li>
                   <li style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', color: '#334155', fontSize: '14px' }}>
-                    <span style={{ color: '#10b981', fontWeight: 'bold' }}>✓</span> Ví hoa hồng & Lịch sử rút tiền: Tự động cộng dồn hoa hồng khi đơn hoàn thành, theo dõi dòng tiền rõ ràng.
+                    <span style={{ color: '#10b981', fontWeight: 'bold' }}>✓</span> Nhận Diện Thương Hiệu Độc Quyền 100%: Logo, màu sắc giao diện, thông tin giới thiệu mang bản sắc riêng của sếp.
                   </li>
                   <li style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', color: '#334155', fontSize: '14px' }}>
-                    <span style={{ color: '#10b981', fontWeight: 'bold' }}>✓</span> Khách tự đặt lệnh rút tiền: Thành viên chủ động tạo yêu cầu rút tiền trên Web hoặc gõ lệnh rút tiền trong nhóm.
+                    <span style={{ color: '#10b981', fontWeight: 'bold' }}>✓</span> Hạ Tầng & Cơ Sở Dữ Liệu Riêng: Tốc độ tải trang siêu tốc, bảo mật tuyệt đối, vận hành ổn định không lo nghẽn mạng.
                   </li>
                   <li style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', color: '#334155', fontSize: '14px' }}>
-                    <span style={{ color: '#10b981', fontWeight: 'bold' }}>✓</span> Duyệt rút tiền siêu nhanh: Chủ nhóm nhận thông báo và bấm duyệt thanh toán cho khách hàng chỉ với 1 bấm.
+                    <span style={{ color: '#10b981', fontWeight: 'bold' }}>✓</span> Tùy Biến Mẫu Tin Nhắn Bot Độc Quyền: Cá nhân hóa 15 mẫu tin nhắn Zalo bot và quy tắc ví theo yêu cầu riêng.
                   </li>
                   <li style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', color: '#334155', fontSize: '14px' }}>
-                    <span style={{ color: '#10b981', fontWeight: 'bold' }}>✓</span> Tốc độ xử lý siêu tốc 24/7: Vận hành riêng biệt, phản hồi tức thì, bảo mật và ổn định tuyệt đối.
+                    <span style={{ color: '#10b981', fontWeight: 'bold' }}>✓</span> Hỗ Trợ Kỹ Thuật VIP 1-1: Ưu tiên cập nhật tính năng mới nhất và được hỗ trợ kỹ thuật trực tiếp 24/7.
                   </li>
                 </ul>
               </div>

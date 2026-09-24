@@ -137,10 +137,6 @@ export default function LandingView() {
         {/* Section 2: Zig-Zag Alternating Showcase Section (Moved UP as requested) */}
         <section id="automation-features" className="landing-block-container reveal-on-scroll" style={{ padding: '0px 20px 24px', marginTop: '0px', marginBottom: '16px' }}>
           <div style={{ textAlign: 'center', marginBottom: '20px', marginTop: '0px' }}>
-            <div className="section-badge" style={{ display: 'inline-flex', alignItems: 'center', gap: '10px', padding: '8px 20px', borderRadius: '30px', background: 'rgba(13, 148, 136, 0.12)', color: '#0d9488', fontSize: '13px', fontWeight: '800', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '12px' }}>
-              <i className="fa-solid fa-sparkles"></i>
-              <span>KHÁM PHÁ CÁC TÍNH NĂNG ĐỘC BẢN</span>
-            </div>
             <h2 className="section-title" style={{ fontSize: '32px', fontWeight: '800', marginBottom: '12px' }}>Hệ Thống Tự Động Hóa Affiliate Toàn Diện</h2>
             <p className="section-subtitle" style={{ fontSize: '15px' }}>Giải pháp mượt mà, tối ưu nhất giúp sếp quản lý nhóm săn sale nhàn hạ 100%</p>
           </div>
@@ -372,27 +368,28 @@ export default function LandingView() {
             },
             { 
               name: 'Zalo Bot Affiliate Pro', 
-              desc: 'Gồm Bot tự đổi link + Trang Web tra cứu đơn cho khách & Trang quản trị cho chủ nhóm', 
-              price: '299.000đ', 
+              desc: 'Bot Zalo + Nền tảng SaaS: Trang tra cứu ví hoa hồng cho khách & Dashboard quản trị cho chủ nhóm', 
+              price: '399.000đ', 
               features: [
                 'Bao gồm toàn bộ tính năng của bản Cơ Bản.',
-                'Trang Web Tra Cứu riêng: Khách hàng tự mở Web xem danh sách đơn hàng & hoa hồng tích lũy.',
-                'Trang Web Quản Trị Doanh Thu: Chủ nhóm đăng nhập xem toàn bộ đơn hàng và bấm duyệt thanh toán 1-click.',
-                'Tra cứu hoa hồng qua Zalo: Khách hàng gõ lệnh `/vitien` hoặc `/donhang` ngay trong nhóm để xem số dư.'
+                'Trang Tra Cứu Khách Hàng (SaaS): Khách tự tra cứu đơn hàng, ví tích lũy, số dư khả dụng và tạo lệnh rút tiền.',
+                'Dashboard Quản Trị Trưởng Nhóm: Đăng nhập xem toàn bộ đơn hàng, quản lý thành viên và duyệt thanh toán 1-click.',
+                'Tùy Chỉnh Kênh SaaS Riêng: Tự cài đặt tỷ lệ chia hoa hồng (%), thuế TNCN (%) và số ngày giữ tiền (Holding days).',
+                'Tra cứu hoa hồng qua Zalo: Khách hàng gõ lệnh `/vitien` hoặc `/donhang` ngay trong nhóm để xem số dư tự động.'
               ], 
               featured: true 
             },
             { 
               name: 'Zalo Bot Affiliate Pro Max', 
-              desc: 'Hệ thống Trang Web riêng biệt + Ví tích lũy hoa hồng tự động & Khách tự đặt lệnh rút tiền', 
-              price: '399.000đ', 
+              desc: 'Giải pháp độc quyền: Sở hữu Website riêng biệt, tên miền riêng & bản sắc thương hiệu riêng cho chủ nhóm', 
+              price: '499.000đ', 
               features: [
-                'Bao gồm toàn bộ tính năng cao cấp của bản Pro.',
-                'Hệ thống Trang Web riêng biệt: Giao diện hiện đại, tra cứu ví hoa hồng và lịch sử dòng tiền minh bạch.',
-                'Ví hoa hồng & Lịch sử rút tiền: Tự động cộng dồn hoa hồng khi đơn hoàn thành, theo dõi dòng tiền rõ ràng.',
-                'Khách tự đặt lệnh rút tiền: Thành viên chủ động tạo yêu cầu rút tiền trên Web hoặc gõ lệnh rút tiền trong nhóm.',
-                'Duyệt rút tiền siêu nhanh: Chủ nhóm nhận thông báo và bấm duyệt thanh toán cho khách hàng chỉ với 1 bấm.',
-                'Tốc độ xử lý siêu tốc 24/7: Vận hành riêng biệt, phản hồi tức thì, bảo mật và ổn định tuyệt đối.'
+                'Bao gồm toàn bộ tính năng cao cấp của gói Pro (SaaS).',
+                'Website Riêng Biệt & Tên Miền Riêng: Cài đặt Web chạy trên tên miền thương hiệu riêng của bạn (VD: domaincuaban.com).',
+                'Nhận Diện Thương Hiệu Độc Quyền 100%: Logo, màu sắc giao diện, thông tin giới thiệu mang bản sắc riêng của sếp.',
+                'Hạ Tầng & Cơ Sở Dữ Liệu Riêng: Tốc độ tải trang siêu tốc, bảo mật tuyệt đối, vận hành ổn định không lo nghẽn mạng.',
+                'Tùy Biến Mẫu Tin Nhắn Bot Độc Quyền: Cá nhân hóa 15 mẫu tin nhắn Zalo bot và quy tắc ví theo yêu cầu riêng.',
+                'Hỗ Trợ Kỹ Thuật VIP 1-1: Ưu tiên cập nhật tính năng mới nhất và được hỗ trợ kỹ thuật trực tiếp 24/7.'
               ], 
               featured: false 
             }

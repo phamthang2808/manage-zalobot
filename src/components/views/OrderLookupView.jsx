@@ -621,19 +621,19 @@ export default function OrderLookupView() {
             {/* Thẻ 0: Tổng tích lũy (Hoàn thành + Chờ) */}
             <div className="stat-card-item total" style={{ marginBottom: '12px', width: '100%', boxSizing: 'border-box' }}>
               <span className="stat-card-label">TỔNG TÍCH LŨY (HOÀN THÀNH + CHỜ)</span>
-              <span className="stat-card-value primary">{formatMoney((lookupResult.wallet.pendingCommission || 0) + (lookupResult.wallet.rawCompletedCommission != null ? lookupResult.wallet.rawCompletedCommission : (lookupResult.wallet.completedCommission || 0)))}</span>
+              <span className="stat-card-value">{formatMoney((lookupResult.wallet.pendingCommission || 0) + (lookupResult.wallet.rawCompletedCommission != null ? lookupResult.wallet.rawCompletedCommission : (lookupResult.wallet.completedCommission || 0)))}</span>
             </div>
 
             <div className="stats-cards-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))' }}>
               <div className="stat-card-item pending">
                 <span className="stat-card-label">ĐANG XỬ LÝ</span>
                 <span style={{ fontSize: '11px', color: 'var(--text-muted)', marginBottom: '4px' }}>(đang vận chuyển hoặc chưa ấn nhận hàng)</span>
-                <span className="stat-card-value" style={{ color: '#d97706' }}>{formatMoney(lookupResult.wallet.pendingCommission)}</span>
+                <span className="stat-card-value">{formatMoney(lookupResult.wallet.pendingCommission)}</span>
               </div>
               <div className="stat-card-item completed">
                 <span className="stat-card-label">ĐÃ HOÀN THÀNH</span>
                 <span style={{ fontSize: '11px', color: 'var(--text-muted)', marginBottom: '4px' }}>(Hoàn thành • Chưa đủ 3 ngày để rút)</span>
-                <span className="stat-card-value" style={{ color: '#059669' }}>{formatMoney(lookupResult.wallet.completedNotYetWithdrawable != null ? lookupResult.wallet.completedNotYetWithdrawable : lookupResult.wallet.completedCommission)}</span>
+                <span className="stat-card-value">{formatMoney(lookupResult.wallet.completedNotYetWithdrawable != null ? lookupResult.wallet.completedNotYetWithdrawable : lookupResult.wallet.completedCommission)}</span>
               </div>
               <div className="stat-card-item withdrawable">
                 <span className="stat-card-label">SỐ DƯ KHẢ DỤNG</span>
@@ -642,16 +642,16 @@ export default function OrderLookupView() {
                     (Đang chờ duyệt rút: {formatMoney(lookupResult.wallet.pendingWithdrawn)})
                   </span>
                 ) : (
-                  <span style={{ fontSize: '11px', color: '#ea580c', marginBottom: '4px' }}>
+                  <span style={{ fontSize: '11px', color: 'var(--text-muted)', marginBottom: '4px' }}>
                     (Sau 3 ngày • Trừ thuế & chia 8-2)
                   </span>
                 )}
-                <span className="stat-card-value" style={{ color: '#ea580c' }}>{formatMoney(lookupResult.wallet.withdrawableCommission)}</span>
+                <span className="stat-card-value">{formatMoney(lookupResult.wallet.withdrawableCommission)}</span>
               </div>
               <div className="stat-card-item received">
                 <span className="stat-card-label">ĐÃ NHẬN (ĐÃ THANH TOÁN)</span>
                 <span style={{ fontSize: '11px', color: 'var(--text-muted)', marginBottom: '4px' }}>(Tổng tiền đã rút về bank)</span>
-                <span className="stat-card-value" style={{ color: '#8b5cf6' }}>{formatMoney(lookupResult.wallet.receivedCommission)}</span>
+                <span className="stat-card-value">{formatMoney(lookupResult.wallet.receivedCommission)}</span>
               </div>
             </div>
           </div>

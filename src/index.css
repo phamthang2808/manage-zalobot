@@ -4014,36 +4014,66 @@ body.dark .stat-card-item {
 html[data-theme="dark"] .stat-card-item.total,
 html.dark .stat-card-item.total,
 body.dark .stat-card-item.total {
-  background: linear-gradient(135deg, rgba(249, 115, 22, 0.15) 0%, #1e293b 100%) !important;
-  border-color: rgba(249, 115, 22, 0.4) !important;
+  background: linear-gradient(135deg, rgba(168, 85, 247, 0.2), #111827 100%) !important;
+  border: 1.5px solid rgba(192, 132, 252, 0.6) !important;
+  box-shadow: 0 4px 20px rgba(168, 85, 247, 0.25) !important;
+}
+html[data-theme="dark"] .stat-card-item.total .stat-card-value,
+html.dark .stat-card-item.total .stat-card-value,
+body.dark .stat-card-item.total .stat-card-value {
+  color: #c084fc !important;
 }
 
 html[data-theme="dark"] .stat-card-item.pending,
 html.dark .stat-card-item.pending,
 body.dark .stat-card-item.pending {
-  background: linear-gradient(135deg, rgba(245, 158, 11, 0.15) 0%, #1e293b 100%) !important;
-  border-color: rgba(245, 158, 11, 0.4) !important;
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.2), #111827 100%) !important;
+  border: 1.5px solid rgba(251, 191, 36, 0.6) !important;
+  box-shadow: 0 4px 20px rgba(245, 158, 11, 0.25) !important;
+}
+html[data-theme="dark"] .stat-card-item.pending .stat-card-value,
+html.dark .stat-card-item.pending .stat-card-value,
+body.dark .stat-card-item.pending .stat-card-value {
+  color: #fbbf24 !important;
 }
 
 html[data-theme="dark"] .stat-card-item.completed,
 html.dark .stat-card-item.completed,
 body.dark .stat-card-item.completed {
-  background: linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, #1e293b 100%) !important;
-  border-color: rgba(16, 185, 129, 0.4) !important;
+  background: linear-gradient(135deg, rgba(6, 182, 212, 0.2), #111827 100%) !important;
+  border: 1.5px solid rgba(34, 211, 238, 0.6) !important;
+  box-shadow: 0 4px 20px rgba(6, 182, 212, 0.25) !important;
+}
+html[data-theme="dark"] .stat-card-item.completed .stat-card-value,
+html.dark .stat-card-item.completed .stat-card-value,
+body.dark .stat-card-item.completed .stat-card-value {
+  color: #22d3ee !important;
 }
 
 html[data-theme="dark"] .stat-card-item.withdrawable,
 html.dark .stat-card-item.withdrawable,
 body.dark .stat-card-item.withdrawable {
-  background: linear-gradient(135deg, rgba(249, 115, 22, 0.15) 0%, #1e293b 100%) !important;
-  border-color: rgba(249, 115, 22, 0.4) !important;
+  background: linear-gradient(135deg, rgba(234, 88, 12, 0.2), #111827 100%) !important;
+  border: 1.5px solid rgba(251, 146, 60, 0.6) !important;
+  box-shadow: 0 4px 20px rgba(234, 88, 12, 0.25) !important;
+}
+html[data-theme="dark"] .stat-card-item.withdrawable .stat-card-value,
+html.dark .stat-card-item.withdrawable .stat-card-value,
+body.dark .stat-card-item.withdrawable .stat-card-value {
+  color: #ff782c !important;
 }
 
 html[data-theme="dark"] .stat-card-item.received,
 html.dark .stat-card-item.received,
 body.dark .stat-card-item.received {
-  background: linear-gradient(135deg, rgba(34, 197, 94, 0.15) 0%, #1e293b 100%) !important;
-  border-color: rgba(34, 197, 94, 0.4) !important;
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.2), #111827 100%) !important;
+  border: 1.5px solid rgba(52, 211, 153, 0.6) !important;
+  box-shadow: 0 4px 20px rgba(16, 185, 129, 0.25) !important;
+}
+html[data-theme="dark"] .stat-card-item.received .stat-card-value,
+html.dark .stat-card-item.received .stat-card-value,
+body.dark .stat-card-item.received .stat-card-value {
+  color: #34d399 !important;
 }
 
 html[data-theme="dark"] .stat-card-label,
@@ -4486,42 +4516,60 @@ body.dark {
   }
 
   /* Specific glowing variants for stat cards & lookup stat items */
+  .stat-card.primary,
+  .stat-card-item.total {
+    background: linear-gradient(145deg, rgba(59, 130, 246, 0.22), #0f172a 90%) !important;
+    border: 1.5px solid rgba(96, 165, 250, 0.65) !important;
+    box-shadow: 0 4px 20px rgba(59, 130, 246, 0.25), inset 0 0 12px rgba(96, 165, 250, 0.12) !important;
+  }
+  .stat-card.primary .stat-val,
+  .stat-card-item.total .stat-card-value {
+    color: #60a5fa !important;
+    text-shadow: 0 0 12px rgba(96, 165, 250, 0.4);
+  }
+
+  .stat-card-item.pending {
+    background: linear-gradient(145deg, rgba(245, 158, 11, 0.22), #0f172a 90%) !important;
+    border: 1.5px solid rgba(251, 191, 36, 0.65) !important;
+    box-shadow: 0 4px 20px rgba(245, 158, 11, 0.22), inset 0 0 12px rgba(251, 191, 36, 0.12) !important;
+  }
+  .stat-card-item.pending .stat-card-value {
+    color: #fbbf24 !important;
+    text-shadow: 0 0 12px rgba(251, 191, 36, 0.4);
+  }
+
   .stat-card.success,
   .stat-card-item.completed {
-    background: linear-gradient(145deg, rgba(16, 185, 129, 0.14), #0f172a 90%) !important;
-    border: 1.5px solid rgba(52, 211, 153, 0.45) !important;
-    box-shadow: 0 4px 20px rgba(16, 185, 129, 0.2), inset 0 0 12px rgba(52, 211, 153, 0.1) !important;
+    background: linear-gradient(145deg, rgba(16, 185, 129, 0.22), #0f172a 90%) !important;
+    border: 1.5px solid rgba(52, 211, 153, 0.65) !important;
+    box-shadow: 0 4px 20px rgba(16, 185, 129, 0.22), inset 0 0 12px rgba(52, 211, 153, 0.12) !important;
   }
   .stat-card.success .stat-val,
   .stat-card-item.completed .stat-card-value {
     color: #34d399 !important;
-    text-shadow: 0 0 12px rgba(52, 211, 153, 0.35);
+    text-shadow: 0 0 12px rgba(52, 211, 153, 0.4);
   }
 
   .stat-card.warning,
-  .stat-card-item.withdrawable,
-  .stat-card-item.total {
-    background: linear-gradient(145deg, rgba(249, 115, 22, 0.15), #0f172a 90%) !important;
-    border: 1.5px solid rgba(251, 146, 60, 0.5) !important;
-    box-shadow: 0 4px 20px rgba(249, 115, 22, 0.22), inset 0 0 12px rgba(251, 146, 60, 0.1) !important;
+  .stat-card-item.withdrawable {
+    background: linear-gradient(145deg, rgba(249, 115, 22, 0.22), #0f172a 90%) !important;
+    border: 1.5px solid rgba(251, 146, 60, 0.65) !important;
+    box-shadow: 0 4px 20px rgba(249, 115, 22, 0.25), inset 0 0 12px rgba(251, 146, 60, 0.12) !important;
   }
   .stat-card.warning .stat-val,
-  .stat-card-item.total .stat-card-value,
   .stat-card-item.withdrawable .stat-card-value {
     color: #fb923c !important;
-    text-shadow: 0 0 12px rgba(251, 146, 60, 0.35);
-  }
-
-  .stat-card-item.pending {
-    background: linear-gradient(145deg, rgba(245, 158, 11, 0.14), #0f172a 90%) !important;
-    border: 1.5px solid rgba(251, 191, 36, 0.45) !important;
-    box-shadow: 0 4px 20px rgba(245, 158, 11, 0.18) !important;
+    text-shadow: 0 0 12px rgba(251, 146, 60, 0.4);
   }
 
   .stat-card-item.received {
-    background: linear-gradient(145deg, rgba(74, 222, 128, 0.14), #0f172a 90%) !important;
-    border: 1.5px solid rgba(74, 222, 128, 0.4) !important;
-    box-shadow: 0 4px 20px rgba(74, 222, 128, 0.18) !important;
+    background: linear-gradient(145deg, rgba(168, 85, 247, 0.22), #0f172a 90%) !important;
+    border: 1.5px solid rgba(192, 132, 252, 0.65) !important;
+    box-shadow: 0 4px 20px rgba(168, 85, 247, 0.25), inset 0 0 12px rgba(192, 132, 252, 0.12) !important;
+  }
+  .stat-card-item.received .stat-card-value {
+    color: #c084fc !important;
+    text-shadow: 0 0 12px rgba(192, 132, 252, 0.4);
   }
 
   /* Make inner inputs, code badges, and highlight boxes shine in Dark Mode */

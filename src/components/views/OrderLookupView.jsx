@@ -472,15 +472,20 @@ export default function OrderLookupView() {
         .stats-section-title { font-size: 17px; font-weight: 800; margin-bottom: 12px; color: var(--text-bright); display: flex; align-items: center; gap: 8px; }
         .stats-cards-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
         .stats-cards-grid > :first-child { grid-column: span 2; }
-        .stat-card-item { border-radius: 12px; padding: 16px; border: 1.5px solid var(--border-color); display: flex; flex-direction: column; box-shadow: 0 4px 12px rgba(0,0,0,0.04); background: var(--bg-card); }
-        .stat-card-item.total { background: linear-gradient(135deg, rgba(255,237,213,0.5) 0%, var(--bg-card) 100%); border-color: #fdba74; }
+        .stat-card-item { border-radius: 12px; padding: 16px; border: 1.5px solid var(--border-color); display: flex; flex-direction: column; box-shadow: 0 4px 12px rgba(0,0,0,0.04); background: var(--bg-card); transition: all 0.2s ease; }
+        .stat-card-item.total { background: linear-gradient(135deg, rgba(219,234,254,0.5) 0%, var(--bg-card) 100%); border-color: #93c5fd; }
         .stat-card-item.pending { background: linear-gradient(135deg, rgba(254,243,199,0.5) 0%, var(--bg-card) 100%); border-color: #fcd34d; }
         .stat-card-item.completed { background: linear-gradient(135deg, rgba(209,250,229,0.5) 0%, var(--bg-card) 100%); border-color: #6ee7b7; }
         .stat-card-item.withdrawable { background: linear-gradient(135deg, rgba(255,237,213,0.5) 0%, var(--bg-card) 100%); border-color: #fdba74; }
-        .stat-card-item.received { background: linear-gradient(135deg, rgba(220,252,231,0.5) 0%, var(--bg-card) 100%); border-color: #86efac; }
+        .stat-card-item.received { background: linear-gradient(135deg, rgba(243,232,255,0.5) 0%, var(--bg-card) 100%); border-color: #c084fc; }
+        html[data-theme="dark"] .stat-card-item.total, body.dark .stat-card-item.total { background: linear-gradient(135deg, rgba(37,99,235,0.2) 0%, var(--bg-card) 100%); border-color: rgba(59,130,246,0.5); }
+        html[data-theme="dark"] .stat-card-item.pending, body.dark .stat-card-item.pending { background: linear-gradient(135deg, rgba(217,119,6,0.2) 0%, var(--bg-card) 100%); border-color: rgba(245,158,11,0.5); }
+        html[data-theme="dark"] .stat-card-item.completed, body.dark .stat-card-item.completed { background: linear-gradient(135deg, rgba(5,150,105,0.2) 0%, var(--bg-card) 100%); border-color: rgba(16,185,129,0.5); }
+        html[data-theme="dark"] .stat-card-item.withdrawable, body.dark .stat-card-item.withdrawable { background: linear-gradient(135deg, rgba(234,88,12,0.2) 0%, var(--bg-card) 100%); border-color: rgba(249,115,22,0.5); }
+        html[data-theme="dark"] .stat-card-item.received, body.dark .stat-card-item.received { background: linear-gradient(135deg, rgba(139,92,246,0.2) 0%, var(--bg-card) 100%); border-color: rgba(168,85,247,0.5); }
         .stat-card-label { font-size: 11.5px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 4px; font-weight: 700; letter-spacing: 0.5px; }
         .stat-card-value { font-size: 24px; font-weight: 900; color: var(--text-bright); }
-        .stat-card-value.primary { color: #c2410c; }
+        .stat-card-value.primary { color: #2563eb; }
         .orders-container { width: 100%; max-width: 600px; }
         .order-card-item { background: var(--bg-card); border: 1.5px solid var(--border-color); border-radius: 12px; padding: 16px; margin-bottom: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.04); }
         .order-card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; font-size: 12.5px; color: var(--text-muted); font-weight: 600; }
@@ -612,16 +617,23 @@ export default function OrderLookupView() {
           {/* Wallet Stats */}
           <div className="stats-container">
             <h3 className="stats-section-title">💰 Thống Kê Hoa Hồng của: <span style={{ color: '#ea580c' }}>{lookupResult.zaloName}</span></h3>
+            
+            {/* Thẻ 0: Tổng tích lũy (Hoàn thành + Chờ) */}
+            <div className="stat-card-item total" style={{ marginBottom: '12px', width: '100%', boxSizing: 'border-box' }}>
+              <span className="stat-card-label">TỔNG TÍCH LŨY (HOÀN THÀNH + CHỜ)</span>
+              <span className="stat-card-value primary">{formatMoney((lookupResult.wallet.pendingCommission || 0) + (lookupResult.wallet.rawCompletedCommission != null ? lookupResult.wallet.rawCompletedCommission : (lookupResult.wallet.completedCommission || 0)))}</span>
+            </div>
+
             <div className="stats-cards-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))' }}>
               <div className="stat-card-item pending">
-                <span className="stat-card-label">ĐANG CHỜ XỬ LÝ</span>
-                <span style={{ fontSize: '11px', color: 'var(--text-muted)', marginBottom: '4px' }}>(Đang vận chuyển / chưa xác nhận)</span>
-                <span className="stat-card-value">{formatMoney(lookupResult.wallet.pendingCommission)}</span>
+                <span className="stat-card-label">ĐANG XỬ LÝ</span>
+                <span style={{ fontSize: '11px', color: 'var(--text-muted)', marginBottom: '4px' }}>(đang vận chuyển hoặc chưa ấn nhận hàng)</span>
+                <span className="stat-card-value" style={{ color: '#d97706' }}>{formatMoney(lookupResult.wallet.pendingCommission)}</span>
               </div>
               <div className="stat-card-item completed">
                 <span className="stat-card-label">ĐÃ HOÀN THÀNH</span>
                 <span style={{ fontSize: '11px', color: 'var(--text-muted)', marginBottom: '4px' }}>(Hoàn thành • Chưa đủ 3 ngày để rút)</span>
-                <span className="stat-card-value">{formatMoney(lookupResult.wallet.completedNotYetWithdrawable != null ? lookupResult.wallet.completedNotYetWithdrawable : lookupResult.wallet.completedCommission)}</span>
+                <span className="stat-card-value" style={{ color: '#059669' }}>{formatMoney(lookupResult.wallet.completedNotYetWithdrawable != null ? lookupResult.wallet.completedNotYetWithdrawable : lookupResult.wallet.completedCommission)}</span>
               </div>
               <div className="stat-card-item withdrawable">
                 <span className="stat-card-label">SỐ DƯ KHẢ DỤNG</span>
@@ -639,7 +651,7 @@ export default function OrderLookupView() {
               <div className="stat-card-item received">
                 <span className="stat-card-label">ĐÃ NHẬN (ĐÃ THANH TOÁN)</span>
                 <span style={{ fontSize: '11px', color: 'var(--text-muted)', marginBottom: '4px' }}>(Tổng tiền đã rút về bank)</span>
-                <span className="stat-card-value" style={{ color: '#16a34a' }}>{formatMoney(lookupResult.wallet.receivedCommission)}</span>
+                <span className="stat-card-value" style={{ color: '#8b5cf6' }}>{formatMoney(lookupResult.wallet.receivedCommission)}</span>
               </div>
             </div>
           </div>

@@ -5,6 +5,7 @@ import RunningCatMascot from './components/common/RunningCatMascot';
 import OrdersTab from './components/dashboard/OrdersTab';
 import { UserDetailModal } from './components/dashboard/UsersTab';
 import OrderLookupView from './components/views/OrderLookupView';
+import FloatingZaloContact from './components/common/FloatingZaloContact';
 
 const API_URL_ROOT = import.meta.env.PROD ? "" : (import.meta.env.VITE_API_URL || 'http://localhost:8080');
 
@@ -1235,7 +1236,12 @@ function App() {
   );
 
   if (view === 'lookup') {
-    return <OrderLookupView setView={setView} />;
+    return (
+      <>
+        <OrderLookupView setView={setView} />
+        <FloatingZaloContact />
+      </>
+    );
   }
 
   if (view === 'login') {
@@ -2591,6 +2597,7 @@ function App() {
             </div>
           </div>
         </footer>
+        <FloatingZaloContact />
         {renderMobileBottomNav()}
       </div>
     );
@@ -2612,16 +2619,8 @@ function App() {
         </div>
         <ul className="sidebar-menu">
           <li 
-            className="menu-item"
+            className="menu-item sidebar-home-item"
             onClick={() => { setView('home'); sessionStorage.removeItem('adminView'); setSidebarOpen(false); }}
-            style={{ 
-              background: '#fff7ed', 
-              color: '#ea580c', 
-              fontWeight: '600', 
-              borderLeft: '3px solid #f97316', 
-              marginBottom: '4px',
-              fontSize: '14px'
-            }}
           >
             <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style={{ flexShrink: 0 }}><path d="M11.47 3.841a.75.75 0 0 1 1.06 0l8.69 8.69a.75.75 0 1 0 1.06-1.061l-8.689-8.69a2.25 2.25 0 0 0-3.182 0l-8.69 8.69a.75.75 0 1 0 1.061 1.06l8.69-8.689Z"/><path d="m12 5.432 8.159 8.159c.03.03.06.058.091.086v6.198c0 1.035-.84 1.875-1.875 1.875H15a.75.75 0 0 1-.75-.75v-4.5a.75.75 0 0 0-.75-.75h-3a.75.75 0 0 0-.75.75V21a.75.75 0 0 1-.75.75H5.625a1.875 1.875 0 0 1-1.875-1.875v-6.198a.465.465 0 0 0 .091-.086L12 5.43Z"/></svg>
             Về Trang Chủ
@@ -2686,8 +2685,8 @@ function App() {
         </ul>
 
         {/* Sidebar Footer */}
-        <div className="sidebar-footer" style={{ padding: '12px 16px 16px', borderTop: '1px solid #e2e8f0' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '12px', padding: '10px 12px', background: '#f8fafc', borderRadius: '10px', border: '1px solid #e2e8f0' }}>
+        <div className="sidebar-footer">
+          <div className="sidebar-user-box">
             {user?.avatarUrl ? (
               <img 
                 src={user.avatarUrl} 
@@ -2699,31 +2698,13 @@ function App() {
               <div className="avatar" style={{ margin: 0, width: '34px', height: '34px', fontSize: '12px', flexShrink: 0 }}>{(user?.fullName || 'PT').substring(0, 2).toUpperCase()}</div>
             )}
             <div style={{ overflow: 'hidden', flex: 1, minWidth: 0 }}>
-              <div style={{ fontSize: '13px', fontWeight: '700', color: '#0f172a', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{user?.fullName}</div>
-              <div style={{ fontSize: '10px', color: '#ea580c', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.5px' }}>{user?.role}</div>
+              <div className="sidebar-user-name" title={user?.fullName}>{user?.fullName}</div>
+              <div className="sidebar-user-role">{user?.role}</div>
             </div>
           </div>
           <button 
+            className="sidebar-logout-btn"
             onClick={handleLogout} 
-            style={{ 
-              width: '100%', 
-              fontSize: '13px', 
-              padding: '10px', 
-              background: '#fff7ed', 
-              color: '#ea580c', 
-              border: '1px solid #fed7aa', 
-              borderRadius: '8px', 
-              cursor: 'pointer',
-              fontWeight: '600',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: '7px',
-              transition: 'all 0.2s',
-              letterSpacing: '0.2px'
-            }}
-            onMouseEnter={e => { e.currentTarget.style.background='#ffedd5'; e.currentTarget.style.borderColor='#fdba74'; }}
-            onMouseLeave={e => { e.currentTarget.style.background='#fff7ed'; e.currentTarget.style.borderColor='#fed7aa'; }}
           >
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
             Đăng xuất
@@ -2757,7 +2738,7 @@ function App() {
               <div className="avatar">{(user?.fullName || 'PT').substring(0, 2).toUpperCase()}</div>
             )}
             <button 
-              className="btn btn-refresh" 
+              className="btn btn-refresh-header" 
               onClick={(e) => {
                 const svg = e.currentTarget.querySelector('svg');
                 if (svg) {
@@ -2770,20 +2751,6 @@ function App() {
                 }
                 fetchData(token, user);
               }} 
-              style={{ 
-                marginLeft: '12px', 
-                display: 'inline-flex', 
-                alignItems: 'center', 
-                gap: '8px', 
-                padding: '8px 16px',
-                background: '#fff7ed',
-                color: '#ea580c',
-                border: '1px solid #fed7aa',
-                fontWeight: '600',
-                fontSize: '13.5px',
-                borderRadius: '8px',
-                transition: 'all 0.2s ease'
-              }}
             >
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ transition: 'transform 0.5s ease' }}>
                 <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l.73-.73"/>
@@ -2819,14 +2786,14 @@ function App() {
                 <div>
                   <div className="stats-grid">
                     <div className="stat-card">
-                      <div className="stat-icon">
+                      <div className="stat-icon" style={{ background: 'rgba(59, 130, 246, 0.1)', color: '#2563eb' }}>
                         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
                       </div>
                       <span className="stat-label">Tổng thành viên</span>
                       <span className="stat-val">{stats.totalMembers}</span>
                     </div>
                     {/* Shopee Orders Card */}
-                    <div className="stat-card success" style={{ borderLeft: '4px solid #ee4d2d' }}>
+                    <div className="stat-card stat-shopee">
                       <div className="stat-icon" style={{ background: 'rgba(238, 77, 45, 0.12)', color: '#ee4d2d' }}>
                         <svg viewBox="0 0 109.59 122.88" style={{ width: '18px', height: '18px', fill: '#ee4d2d' }}>
                           <path d="M74.98,91.98C76.15,82.36,69.96,76.22,53.6,71c-7.92-2.7-11.66-6.24-11.57-11.12 c0.33-5.4,5.36-9.34,12.04-9.47c4.63,0.09,9.77,1.22,14.76,4.56c0.59,0.37,1.01,0.32,1.35-0.2c0.46-0.74,1.61-2.53,2-3.17 c0.26-0.42,0.31-0.96-0.35-1.44c-0.95-0.7-3.6-2.13-5.03-2.72c-3.88-1.62-8.23-2.64-12.86-2.63c-9.77,0.04-17.47,6.22-18.12,14.47 c-0.42,5.95,2.53,10.79,8.86,14.47c1.34,0.78,8.6,3.67,11.49,4.57c9.08,2.83,13.8,7.9,12.69,13.81c-1.01,5.36-6.65,8.83-14.43,8.93 c-6.17-0.24-11.71-2.75-16.02-6.1c-0.11-0.08-0.65-0.5-0.72-0.56c-0.53-0.42-1.11-0.39-1.47,0.15c-0.26,0.4-1.92,2.8-2.34,3.43 c-0.39,0.55-0.18,0.86,0.23,1.2c1.8,1.5,4.18,3.14,5.81,3.97c4.47,2.28,9.32,3.53,14.48,3.72c3.32,0.22,7.5-0.49,10.63-1.81 C70.63,102.67,74.25,97.92,74.98,91.98L74.98,91.98z M54.79,7.18c-10.59,0-19.22,9.98-19.62,22.47h39.25 C74.01,17.16,65.38,7.18,54.79,7.18z M94.99,122.88l-0.41,0l-80.82-0.01h0c-5.5-0.21-9.54-4.66-10.09-10.19l-0.05-1 l-3.61-79.5v0C0,32.12,0,32.06,0,32c0-1.28,1.03-2.33,2.3-2.35l0,0h25.48C28.41,13.15,40.26,0,54.79,0s26.39,13.15,27.01,29.65 h25.4h0.04c1.3,0,2.35,1.05,2.35,2.35c0,0.04,0,0.08,0,0.12v0l-3.96,79.81l-0.04,0.68C105.12,118.21,100.59,122.73,94.99,122.88 L94.99,122.88z" />
@@ -2842,8 +2809,8 @@ function App() {
                     </div>
 
                     {/* TikTok Orders Card */}
-                    <div className="stat-card info" style={{ borderLeft: '4px solid #00f2fe' }}>
-                      <div className="stat-icon" style={{ background: 'rgba(0, 242, 254, 0.12)', color: '#00f2fe' }}>
+                    <div className="stat-card stat-tiktok">
+                      <div className="stat-icon" style={{ background: 'rgba(0, 200, 230, 0.12)', color: '#0284c7' }}>
                         <svg viewBox="0 0 1024 1024" style={{ width: '18px', height: '18px', fill: 'currentColor' }}>
                           <path d="M800 112.962C800 50.575 749.425 0 687.038 0H112.962C50.575 0 0 50.575 0 112.962v574.076C0 749.426 50.575 800 112.962 800h574.076C749.425 800 800 749.426 800 687.038zM662.759 348.916c-51.615.577-99.71-15.027-141.938-43.927v202.874c0 90.166-61.72 167.62-148.996 187.848-119.068 27.165-219.864-58.954-232.577-161.835-13.294-102.884 52.322-193.051 152.892-213.281 19.651-4.045 49.209-4.045 64.458-.577v108.661c-4.692-1.153-9.086-2.31-13.709-2.888-39.304-6.937-77.371 12.715-92.977 48.55-15.605 35.838-5.16 77.451 26.629 101.73 26.586 20.806 56.085 23.694 86.14 9.822 30.057-13.291 46.21-37.567 49.676-70.512.578-4.622.546-9.826.546-15.028V110.206c0-10.981.086-10.502 11.068-10.502h86.12c6.36 0 8.673.915 9.25 8.433 4.621 67.047 55.526 124.147 120.838 132.818 6.937 1.155 14.369 1.613 22.58 2.19z" transform="translate(112 112)"/>
                         </svg>
@@ -2856,15 +2823,15 @@ function App() {
                         </small>
                       </span>
                     </div>
-                    <div className="stat-card">
-                      <div className="stat-icon info">
+                    <div className="stat-card stat-commission">
+                      <div className="stat-icon" style={{ background: 'rgba(16, 185, 129, 0.1)', color: '#059669' }}>
                         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
                       </div>
                       <span className="stat-label">Doanh thu hoa hồng</span>
-                      <span className="stat-val">{formatMoney(stats.totalCommission)}</span>
+                      <span className="stat-val" style={{ color: '#10b981' }}>{formatMoney(stats.totalCommission)}</span>
                     </div>
-                    <div className="stat-card warning">
-                      <div className="stat-icon warning">
+                    <div className="stat-card stat-pending">
+                      <div className="stat-icon" style={{ background: 'rgba(245, 158, 11, 0.1)', color: '#d97706' }}>
                         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
                       </div>
                       <span className="stat-label">Chờ duyệt rút tiền</span>
@@ -2872,8 +2839,8 @@ function App() {
                         {stats.pendingPayoutsCount}
                       </span>
                     </div>
-                    <div className="stat-card">
-                      <div className="stat-icon">
+                    <div className="stat-card stat-withdrawn">
+                      <div className="stat-icon" style={{ background: 'rgba(99, 102, 241, 0.1)', color: '#4f46e5' }}>
                         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
                       </div>
                       <span className="stat-label">Đã thanh toán (Thực tế)</span>
@@ -3111,6 +3078,7 @@ function App() {
           orders={orders}
         />
       )}
+      <FloatingZaloContact />
       {renderMobileBottomNav()}
     </div>
   );

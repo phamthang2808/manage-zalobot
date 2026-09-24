@@ -483,18 +483,22 @@ export default function OrderLookupView({ setView: propSetView } = {}) {
         .stats-section-title { font-family: var(--font-heading); font-size: 16.5px; font-weight: 700; margin-bottom: 12px; color: var(--text-bright); display: flex; align-items: center; gap: 8px; letter-spacing: -0.2px; }
         .stats-cards-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
         .stats-cards-grid > :first-child { grid-column: span 2; }
-        .stat-card-item { border-radius: 14px; padding: 15px 16px; border: 1px solid var(--border-color); display: flex; flex-direction: column; background: var(--bg-card); transition: all 0.2s ease; }
-        .stat-card-item.total { border-color: rgba(59, 130, 246, 0.25); background: linear-gradient(135deg, rgba(59, 130, 246, 0.05) 0%, var(--bg-card) 100%); }
-        .stat-card-item.pending { border-color: rgba(245, 158, 11, 0.25); background: linear-gradient(135deg, rgba(245, 158, 11, 0.05) 0%, var(--bg-card) 100%); }
-        .stat-card-item.completed { border-color: rgba(16, 185, 129, 0.25); background: linear-gradient(135deg, rgba(16, 185, 129, 0.05) 0%, var(--bg-card) 100%); }
-        .stat-card-item.withdrawable { border-color: rgba(249, 115, 22, 0.3); background: linear-gradient(135deg, rgba(249, 115, 22, 0.06) 0%, var(--bg-card) 100%); }
-        .stat-card-item.received { border-color: rgba(168, 85, 247, 0.25); background: linear-gradient(135deg, rgba(168, 85, 247, 0.05) 0%, var(--bg-card) 100%); }
-        html[data-theme="dark"] .stat-card-item, body.dark .stat-card-item { background: #111827; border: 1px solid rgba(255, 255, 255, 0.08); }
-        html[data-theme="dark"] .stat-card-item.total, body.dark .stat-card-item.total { border-color: rgba(59, 130, 246, 0.35); background: linear-gradient(145deg, rgba(59, 130, 246, 0.1) 0%, #111827 100%); }
-        html[data-theme="dark"] .stat-card-item.pending, body.dark .stat-card-item.pending { border-color: rgba(245, 158, 11, 0.35); background: linear-gradient(145deg, rgba(245, 158, 11, 0.1) 0%, #111827 100%); }
-        html[data-theme="dark"] .stat-card-item.completed, body.dark .stat-card-item.completed { border-color: rgba(16, 185, 129, 0.35); background: linear-gradient(145deg, rgba(16, 185, 129, 0.1) 0%, #111827 100%); }
-        html[data-theme="dark"] .stat-card-item.withdrawable, body.dark .stat-card-item.withdrawable { border-color: rgba(249, 115, 22, 0.4); background: linear-gradient(145deg, rgba(249, 115, 22, 0.1) 0%, #111827 100%); }
-        html[data-theme="dark"] .stat-card-item.received, body.dark .stat-card-item.received { border-color: rgba(168, 85, 247, 0.35); background: linear-gradient(145deg, rgba(168, 85, 247, 0.1) 0%, #111827 100%); }
+        .stat-card-item { border-radius: 14px; padding: 16px; border: 1.5px solid var(--border-color); display: flex; flex-direction: column; box-shadow: 0 4px 12px rgba(0,0,0,0.04); background: var(--bg-card); transition: all 0.2s ease; }
+        .stat-card-item.total { background: linear-gradient(135deg, rgba(219,234,254,0.6) 0%, var(--bg-card) 100%); border-color: #93c5fd; }
+        .stat-card-item.pending { background: linear-gradient(135deg, rgba(254,243,199,0.6) 0%, var(--bg-card) 100%); border-color: #fcd34d; }
+        .stat-card-item.completed { background: linear-gradient(135deg, rgba(209,250,229,0.6) 0%, var(--bg-card) 100%); border-color: #6ee7b7; }
+        .stat-card-item.withdrawable { background: linear-gradient(135deg, rgba(255,237,213,0.6) 0%, var(--bg-card) 100%); border-color: #fdba74; }
+        .stat-card-item.received { background: linear-gradient(135deg, rgba(243,232,255,0.6) 0%, var(--bg-card) 100%); border-color: #c084fc; }
+        html[data-theme="dark"] .stat-card-item.total, body.dark .stat-card-item.total { background: linear-gradient(145deg, rgba(59, 130, 246, 0.22), #0f172a 90%) !important; border-color: rgba(96, 165, 250, 0.65) !important; box-shadow: 0 4px 20px rgba(59, 130, 246, 0.25), inset 0 0 12px rgba(96, 165, 250, 0.12) !important; }
+        html[data-theme="dark"] .stat-card-item.pending, body.dark .stat-card-item.pending { background: linear-gradient(145deg, rgba(245, 158, 11, 0.22), #0f172a 90%) !important; border-color: rgba(251, 191, 36, 0.65) !important; box-shadow: 0 4px 20px rgba(245, 158, 11, 0.22), inset 0 0 12px rgba(251, 191, 36, 0.12) !important; }
+        html[data-theme="dark"] .stat-card-item.completed, body.dark .stat-card-item.completed { background: linear-gradient(145deg, rgba(16, 185, 129, 0.22), #0f172a 90%) !important; border-color: rgba(52, 211, 153, 0.65) !important; box-shadow: 0 4px 20px rgba(16, 185, 129, 0.22), inset 0 0 12px rgba(52, 211, 153, 0.12) !important; }
+        html[data-theme="dark"] .stat-card-item.withdrawable, body.dark .stat-card-item.withdrawable { background: linear-gradient(145deg, rgba(249, 115, 22, 0.22), #0f172a 90%) !important; border-color: rgba(251, 146, 60, 0.65) !important; box-shadow: 0 4px 20px rgba(249, 115, 22, 0.25), inset 0 0 12px rgba(251, 146, 60, 0.12) !important; }
+        html[data-theme="dark"] .stat-card-item.received, body.dark .stat-card-item.received { background: linear-gradient(145deg, rgba(168, 85, 247, 0.22), #0f172a 90%) !important; border-color: rgba(192, 132, 252, 0.65) !important; box-shadow: 0 4px 20px rgba(168, 85, 247, 0.25), inset 0 0 12px rgba(192, 132, 252, 0.12) !important; }
+        html[data-theme="dark"] .stat-card-item.total .stat-card-value, body.dark .stat-card-item.total .stat-card-value { color: #60a5fa !important; text-shadow: 0 0 12px rgba(96, 165, 250, 0.4); }
+        html[data-theme="dark"] .stat-card-item.pending .stat-card-value, body.dark .stat-card-item.pending .stat-card-value { color: #fbbf24 !important; text-shadow: 0 0 12px rgba(251, 191, 36, 0.4); }
+        html[data-theme="dark"] .stat-card-item.completed .stat-card-value, body.dark .stat-card-item.completed .stat-card-value { color: #34d399 !important; text-shadow: 0 0 12px rgba(52, 211, 153, 0.4); }
+        html[data-theme="dark"] .stat-card-item.withdrawable .stat-card-value, body.dark .stat-card-item.withdrawable .stat-card-value { color: #fb923c !important; text-shadow: 0 0 12px rgba(251, 146, 60, 0.4); }
+        html[data-theme="dark"] .stat-card-item.received .stat-card-value, body.dark .stat-card-item.received .stat-card-value { color: #c084fc !important; text-shadow: 0 0 12px rgba(192, 132, 252, 0.4); }
         .stat-card-label { font-size: 11px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 4px; font-weight: 700; letter-spacing: 0.5px; }
         .stat-card-value { font-family: var(--font-heading); font-size: 23px; font-weight: 800; color: var(--text-bright); letter-spacing: -0.3px; }
         .stat-card-value.primary { color: #2563eb; }

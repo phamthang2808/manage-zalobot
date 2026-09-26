@@ -4,7 +4,8 @@ export function ProductLandingView({ code, apiRoot = "" }) {
   const [loading, setLoading] = useState(true);
   const [info, setInfo] = useState(null);
   const [error, setError] = useState("");
-  const [copied, setCopied] = useState(false);
+  const [copiedAff, setCopiedAff] = useState(false);
+  const [copiedPage, setCopiedPage] = useState(false);
   const [imgError, setImgError] = useState(false);
 
   useEffect(() => {
@@ -76,17 +77,36 @@ export function ProductLandingView({ code, apiRoot = "" }) {
     fetchInfo();
   }, [code, apiRoot]);
 
-  const handleCopyLink = () => {
+  // Sao chép link affiliate dài trực tiếp
+  const handleCopyAffiliateLink = () => {
+    if (info && info.longUrl) {
+      navigator.clipboard.writeText(info.longUrl);
+      setCopiedAff(true);
+      setTimeout(() => setCopiedAff(false), 2000);
+    }
+  };
+
+  // Sao chép link trang xem hoàn tiền
+  const handleCopyPageLink = () => {
     const url = window.location.href;
     navigator.clipboard.writeText(url);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+    setCopiedPage(true);
+    setTimeout(() => setCopiedPage(false), 2000);
   };
 
   const handleOpenTarget = () => {
     if (info && info.longUrl) {
-      // Mở trực tiếp link dài affiliate để app Shopee/TikTok nhận diện và mở app ngay lập tức
+      // Mở trực tiếp link dài affiliate để app Shopee/TikTok kích hoạt mở app ngay lập tức
       window.location.href = info.longUrl;
+    }
+  };
+
+  const handleGoUserWallet = () => {
+    const zaloId = info?.subId ? encodeURIComponent(info.subId.trim()) : "";
+    if (zaloId) {
+      window.location.href = `/lookup?zaloId=${zaloId}`;
+    } else {
+      window.location.href = "/lookup";
     }
   };
 
@@ -132,29 +152,31 @@ export function ProductLandingView({ code, apiRoot = "" }) {
 
   const isTiktok = (info.platform || "").toUpperCase().includes("TIKTOK");
   const platformName = isTiktok ? "TikTok Shop" : "Shopee";
+  const displayHost = "28symues.id.vn";
 
   return (
     <div className="sym-container">
       <style>{symuesLandingStyles}</style>
 
-      {/* Header App Bar: Logo to rõ ràng, không kèm chữ vì đã có trong logo, bỏ nút Ví của tôi */}
+      {/* Header App Bar: Logo to bên trái/giữa, Tên miền bên phải logo, Bỏ nút Ví của tôi */}
       <header className="sym-header">
-        <button type="button" className="sym-header-back" onClick={() => (window.location.href = "/lookup")} title="Tra cứu đơn hàng">
+        <button type="button" className="sym-header-back" onClick={() => (window.location.href = "/lookup")} title="Quay lại">
           ‹
         </button>
-        <div className="sym-header-brand-center" onClick={() => (window.location.href = "/")}>
+        <div className="sym-header-brand-wrap" onClick={() => (window.location.href = "/")}>
           <img 
             src="/28symueslogomanin.png" 
             alt="28Symues Logo" 
-            className="sym-brand-logo-large" 
+            className="sym-brand-logo-img" 
             onError={(e) => { e.target.src = "/MAIN.png"; }} 
           />
+          <span className="sym-brand-domain-badge">{displayHost}</span>
         </div>
         <div className="sym-header-placeholder"></div>
       </header>
 
       <main className="sym-main">
-        {/* User Card với avatar chính thức của website (/MAIN.png) */}
+        {/* User Card với avatar chính thức của website (/MAIN.png) & Nút vào đúng trang tra cứu của người đó */}
         <div className="sym-card sym-user-card">
           <div className="sym-user-left">
             <div className="sym-user-avatar-wrap">
@@ -174,14 +196,14 @@ export function ProductLandingView({ code, apiRoot = "" }) {
               </div>
             </div>
           </div>
-          <button type="button" onClick={() => (window.location.href = "/lookup")} className="sym-btn-check-wallet">
+          <button type="button" onClick={handleGoUserWallet} className="sym-btn-check-wallet" title="Tra cứu đơn hàng và số dư của Zalo này">
             Tra cứu ví ›
           </button>
         </div>
 
         {/* Main Product Card */}
         <div className="sym-card sym-product-card">
-          {/* Product Header: Image & Title */}
+          {/* Product Header: Image (Đã bỏ thẻ Shopee Xtra) & Title */}
           <div className="sym-prod-top">
             <div className="sym-img-container">
               {info.imageUrl && !imgError ? (
@@ -196,9 +218,6 @@ export function ProductLandingView({ code, apiRoot = "" }) {
                   <img src="/MAIN.png" alt="Fallback Product" className="sym-fallback-img" />
                 </div>
               )}
-              <div className="sym-platform-tag">
-                {isTiktok ? "TIKTOK SHOP" : "SHOPEE XTRA"}
-              </div>
             </div>
 
             <div className="sym-prod-info">
@@ -215,11 +234,10 @@ export function ProductLandingView({ code, apiRoot = "" }) {
             </div>
           </div>
 
-          {/* Bảng Hoa Hồng Sản Phẩm (Đã bỏ tạm tính thuế & bỏ hoàn tiền sau thuế) */}
+          {/* Bảng Hoa Hồng Sản Phẩm (Đã xóa chữ Minh bạch 100%, bỏ thuế, gọn gàng) */}
           <div className="sym-breakdown-box">
             <div className="sym-breakdown-title">
               <span>📊 THÔNG TIN HOA HỒNG SẢN PHẨM</span>
-              <span className="sym-badge-verified">Minh bạch 100%</span>
             </div>
 
             {/* Giá tham khảo nếu có */}
@@ -287,34 +305,47 @@ export function ProductLandingView({ code, apiRoot = "" }) {
             </div>
           </div>
 
-          {/* Big CTA Action Button - Kích hoạt mở link dài Shopee */}
+          {/* NÚT MUA TRÊN SHOPEE CỰC ĐẸP (Sleek modern pill, hiệu ứng phát sáng cao cấp) */}
           <div className="sym-cta-block">
-            <button type="button" className="sym-btn-cta" onClick={handleOpenTarget}>
-              <span className="sym-cta-shine"></span>
-              <div className="sym-cta-main">
-                <span className="sym-cta-icon">🛍️</span>
-                <span className="sym-cta-text">Mua trên {platformName} - Nhận hoàn tiền</span>
-                <span className="sym-cta-arrow">➔</span>
+            <button type="button" className="sym-btn-cta-premium" onClick={handleOpenTarget}>
+              <div className="sym-cta-glow"></div>
+              <div className="sym-cta-body">
+                <div className="sym-cta-icon-box">
+                  <svg className="sym-cta-shopee-svg" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M19 6h-2c0-2.76-2.24-5-5-5S7 3.24 7 6H5c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm-7-3c1.66 0 3 1.34 3 3H9c0-1.66 1.34-3 3-3zm7 17H5V8h14v12zm-7-8c-1.66 0-3-1.34-3-3H7c0 2.76 2.24 5 5 5s5-2.24 5-5h-2c0 1.66-1.34 3-3 3z" />
+                  </svg>
+                </div>
+                <span className="sym-cta-title-text">
+                  Mua ngay trên {platformName}
+                </span>
+                <span className="sym-cta-arrow-badge">➔</span>
               </div>
             </button>
             <p className="sym-cta-note">
-              🛡️ Mã Zalo <strong>{info.subId || "Thành viên"}</strong> đã được gán vào đơn để cộng tiền tự động.
+              🛡️ Mã Zalo <strong>{info.subId || "Thành viên"}</strong> đã được gán vào đơn để tự động cộng tiền.
             </p>
           </div>
         </div>
 
-        {/* Share Card */}
+        {/* Share Card - Hỗ trợ sao chép link Affiliate dài chuẩn xác */}
         <div className="sym-card sym-share-card">
-          <div className="sym-share-text">
-            <div className="sym-share-title">Gửi link cho bạn bè cùng mua</div>
-            <div className="sym-share-desc">Bạn bè nhận hoàn tiền, bạn tích lũy thêm điểm thưởng!</div>
+          <div className="sym-share-info">
+            <div className="sym-share-title">Chia sẻ link nhận hoa hồng</div>
+            <div className="sym-share-desc">Gửi link dài trực tiếp hoặc link web cho bạn bè cùng mua</div>
           </div>
-          <button type="button" className="sym-btn-copy" onClick={handleCopyLink}>
-            {copied ? "✓ Đã sao chép" : "📋 Copy link"}
-          </button>
+          <div className="sym-share-actions">
+            {info.longUrl && (
+              <button type="button" className="sym-btn-copy-aff" onClick={handleCopyAffiliateLink} title="Sao chép link affiliate dài Shopee">
+                {copiedAff ? "✓ Đã chép link dài" : "🔗 Chép link dài"}
+              </button>
+            )}
+            <button type="button" className="sym-btn-copy-page" onClick={handleCopyPageLink} title="Sao chép link trang xem hoàn tiền này">
+              {copiedPage ? "✓ Đã chép web" : "📋 Chép link web"}
+            </button>
+          </div>
         </div>
 
-        {/* Mẹo Nhận Hoa Hồng Chuẩn 100% (Sửa theo đúng câu lưu ý của bot) */}
+        {/* Mẹo Nhận Hoa Hồng Chuẩn 100% (Đúng câu lưu ý của bot) */}
         <div className="sym-card sym-guide-card">
           <div className="sym-guide-header">
             <span className="sym-guide-title">💡 Mẹo nhỏ nhận hoa hồng chuẩn 100%:</span>
@@ -328,7 +359,7 @@ export function ProductLandingView({ code, apiRoot = "" }) {
             </div>
             <div className="sym-tip-step">
               <span className="sym-tip-bullet">➔</span>
-              <span className="sym-tip-text"><strong>Bấm link vào App Shopee</strong> (ấn nút Mua trên Shopee ở trên).</span>
+              <span className="sym-tip-text"><strong>Bấm link vào App Shopee</strong> (ấn nút Mua ngay trên Shopee ở trên).</span>
             </div>
             <div className="sym-tip-step">
               <span className="sym-tip-bullet">➔</span>
@@ -368,11 +399,11 @@ export function ProductLandingView({ code, apiRoot = "" }) {
           <span className="nav-label">Trang chủ</span>
         </button>
 
-        {/* 2. Tra cứu */}
+        {/* 2. Tra cứu (Nếu có Zalo ID thì tra cứu trực tiếp) */}
         <button 
           type="button" 
           className="mobile-bottom-nav-item active" 
-          onClick={() => { window.location.href = '/lookup'; }}
+          onClick={handleGoUserWallet}
         >
           <div className="nav-icon-wrap">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -552,7 +583,7 @@ body {
   transform: scale(0.98);
 }
 
-/* Header App Bar - Logo to rõ ràng, không kèm chữ */
+/* Header App Bar: Logo to và Tên miền bên phải logo */
 .sym-header {
   display: flex;
   align-items: center;
@@ -589,19 +620,30 @@ body {
   background: #ffedd5;
 }
 
-.sym-header-brand-center {
+.sym-header-brand-wrap {
   display: flex;
   align-items: center;
-  justify-content: center;
-  flex: 1;
+  gap: 10px;
   cursor: pointer;
 }
 
-.sym-brand-logo-large {
+.sym-brand-logo-img {
   height: 48px;
-  max-width: 220px;
+  max-width: 170px;
   object-fit: contain;
-  filter: drop-shadow(0 2px 6px rgba(234, 88, 12, 0.18));
+  filter: drop-shadow(0 2px 5px rgba(234, 88, 12, 0.2));
+}
+
+.sym-brand-domain-badge {
+  font-size: 12px;
+  font-weight: 800;
+  color: #ea580c;
+  background: #fff7ed;
+  border: 1px solid #ffedd5;
+  padding: 4px 10px;
+  border-radius: 999px;
+  letter-spacing: 0.3px;
+  box-shadow: 0 1px 4px rgba(234, 88, 12, 0.08);
 }
 
 .sym-header-placeholder {
@@ -688,20 +730,22 @@ body {
 }
 
 .sym-btn-check-wallet {
-  background: #fff7ed;
-  color: #ea580c;
+  background: linear-gradient(135deg, #fff7ed, #ffedd5);
+  color: #c24e02;
   border: 1px solid #fed7aa;
-  font-size: 11.5px;
-  font-weight: 700;
-  padding: 7px 13px;
+  font-size: 12px;
+  font-weight: 800;
+  padding: 7px 14px;
   border-radius: 12px;
   cursor: pointer;
+  box-shadow: 0 2px 6px rgba(234, 88, 12, 0.1);
   transition: all 0.15s ease;
 }
 
 .sym-btn-check-wallet:hover {
   background: #ea580c;
   color: #ffffff;
+  border-color: #ea580c;
 }
 
 /* Product Card */
@@ -750,20 +794,6 @@ body {
   object-fit: contain;
 }
 
-.sym-platform-tag {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background: #ea580c;
-  color: #ffffff;
-  font-size: 8px;
-  font-weight: 900;
-  text-align: center;
-  padding: 2.5px 0;
-  letter-spacing: 0.3px;
-}
-
 .sym-prod-info {
   flex: 1;
   display: flex;
@@ -801,7 +831,7 @@ body {
   overflow: hidden;
 }
 
-/* Commission Breakdown Box */
+/* Commission Breakdown Box (Gọn gàng, không chữ minh bạch 100%) */
 .sym-breakdown-box {
   background: #fcfcfd;
   border: 1px solid #eaecf0;
@@ -821,16 +851,6 @@ body {
   color: #475467;
   padding-bottom: 6px;
   border-bottom: 1px dashed #eaecf0;
-}
-
-.sym-badge-verified {
-  font-size: 9.5px;
-  font-weight: 700;
-  color: #027a48;
-  background: #ecfdf3;
-  border: 1px solid #abefc6;
-  padding: 1px 6px;
-  border-radius: 999px;
 }
 
 .sym-breakdown-row {
@@ -904,59 +924,91 @@ body {
 .sym-val-total {
   font-weight: 800;
   color: #ea580c;
-  font-size: 14px;
+  font-size: 14.5px;
 }
 
-/* CTA Action */
+/* NÚT MUA TRÊN SHOPEE CỰC ĐẸP (PREMIUM CTA BUTTON) */
 .sym-cta-block {
   display: flex;
   flex-direction: column;
   gap: 8px;
 }
 
-.sym-btn-cta {
+.sym-btn-cta-premium {
   width: 100%;
-  background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
   border: none;
-  border-radius: 18px;
-  padding: 14px 20px;
+  background: linear-gradient(135deg, #ff5722 0%, #ea580c 50%, #c2410c 100%);
+  border-radius: 999px;
+  padding: 13px 20px;
   color: #ffffff;
   cursor: pointer;
   position: relative;
   overflow: hidden;
-  box-shadow: 0 8px 24px rgba(234, 88, 12, 0.36);
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 10px 26px -4px rgba(234, 88, 12, 0.48), 0 3px 8px rgba(0, 0, 0, 0.08);
+  transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-.sym-btn-cta:hover {
-  transform: translateY(-1.5px);
-  box-shadow: 0 10px 28px rgba(234, 88, 12, 0.45);
+.sym-btn-cta-premium:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 30px -4px rgba(234, 88, 12, 0.55), 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
-.sym-btn-cta:active {
-  transform: translateY(1px);
+.sym-btn-cta-premium:active {
+  transform: scale(0.98);
 }
 
-.sym-cta-main {
+.sym-cta-glow {
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.25), transparent);
+  transform: skewX(-20deg);
+  animation: sym-glow-sweep 3.5s infinite;
+}
+
+@keyframes sym-glow-sweep {
+  0% { left: -100%; }
+  40%, 100% { left: 150%; }
+}
+
+.sym-cta-body {
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 10px;
+  position: relative;
+  z-index: 2;
 }
 
-.sym-cta-icon {
-  font-size: 20px;
+.sym-cta-icon-box {
+  width: 26px;
+  height: 26px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
 }
 
-.sym-cta-text {
+.sym-cta-shopee-svg {
+  width: 15px;
+  height: 15px;
+}
+
+.sym-cta-title-text {
   font-size: 15px;
   font-weight: 900;
-  letter-spacing: 0.2px;
+  letter-spacing: 0.3px;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
 }
 
-.sym-cta-arrow {
-  font-size: 16px;
+.sym-cta-arrow-badge {
+  font-size: 15px;
   font-weight: 900;
+  margin-left: 2px;
 }
 
 .sym-cta-note {
@@ -970,15 +1022,15 @@ body {
   color: #ea580c;
 }
 
-/* Share Card */
+/* Share Card - Hỗ trợ sao chép link Affiliate dài */
 .sym-share-card {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
+  flex-direction: column;
+  gap: 8px;
   background: #ffffff;
 }
 
-.sym-share-text {
+.sym-share-info {
   display: flex;
   flex-direction: column;
   gap: 2px;
@@ -995,25 +1047,50 @@ body {
   color: #667085;
 }
 
-.sym-btn-copy {
-  background: #fff7ed;
-  border: 1px solid #fed7aa;
-  color: #ea580c;
-  font-size: 12px;
+.sym-share-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.sym-btn-copy-aff {
+  flex: 1;
+  background: linear-gradient(135deg, #fff7ed, #ffedd5);
+  border: 1.5px solid #f97316;
+  color: #c24e02;
+  font-size: 11.5px;
   font-weight: 800;
-  padding: 8px 14px;
+  padding: 8px 12px;
+  border-radius: 12px;
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.15s ease;
+}
+
+.sym-btn-copy-aff:hover {
+  background: #f97316;
+  color: #ffffff;
+}
+
+.sym-btn-copy-page {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  color: #475569;
+  font-size: 11.5px;
+  font-weight: 700;
+  padding: 8px 12px;
   border-radius: 12px;
   cursor: pointer;
   white-space: nowrap;
   transition: all 0.15s ease;
 }
 
-.sym-btn-copy:hover {
-  background: #ea580c;
-  color: #ffffff;
+.sym-btn-copy-page:hover {
+  background: #f1f5f9;
+  color: #0f172a;
 }
 
-/* Guide Card - Sửa thành Mẹo nhỏ nhận hoa hồng chuẩn 100% */
+/* Guide Card - Mẹo nhỏ nhận hoa hồng chuẩn 100% */
 .sym-guide-card {
   background: #ffffff;
   display: flex;

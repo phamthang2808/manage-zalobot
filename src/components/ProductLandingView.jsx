@@ -8,12 +8,19 @@ export function ProductLandingView({ code, apiRoot = "" }) {
   const [imgError, setImgError] = useState(false);
 
   useEffect(() => {
-    // Tự động bóc tách code từ URL nếu không truyền prop
+    // Tự động bóc tách mã code từ URL (hỗ trợ cả /p/code, /p/code?params, /s/code, query params)
     let targetCode = code;
     if (!targetCode) {
       const path = window.location.pathname;
       if (path.includes("/p/")) {
-        targetCode = path.split("/p/")[1]?.split("?")[0]?.trim();
+        const part = path.substring(path.indexOf("/p/") + 3);
+        targetCode = part.split("/")[0].split("?")[0].split("#")[0].trim();
+      } else if (path.includes("/s/")) {
+        const part = path.substring(path.indexOf("/s/") + 3);
+        targetCode = part.split("/")[0].split("?")[0].split("#")[0].trim();
+      } else {
+        const params = new URLSearchParams(window.location.search);
+        targetCode = params.get("code") || params.get("p") || params.get("c") || params.get("q");
       }
     }
 
@@ -26,18 +33,29 @@ export function ProductLandingView({ code, apiRoot = "" }) {
     const fetchInfo = async () => {
       try {
         const root = apiRoot || (import.meta.env.PROD ? "" : "http://localhost:8080");
-        const res = await fetch(`${root}/api/short-link/info/${targetCode}`);
-        if (res.ok) {
+        
+        // Thử gọi endpoint chi tiết sản phẩm
+        let res = await fetch(`${root}/api/short-link/info/${targetCode}`).catch(() => null);
+        if (!res || !res.ok) {
+          res = await fetch(`${root}/api/public/short-link/info/${targetCode}`).catch(() => null);
+        }
+
+        if (res && res.ok) {
           const data = await res.json();
           setInfo(data);
         } else {
-          // Fallback sang resolve endpoint
-          const res2 = await fetch(`${root}/api/short-link/resolve/${targetCode}`);
-          if (res2.ok) {
+          // Fallback sang endpoint giải mã link
+          let res2 = await fetch(`${root}/api/public/short-link/${targetCode}`).catch(() => null);
+          if (!res2 || !res2.ok) {
+            res2 = await fetch(`${root}/api/short-link/resolve/${targetCode}`).catch(() => null);
+          }
+
+          if (res2 && res2.ok) {
             const data2 = await res2.json();
+            const longUrl = data2.data || data2.longUrl || "";
             setInfo({
               code: targetCode,
-              longUrl: data2.longUrl,
+              longUrl: longUrl,
               productName: "Sản phẩm tiếp thị hoàn tiền",
               platform: "SHOPEE",
               rawCommissionMoney: 0,
@@ -67,7 +85,7 @@ export function ProductLandingView({ code, apiRoot = "" }) {
 
   const handleOpenTarget = () => {
     if (info && info.longUrl) {
-      // Mở link dài affiliate trực tiếp để ứng dụng Shopee kích hoạt mở app ngay lập tức
+      // Mở trực tiếp link dài affiliate để app Shopee/TikTok nhận diện và mở app ngay lập tức
       window.location.href = info.longUrl;
     }
   };
@@ -106,57 +124,36 @@ export function ProductLandingView({ code, apiRoot = "" }) {
     );
   }
 
-  // Tính toán hoa hồng theo đúng dự án 28Symues: Chia 8/2 - Thuế 10%
   const rawComm = info.rawCommissionMoney || 0;
-  const taxComm = rawComm * 0.10; // Thuế TNCN 10%
-  const netComm = info.netCommissionMoney || (rawComm > 0 ? (rawComm * 0.90 * 0.80) : 0); // Khách nhận 80% sau thuế
+  const productPrice = info.productPrice || 0;
   const shopeeComm = info.shopeeCommissionMoney || 0;
   const sellerComm = info.sellerCommissionMoney || 0;
   const hasSplit = shopeeComm > 0 || sellerComm > 0;
 
   const isTiktok = (info.platform || "").toUpperCase().includes("TIKTOK");
   const platformName = isTiktok ? "TikTok Shop" : "Shopee";
-  const displayHost = "28symues.id.vn";
 
   return (
     <div className="sym-container">
       <style>{symuesLandingStyles}</style>
 
-      {/* Header App Bar với logo to rõ ràng */}
+      {/* Header App Bar: Logo to rõ ràng, không kèm chữ vì đã có trong logo, bỏ nút Ví của tôi */}
       <header className="sym-header">
         <button type="button" className="sym-header-back" onClick={() => (window.location.href = "/lookup")} title="Tra cứu đơn hàng">
           ‹
         </button>
-        <div className="sym-header-brand" onClick={() => (window.location.href = "/")}>
+        <div className="sym-header-brand-center" onClick={() => (window.location.href = "/")}>
           <img 
             src="/28symueslogomanin.png" 
             alt="28Symues Logo" 
-            className="sym-brand-logo" 
+            className="sym-brand-logo-large" 
             onError={(e) => { e.target.src = "/MAIN.png"; }} 
           />
-          <div className="sym-brand-titles">
-            <span className="sym-brand-name">28SYMUES AFFILIATE</span>
-            <span className="sym-brand-domain">{displayHost}</span>
-          </div>
         </div>
-        <button type="button" onClick={() => (window.location.href = "/lookup")} className="sym-header-lookup-btn">
-          Ví của tôi
-        </button>
+        <div className="sym-header-placeholder"></div>
       </header>
 
       <main className="sym-main">
-        {/* Brand Banner Badge - Đúng tỉ lệ 80 - 20 & Thuế 10% */}
-        <div className="sym-banner-pill">
-          <div className="sym-pill-left">
-            <span className="sym-pill-icon">💰</span>
-            <span className="sym-pill-text-orange">28Symues Hoàn Tiền</span>
-            <span className="sym-pill-badge-ratio">Tỉ Lệ 80 - 20</span>
-          </div>
-          <div className="sym-pill-right">
-            <span className="sym-pill-tax-tag">Thuế TNCN 10%</span>
-          </div>
-        </div>
-
         {/* User Card với avatar chính thức của website (/MAIN.png) */}
         <div className="sym-card sym-user-card">
           <div className="sym-user-left">
@@ -218,12 +215,25 @@ export function ProductLandingView({ code, apiRoot = "" }) {
             </div>
           </div>
 
-          {/* Commission Calculation Breakdown - Chia 2 Hoa Hồng Rõ Ràng & Minh bạch 8/2 */}
+          {/* Bảng Hoa Hồng Sản Phẩm (Đã bỏ tạm tính thuế & bỏ hoàn tiền sau thuế) */}
           <div className="sym-breakdown-box">
             <div className="sym-breakdown-title">
-              <span>📊 BẢNG TÍNH HOA HỒNG CHI TIẾT</span>
+              <span>📊 THÔNG TIN HOA HỒNG SẢN PHẨM</span>
               <span className="sym-badge-verified">Minh bạch 100%</span>
             </div>
+
+            {/* Giá tham khảo nếu có */}
+            {productPrice > 0 && (
+              <div className="sym-breakdown-row">
+                <div className="sym-row-label">
+                  <span className="sym-row-bullet">💵</span>
+                  <span>Giá tham khảo:</span>
+                </div>
+                <div className="sym-row-value">
+                  <span className="sym-val-price">đ{formatVnd(productPrice)}</span>
+                </div>
+              </div>
+            )}
 
             {/* Chia 2 phần hoa hồng: Shopee & Shop (nếu có dữ liệu) */}
             {hasSplit && (
@@ -263,45 +273,15 @@ export function ProductLandingView({ code, apiRoot = "" }) {
             {/* Dòng Tổng hoa hồng gốc */}
             <div className="sym-breakdown-row sym-row-total">
               <div className="sym-row-label">
-                <span className="sym-row-bullet">🏷️</span>
-                <span><strong>Tổng hoa hồng gốc:</strong></span>
+                <span className="sym-row-bullet">💰</span>
+                <span><strong>Tổng hoa hồng:</strong></span>
               </div>
               <div className="sym-row-value">
                 {info.commissionRateText && (
-                  <span className="sym-rate-pill">{info.commissionRateText}</span>
+                  <span className="sym-rate-pill sym-rate-pill-total">{info.commissionRateText}</span>
                 )}
-                <span className="sym-val-raw">
+                <span className="sym-val-total">
                   ~ {rawComm > 0 ? formatVnd(rawComm) : "Chờ cập nhật"}
-                </span>
-              </div>
-            </div>
-
-            {/* Dòng Khấu trừ thuế TNCN 10% */}
-            <div className="sym-breakdown-row sym-row-tax">
-              <div className="sym-row-label">
-                <span className="sym-row-bullet">🏛️</span>
-                <span>Tạm tính thuế TNCN (10%):</span>
-              </div>
-              <div className="sym-row-value sym-val-tax">
-                - {taxComm > 0 ? formatVnd(taxComm) : "0đ"}
-              </div>
-            </div>
-
-            {/* Dòng Khách nhận 80% sau thuế */}
-            <div className="sym-cashback-highlight">
-              <div className="sym-highlight-header">
-                <div className="sym-highlight-badge">
-                  <span>✨ HOÀN TIỀN BẠN NHẬN (80% SAU THUẾ)</span>
-                </div>
-                <span className="sym-share-ratio">Tỉ lệ 8/2</span>
-              </div>
-
-              <div className="sym-highlight-amount-wrap">
-                <span className="sym-highlight-amount">
-                  {netComm > 0 ? formatVnd(netComm) : "Chờ cập nhật"}
-                </span>
-                <span className="sym-highlight-sub">
-                  (Đã tự động khấu trừ 10% thuế TNCN theo quy định sàn)
                 </span>
               </div>
             </div>
@@ -334,33 +314,25 @@ export function ProductLandingView({ code, apiRoot = "" }) {
           </button>
         </div>
 
-        {/* 3 Step Instruction Guide */}
+        {/* Mẹo Nhận Hoa Hồng Chuẩn 100% (Sửa theo đúng câu lưu ý của bot) */}
         <div className="sym-card sym-guide-card">
           <div className="sym-guide-header">
-            <span className="sym-guide-title">📌 3 BƯỚC MUA HÀNG ĐỂ ĐẢM BẢO CÓ TIỀN</span>
-            <span className="sym-guide-badge">Rất quan trọng</span>
+            <span className="sym-guide-title">💡 Mẹo nhỏ nhận hoa hồng chuẩn 100%:</span>
+            <span className="sym-guide-badge">Lưu ý quan trọng</span>
           </div>
 
-          <div className="sym-steps-list">
-            <div className="sym-step-item">
-              <div className="sym-step-num sym-step-num-1">1</div>
-              <div className="sym-step-content">
-                <strong>Bấm nút "Mua trên {platformName}"</strong> ở trên để mở trực tiếp ứng dụng {platformName}.
-              </div>
+          <div className="sym-tips-box">
+            <div className="sym-tip-step">
+              <span className="sym-tip-bullet">❌</span>
+              <span className="sym-tip-text"><strong>Xóa sp cũ trong giỏ</strong> (nếu đã lỡ thêm từ trước).</span>
             </div>
-
-            <div className="sym-step-item">
-              <div className="sym-step-num sym-step-num-2">2</div>
-              <div className="sym-step-content">
-                <strong>Xóa sản phẩm trong giỏ hàng (nếu có từ trước)</strong>, sau đó mới bấm "Thêm vào giỏ" và bấm Đặt mua ngay để sàn ghi nhận hoa hồng.
-              </div>
+            <div className="sym-tip-step">
+              <span className="sym-tip-bullet">➔</span>
+              <span className="sym-tip-text"><strong>Bấm link vào App Shopee</strong> (ấn nút Mua trên Shopee ở trên).</span>
             </div>
-
-            <div className="sym-step-item">
-              <div className="sym-step-num sym-step-num-3">3</div>
-              <div className="sym-step-content">
-                <strong>Đơn hàng xuất hiện tự động sau 15-30 phút</strong>. Bạn có thể vào lại website <strong>28symues.id.vn/lookup</strong> để kiểm tra số dư và rút tiền.
-              </div>
+            <div className="sym-tip-step">
+              <span className="sym-tip-bullet">➔</span>
+              <span className="sym-tip-text"><strong>Mua ngay (không xem Live/Video giữa chừng)</strong> nhé sếp ơi!</span>
             </div>
           </div>
         </div>
@@ -380,7 +352,7 @@ export function ProductLandingView({ code, apiRoot = "" }) {
         </div>
       </a>
 
-      {/* Menu Chân Trang CHUẨN CỦA WEBSITE (Hoạt động 100% khi bấm) */}
+      {/* Menu Chân Trang CHUẨN CỦA WEBSITE - Nút bên phải cùng là Đăng nhập */}
       <nav className="mobile-bottom-nav sym-site-nav">
         {/* 1. Trang chủ */}
         <button 
@@ -443,18 +415,20 @@ export function ProductLandingView({ code, apiRoot = "" }) {
           <span className="nav-label">Hướng dẫn</span>
         </button>
 
-        {/* 5. Quản trị */}
+        {/* 5. Đăng nhập (Nút ngoài cùng bên phải) */}
         <button 
           type="button" 
           className="mobile-bottom-nav-item" 
           onClick={() => { window.location.href = '/?view=login'; }}
         >
           <div className="nav-icon-wrap">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M19.43 12.98c.04-.32.07-.64.07-.98s-.03-.66-.07-.98l2.11-1.65c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.3-.61-.22l-2.49 1c-.52-.4-1.08-.73-1.69-.98l-.38-2.65C14.46 2.18 14.25 2 14 2h-4c-.25 0-.46.18-.49.42l-.38 2.65c-.61.25-1.17.59-1.69.98l-2.49-1c-.23-.09-.49 0-.61.22l-2 3.46c-.13.22-.07.49.12.64l2.11 1.65c-.04.32-.07.65-.07.98s.03.66.07.98l-2.11 1.65c-.19.15-.24.42-.12.64l2 3.46c.12.22.39.3.61.22l2.49-1c.52.4 1.08.73 1.69.98l.38 2.65c.03.24.24.42.49.42h4c.25 0 .46-.18.49-.42l.38-2.65c.61-.25 1.17-.59 1.69-.98l2.49 1c.23.09.49 0 .61-.22l2-3.46c.12-.22.07-.49-.12-.64l-2.11-1.65zM12 15.5c-1.93 0-3.5-1.57-3.5-3.5s1.57-3.5 3.5-3.5 3.5 1.57 3.5 3.5-1.57 3.5-3.5 3.5z" />
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" />
+              <polyline points="10 17 15 12 10 7" />
+              <line x1="15" y1="12" x2="3" y2="12" />
             </svg>
           </div>
-          <span className="nav-label">Quản trị</span>
+          <span className="nav-label">Đăng nhập</span>
         </button>
       </nav>
     </div>
@@ -465,7 +439,6 @@ const symuesLandingStyles = `
 /* ==========================================================================
    28SYMUES AFFILIATE - PRODUCT LANDING VIEW
    Palette: Amber/Orange (#f97316 / #ea580c), Dark Navy (#101828), Cream Warm (#fffaf5)
-   Ratio: 8/2 (Khách nhận 80% sau thuế 10%)
    ========================================================================== */
 
 * {
@@ -579,31 +552,32 @@ body {
   transform: scale(0.98);
 }
 
-/* Header App Bar - Logo to rõ ràng */
+/* Header App Bar - Logo to rõ ràng, không kèm chữ */
 .sym-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 10px 16px;
-  background: rgba(255, 255, 255, 0.92);
+  background: rgba(255, 255, 255, 0.94);
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
   border-bottom: 1px solid rgba(254, 215, 170, 0.6);
   position: sticky;
   top: 0;
   z-index: 50;
+  min-height: 64px;
 }
 
 .sym-header-back {
   background: #fff7ed;
   border: 1px solid #ffedd5;
-  width: 36px;
-  height: 36px;
-  border-radius: 10px;
+  width: 38px;
+  height: 38px;
+  border-radius: 12px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 26px;
+  font-size: 28px;
   line-height: 1;
   color: #ea580c;
   cursor: pointer;
@@ -615,54 +589,23 @@ body {
   background: #ffedd5;
 }
 
-.sym-header-brand {
+.sym-header-brand-center {
   display: flex;
   align-items: center;
-  gap: 12px;
+  justify-content: center;
+  flex: 1;
   cursor: pointer;
 }
 
-.sym-brand-logo {
-  width: 44px;
-  height: 44px;
+.sym-brand-logo-large {
+  height: 48px;
+  max-width: 220px;
   object-fit: contain;
-  border-radius: 10px;
-  filter: drop-shadow(0 2px 4px rgba(234, 88, 12, 0.2));
+  filter: drop-shadow(0 2px 6px rgba(234, 88, 12, 0.18));
 }
 
-.sym-brand-titles {
-  display: flex;
-  flex-direction: column;
-}
-
-.sym-brand-name {
-  font-size: 14px;
-  font-weight: 900;
-  letter-spacing: 0.5px;
-  color: #101828;
-}
-
-.sym-brand-domain {
-  font-size: 11px;
-  font-weight: 700;
-  color: #ea580c;
-}
-
-.sym-header-lookup-btn {
-  background: #fff7ed;
-  border: 1px solid #fed7aa;
-  color: #ea580c;
-  font-size: 11.5px;
-  font-weight: 700;
-  padding: 6px 14px;
-  border-radius: 999px;
-  cursor: pointer;
-  transition: all 0.15s ease;
-}
-
-.sym-header-lookup-btn:hover {
-  background: #ea580c;
-  color: #ffffff;
+.sym-header-placeholder {
+  width: 38px;
 }
 
 /* Main Content Area */
@@ -671,55 +614,6 @@ body {
   display: flex;
   flex-direction: column;
   gap: 12px;
-}
-
-/* Banner Pill */
-.sym-banner-pill {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  background: #ffffff;
-  border-radius: 999px;
-  padding: 6px 12px;
-  border: 1px solid #fed7aa;
-  box-shadow: 0 2px 8px rgba(234, 88, 12, 0.06);
-}
-
-.sym-pill-left {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.sym-pill-icon {
-  font-size: 16px;
-}
-
-.sym-pill-text-orange {
-  font-size: 12px;
-  font-weight: 800;
-  color: #ea580c;
-}
-
-.sym-pill-badge-ratio {
-  background: linear-gradient(135deg, #f97316, #ea580c);
-  color: #ffffff;
-  font-size: 10px;
-  font-weight: 800;
-  padding: 2.5px 8px;
-  border-radius: 999px;
-  box-shadow: 0 2px 6px rgba(234, 88, 12, 0.25);
-  letter-spacing: 0.3px;
-}
-
-.sym-pill-tax-tag {
-  font-size: 10px;
-  font-weight: 700;
-  color: #475467;
-  background: #f2f4f7;
-  padding: 2.5px 8px;
-  border-radius: 999px;
-  border: 1px solid #eaecf0;
 }
 
 /* Cards Base */
@@ -745,8 +639,8 @@ body {
 }
 
 .sym-user-avatar-wrap {
-  width: 46px;
-  height: 46px;
+  width: 48px;
+  height: 48px;
   border-radius: 50%;
   background: #fff7ed;
   border: 2px solid #f97316;
@@ -771,7 +665,7 @@ body {
 }
 
 .sym-user-greeting {
-  font-size: 13px;
+  font-size: 13.5px;
   color: #475467;
   font-weight: 600;
 }
@@ -799,7 +693,7 @@ body {
   border: 1px solid #fed7aa;
   font-size: 11.5px;
   font-weight: 700;
-  padding: 6px 12px;
+  padding: 7px 13px;
   border-radius: 12px;
   cursor: pointer;
   transition: all 0.15s ease;
@@ -943,7 +837,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  font-size: 12px;
+  font-size: 12.5px;
 }
 
 .sym-row-subcom {
@@ -952,8 +846,8 @@ body {
 }
 
 .sym-row-total {
-  padding-top: 4px;
-  border-top: 1px dashed #f2f4f7;
+  padding-top: 6px;
+  border-top: 1px dashed #eaecf0;
 }
 
 .sym-row-label {
@@ -965,7 +859,7 @@ body {
 }
 
 .sym-row-bullet {
-  font-size: 12px;
+  font-size: 13px;
 }
 
 .sym-row-value {
@@ -974,11 +868,14 @@ body {
   gap: 6px;
 }
 
-.sym-rate-pill {
-  font-size: 10px;
+.sym-val-price {
   font-weight: 800;
-  color: #c24e02;
-  background: #fff0d5;
+  color: #0f172a;
+}
+
+.sym-rate-pill {
+  font-size: 10.5px;
+  font-weight: 800;
   padding: 1.5px 6px;
   border-radius: 6px;
 }
@@ -993,79 +890,21 @@ body {
   background: #ecfdf3;
 }
 
+.sym-rate-pill-total {
+  color: #ffffff;
+  background: #ea580c;
+}
+
 .sym-val-sub {
   font-weight: 600;
   color: #344054;
-  font-size: 11.5px;
-}
-
-.sym-val-raw {
-  font-weight: 700;
-  color: #101828;
-}
-
-.sym-row-tax .sym-row-label {
-  color: #667085;
-}
-
-.sym-val-tax {
-  font-weight: 600;
-  color: #b42318;
   font-size: 12px;
 }
 
-/* Cashback Highlight Box - 80% After Tax */
-.sym-cashback-highlight {
-  background: linear-gradient(135deg, #fff9ed 0%, #ffedd5 100%);
-  border: 1.5px solid #f97316;
-  border-radius: 14px;
-  padding: 12px;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  margin-top: 4px;
-  box-shadow: 0 4px 14px rgba(249, 115, 22, 0.12);
-}
-
-.sym-highlight-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.sym-highlight-badge {
-  font-size: 11px;
-  font-weight: 900;
-  color: #ea580c;
-  letter-spacing: 0.3px;
-}
-
-.sym-share-ratio {
-  font-size: 10px;
+.sym-val-total {
   font-weight: 800;
-  color: #ffffff;
-  background: #ea580c;
-  padding: 2px 7px;
-  border-radius: 999px;
-}
-
-.sym-highlight-amount-wrap {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.sym-highlight-amount {
-  font-size: 24px;
-  font-weight: 900;
-  color: #c24e02;
-  line-height: 1.2;
-}
-
-.sym-highlight-sub {
-  font-size: 10.5px;
-  color: #7c340e;
-  font-weight: 500;
+  color: #ea580c;
+  font-size: 14px;
 }
 
 /* CTA Action */
@@ -1174,12 +1013,12 @@ body {
   color: #ffffff;
 }
 
-/* Guide Card */
+/* Guide Card - Sửa thành Mẹo nhỏ nhận hoa hồng chuẩn 100% */
 .sym-guide-card {
   background: #ffffff;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 10px;
 }
 
 .sym-guide-header {
@@ -1191,7 +1030,7 @@ body {
 }
 
 .sym-guide-title {
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 800;
   color: #101828;
 }
@@ -1206,43 +1045,36 @@ body {
   border-radius: 999px;
 }
 
-.sym-steps-list {
+.sym-tips-box {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 8px;
+  padding-top: 4px;
 }
 
-.sym-step-item {
+.sym-tip-step {
   display: flex;
   align-items: flex-start;
   gap: 10px;
+  background: #fffaf5;
+  border: 1px solid #ffedd5;
+  border-radius: 12px;
+  padding: 10px 12px;
 }
 
-.sym-step-num {
-  width: 22px;
-  height: 22px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 11px;
-  font-weight: 900;
-  color: #ffffff;
+.sym-tip-bullet {
+  font-size: 15px;
+  line-height: 1.3;
   flex-shrink: 0;
-  margin-top: 1px;
 }
 
-.sym-step-num-1 { background: #ea580c; }
-.sym-step-num-2 { background: #f97316; }
-.sym-step-num-3 { background: #12b76a; }
-
-.sym-step-content {
-  font-size: 12px;
+.sym-tip-text {
+  font-size: 12.5px;
   color: #344054;
   line-height: 1.5;
 }
 
-.sym-step-content strong {
+.sym-tip-text strong {
   color: #101828;
 }
 
@@ -1296,7 +1128,7 @@ body {
   border-radius: 50%;
 }
 
-/* Menu chân trang chính thức của Website */
+/* Menu chân trang chính thức của Website - Nút phải cùng là Đăng nhập */
 .sym-site-nav {
   position: fixed;
   bottom: 0;

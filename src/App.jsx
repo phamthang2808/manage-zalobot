@@ -1252,7 +1252,7 @@ function App() {
   useEffect(() => {
     const path = window.location.pathname;
     const params = new URLSearchParams(window.location.search);
-    const pCode = path.includes('/p/') ? path.split('/p/')[1]?.split('?')[0]?.trim() : (params.get('p') || params.get('code'));
+    const pCode = path.includes('/p/') ? path.split('/p/')[1]?.split('?')[0]?.split('#')[0]?.split('/')[0]?.trim() : (params.get('p') || params.get('code'));
     if (pCode) {
       setProductCode(pCode);
     }

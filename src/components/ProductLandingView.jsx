@@ -310,7 +310,6 @@ export function ProductLandingView({ code, apiRoot = "" }) {
                 <span className="sym-cta-title-text">
                   Mua ngay trên {platformName}
                 </span>
-                <span className="sym-cta-arrow-badge">➔</span>
               </div>
             </button>
 
@@ -954,16 +953,20 @@ body {
 
 .sym-btn-cta-main {
   flex: 1;
+  min-width: 0;
   border: none;
   background: linear-gradient(135deg, #ff5722 0%, #ea580c 50%, #c2410c 100%);
   border-radius: 999px;
-  padding: 12px 16px;
+  padding: 12px 10px;
   color: #ffffff;
   cursor: pointer;
   position: relative;
   overflow: hidden;
   box-shadow: 0 8px 24px -4px rgba(234, 88, 12, 0.45);
   transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .sym-btn-cta-main:hover {
@@ -995,15 +998,16 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
+  gap: 6px;
   position: relative;
   z-index: 2;
+  width: 100%;
 }
 
 .sym-cta-icon-box {
-  width: 24px;
-  height: 24px;
-  background: rgba(255, 255, 255, 0.2);
+  width: 22px;
+  height: 22px;
+  background: rgba(255, 255, 255, 0.22);
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -1012,22 +1016,16 @@ body {
 }
 
 .sym-cta-shopee-svg {
-  width: 14px;
-  height: 14px;
+  width: 13px;
+  height: 13px;
 }
 
 .sym-cta-title-text {
-  font-size: 14.5px;
-  font-weight: 900;
-  letter-spacing: 0.2px;
+  font-size: 13.5px;
+  font-weight: 800;
+  letter-spacing: 0;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
   white-space: nowrap;
-}
-
-.sym-cta-arrow-badge {
-  font-size: 14px;
-  font-weight: 900;
-  margin-left: 2px;
 }
 
 /* Nút Copy link cùng hàng */
@@ -1036,19 +1034,35 @@ body {
   background: linear-gradient(135deg, #fff7ed, #ffedd5);
   border: 1.5px solid #f97316;
   color: #c24e02;
-  font-size: 12.5px;
+  font-size: 12px;
   font-weight: 800;
-  padding: 12px 14px;
+  padding: 11px 12px;
   border-radius: 999px;
   cursor: pointer;
   white-space: nowrap;
   box-shadow: 0 4px 12px rgba(234, 88, 12, 0.12);
   transition: all 0.15s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .sym-btn-copy-aff-row:hover {
   background: #f97316;
   color: #ffffff;
+}
+
+@media (max-width: 360px) {
+  .sym-cta-title-text {
+    font-size: 12px;
+  }
+  .sym-btn-cta-main {
+    padding: 11px 8px;
+  }
+  .sym-btn-copy-aff-row {
+    padding: 11px 10px;
+    font-size: 11.5px;
+  }
 }
 
 /* Guide Card - Mẹo nhỏ nhận hoa hồng chuẩn 100% */

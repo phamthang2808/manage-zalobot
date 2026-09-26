@@ -5,7 +5,6 @@ export function ProductLandingView({ code, apiRoot = "" }) {
   const [info, setInfo] = useState(null);
   const [error, setError] = useState("");
   const [copiedAff, setCopiedAff] = useState(false);
-  const [copiedPage, setCopiedPage] = useState(false);
   const [imgError, setImgError] = useState(false);
 
   useEffect(() => {
@@ -86,17 +85,9 @@ export function ProductLandingView({ code, apiRoot = "" }) {
     }
   };
 
-  // Sao chép link trang xem hoàn tiền
-  const handleCopyPageLink = () => {
-    const url = window.location.href;
-    navigator.clipboard.writeText(url);
-    setCopiedPage(true);
-    setTimeout(() => setCopiedPage(false), 2000);
-  };
-
   const handleOpenTarget = () => {
     if (info && info.longUrl) {
-      // Mở trực tiếp link dài affiliate để app Shopee/TikTok kích hoạt mở app ngay lập tức
+      // Mở trực tiếp link dài affiliate để app Shopee kích hoạt mở app ngay lập tức
       window.location.href = info.longUrl;
     }
   };
@@ -158,7 +149,7 @@ export function ProductLandingView({ code, apiRoot = "" }) {
     <div className="sym-container">
       <style>{symuesLandingStyles}</style>
 
-      {/* Header App Bar: Logo to bên trái/giữa, Tên miền bên phải logo, Bỏ nút Ví của tôi */}
+      {/* Header App Bar: Logo to bên trái/giữa, Tên miền bên phải logo */}
       <header className="sym-header">
         <button type="button" className="sym-header-back" onClick={() => (window.location.href = "/lookup")} title="Quay lại">
           ‹
@@ -176,15 +167,15 @@ export function ProductLandingView({ code, apiRoot = "" }) {
       </header>
 
       <main className="sym-main">
-        {/* User Card với avatar chính thức của website (/MAIN.png) & Nút vào đúng trang tra cứu của người đó */}
+        {/* User Card: Avatar là favicon (/favaicon28symues.png) vừa khít, Zalo ID rõ nét, Nút tra cứu 1 hàng không bể */}
         <div className="sym-card sym-user-card">
           <div className="sym-user-left">
             <div className="sym-user-avatar-wrap">
               <img 
-                src="/MAIN.png" 
-                alt="Avatar Web" 
+                src="/favaicon28symues.png" 
+                alt="Avatar" 
                 className="sym-user-avatar-img" 
-                onError={(e) => { e.target.src = "/avatarmeo.png"; }} 
+                onError={(e) => { e.target.src = "/fvc.png"; }} 
               />
             </div>
             <div className="sym-user-meta">
@@ -192,7 +183,8 @@ export function ProductLandingView({ code, apiRoot = "" }) {
                 Xin chào, <span className="sym-user-name">{info.senderName || "Phạm Thắng"}</span>
               </div>
               <div className="sym-user-subid">
-                <span className="sym-subid-label">Zalo ID:</span> {info.subId || "Thành viên"}
+                <span className="sym-subid-label">Zalo ID:</span>
+                <span className="sym-subid-val">{info.subId || "Thành viên"}</span>
               </div>
             </div>
           </div>
@@ -203,7 +195,7 @@ export function ProductLandingView({ code, apiRoot = "" }) {
 
         {/* Main Product Card */}
         <div className="sym-card sym-product-card">
-          {/* Product Header: Image (Đã bỏ thẻ Shopee Xtra) & Title */}
+          {/* Product Header: Image (Đã bỏ thẻ Shopee Xtra) & Title (Đậm nét không bị mờ trên điện thoại) */}
           <div className="sym-prod-top">
             <div className="sym-img-container">
               {info.imageUrl && !imgError ? (
@@ -215,7 +207,7 @@ export function ProductLandingView({ code, apiRoot = "" }) {
                 />
               ) : (
                 <div className="sym-prod-fallback">
-                  <img src="/MAIN.png" alt="Fallback Product" className="sym-fallback-img" />
+                  <img src="/favaicon28symues.png" alt="Fallback Product" className="sym-fallback-img" />
                 </div>
               )}
             </div>
@@ -234,7 +226,7 @@ export function ProductLandingView({ code, apiRoot = "" }) {
             </div>
           </div>
 
-          {/* Bảng Hoa Hồng Sản Phẩm (Đã xóa chữ Minh bạch 100%, bỏ thuế, gọn gàng) */}
+          {/* Bảng Hoa Hồng Sản Phẩm (Đã xóa chữ Minh bạch 100%, không bị bể số tiền) */}
           <div className="sym-breakdown-box">
             <div className="sym-breakdown-title">
               <span>📊 THÔNG TIN HOA HỒNG SẢN PHẨM</span>
@@ -253,13 +245,13 @@ export function ProductLandingView({ code, apiRoot = "" }) {
               </div>
             )}
 
-            {/* Chia 2 phần hoa hồng: Shopee & Shop (nếu có dữ liệu) */}
+            {/* Chia 2 phần hoa hồng: Shopee & Shop (label gọn, value nowrap không bị bể dòng) */}
             {hasSplit && (
               <>
                 <div className="sym-breakdown-row sym-row-subcom">
                   <div className="sym-row-label">
                     <span className="sym-row-bullet">🔸</span>
-                    <span>Hoa hồng từ sàn Shopee:</span>
+                    <span>Hoa hồng Shopee:</span>
                   </div>
                   <div className="sym-row-value">
                     {info.shopeeRateText && (
@@ -274,7 +266,7 @@ export function ProductLandingView({ code, apiRoot = "" }) {
                 <div className="sym-breakdown-row sym-row-subcom">
                   <div className="sym-row-label">
                     <span className="sym-row-bullet">🔹</span>
-                    <span>Hoa hồng từ Shop (Người bán):</span>
+                    <span>Hoa hồng Shop:</span>
                   </div>
                   <div className="sym-row-value">
                     {info.sellerRateText && (
@@ -288,7 +280,7 @@ export function ProductLandingView({ code, apiRoot = "" }) {
               </>
             )}
 
-            {/* Dòng Tổng hoa hồng gốc */}
+            {/* Dòng Tổng hoa hồng */}
             <div className="sym-breakdown-row sym-row-total">
               <div className="sym-row-label">
                 <span className="sym-row-bullet">💰</span>
@@ -305,9 +297,9 @@ export function ProductLandingView({ code, apiRoot = "" }) {
             </div>
           </div>
 
-          {/* NÚT MUA TRÊN SHOPEE CỰC ĐẸP (Sleek modern pill, hiệu ứng phát sáng cao cấp) */}
-          <div className="sym-cta-block">
-            <button type="button" className="sym-btn-cta-premium" onClick={handleOpenTarget}>
+          {/* HÀNG NÚT: MUA NGAY TRÊN SHOPEE + COPY LINK DÀI CÙNG 1 HÀNG */}
+          <div className="sym-action-row">
+            <button type="button" className="sym-btn-cta-main" onClick={handleOpenTarget}>
               <div className="sym-cta-glow"></div>
               <div className="sym-cta-body">
                 <div className="sym-cta-icon-box">
@@ -321,35 +313,24 @@ export function ProductLandingView({ code, apiRoot = "" }) {
                 <span className="sym-cta-arrow-badge">➔</span>
               </div>
             </button>
-            <p className="sym-cta-note">
-              🛡️ Mã Zalo <strong>{info.subId || "Thành viên"}</strong> đã được gán vào đơn để tự động cộng tiền.
-            </p>
-          </div>
-        </div>
 
-        {/* Share Card - Hỗ trợ sao chép link Affiliate dài chuẩn xác */}
-        <div className="sym-card sym-share-card">
-          <div className="sym-share-info">
-            <div className="sym-share-title">Chia sẻ link nhận hoa hồng</div>
-            <div className="sym-share-desc">Gửi link dài trực tiếp hoặc link web cho bạn bè cùng mua</div>
-          </div>
-          <div className="sym-share-actions">
             {info.longUrl && (
-              <button type="button" className="sym-btn-copy-aff" onClick={handleCopyAffiliateLink} title="Sao chép link affiliate dài Shopee">
-                {copiedAff ? "✓ Đã chép link dài" : "🔗 Chép link dài"}
+              <button 
+                type="button" 
+                className="sym-btn-copy-aff-row" 
+                onClick={handleCopyAffiliateLink} 
+                title="Sao chép link affiliate dài Shopee"
+              >
+                {copiedAff ? "✓ Đã chép" : "📋 Copy link"}
               </button>
             )}
-            <button type="button" className="sym-btn-copy-page" onClick={handleCopyPageLink} title="Sao chép link trang xem hoàn tiền này">
-              {copiedPage ? "✓ Đã chép web" : "📋 Chép link web"}
-            </button>
           </div>
         </div>
 
-        {/* Mẹo Nhận Hoa Hồng Chuẩn 100% (Đúng câu lưu ý của bot) */}
+        {/* Mẹo Nhận Hoa Hồng Chuẩn 100% (Đã căn chỉnh không bể dòng & cập nhật chú thích ấn link lần 2) */}
         <div className="sym-card sym-guide-card">
           <div className="sym-guide-header">
             <span className="sym-guide-title">💡 Mẹo nhỏ nhận hoa hồng chuẩn 100%:</span>
-            <span className="sym-guide-badge">Lưu ý quan trọng</span>
           </div>
 
           <div className="sym-tips-box">
@@ -359,7 +340,7 @@ export function ProductLandingView({ code, apiRoot = "" }) {
             </div>
             <div className="sym-tip-step">
               <span className="sym-tip-bullet">➔</span>
-              <span className="sym-tip-text"><strong>Bấm link vào App Shopee</strong> (ấn nút Mua ngay trên Shopee ở trên).</span>
+              <span className="sym-tip-text"><strong>Bấm link vào App Shopee</strong> (nên ấn vào link lần 2 tăng tỉ lệ).</span>
             </div>
             <div className="sym-tip-step">
               <span className="sym-tip-bullet">➔</span>
@@ -667,17 +648,20 @@ body {
   padding: 14px 16px;
 }
 
-/* User Card - Avatar chuẩn của web */
+/* User Card - Avatar favicon vừa khít, Zalo ID rõ nét, Nút tra cứu 1 hàng không bể */
 .sym-user-card {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 12px;
 }
 
 .sym-user-left {
   display: flex;
   align-items: center;
   gap: 12px;
+  min-width: 0;
+  flex: 1;
 }
 
 .sym-user-avatar-wrap {
@@ -685,31 +669,37 @@ body {
   height: 48px;
   border-radius: 50%;
   background: #fff7ed;
-  border: 2px solid #f97316;
+  border: 2.5px solid #f97316;
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: hidden;
   position: relative;
   flex-shrink: 0;
-  box-shadow: 0 2px 8px rgba(249, 115, 22, 0.18);
+  box-shadow: 0 2px 8px rgba(249, 115, 22, 0.22);
 }
 
 .sym-user-avatar-img {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  border-radius: 50%;
 }
 
 .sym-user-meta {
   display: flex;
   flex-direction: column;
+  min-width: 0;
+  flex: 1;
 }
 
 .sym-user-greeting {
   font-size: 13.5px;
-  color: #475467;
+  color: #334155;
   font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .sym-user-name {
@@ -718,25 +708,41 @@ body {
 }
 
 .sym-user-subid {
-  font-size: 11.5px;
-  color: #98a2b3;
-  margin-top: 2px;
-  font-family: SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 12.5px;
+  margin-top: 3px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .sym-subid-label {
-  color: #667085;
-  font-weight: 500;
+  color: #64748b;
+  font-weight: 600;
 }
 
+.sym-subid-val {
+  color: #1e293b;
+  font-weight: 800;
+  font-family: SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+}
+
+/* Nút tra cứu ví trên 1 hàng không bị bể */
 .sym-btn-check-wallet {
+  white-space: nowrap !important;
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   background: linear-gradient(135deg, #fff7ed, #ffedd5);
   color: #c24e02;
   border: 1px solid #fed7aa;
   font-size: 12px;
   font-weight: 800;
-  padding: 7px 14px;
-  border-radius: 12px;
+  padding: 8px 14px;
+  border-radius: 999px;
   cursor: pointer;
   box-shadow: 0 2px 6px rgba(234, 88, 12, 0.1);
   transition: all 0.15s ease;
@@ -777,6 +783,7 @@ body {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  border-radius: 16px;
 }
 
 .sym-prod-fallback {
@@ -789,8 +796,8 @@ body {
 }
 
 .sym-fallback-img {
-  width: 70%;
-  height: 70%;
+  width: 65%;
+  height: 65%;
   object-fit: contain;
 }
 
@@ -799,6 +806,7 @@ body {
   display: flex;
   flex-direction: column;
   gap: 6px;
+  min-width: 0;
 }
 
 .sym-platform-badge {
@@ -820,18 +828,22 @@ body {
   height: 13px;
 }
 
+/* Tên sản phẩm rõ ràng, không bị mờ trên điện thoại */
 .sym-prod-title {
   font-size: 14px;
   font-weight: 800;
-  color: #101828;
+  color: #0f172a !important;
+  -webkit-text-fill-color: #0f172a !important;
   line-height: 1.45;
   display: -webkit-box;
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
+  text-shadow: none !important;
+  opacity: 1 !important;
 }
 
-/* Commission Breakdown Box (Gọn gàng, không chữ minh bạch 100%) */
+/* Commission Breakdown Box (Gọn gàng, không bị bể số tiền) */
 .sym-breakdown-box {
   background: #fcfcfd;
   border: 1px solid #eaecf0;
@@ -845,7 +857,6 @@ body {
 .sym-breakdown-title {
   display: flex;
   align-items: center;
-  justify-content: space-between;
   font-size: 11.5px;
   font-weight: 800;
   color: #475467;
@@ -857,11 +868,11 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  font-size: 12.5px;
+  gap: 8px;
+  font-size: 13px;
 }
 
 .sym-row-subcom {
-  padding-left: 4px;
   color: #475467;
 }
 
@@ -874,8 +885,10 @@ body {
   display: flex;
   align-items: center;
   gap: 6px;
-  color: #475467;
+  color: #334155;
   font-weight: 600;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .sym-row-bullet {
@@ -886,6 +899,8 @@ body {
   display: flex;
   align-items: center;
   gap: 6px;
+  white-space: nowrap !important;
+  flex-shrink: 0;
 }
 
 .sym-val-price {
@@ -916,44 +931,47 @@ body {
 }
 
 .sym-val-sub {
-  font-weight: 600;
+  font-weight: 700;
   color: #344054;
-  font-size: 12px;
+  font-size: 12.5px;
+  white-space: nowrap;
 }
 
 .sym-val-total {
-  font-weight: 800;
+  font-weight: 900;
   color: #ea580c;
   font-size: 14.5px;
+  white-space: nowrap;
 }
 
-/* NÚT MUA TRÊN SHOPEE CỰC ĐẸP (PREMIUM CTA BUTTON) */
-.sym-cta-block {
+/* HÀNG NÚT: MUA NGAY TRÊN SHOPEE + COPY LINK DÀI CÙNG 1 HÀNG */
+.sym-action-row {
   display: flex;
-  flex-direction: column;
+  align-items: center;
   gap: 8px;
+  width: 100%;
 }
 
-.sym-btn-cta-premium {
-  width: 100%;
+.sym-btn-cta-main {
+  flex: 1;
   border: none;
   background: linear-gradient(135deg, #ff5722 0%, #ea580c 50%, #c2410c 100%);
   border-radius: 999px;
-  padding: 13px 20px;
+  padding: 12px 16px;
   color: #ffffff;
   cursor: pointer;
   position: relative;
   overflow: hidden;
-  box-shadow: 0 10px 26px -4px rgba(234, 88, 12, 0.48), 0 3px 8px rgba(0, 0, 0, 0.08);
-  transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+  box-shadow: 0 8px 24px -4px rgba(234, 88, 12, 0.45);
+  transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-.sym-btn-cta-premium:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 14px 30px -4px rgba(234, 88, 12, 0.55), 0 4px 10px rgba(0, 0, 0, 0.1);
+.sym-btn-cta-main:hover {
+  transform: translateY(-1.5px);
+  box-shadow: 0 10px 28px -4px rgba(234, 88, 12, 0.52);
 }
 
-.sym-btn-cta-premium:active {
+.sym-btn-cta-main:active {
   transform: scale(0.98);
 }
 
@@ -977,14 +995,14 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
+  gap: 8px;
   position: relative;
   z-index: 2;
 }
 
 .sym-cta-icon-box {
-  width: 26px;
-  height: 26px;
+  width: 24px;
+  height: 24px;
   background: rgba(255, 255, 255, 0.2);
   border-radius: 50%;
   display: flex;
@@ -994,100 +1012,43 @@ body {
 }
 
 .sym-cta-shopee-svg {
-  width: 15px;
-  height: 15px;
+  width: 14px;
+  height: 14px;
 }
 
 .sym-cta-title-text {
-  font-size: 15px;
+  font-size: 14.5px;
   font-weight: 900;
-  letter-spacing: 0.3px;
+  letter-spacing: 0.2px;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  white-space: nowrap;
 }
 
 .sym-cta-arrow-badge {
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 900;
   margin-left: 2px;
 }
 
-.sym-cta-note {
-  font-size: 11.5px;
-  color: #667085;
-  text-align: center;
-  line-height: 1.4;
-}
-
-.sym-cta-note strong {
-  color: #ea580c;
-}
-
-/* Share Card - Hỗ trợ sao chép link Affiliate dài */
-.sym-share-card {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  background: #ffffff;
-}
-
-.sym-share-info {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.sym-share-title {
-  font-size: 13px;
-  font-weight: 800;
-  color: #101828;
-}
-
-.sym-share-desc {
-  font-size: 11px;
-  color: #667085;
-}
-
-.sym-share-actions {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.sym-btn-copy-aff {
-  flex: 1;
+/* Nút Copy link cùng hàng */
+.sym-btn-copy-aff-row {
+  flex-shrink: 0;
   background: linear-gradient(135deg, #fff7ed, #ffedd5);
   border: 1.5px solid #f97316;
   color: #c24e02;
-  font-size: 11.5px;
+  font-size: 12.5px;
   font-weight: 800;
-  padding: 8px 12px;
-  border-radius: 12px;
-  cursor: pointer;
-  text-align: center;
-  transition: all 0.15s ease;
-}
-
-.sym-btn-copy-aff:hover {
-  background: #f97316;
-  color: #ffffff;
-}
-
-.sym-btn-copy-page {
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
-  color: #475569;
-  font-size: 11.5px;
-  font-weight: 700;
-  padding: 8px 12px;
-  border-radius: 12px;
+  padding: 12px 14px;
+  border-radius: 999px;
   cursor: pointer;
   white-space: nowrap;
+  box-shadow: 0 4px 12px rgba(234, 88, 12, 0.12);
   transition: all 0.15s ease;
 }
 
-.sym-btn-copy-page:hover {
-  background: #f1f5f9;
-  color: #0f172a;
+.sym-btn-copy-aff-row:hover {
+  background: #f97316;
+  color: #ffffff;
 }
 
 /* Guide Card - Mẹo nhỏ nhận hoa hồng chuẩn 100% */
@@ -1095,31 +1056,21 @@ body {
   background: #ffffff;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 8px;
 }
 
 .sym-guide-header {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  padding-bottom: 8px;
+  padding-bottom: 6px;
   border-bottom: 1px solid #f2f4f7;
 }
 
 .sym-guide-title {
-  font-size: 13px;
+  font-size: 13.5px;
   font-weight: 800;
   color: #101828;
-}
-
-.sym-guide-badge {
-  font-size: 10px;
-  font-weight: 800;
-  color: #b42318;
-  background: #fef3f2;
-  border: 1px solid #fecdca;
-  padding: 1.5px 7px;
-  border-radius: 999px;
+  white-space: nowrap;
 }
 
 .sym-tips-box {
@@ -1132,15 +1083,15 @@ body {
 .sym-tip-step {
   display: flex;
   align-items: flex-start;
-  gap: 10px;
+  gap: 8px;
   background: #fffaf5;
   border: 1px solid #ffedd5;
   border-radius: 12px;
-  padding: 10px 12px;
+  padding: 9px 12px;
 }
 
 .sym-tip-bullet {
-  font-size: 15px;
+  font-size: 14px;
   line-height: 1.3;
   flex-shrink: 0;
 }

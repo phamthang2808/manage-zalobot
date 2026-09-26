@@ -5,6 +5,7 @@ export function ProductLandingView({ code, apiRoot = "" }) {
   const [info, setInfo] = useState(null);
   const [error, setError] = useState("");
   const [copied, setCopied] = useState(false);
+  const [imgError, setImgError] = useState(false);
 
   useEffect(() => {
     // Tự động bóc tách code từ URL nếu không truyền prop
@@ -66,6 +67,7 @@ export function ProductLandingView({ code, apiRoot = "" }) {
 
   const handleOpenTarget = () => {
     if (info && info.longUrl) {
+      // Mở link dài affiliate trực tiếp để ứng dụng Shopee kích hoạt mở app ngay lập tức
       window.location.href = info.longUrl;
     }
   };
@@ -96,9 +98,9 @@ export function ProductLandingView({ code, apiRoot = "" }) {
           <div className="sym-error-icon">⚠️</div>
           <h2 className="sym-error-title">Không tìm thấy sản phẩm</h2>
           <p className="sym-error-desc">{error || "Liên kết này không tồn tại hoặc đã quá hạn."}</p>
-          <a href="/lookup" className="sym-btn-primary">
+          <button type="button" onClick={() => (window.location.href = "/lookup")} className="sym-btn-primary">
             🔍 Tra cứu đơn hàng của bạn
-          </a>
+          </button>
         </div>
       </div>
     );
@@ -108,6 +110,10 @@ export function ProductLandingView({ code, apiRoot = "" }) {
   const rawComm = info.rawCommissionMoney || 0;
   const taxComm = rawComm * 0.10; // Thuế TNCN 10%
   const netComm = info.netCommissionMoney || (rawComm > 0 ? (rawComm * 0.90 * 0.80) : 0); // Khách nhận 80% sau thuế
+  const shopeeComm = info.shopeeCommissionMoney || 0;
+  const sellerComm = info.sellerCommissionMoney || 0;
+  const hasSplit = shopeeComm > 0 || sellerComm > 0;
+
   const isTiktok = (info.platform || "").toUpperCase().includes("TIKTOK");
   const platformName = isTiktok ? "TikTok Shop" : "Shopee";
   const displayHost = "28symues.id.vn";
@@ -116,21 +122,26 @@ export function ProductLandingView({ code, apiRoot = "" }) {
     <div className="sym-container">
       <style>{symuesLandingStyles}</style>
 
-      {/* Header App Bar */}
+      {/* Header App Bar với logo to rõ ràng */}
       <header className="sym-header">
         <button type="button" className="sym-header-back" onClick={() => (window.location.href = "/lookup")} title="Tra cứu đơn hàng">
           ‹
         </button>
-        <div className="sym-header-brand">
-          <img src="/28symueslogomanin.png" alt="28Symues" className="sym-brand-logo" onError={(e) => { e.target.style.display = 'none'; }} />
+        <div className="sym-header-brand" onClick={() => (window.location.href = "/")}>
+          <img 
+            src="/28symueslogomanin.png" 
+            alt="28Symues Logo" 
+            className="sym-brand-logo" 
+            onError={(e) => { e.target.src = "/MAIN.png"; }} 
+          />
           <div className="sym-brand-titles">
             <span className="sym-brand-name">28SYMUES AFFILIATE</span>
             <span className="sym-brand-domain">{displayHost}</span>
           </div>
         </div>
-        <a href="/lookup" className="sym-header-lookup-btn">
+        <button type="button" onClick={() => (window.location.href = "/lookup")} className="sym-header-lookup-btn">
           Ví của tôi
-        </a>
+        </button>
       </header>
 
       <main className="sym-main">
@@ -146,25 +157,29 @@ export function ProductLandingView({ code, apiRoot = "" }) {
           </div>
         </div>
 
-        {/* User Card */}
+        {/* User Card với avatar chính thức của website (/MAIN.png) */}
         <div className="sym-card sym-user-card">
           <div className="sym-user-left">
             <div className="sym-user-avatar-wrap">
-              <img src="/avatarmeo.png" alt="Avatar" className="sym-user-avatar-img" onError={(e) => { e.target.style.display = 'none'; }} />
-              <span className="sym-user-avatar-fallback">🐱</span>
+              <img 
+                src="/MAIN.png" 
+                alt="Avatar Web" 
+                className="sym-user-avatar-img" 
+                onError={(e) => { e.target.src = "/avatarmeo.png"; }} 
+              />
             </div>
             <div className="sym-user-meta">
               <div className="sym-user-greeting">
-                Xin chào, <span className="sym-user-name">{info.senderName || "Thành viên Zalo"}</span>
+                Xin chào, <span className="sym-user-name">{info.senderName || "Phạm Thắng"}</span>
               </div>
               <div className="sym-user-subid">
                 <span className="sym-subid-label">Zalo ID:</span> {info.subId || "Thành viên"}
               </div>
             </div>
           </div>
-          <a href="/lookup" className="sym-btn-check-wallet">
+          <button type="button" onClick={() => (window.location.href = "/lookup")} className="sym-btn-check-wallet">
             Tra cứu ví ›
-          </a>
+          </button>
         </div>
 
         {/* Main Product Card */}
@@ -172,10 +187,17 @@ export function ProductLandingView({ code, apiRoot = "" }) {
           {/* Product Header: Image & Title */}
           <div className="sym-prod-top">
             <div className="sym-img-container">
-              {info.imageUrl ? (
-                <img src={info.imageUrl} alt={info.productName} className="sym-prod-img" />
+              {info.imageUrl && !imgError ? (
+                <img 
+                  src={info.imageUrl} 
+                  alt={info.productName} 
+                  className="sym-prod-img" 
+                  onError={() => setImgError(true)} 
+                />
               ) : (
-                <div className="sym-prod-no-img">🛍️</div>
+                <div className="sym-prod-fallback">
+                  <img src="/MAIN.png" alt="Fallback Product" className="sym-fallback-img" />
+                </div>
               )}
               <div className="sym-platform-tag">
                 {isTiktok ? "TIKTOK SHOP" : "SHOPEE XTRA"}
@@ -184,25 +206,65 @@ export function ProductLandingView({ code, apiRoot = "" }) {
 
             <div className="sym-prod-info">
               <span className="sym-platform-badge">
-                <img src={isTiktok ? "/tiktok-icon.svg" : "/shopee-icon.svg"} alt="" className="sym-platform-icon" onError={(e) => { e.target.style.display = 'none'; }} />
+                <img 
+                  src={isTiktok ? "/tiktok-icon.svg" : "/shopee-icon.svg"} 
+                  alt="" 
+                  className="sym-platform-icon" 
+                  onError={(e) => { e.target.style.display = 'none'; }} 
+                />
                 Mua trên {platformName}
               </span>
               <h1 className="sym-prod-title">{info.productName || "Sản phẩm tiếp thị hoàn tiền 28Symues"}</h1>
             </div>
           </div>
 
-          {/* Commission Calculation Breakdown - Minh bạch 8/2 thuế 10% */}
+          {/* Commission Calculation Breakdown - Chia 2 Hoa Hồng Rõ Ràng & Minh bạch 8/2 */}
           <div className="sym-breakdown-box">
             <div className="sym-breakdown-title">
               <span>📊 BẢNG TÍNH HOA HỒNG CHI TIẾT</span>
               <span className="sym-badge-verified">Minh bạch 100%</span>
             </div>
 
-            {/* Dòng 1: Hoa hồng sàn Shopee */}
-            <div className="sym-breakdown-row">
+            {/* Chia 2 phần hoa hồng: Shopee & Shop (nếu có dữ liệu) */}
+            {hasSplit && (
+              <>
+                <div className="sym-breakdown-row sym-row-subcom">
+                  <div className="sym-row-label">
+                    <span className="sym-row-bullet">🔸</span>
+                    <span>Hoa hồng từ sàn Shopee:</span>
+                  </div>
+                  <div className="sym-row-value">
+                    {info.shopeeRateText && (
+                      <span className="sym-rate-pill sym-rate-pill-shopee">{info.shopeeRateText}</span>
+                    )}
+                    <span className="sym-val-sub">
+                      ~ {formatVnd(shopeeComm)}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="sym-breakdown-row sym-row-subcom">
+                  <div className="sym-row-label">
+                    <span className="sym-row-bullet">🔹</span>
+                    <span>Hoa hồng từ Shop (Người bán):</span>
+                  </div>
+                  <div className="sym-row-value">
+                    {info.sellerRateText && (
+                      <span className="sym-rate-pill sym-rate-pill-seller">{info.sellerRateText}</span>
+                    )}
+                    <span className="sym-val-sub">
+                      ~ {formatVnd(sellerComm)}
+                    </span>
+                  </div>
+                </div>
+              </>
+            )}
+
+            {/* Dòng Tổng hoa hồng gốc */}
+            <div className="sym-breakdown-row sym-row-total">
               <div className="sym-row-label">
                 <span className="sym-row-bullet">🏷️</span>
-                <span>Hoa hồng gốc từ sàn:</span>
+                <span><strong>Tổng hoa hồng gốc:</strong></span>
               </div>
               <div className="sym-row-value">
                 {info.commissionRateText && (
@@ -214,7 +276,7 @@ export function ProductLandingView({ code, apiRoot = "" }) {
               </div>
             </div>
 
-            {/* Dòng 2: Khấu trừ thuế TNCN 10% */}
+            {/* Dòng Khấu trừ thuế TNCN 10% */}
             <div className="sym-breakdown-row sym-row-tax">
               <div className="sym-row-label">
                 <span className="sym-row-bullet">🏛️</span>
@@ -225,7 +287,7 @@ export function ProductLandingView({ code, apiRoot = "" }) {
               </div>
             </div>
 
-            {/* Dòng 3: Khách nhận 80% sau thuế */}
+            {/* Dòng Khách nhận 80% sau thuế */}
             <div className="sym-cashback-highlight">
               <div className="sym-highlight-header">
                 <div className="sym-highlight-badge">
@@ -239,13 +301,13 @@ export function ProductLandingView({ code, apiRoot = "" }) {
                   {netComm > 0 ? formatVnd(netComm) : "Chờ cập nhật"}
                 </span>
                 <span className="sym-highlight-sub">
-                  (Đã tự động khấu trừ 10% thuế TNCN theo luật)
+                  (Đã tự động khấu trừ 10% thuế TNCN theo quy định sàn)
                 </span>
               </div>
             </div>
           </div>
 
-          {/* Big CTA Action Button */}
+          {/* Big CTA Action Button - Kích hoạt mở link dài Shopee */}
           <div className="sym-cta-block">
             <button type="button" className="sym-btn-cta" onClick={handleOpenTarget}>
               <span className="sym-cta-shine"></span>
@@ -283,7 +345,7 @@ export function ProductLandingView({ code, apiRoot = "" }) {
             <div className="sym-step-item">
               <div className="sym-step-num sym-step-num-1">1</div>
               <div className="sym-step-content">
-                <strong>Bấm nút "Mua trên {platformName}"</strong> ở trên để hệ thống tự động chuyển tiếp vào app {platformName}.
+                <strong>Bấm nút "Mua trên {platformName}"</strong> ở trên để mở trực tiếp ứng dụng {platformName}.
               </div>
             </div>
 
@@ -304,30 +366,96 @@ export function ProductLandingView({ code, apiRoot = "" }) {
         </div>
       </main>
 
-      {/* Bottom Sticky Navigation */}
-      <nav className="sym-bottom-nav">
-        <a href="/lookup" className="sym-nav-item active">
-          <span className="sym-nav-icon">🔍</span>
-          <span className="sym-nav-label">Tra cứu ví</span>
-        </a>
-        <a href="/leaderboard" className="sym-nav-item">
-          <span className="sym-nav-icon">🏆</span>
-          <span className="sym-nav-label">Bảng vàng</span>
-        </a>
-        <a href="/" className="sym-nav-center-item">
-          <div className="sym-nav-circle">
-            <span>⚡</span>
+      {/* Floating Zalo Contact Button như trên website chính */}
+      <a 
+        href="https://zalo.me/g/0p083nqqoordpki9zgvy" 
+        target="_blank" 
+        rel="noreferrer" 
+        className="sym-floating-zalo"
+        title="Chat Zalo hỗ trợ hoàn tiền"
+      >
+        <div className="sym-floating-zalo-inner">
+          <span className="sym-zalo-text-icon">Zalo</span>
+          <span className="sym-zalo-online-dot"></span>
+        </div>
+      </a>
+
+      {/* Menu Chân Trang CHUẨN CỦA WEBSITE (Hoạt động 100% khi bấm) */}
+      <nav className="mobile-bottom-nav sym-site-nav">
+        {/* 1. Trang chủ */}
+        <button 
+          type="button" 
+          className="mobile-bottom-nav-item" 
+          onClick={() => { window.location.href = '/'; }}
+        >
+          <div className="nav-icon-wrap">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" />
+            </svg>
           </div>
-          <span className="sym-nav-label">Săn Sale</span>
+          <span className="nav-label">Trang chủ</span>
+        </button>
+
+        {/* 2. Tra cứu */}
+        <button 
+          type="button" 
+          className="mobile-bottom-nav-item active" 
+          onClick={() => { window.location.href = '/lookup'; }}
+        >
+          <div className="nav-icon-wrap">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="11" cy="11" r="8"></circle>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+          </div>
+          <span className="nav-label">Tra cứu</span>
+        </button>
+
+        {/* 3. Bot Zalo */}
+        <a 
+          href="https://zalo.me/g/0p083nqqoordpki9zgvy" 
+          target="_blank" 
+          rel="noreferrer" 
+          className="mobile-bottom-nav-item" 
+          title="Nhắn tin với Bot Zalo hoàn tiền"
+        >
+          <div className="nav-icon-wrap">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM6 9h12v2H6V9zm8 5H6v-2h8v2zm4-6H6V6h12v2z" />
+            </svg>
+          </div>
+          <span className="nav-label">Bot Zalo</span>
         </a>
-        <a href="/wallet" className="sym-nav-item">
-          <span className="sym-nav-icon">💳</span>
-          <span className="sym-nav-label">Rút tiền</span>
-        </a>
-        <a href="https://zalo.me/0865809228" target="_blank" rel="noreferrer" className="sym-nav-item">
-          <span className="sym-nav-icon">💬</span>
-          <span className="sym-nav-label">Hỗ trợ Zalo</span>
-        </a>
+
+        {/* 4. Hướng dẫn */}
+        <button 
+          type="button" 
+          className="mobile-bottom-nav-item" 
+          onClick={() => { window.location.href = '/#steps'; }}
+        >
+          <div className="nav-icon-wrap">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="12" cy="12" r="10"></circle>
+              <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+              <line x1="12" y1="17" x2="12.01" y2="17"></line>
+            </svg>
+          </div>
+          <span className="nav-label">Hướng dẫn</span>
+        </button>
+
+        {/* 5. Quản trị */}
+        <button 
+          type="button" 
+          className="mobile-bottom-nav-item" 
+          onClick={() => { window.location.href = '/?view=login'; }}
+        >
+          <div className="nav-icon-wrap">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M19.43 12.98c.04-.32.07-.64.07-.98s-.03-.66-.07-.98l2.11-1.65c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.3-.61-.22l-2.49 1c-.52-.4-1.08-.73-1.69-.98l-.38-2.65C14.46 2.18 14.25 2 14 2h-4c-.25 0-.46.18-.49.42l-.38 2.65c-.61.25-1.17.59-1.69.98l-2.49-1c-.23-.09-.49 0-.61.22l-2 3.46c-.13.22-.07.49.12.64l2.11 1.65c-.04.32-.07.65-.07.98s.03.66.07.98l-2.11 1.65c-.19.15-.24.42-.12.64l2 3.46c.12.22.39.3.61.22l2.49-1c.52.4 1.08.73 1.69.98l.38 2.65c.03.24.24.42.49.42h4c.25 0 .46-.18.49-.42l.38-2.65c.61-.25 1.17-.59 1.69-.98l2.49 1c.23.09.49 0 .61-.22l2-3.46c.12-.22.07-.49-.12-.64l-2.11-1.65zM12 15.5c-1.93 0-3.5-1.57-3.5-3.5s1.57-3.5 3.5-3.5 3.5 1.57 3.5 3.5-1.57 3.5-3.5 3.5z" />
+            </svg>
+          </div>
+          <span className="nav-label">Quản trị</span>
+        </button>
       </nav>
     </div>
   );
@@ -441,7 +569,8 @@ body {
   font-size: 14px;
   padding: 12px 24px;
   border-radius: 14px;
-  text-decoration: none;
+  border: none;
+  cursor: pointer;
   box-shadow: 0 6px 18px rgba(234, 88, 12, 0.35);
   transition: transform 0.15s ease;
 }
@@ -450,16 +579,16 @@ body {
   transform: scale(0.98);
 }
 
-/* Header App Bar */
+/* Header App Bar - Logo to rõ ràng */
 .sym-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 12px 16px;
-  background: rgba(255, 255, 255, 0.88);
+  padding: 10px 16px;
+  background: rgba(255, 255, 255, 0.92);
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
-  border-bottom: 1px solid rgba(254, 215, 170, 0.5);
+  border-bottom: 1px solid rgba(254, 215, 170, 0.6);
   position: sticky;
   top: 0;
   z-index: 50;
@@ -468,13 +597,13 @@ body {
 .sym-header-back {
   background: #fff7ed;
   border: 1px solid #ffedd5;
-  width: 34px;
-  height: 34px;
+  width: 36px;
+  height: 36px;
   border-radius: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 24px;
+  font-size: 26px;
   line-height: 1;
   color: #ea580c;
   cursor: pointer;
@@ -489,14 +618,16 @@ body {
 .sym-header-brand {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
+  cursor: pointer;
 }
 
 .sym-brand-logo {
-  width: 32px;
-  height: 32px;
+  width: 44px;
+  height: 44px;
   object-fit: contain;
-  border-radius: 8px;
+  border-radius: 10px;
+  filter: drop-shadow(0 2px 4px rgba(234, 88, 12, 0.2));
 }
 
 .sym-brand-titles {
@@ -505,15 +636,15 @@ body {
 }
 
 .sym-brand-name {
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 900;
   letter-spacing: 0.5px;
   color: #101828;
 }
 
 .sym-brand-domain {
-  font-size: 10.5px;
-  font-weight: 600;
+  font-size: 11px;
+  font-weight: 700;
   color: #ea580c;
 }
 
@@ -523,9 +654,9 @@ body {
   color: #ea580c;
   font-size: 11.5px;
   font-weight: 700;
-  padding: 6px 12px;
+  padding: 6px 14px;
   border-radius: 999px;
-  text-decoration: none;
+  cursor: pointer;
   transition: all 0.15s ease;
 }
 
@@ -600,7 +731,7 @@ body {
   padding: 14px 16px;
 }
 
-/* User Card */
+/* User Card - Avatar chuẩn của web */
 .sym-user-card {
   display: flex;
   align-items: center;
@@ -614,27 +745,24 @@ body {
 }
 
 .sym-user-avatar-wrap {
-  width: 44px;
-  height: 44px;
+  width: 46px;
+  height: 46px;
   border-radius: 50%;
   background: #fff7ed;
-  border: 2px solid #fed7aa;
+  border: 2px solid #f97316;
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: hidden;
   position: relative;
   flex-shrink: 0;
+  box-shadow: 0 2px 8px rgba(249, 115, 22, 0.18);
 }
 
 .sym-user-avatar-img {
   width: 100%;
   height: 100%;
   object-fit: cover;
-}
-
-.sym-user-avatar-fallback {
-  font-size: 22px;
 }
 
 .sym-user-meta {
@@ -673,7 +801,7 @@ body {
   font-weight: 700;
   padding: 6px 12px;
   border-radius: 12px;
-  text-decoration: none;
+  cursor: pointer;
   transition: all 0.15s ease;
 }
 
@@ -697,8 +825,8 @@ body {
 }
 
 .sym-img-container {
-  width: 96px;
-  height: 96px;
+  width: 98px;
+  height: 98px;
   border-radius: 16px;
   overflow: hidden;
   position: relative;
@@ -713,13 +841,19 @@ body {
   object-fit: cover;
 }
 
-.sym-prod-no-img {
+.sym-prod-fallback {
   width: 100%;
   height: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 38px;
+  background: #fff7ed;
+}
+
+.sym-fallback-img {
+  width: 70%;
+  height: 70%;
+  object-fit: contain;
 }
 
 .sym-platform-tag {
@@ -781,7 +915,7 @@ body {
   padding: 12px 14px;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 9px;
 }
 
 .sym-breakdown-title {
@@ -809,7 +943,17 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  font-size: 12.5px;
+  font-size: 12px;
+}
+
+.sym-row-subcom {
+  padding-left: 4px;
+  color: #475467;
+}
+
+.sym-row-total {
+  padding-top: 4px;
+  border-top: 1px dashed #f2f4f7;
 }
 
 .sym-row-label {
@@ -821,7 +965,7 @@ body {
 }
 
 .sym-row-bullet {
-  font-size: 13px;
+  font-size: 12px;
 }
 
 .sym-row-value {
@@ -831,12 +975,28 @@ body {
 }
 
 .sym-rate-pill {
-  font-size: 10.5px;
+  font-size: 10px;
   font-weight: 800;
   color: #c24e02;
   background: #fff0d5;
   padding: 1.5px 6px;
   border-radius: 6px;
+}
+
+.sym-rate-pill-shopee {
+  color: #c24e02;
+  background: #ffedd5;
+}
+
+.sym-rate-pill-seller {
+  color: #027a48;
+  background: #ecfdf3;
+}
+
+.sym-val-sub {
+  font-weight: 600;
+  color: #344054;
+  font-size: 11.5px;
 }
 
 .sym-val-raw {
@@ -1086,72 +1246,104 @@ body {
   color: #101828;
 }
 
-/* Bottom Navigation Bar */
-.sym-bottom-nav {
+/* Floating Zalo Contact Button */
+.sym-floating-zalo {
+  position: fixed;
+  bottom: 74px;
+  right: calc(50% - 220px);
+  z-index: 99;
+  text-decoration: none;
+}
+
+@media (max-width: 480px) {
+  .sym-floating-zalo {
+    right: 16px;
+  }
+}
+
+.sym-floating-zalo-inner {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #0084ff, #0066cc);
+  box-shadow: 0 4px 18px rgba(0, 102, 204, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.sym-floating-zalo-inner:hover {
+  transform: scale(1.08);
+}
+
+.sym-zalo-text-icon {
+  color: #ffffff;
+  font-weight: 900;
+  font-size: 14px;
+  letter-spacing: -0.3px;
+}
+
+.sym-zalo-online-dot {
+  position: absolute;
+  bottom: 3px;
+  right: 3px;
+  width: 12px;
+  height: 12px;
+  background: #12b76a;
+  border: 2px solid #ffffff;
+  border-radius: 50%;
+}
+
+/* Menu chân trang chính thức của Website */
+.sym-site-nav {
   position: fixed;
   bottom: 0;
   left: 50%;
   transform: translateX(-50%);
   width: 100%;
   max-width: 480px;
-  background: rgba(255, 255, 255, 0.94);
+  background: rgba(255, 255, 255, 0.96);
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
-  border-top: 1px solid rgba(254, 215, 170, 0.5);
+  border-top: 1px solid rgba(254, 215, 170, 0.6);
   display: flex;
   align-items: center;
   justify-content: space-around;
-  padding: 8px 10px 12px;
+  padding: 8px 10px 10px;
   z-index: 60;
-  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.06);
 }
 
-.sym-nav-item {
+.mobile-bottom-nav-item {
   display: flex;
   flex-direction: column;
   align-items: center;
+  background: none;
+  border: none;
   text-decoration: none;
-  gap: 3px;
   color: #667085;
-  font-size: 10px;
-  font-weight: 700;
-  transition: color 0.15s ease;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 4px 8px;
+  gap: 3px;
+  transition: all 0.15s ease;
 }
 
-.sym-nav-item:hover, .sym-nav-item.active {
+.mobile-bottom-nav-item:hover, .mobile-bottom-nav-item.active {
   color: #ea580c;
 }
 
-.sym-nav-icon {
-  font-size: 18px;
-}
-
-.sym-nav-center-item {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-decoration: none;
-  margin-top: -24px;
-}
-
-.sym-nav-circle {
-  width: 46px;
-  height: 46px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, #f97316, #ea580c);
+.nav-icon-wrap {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 22px;
-  color: #ffffff;
-  box-shadow: 0 4px 14px rgba(234, 88, 12, 0.4);
-  border: 3px solid #ffffff;
-  margin-bottom: 2px;
 }
 
-.sym-nav-label {
-  font-size: 10px;
-  font-weight: 800;
-  color: #ea580c;
+.nav-label {
+  font-size: 10.5px;
+  font-weight: 700;
 }
 `;

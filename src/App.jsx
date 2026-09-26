@@ -6,6 +6,7 @@ import OrdersTab from './components/dashboard/OrdersTab';
 import { UserDetailModal } from './components/dashboard/UsersTab';
 import OrderLookupView from './components/views/OrderLookupView';
 import FloatingZaloContact from './components/common/FloatingZaloContact';
+import { ProductLandingView } from './components/ProductLandingView';
 
 const API_URL_ROOT = import.meta.env.PROD ? "" : (import.meta.env.VITE_API_URL || 'http://localhost:8080');
 
@@ -1234,6 +1235,32 @@ function App() {
       }} />
     </div>
   );
+
+  const [productCode, setProductCode] = useState(() => {
+    try {
+      const path = window.location.pathname;
+      const params = new URLSearchParams(window.location.search);
+      if (path.includes('/p/')) {
+        return path.split('/p/')[1]?.split('?')[0]?.trim();
+      }
+      return params.get('p') || params.get('code') || '';
+    } catch (e) {
+      return '';
+    }
+  });
+
+  useEffect(() => {
+    const path = window.location.pathname;
+    const params = new URLSearchParams(window.location.search);
+    const pCode = path.includes('/p/') ? path.split('/p/')[1]?.split('?')[0]?.trim() : (params.get('p') || params.get('code'));
+    if (pCode) {
+      setProductCode(pCode);
+    }
+  }, []);
+
+  if (productCode || view === 'product_landing') {
+    return <ProductLandingView code={productCode} apiRoot={API_URL_ROOT} />;
+  }
 
   if (view === 'lookup') {
     return (

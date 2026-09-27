@@ -310,17 +310,28 @@ export function ProductLandingView({ code, apiRoot = "" }) {
                 <span className="sym-cta-title-text">
                   Mua ngay trên {platformName}
                 </span>
+                <i className="fa-solid fa-chevron-right sym-cta-arrow"></i>
               </div>
             </button>
 
             {info.longUrl && (
               <button 
                 type="button" 
-                className="sym-btn-copy-aff-row" 
+                className={`sym-btn-copy-aff-row ${copiedAff ? "is-copied" : ""}`} 
                 onClick={handleCopyAffiliateLink} 
                 title="Sao chép link affiliate dài Shopee"
               >
-                {copiedAff ? "✓ Đã chép" : "📋 Copy link"}
+                {copiedAff ? (
+                  <>
+                    <i className="fa-solid fa-check sym-copy-icon"></i>
+                    <span>Đã chép</span>
+                  </>
+                ) : (
+                  <>
+                    <i className="fa-regular fa-copy sym-copy-icon"></i>
+                    <span>Copy link</span>
+                  </>
+                )}
               </button>
             )}
           </div>
@@ -947,35 +958,37 @@ body {
 .sym-action-row {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
   width: 100%;
 }
 
 .sym-btn-cta-main {
-  flex: 1;
+  flex: 1.65;
   min-width: 0;
+  height: 48px;
   border: none;
-  background: linear-gradient(135deg, #ff5722 0%, #ea580c 50%, #c2410c 100%);
+  background: linear-gradient(135deg, #ff5722 0%, #ee4d2d 45%, #d0011b 100%);
   border-radius: 999px;
-  padding: 12px 10px;
+  padding: 0 16px;
   color: #ffffff;
   cursor: pointer;
   position: relative;
   overflow: hidden;
-  box-shadow: 0 8px 24px -4px rgba(234, 88, 12, 0.45);
-  transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+  box-shadow: 0 8px 22px -3px rgba(238, 77, 45, 0.45), 0 2px 6px rgba(0, 0, 0, 0.08);
+  transition: all 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
 .sym-btn-cta-main:hover {
-  transform: translateY(-1.5px);
-  box-shadow: 0 10px 28px -4px rgba(234, 88, 12, 0.52);
+  transform: translateY(-2px) scale(1.01);
+  box-shadow: 0 12px 28px -3px rgba(238, 77, 45, 0.55), 0 4px 12px rgba(0, 0, 0, 0.12);
 }
 
 .sym-btn-cta-main:active {
-  transform: scale(0.98);
+  transform: translateY(0) scale(0.98);
+  box-shadow: 0 4px 14px -2px rgba(238, 77, 45, 0.4);
 }
 
 .sym-cta-glow {
@@ -984,84 +997,119 @@ body {
   left: -100%;
   width: 50%;
   height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.25), transparent);
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.35), transparent);
   transform: skewX(-20deg);
-  animation: sym-glow-sweep 3.5s infinite;
+  animation: sym-glow-sweep 3s infinite;
 }
 
 @keyframes sym-glow-sweep {
   0% { left: -100%; }
-  40%, 100% { left: 150%; }
+  35%, 100% { left: 160%; }
 }
 
 .sym-cta-body {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
+  gap: 8px;
   position: relative;
   z-index: 2;
   width: 100%;
 }
 
 .sym-cta-icon-box {
-  width: 22px;
-  height: 22px;
+  width: 26px;
+  height: 26px;
   background: rgba(255, 255, 255, 0.22);
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
+  box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.4);
 }
 
 .sym-cta-shopee-svg {
-  width: 13px;
-  height: 13px;
+  width: 14px;
+  height: 14px;
+  fill: #ffffff;
 }
 
 .sym-cta-title-text {
-  font-size: 13.5px;
+  font-size: 14px;
   font-weight: 800;
-  letter-spacing: 0;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  letter-spacing: -0.2px;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
   white-space: nowrap;
+}
+
+.sym-cta-arrow {
+  font-size: 11px;
+  opacity: 0.85;
+  transition: transform 0.2s ease;
+}
+
+.sym-btn-cta-main:hover .sym-cta-arrow {
+  transform: translateX(3px);
+  opacity: 1;
 }
 
 /* Nút Copy link cùng hàng */
 .sym-btn-copy-aff-row {
-  flex-shrink: 0;
-  background: linear-gradient(135deg, #fff7ed, #ffedd5);
-  border: 1.5px solid #f97316;
-  color: #c24e02;
-  font-size: 12px;
+  flex: 1;
+  height: 48px;
+  background: linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%);
+  border: 1.5px solid #fdba74;
+  color: #c2410c;
+  font-size: 13px;
   font-weight: 800;
-  padding: 11px 12px;
+  padding: 0 14px;
   border-radius: 999px;
   cursor: pointer;
   white-space: nowrap;
-  box-shadow: 0 4px 12px rgba(234, 88, 12, 0.12);
-  transition: all 0.15s ease;
+  box-shadow: 0 4px 12px rgba(234, 88, 12, 0.08);
+  transition: all 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  gap: 6px;
 }
 
 .sym-btn-copy-aff-row:hover {
-  background: #f97316;
-  color: #ffffff;
+  background: linear-gradient(135deg, #ffedd5 0%, #fed7aa 100%);
+  border-color: #f97316;
+  color: #9a3412;
+  transform: translateY(-2px) scale(1.01);
+  box-shadow: 0 8px 18px rgba(234, 88, 12, 0.16);
+}
+
+.sym-btn-copy-aff-row:active {
+  transform: translateY(0) scale(0.97);
+}
+
+.sym-btn-copy-aff-row.is-copied {
+  background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+  border-color: #6ee7b7;
+  color: #047857;
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.12);
+}
+
+.sym-copy-icon {
+  font-size: 13px;
 }
 
 @media (max-width: 360px) {
   .sym-cta-title-text {
-    font-size: 12px;
+    font-size: 12.5px;
   }
   .sym-btn-cta-main {
-    padding: 11px 8px;
+    height: 44px;
+    padding: 0 10px;
   }
   .sym-btn-copy-aff-row {
-    padding: 11px 10px;
-    font-size: 11.5px;
+    height: 44px;
+    padding: 0 10px;
+    font-size: 12px;
   }
 }
 

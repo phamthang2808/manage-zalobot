@@ -968,7 +968,7 @@ body {
   height: 48px;
   border: none;
   background: linear-gradient(135deg, #ff5722 0%, #ee4d2d 45%, #d0011b 100%);
-  border-radius: 999px;
+  border-radius: 14px;
   padding: 0 16px;
   color: #ffffff;
   cursor: pointer;
@@ -1021,7 +1021,7 @@ body {
   width: 26px;
   height: 26px;
   background: rgba(255, 255, 255, 0.22);
-  border-radius: 50%;
+  border-radius: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1064,7 +1064,7 @@ body {
   font-size: 13px;
   font-weight: 800;
   padding: 0 14px;
-  border-radius: 999px;
+  border-radius: 14px;
   cursor: pointer;
   white-space: nowrap;
   box-shadow: 0 4px 12px rgba(234, 88, 12, 0.08);

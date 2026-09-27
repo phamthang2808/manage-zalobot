@@ -149,21 +149,23 @@ export function ProductLandingView({ code, apiRoot = "" }) {
     <div className="sym-container">
       <style>{symuesLandingStyles}</style>
 
-      {/* Header App Bar: Logo to bên trái/giữa, Tên miền bên phải logo */}
+      {/* Header App Bar: Logo bên trái, Tên miền bên phải (tách sang 2 bên) */}
       <header className="sym-header">
-        <button type="button" className="sym-header-back" onClick={() => (window.location.href = "/lookup")} title="Quay lại">
-          ‹
-        </button>
-        <div className="sym-header-brand-wrap" onClick={() => (window.location.href = "/")}>
+        <div className="sym-header-left">
+          <button type="button" className="sym-header-back" onClick={() => (window.location.href = "/lookup")} title="Quay lại">
+            ‹
+          </button>
           <img 
             src="/28symueslogomanin.png" 
             alt="28Symues Logo" 
             className="sym-brand-logo-img" 
+            onClick={() => (window.location.href = "/")}
             onError={(e) => { e.target.src = "/MAIN.png"; }} 
           />
+        </div>
+        <div className="sym-header-right" onClick={() => (window.location.href = "/")}>
           <span className="sym-brand-domain-badge">{displayHost}</span>
         </div>
-        <div className="sym-header-placeholder"></div>
       </header>
 
       <main className="sym-main">
@@ -574,12 +576,12 @@ body {
   transform: scale(0.98);
 }
 
-/* Header App Bar: Logo to và Tên miền bên phải logo */
+/* Header App Bar: Logo bên trái, Tên miền bên phải (tách sang 2 bên) */
 .sym-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 10px 16px;
+  padding: 10px 14px;
   background: rgba(255, 255, 255, 0.94);
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
@@ -587,42 +589,49 @@ body {
   position: sticky;
   top: 0;
   z-index: 50;
-  min-height: 64px;
+  min-height: 60px;
+}
+
+.sym-header-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.sym-header-right {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
 }
 
 .sym-header-back {
   background: #fff7ed;
   border: 1px solid #ffedd5;
-  width: 38px;
-  height: 38px;
-  border-radius: 12px;
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 28px;
+  font-size: 26px;
   line-height: 1;
   color: #ea580c;
   cursor: pointer;
-  padding-bottom: 3px;
+  padding-bottom: 2px;
   transition: all 0.15s ease;
+  flex-shrink: 0;
 }
 
 .sym-header-back:hover {
   background: #ffedd5;
 }
 
-.sym-header-brand-wrap {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  cursor: pointer;
-}
-
 .sym-brand-logo-img {
-  height: 48px;
-  max-width: 170px;
+  height: 40px;
+  max-width: 145px;
   object-fit: contain;
-  filter: drop-shadow(0 2px 5px rgba(234, 88, 12, 0.2));
+  filter: drop-shadow(0 2px 4px rgba(234, 88, 12, 0.18));
+  cursor: pointer;
 }
 
 .sym-brand-domain-badge {
@@ -632,13 +641,10 @@ body {
   background: #fff7ed;
   border: 1px solid #ffedd5;
   padding: 4px 10px;
-  border-radius: 999px;
-  letter-spacing: 0.3px;
+  border-radius: 8px;
+  letter-spacing: 0.2px;
   box-shadow: 0 1px 4px rgba(234, 88, 12, 0.08);
-}
-
-.sym-header-placeholder {
-  width: 38px;
+  white-space: nowrap;
 }
 
 /* Main Content Area */
@@ -954,41 +960,40 @@ body {
   white-space: nowrap;
 }
 
-/* HÀNG NÚT: MUA NGAY TRÊN SHOPEE + COPY LINK DÀI CÙNG 1 HÀNG */
+/* HÀNG NÚT: MUA NGAY TRÊN SHOPEE + COPY LINK DÀI CÙNG 1 HÀNG (Bo góc nhẹ 8px chữ nhật, chống bể trên mobile) */
 .sym-action-row {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
   width: 100%;
 }
 
 .sym-btn-cta-main {
-  flex: 1.65;
+  flex: 1.4;
   min-width: 0;
-  height: 48px;
+  height: 46px;
   border: none;
   background: linear-gradient(135deg, #ff5722 0%, #ee4d2d 45%, #d0011b 100%);
-  border-radius: 14px;
-  padding: 0 16px;
+  border-radius: 8px;
+  padding: 0 8px;
   color: #ffffff;
   cursor: pointer;
   position: relative;
   overflow: hidden;
-  box-shadow: 0 8px 22px -3px rgba(238, 77, 45, 0.45), 0 2px 6px rgba(0, 0, 0, 0.08);
-  transition: all 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
+  box-shadow: 0 6px 18px -2px rgba(238, 77, 45, 0.42), 0 2px 4px rgba(0, 0, 0, 0.08);
+  transition: all 0.2s ease;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
 .sym-btn-cta-main:hover {
-  transform: translateY(-2px) scale(1.01);
-  box-shadow: 0 12px 28px -3px rgba(238, 77, 45, 0.55), 0 4px 12px rgba(0, 0, 0, 0.12);
+  transform: translateY(-1.5px);
+  box-shadow: 0 10px 24px -2px rgba(238, 77, 45, 0.52);
 }
 
 .sym-btn-cta-main:active {
   transform: translateY(0) scale(0.98);
-  box-shadow: 0 4px 14px -2px rgba(238, 77, 45, 0.4);
 }
 
 .sym-cta-glow {
@@ -997,7 +1002,7 @@ body {
   left: -100%;
   width: 50%;
   height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.35), transparent);
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
   transform: skewX(-20deg);
   animation: sym-glow-sweep 3s infinite;
 }
@@ -1011,76 +1016,77 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
+  gap: 5px;
   position: relative;
   z-index: 2;
   width: 100%;
+  min-width: 0;
 }
 
 .sym-cta-icon-box {
-  width: 26px;
-  height: 26px;
+  width: 22px;
+  height: 22px;
   background: rgba(255, 255, 255, 0.22);
-  border-radius: 8px;
+  border-radius: 6px;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.4);
 }
 
 .sym-cta-shopee-svg {
-  width: 14px;
-  height: 14px;
+  width: 13px;
+  height: 13px;
   fill: #ffffff;
 }
 
 .sym-cta-title-text {
-  font-size: 14px;
+  font-size: 13.5px;
   font-weight: 800;
-  letter-spacing: -0.2px;
+  letter-spacing: -0.3px;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
   white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .sym-cta-arrow {
-  font-size: 11px;
-  opacity: 0.85;
-  transition: transform 0.2s ease;
+  font-size: 10px;
+  opacity: 0.9;
+  flex-shrink: 0;
 }
 
 .sym-btn-cta-main:hover .sym-cta-arrow {
-  transform: translateX(3px);
-  opacity: 1;
+  transform: translateX(2px);
 }
 
 /* Nút Copy link cùng hàng */
 .sym-btn-copy-aff-row {
   flex: 1;
-  height: 48px;
+  min-width: 0;
+  height: 46px;
   background: linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%);
   border: 1.5px solid #fdba74;
   color: #c2410c;
-  font-size: 13px;
+  font-size: 12.5px;
   font-weight: 800;
-  padding: 0 14px;
-  border-radius: 14px;
+  padding: 0 8px;
+  border-radius: 8px;
   cursor: pointer;
   white-space: nowrap;
-  box-shadow: 0 4px 12px rgba(234, 88, 12, 0.08);
-  transition: all 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
+  box-shadow: 0 3px 10px rgba(234, 88, 12, 0.08);
+  transition: all 0.2s ease;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
+  gap: 5px;
 }
 
 .sym-btn-copy-aff-row:hover {
   background: linear-gradient(135deg, #ffedd5 0%, #fed7aa 100%);
   border-color: #f97316;
   color: #9a3412;
-  transform: translateY(-2px) scale(1.01);
-  box-shadow: 0 8px 18px rgba(234, 88, 12, 0.16);
+  transform: translateY(-1.5px);
 }
 
 .sym-btn-copy-aff-row:active {
@@ -1091,25 +1097,34 @@ body {
   background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
   border-color: #6ee7b7;
   color: #047857;
-  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.12);
 }
 
 .sym-copy-icon {
-  font-size: 13px;
+  font-size: 12px;
+  flex-shrink: 0;
 }
 
-@media (max-width: 360px) {
+@media (max-width: 420px) {
   .sym-cta-title-text {
-    font-size: 12.5px;
+    font-size: 12px;
+    letter-spacing: -0.4px;
   }
   .sym-btn-cta-main {
     height: 44px;
-    padding: 0 10px;
+    padding: 0 5px;
   }
   .sym-btn-copy-aff-row {
     height: 44px;
-    padding: 0 10px;
-    font-size: 12px;
+    padding: 0 5px;
+    font-size: 11.5px;
+  }
+  .sym-cta-icon-box {
+    width: 20px;
+    height: 20px;
+  }
+  .sym-cta-shopee-svg {
+    width: 12px;
+    height: 12px;
   }
 }
 

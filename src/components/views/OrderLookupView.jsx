@@ -684,9 +684,6 @@ export default function OrderLookupView({ setView: propSetView } = {}) {
             </h3>
             {isEditingBank ? (
               <div style={{ marginTop: '16px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                <div style={{ fontSize: '12.5px', color: '#ea580c', background: 'rgba(234,88,12,0.08)', padding: '8px 12px', borderRadius: '8px', border: '1px solid rgba(234,88,12,0.2)' }}>
-                  🔓 Đã mở khóa bảo mật PIN. Sếp có thể xem chi tiết hoặc chỉnh sửa STK bên dưới rồi nhấn <strong>OK (Lưu thông tin)</strong>.
-                </div>
                 <div className="lookup-date-grid" style={{ marginBottom: '4px' }}>
                   <div className="lookup-input-group" style={{ marginBottom: 0 }}>
                     <label className="lookup-label">Tên Ngân Hàng</label>
@@ -700,8 +697,8 @@ export default function OrderLookupView({ setView: propSetView } = {}) {
                 {bankSaveError && <div style={{ color: '#ef4444', fontSize: '12px' }}>⚠️ {bankSaveError}</div>}
                 <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end', marginTop: '4px' }}>
                   <button className="lookup-admin-link" style={{ padding: '6px 14px', background: 'var(--bg-main)', color: 'var(--text-muted)' }} onClick={() => { setIsEditingBank(false); setVerifiedPin(''); setBankSaveError(''); }} disabled={bankSaveLoading}>Hủy</button>
-                  <button className="lookup-btn" style={{ width: 'auto', padding: '6px 16px', fontSize: '13px' }} onClick={handleSaveBank} disabled={bankSaveLoading}>
-                    {bankSaveLoading ? 'Đang lưu...' : 'OK (Lưu thông tin)'}
+                  <button className="lookup-btn" style={{ width: 'auto', padding: '6px 20px', fontSize: '13px' }} onClick={handleSaveBank} disabled={bankSaveLoading}>
+                    {bankSaveLoading ? 'Đang lưu...' : 'Lưu'}
                   </button>
                 </div>
               </div>

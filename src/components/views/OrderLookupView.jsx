@@ -41,6 +41,20 @@ export default function OrderLookupView({ setView: propSetView } = {}) {
   const [editAccountNumber, setEditAccountNumber] = useState('');
   const [bankSaveError, setBankSaveError] = useState('');
   const [bankSaveLoading, setBankSaveLoading] = useState(false);
+  const [verifiedPin, setVerifiedPin] = useState('');
+
+  // Hàm ẩn số tài khoản ngân hàng: Chỉ hiển thị 2 số đầu và 3 số cuối (ví dụ: 12*****789)
+  const maskAccountNumber = (acc) => {
+    if (!acc) return 'Chưa thiết lập';
+    const s = String(acc).trim();
+    if (s.length <= 5) {
+      return s.length > 2 ? s.slice(0, 1) + '***' + s.slice(-1) : '***';
+    }
+    const start = s.slice(0, 2);
+    const end = s.slice(-3);
+    const mask = '*'.repeat(Math.max(s.length - 5, 3));
+    return `${start}${mask}${end}`;
+  };
 
   // Payout state
   const [payoutAmount, setPayoutAmount] = useState('');
@@ -168,6 +182,28 @@ export default function OrderLookupView({ setView: propSetView } = {}) {
     });
   };
 
+  // Bắt đầu sửa STK / xem chi tiết: Luôn yêu cầu nhập mã PIN trước
+  const handleStartEditBank = () => {
+    setBankSaveError('');
+    setPendingAction('UNLOCK_BANK');
+    setInputPin('');
+    setPinError('');
+
+    if (!lookupResult?.hasPin) {
+      // User chưa tạo mã PIN -> Mở luồng tạo mã PIN
+      setPinModalMode('CREATE_PIN');
+      setCreateStep(1);
+      setNewPin('');
+      setConfirmPin('');
+      setSecurityOtp('');
+      setPinModalOpen(true);
+    } else {
+      // User đã có PIN -> Mở modal nhập mã PIN 6 số ngay
+      setPinModalMode('ENTER_PIN');
+      setPinModalOpen(true);
+    }
+  };
+
   // Trigger PIN flow for actions
   const initiateAction = (action) => {
     if (action === 'BANK') {
@@ -237,9 +273,59 @@ export default function OrderLookupView({ setView: propSetView } = {}) {
     }
   };
 
-  // Execute the pending action (Bank Save or Payout) with verified PIN
+  // Lưu thông tin ngân hàng sau khi sửa xong (dùng verifiedPin đã xác thực ở bước mở khóa)
+  const handleSaveBank = async () => {
+    if (!editBankName.trim() || !editAccountNumber.trim()) {
+      setBankSaveError('Vui lòng điền đầy đủ tên ngân hàng và số tài khoản');
+      return;
+    }
+    setBankSaveError('');
+    setBankSaveLoading(true);
+    try {
+      let pinToUse = verifiedPin;
+      if (!pinToUse) {
+        initiateAction('BANK');
+        setBankSaveLoading(false);
+        return;
+      }
+
+      const res = await fetch(`${API_URL_ROOT}/api/public/bank-info`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          zaloId: lookupResult.zaloId,
+          bankName: editBankName.trim(),
+          accountNumber: editAccountNumber.trim(),
+          pin: pinToUse
+        })
+      });
+      const json = await res.json();
+      if (!res.ok) throw new Error(json.message || 'Lỗi khi lưu thông tin ngân hàng');
+      setLookupResult(prev => ({ ...prev, bankName: editBankName.trim(), accountNumber: editAccountNumber.trim() }));
+      setIsEditingBank(false);
+      setVerifiedPin('');
+      showToast('✓ Đã cập nhật thông tin ngân hàng thành công!', 'success');
+    } catch (err) {
+      setBankSaveError(err.message);
+      showToast(err.message, 'error');
+    } finally {
+      setBankSaveLoading(false);
+    }
+  };
+
+  // Execute the pending action (Bank Unlock, Bank Save or Payout) with verified PIN
   const executePendingActionWithPin = async (pinToUse) => {
-    if (pendingAction === 'BANK') {
+    if (pendingAction === 'UNLOCK_BANK') {
+      setVerifiedPin(pinToUse);
+      setEditBankName(lookupResult?.bankName || '');
+      setEditAccountNumber(lookupResult?.accountNumber || '');
+      setBankSaveError('');
+      setIsEditingBank(true);
+      setPinModalOpen(false);
+      setPinLoading(false);
+      showToast('✓ Xác thực PIN thành công! Sếp có thể xem chi tiết & sửa STK.', 'success');
+      return;
+    } else if (pendingAction === 'BANK') {
       setBankSaveLoading(true);
       setPinLoading(true);
       try {
@@ -257,6 +343,7 @@ export default function OrderLookupView({ setView: propSetView } = {}) {
         if (!res.ok) throw new Error(json.message || 'Lỗi khi lưu thông tin ngân hàng');
         setLookupResult(prev => ({ ...prev, bankName: editBankName.trim(), accountNumber: editAccountNumber.trim() }));
         setIsEditingBank(false);
+        setVerifiedPin('');
         setPinModalOpen(false);
         showToast('✓ Đã cập nhật thông tin ngân hàng thành công!', 'success');
       } catch (err) {
@@ -589,7 +676,7 @@ export default function OrderLookupView({ setView: propSetView } = {}) {
               <span className="bank-card-title-text">🏦 Thông Tin Ngân Hàng Nhận Tiền</span>
               {!isEditingBank && (
                 <button className="bank-edit-btn"
-                  onClick={() => { setEditBankName(lookupResult.bankName || ''); setEditAccountNumber(lookupResult.accountNumber || ''); setBankSaveError(''); setIsEditingBank(true); }}>
+                  onClick={handleStartEditBank}>
                   <i className="fa-regular fa-pen-to-square" style={{ fontSize: '12px' }}></i>
                   <span>{lookupResult.bankName ? 'Sửa' : 'Cài đặt'}</span>
                 </button>
@@ -597,6 +684,9 @@ export default function OrderLookupView({ setView: propSetView } = {}) {
             </h3>
             {isEditingBank ? (
               <div style={{ marginTop: '16px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                <div style={{ fontSize: '12.5px', color: '#ea580c', background: 'rgba(234,88,12,0.08)', padding: '8px 12px', borderRadius: '8px', border: '1px solid rgba(234,88,12,0.2)' }}>
+                  🔓 Đã mở khóa bảo mật PIN. Sếp có thể xem chi tiết hoặc chỉnh sửa STK bên dưới rồi nhấn <strong>OK (Lưu thông tin)</strong>.
+                </div>
                 <div className="lookup-date-grid" style={{ marginBottom: '4px' }}>
                   <div className="lookup-input-group" style={{ marginBottom: 0 }}>
                     <label className="lookup-label">Tên Ngân Hàng</label>
@@ -609,9 +699,9 @@ export default function OrderLookupView({ setView: propSetView } = {}) {
                 </div>
                 {bankSaveError && <div style={{ color: '#ef4444', fontSize: '12px' }}>⚠️ {bankSaveError}</div>}
                 <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end', marginTop: '4px' }}>
-                  <button className="lookup-admin-link" style={{ padding: '6px 14px', background: 'var(--bg-main)', color: 'var(--text-muted)' }} onClick={() => setIsEditingBank(false)} disabled={bankSaveLoading}>Hủy</button>
-                  <button className="lookup-btn" style={{ width: 'auto', padding: '6px 16px', fontSize: '13px' }} onClick={() => initiateAction('BANK')} disabled={bankSaveLoading}>
-                    {bankSaveLoading ? 'Đang lưu...' : 'Lưu thông tin'}
+                  <button className="lookup-admin-link" style={{ padding: '6px 14px', background: 'var(--bg-main)', color: 'var(--text-muted)' }} onClick={() => { setIsEditingBank(false); setVerifiedPin(''); setBankSaveError(''); }} disabled={bankSaveLoading}>Hủy</button>
+                  <button className="lookup-btn" style={{ width: 'auto', padding: '6px 16px', fontSize: '13px' }} onClick={handleSaveBank} disabled={bankSaveLoading}>
+                    {bankSaveLoading ? 'Đang lưu...' : 'OK (Lưu thông tin)'}
                   </button>
                 </div>
               </div>
@@ -623,7 +713,7 @@ export default function OrderLookupView({ setView: propSetView } = {}) {
                 </div>
                 <div>
                   <span className="bank-info-label">SỐ TÀI KHOẢN</span>
-                  <strong className="bank-info-val">{lookupResult.accountNumber || 'Chưa thiết lập'}</strong>
+                  <strong className="bank-info-val">{maskAccountNumber(lookupResult.accountNumber)}</strong>
                 </div>
               </div>
             )}
@@ -805,10 +895,14 @@ export default function OrderLookupView({ setView: propSetView } = {}) {
             {pinModalMode === 'ENTER_PIN' && (
               <>
                 <h3 style={{ fontSize: '19px', fontWeight: '800', color: 'var(--text-bright)', marginBottom: '6px' }}>
-                  Xác Nhận Mã PIN Rút Tiền
+                  {pendingAction === 'UNLOCK_BANK' ? 'Xác Nhận PIN Để Xem & Sửa STK' : 'Xác Nhận Mã PIN Rút Tiền'}
                 </h3>
                 <p style={{ fontSize: '13px', color: 'var(--text-muted)', lineHeight: '1.5', marginBottom: '16px', padding: '0 4px' }}>
-                  Nhập mã PIN 6 số bảo mật của <strong style={{ color: '#ea580c' }}>{lookupResult?.zaloName || 'sếp'}</strong> để {pendingAction === 'BANK' ? 'cập nhật tài khoản ngân hàng' : 'gửi yêu cầu rút tiền'}.
+                  Nhập mã PIN 6 số bảo mật của <strong style={{ color: '#ea580c' }}>{lookupResult?.zaloName || 'sếp'}</strong> để {
+                    pendingAction === 'UNLOCK_BANK' ? 'mở khóa xem chi tiết và sửa tài khoản ngân hàng' :
+                    pendingAction === 'BANK' ? 'cập nhật tài khoản ngân hàng' : 
+                    'gửi yêu cầu rút tiền'
+                  }.
                 </p>
 
                 {/* 6 Digit Box Display */}
@@ -911,7 +1005,9 @@ export default function OrderLookupView({ setView: propSetView } = {}) {
 
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
                   <button className="lookup-btn" onClick={handleConfirmEnterPin} disabled={inputPin.length !== 6 || pinLoading || bankSaveLoading || payoutSaveLoading}>
-                    {(pinLoading || bankSaveLoading || payoutSaveLoading) ? (<><div className="lookup-spinner"></div>Đang xác nhận...</>) : '✓ Xác nhận giao dịch'}
+                    {(pinLoading || bankSaveLoading || payoutSaveLoading) ? (<><div className="lookup-spinner"></div>Đang xác nhận...</>) : (
+                      pendingAction === 'UNLOCK_BANK' ? '✓ Xác nhận & Mở khóa STK' : '✓ Xác nhận giao dịch'
+                    )}
                   </button>
                   
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '4px' }}>

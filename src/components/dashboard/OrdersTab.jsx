@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useApp } from '../../context/AppContext';
 import { formatDateTime, formatMoney } from '../../utils/formatters';
+import CopyButton from '../common/CopyButton';
+import AssignOrderModal from './AssignOrderModal';
 
 // Helper to reliably parse any date into YYYY-MM-DD
 const parseDateToYMD = (val) => {
@@ -41,6 +43,7 @@ export default function OrdersTab() {
   const [platformFilter, setPlatformFilter] = useState('Shopee');
   const [syncLoading, setSyncLoading] = useState(false);
   const [activeDatePreset, setActiveDatePreset] = useState('ALL');
+  const [selectedOrderForAssign, setSelectedOrderForAssign] = useState(null);
 
   useEffect(() => {
     if (token && user) {
@@ -358,21 +361,22 @@ export default function OrdersTab() {
 
       {/* Responsive Orders Table */}
       <div className="table-container" style={{ overflowX: 'auto' }}>
-        <table style={{ tableLayout: 'fixed', width: '100%', minWidth: '780px' }}>
+        <table style={{ tableLayout: 'fixed', width: '100%', minWidth: '860px' }}>
           <thead>
             <tr>
-              <th style={{ width: '150px' }}>Mã đơn hàng</th>
-              <th style={{ width: '250px' }}>Tên sản phẩm</th>
-              <th style={{ width: '160px' }}>Thành viên / Zalo ID</th>
-              <th style={{ width: '150px', textAlign: 'right' }}>Tích lũy hoa hồng</th>
-              <th style={{ width: '145px' }}>Thời gian</th>
-              <th style={{ width: '110px', textAlign: 'center' }}>Trạng thái</th>
+              <th style={{ width: '165px' }}>Mã đơn hàng</th>
+              <th style={{ width: '220px' }}>Tên sản phẩm</th>
+              <th style={{ width: '180px' }}>Thành viên / Zalo ID</th>
+              <th style={{ width: '145px', textAlign: 'right' }}>Tích lũy hoa hồng</th>
+              <th style={{ width: '135px' }}>Thời gian</th>
+              <th style={{ width: '105px', textAlign: 'center' }}>Trạng thái</th>
+              <th style={{ width: '105px', textAlign: 'center' }}>Gắn đơn</th>
             </tr>
           </thead>
           <tbody>
             {filteredOrders.length === 0 ? (
               <tr className="empty-row">
-                <td colSpan="6" style={{ textAlign: 'center', color: 'var(--text-muted)', padding: '32px 16px' }}>
+                <td colSpan="7" style={{ textAlign: 'center', color: 'var(--text-muted)', padding: '32px 16px' }}>
                   Không tìm thấy đơn hàng {platformFilter} nào phù hợp
                 </td>
               </tr>
@@ -384,7 +388,10 @@ export default function OrdersTab() {
                 return (
                   <tr key={o.id}>
                     <td data-label="Mã đơn">
-                      <code className="order-id-code" style={{ fontSize: '12px' }}>{o.orderId}</code>
+                      <div style={{ display: 'inline-flex', alignItems: 'center' }}>
+                        <code className="order-id-code" style={{ fontSize: '12px' }}>{o.orderId}</code>
+                        <CopyButton text={o.orderId} title="Copy mã đơn hàng" toastMessage={`Đã copy mã đơn: ${o.orderId}`} />
+                      </div>
                     </td>
                     <td data-label="Sản phẩm" title={o.productName}>
                       <span style={{ fontWeight: '600', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
@@ -392,12 +399,25 @@ export default function OrdersTab() {
                       </span>
                     </td>
                     <td data-label="Thành viên">
-                      <div style={{ fontWeight: '600', fontSize: '13.5px' }} title={orderUser ? orderUser.zaloName : (o.zaloId || 'UNKNOWN')}>
-                        {orderUser ? orderUser.zaloName : <code style={{ color: 'var(--color-danger)', fontSize: '11px' }}>{o.zaloId || 'UNKNOWN'}</code>}
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '4px' }}>
+                        <div style={{ fontWeight: '600', fontSize: '13.5px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={orderUser ? orderUser.zaloName : (o.zaloId || 'UNKNOWN')}>
+                          {orderUser ? orderUser.zaloName : <code style={{ color: 'var(--color-danger)', fontSize: '11px' }}>{o.zaloId || 'UNKNOWN'}</code>}
+                        </div>
+                        {(o.zaloId || o.subId) && (
+                          <CopyButton text={o.zaloId || o.subId} title="Copy Zalo ID" toastMessage={`Đã copy Zalo ID: ${o.zaloId || o.subId}`} />
+                        )}
                       </div>
-                      {o.subId && (
-                        <div style={{ marginTop: '2px' }}>
-                          <code style={{ fontSize: '11.5px', color: 'var(--text-muted)' }} title={o.subId}>{o.subId}</code>
+                      {o.subId && o.subId !== o.zaloId && (
+                        <div style={{ marginTop: '2px', display: 'flex', alignItems: 'center' }}>
+                          <code style={{ fontSize: '11.5px', color: 'var(--text-muted)' }} title={o.subId}>Sub: {o.subId}</code>
+                          <CopyButton text={o.subId} title="Copy Sub ID" toastMessage={`Đã copy Sub ID: ${o.subId}`} />
+                        </div>
+                      )}
+                      {o.manuallyAssigned && (
+                        <div style={{ marginTop: '3px' }}>
+                          <span style={{ fontSize: '10px', background: 'rgba(249,115,22,0.15)', color: '#ea580c', border: '1px solid rgba(249,115,22,0.3)', borderRadius: '6px', padding: '1px 5px', fontWeight: '700' }}>
+                            🔒 Đã gắn tay
+                          </span>
                         </div>
                       )}
                     </td>
@@ -420,6 +440,31 @@ export default function OrdersTab() {
                         {o.status === 2 || o.status === 'Hoàn thành' || o.status === 'Đã chốt HH' ? 'Hoàn thành (Đã chốt)' : o.status === 3 || o.status === 'Đã hủy' ? 'Đã hủy' : (typeof o.status === 'number' ? (o.status === 2 ? 'Hoàn thành' : o.status === 3 ? 'Đã hủy' : 'Chờ kiểm duyệt') : (o.status || 'Chờ kiểm duyệt'))}
                       </span>
                     </td>
+                    <td data-label="Gắn đơn" style={{ textAlign: 'center' }}>
+                      <button
+                        type="button"
+                        onClick={() => setSelectedOrderForAssign(o)}
+                        style={{
+                          background: o.manuallyAssigned ? 'rgba(249,115,22,0.12)' : 'var(--bg-main, #f1f5f9)',
+                          color: o.manuallyAssigned ? '#ea580c' : 'var(--text-main, #334155)',
+                          border: `1px solid ${o.manuallyAssigned ? '#fed7aa' : 'var(--border-color, #cbd5e1)'}`,
+                          borderRadius: '8px',
+                          padding: '5px 10px',
+                          fontSize: '11.5px',
+                          fontWeight: '700',
+                          cursor: 'pointer',
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: '5px',
+                          transition: 'all 0.2s ease',
+                          whiteSpace: 'nowrap'
+                        }}
+                        title="Gắn đơn cho thành viên khác"
+                      >
+                        <i className="fa-solid fa-link" style={{ fontSize: '11px' }}></i>
+                        <span>{o.manuallyAssigned ? 'Đổi chủ' : 'Gắn đơn'}</span>
+                      </button>
+                    </td>
                   </tr>
                 );
               })
@@ -427,6 +472,15 @@ export default function OrdersTab() {
           </tbody>
         </table>
       </div>
+
+      {/* Assign Order Modal */}
+      {selectedOrderForAssign && (
+        <AssignOrderModal
+          order={selectedOrderForAssign}
+          onClose={() => setSelectedOrderForAssign(null)}
+          onSuccess={() => fetchData(token, user)}
+        />
+      )}
     </div>
   );
 }

@@ -5,6 +5,7 @@ import MobileBottomNav from '../common/MobileBottomNav';
 import ToastNotification from '../common/ToastNotification';
 import ThemeToggle from '../common/ThemeToggle';
 import RunningCatMascot from '../common/RunningCatMascot';
+import CopyButton from '../common/CopyButton';
 
 export default function OrderLookupView({ setView: propSetView } = {}) {
   const { setView: contextSetView, showToast, API_URL_ROOT } = useApp();
@@ -568,9 +569,8 @@ export default function OrderLookupView({ setView: propSetView } = {}) {
         .lookup-error { width: 100%; max-width: 600px; background: rgba(239,68,68,0.08); border: 1px solid rgba(239,68,68,0.3); color: #ef4444; padding: 12px 16px; border-radius: 12px; margin-bottom: 20px; font-size: 13.5px; font-weight: 600; }
         .stats-container { width: 100%; max-width: 600px; margin-bottom: 24px; }
         .stats-section-title { font-family: var(--font-heading); font-size: 16.5px; font-weight: 700; margin-bottom: 12px; color: var(--text-bright); display: flex; align-items: center; gap: 8px; letter-spacing: -0.2px; }
-        .stats-cards-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
-        .stats-cards-grid > :first-child { grid-column: span 2; }
-        .stat-card-item { border-radius: 14px; padding: 16px; border: 1.5px solid var(--border-color); display: flex; flex-direction: column; box-shadow: 0 4px 12px rgba(0,0,0,0.04); background: var(--bg-card); transition: all 0.2s ease; }
+        .stats-cards-grid { display: flex; flex-direction: column; gap: 8px; width: 100%; }
+        .stat-card-item { border-radius: 14px; padding: 12px 16px; border: 1.5px solid var(--border-color); display: flex; flex-direction: row; align-items: center; justify-content: space-between; box-shadow: 0 4px 12px rgba(0,0,0,0.03); background: var(--bg-card); transition: all 0.2s ease; gap: 10px; width: 100%; box-sizing: border-box; }
         .stat-card-item.total { background: linear-gradient(135deg, rgba(219,234,254,0.6) 0%, var(--bg-card) 100%); border-color: #93c5fd; }
         .stat-card-item.pending { background: linear-gradient(135deg, rgba(254,243,199,0.6) 0%, var(--bg-card) 100%); border-color: #fcd34d; }
         .stat-card-item.completed { background: linear-gradient(135deg, rgba(209,250,229,0.6) 0%, var(--bg-card) 100%); border-color: #6ee7b7; }
@@ -586,8 +586,11 @@ export default function OrderLookupView({ setView: propSetView } = {}) {
         html[data-theme="dark"] .stat-card-item.completed .stat-card-value, body.dark .stat-card-item.completed .stat-card-value { color: #34d399 !important; text-shadow: 0 0 12px rgba(52, 211, 153, 0.4); }
         html[data-theme="dark"] .stat-card-item.withdrawable .stat-card-value, body.dark .stat-card-item.withdrawable .stat-card-value { color: #fb923c !important; text-shadow: 0 0 12px rgba(251, 146, 60, 0.4); }
         html[data-theme="dark"] .stat-card-item.received .stat-card-value, body.dark .stat-card-item.received .stat-card-value { color: #c084fc !important; text-shadow: 0 0 12px rgba(192, 132, 252, 0.4); }
-        .stat-card-label { font-size: 11px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 4px; font-weight: 700; letter-spacing: 0.5px; }
-        .stat-card-value { font-family: var(--font-heading); font-size: 23px; font-weight: 800; color: var(--text-bright); letter-spacing: -0.3px; }
+        .stat-card-item-left { display: flex; flex-direction: column; gap: 2px; text-align: left; flex: 1; min-width: 0; }
+        .stat-card-item-right { text-align: right; flex-shrink: 0; }
+        .stat-card-label { font-size: 11px; text-transform: uppercase; color: var(--text-muted); font-weight: 800; letter-spacing: 0.5px; display: flex; align-items: center; gap: 5px; }
+        .stat-card-sub { font-size: 11px; color: var(--text-muted); opacity: 0.85; line-height: 1.3; }
+        .stat-card-value { font-family: var(--font-heading); font-size: 20px; font-weight: 800; color: var(--text-bright); letter-spacing: -0.3px; white-space: nowrap; }
         .stat-card-value.primary { color: #2563eb; }
         .orders-container { width: 100%; max-width: 600px; }
         .order-card-item { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 14px; padding: 16px; margin-bottom: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.03); }
@@ -611,7 +614,7 @@ export default function OrderLookupView({ setView: propSetView } = {}) {
         .pin-dot-bullet { width: 12px; height: 12px; border-radius: 50%; background: #ea580c; box-shadow: 0 0 6px rgba(234, 88, 12, 0.5); }
         .pin-hidden-input { position: absolute; opacity: 0; pointer-events: auto; width: calc(100% - 50px); height: 100%; top: 0; left: 0; z-index: 2; }
         @media (max-width: 480px) { .pin-box-item { width: 36px; height: 44px; font-size: 17px; border-radius: 9px; } .pin-digit-dots { gap: 6px; } }
-        @media (max-width: 480px) { .stats-cards-grid { grid-template-columns: 1fr; } .stats-cards-grid > :first-child { grid-column: span 1; } .lookup-card { padding: 16px; } .stat-card-value { font-size: 20px; } .lookup-banner-img-wrap { width: 100%; max-width: 280px; } }
+        @media (max-width: 480px) { .stats-cards-grid { display: flex !important; flex-direction: column !important; gap: 8px !important; } .stat-card-item { display: flex !important; flex-direction: row !important; align-items: center !important; justify-content: space-between !important; padding: 11px 13px !important; border-radius: 12px !important; } .stat-card-value { font-size: 17.5px !important; } .stat-card-label { font-size: 10.5px !important; } .stat-card-sub { font-size: 10px !important; } .lookup-card { padding: 16px; } .lookup-banner-img-wrap { width: 100%; max-width: 280px; } }
       `}} />
 
       <ToastNotification />
@@ -720,40 +723,75 @@ export default function OrderLookupView({ setView: propSetView } = {}) {
           <div className="stats-container">
             <h3 className="stats-section-title">💰 Thống Kê Hoa Hồng của: <span style={{ color: '#ea580c' }}>{lookupResult.zaloName}</span></h3>
             
-            {/* Thẻ 0: Tổng tích lũy (Hoàn thành + Chờ) */}
-            <div className="stat-card-item total" style={{ marginBottom: '12px', width: '100%', boxSizing: 'border-box' }}>
-              <span className="stat-card-label">TỔNG TÍCH LŨY (HOÀN THÀNH + CHỜ)</span>
-              <span className="stat-card-value">{formatMoney((lookupResult.wallet.pendingCommission || 0) + (lookupResult.wallet.rawCompletedCommission != null ? lookupResult.wallet.rawCompletedCommission : (lookupResult.wallet.completedCommission || 0)))}</span>
+            {/* Thẻ 0: Tổng tích lũy (Hoàn thành + Chờ) - Hàng Ngang */}
+            <div className="stat-card-item total" style={{ marginBottom: '10px', width: '100%', boxSizing: 'border-box' }}>
+              <div className="stat-card-item-left">
+                <span className="stat-card-label">🌟 TỔNG TÍCH LŨY (HOÀN THÀNH + CHỜ)</span>
+                <span className="stat-card-sub">(Toàn bộ hoa hồng tích lũy)</span>
+              </div>
+              <div className="stat-card-item-right">
+                <span className="stat-card-value" style={{ color: '#2563eb' }}>
+                  {formatMoney((lookupResult.wallet.pendingCommission || 0) + (lookupResult.wallet.rawCompletedCommission != null ? lookupResult.wallet.rawCompletedCommission : (lookupResult.wallet.completedCommission || 0)))}
+                </span>
+              </div>
             </div>
 
-            <div className="stats-cards-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))' }}>
+            {/* Danh sách các mục ví - Hàng Ngang gọn gàng trên di động */}
+            <div className="stats-cards-grid">
               <div className="stat-card-item pending">
-                <span className="stat-card-label">ĐANG XỬ LÝ</span>
-                <span style={{ fontSize: '11px', color: 'var(--text-muted)', marginBottom: '4px' }}>(đang vận chuyển hoặc chưa ấn nhận hàng)</span>
-                <span className="stat-card-value">{formatMoney(lookupResult.wallet.pendingCommission)}</span>
+                <div className="stat-card-item-left">
+                  <span className="stat-card-label">⏳ ĐANG XỬ LÝ</span>
+                  <span className="stat-card-sub">(Đang vận chuyển hoặc chưa ấn nhận hàng)</span>
+                </div>
+                <div className="stat-card-item-right">
+                  <span className="stat-card-value" style={{ color: '#d97706' }}>
+                    {formatMoney(lookupResult.wallet.pendingCommission)}
+                  </span>
+                </div>
               </div>
+
               <div className="stat-card-item completed">
-                <span className="stat-card-label">ĐÃ HOÀN THÀNH</span>
-                <span style={{ fontSize: '11px', color: 'var(--text-muted)', marginBottom: '4px' }}>(Hoàn thành • Chưa đủ 3 ngày để rút)</span>
-                <span className="stat-card-value">{formatMoney(lookupResult.wallet.completedNotYetWithdrawable != null ? lookupResult.wallet.completedNotYetWithdrawable : lookupResult.wallet.completedCommission)}</span>
+                <div className="stat-card-item-left">
+                  <span className="stat-card-label">📦 ĐÃ HOÀN THÀNH</span>
+                  <span className="stat-card-sub">(Hoàn thành • Chưa đủ 3 ngày để rút)</span>
+                </div>
+                <div className="stat-card-item-right">
+                  <span className="stat-card-value" style={{ color: '#059669' }}>
+                    {formatMoney(lookupResult.wallet.completedNotYetWithdrawable != null ? lookupResult.wallet.completedNotYetWithdrawable : lookupResult.wallet.completedCommission)}
+                  </span>
+                </div>
               </div>
+
               <div className="stat-card-item withdrawable">
-                <span className="stat-card-label">SỐ DƯ KHẢ DỤNG</span>
-                {lookupResult.wallet.pendingWithdrawn > 0 ? (
-                  <span style={{ fontSize: '11px', color: '#d97706', fontWeight: 'bold', marginBottom: '4px' }}>
-                    (Đang chờ duyệt rút: {formatMoney(lookupResult.wallet.pendingWithdrawn)})
+                <div className="stat-card-item-left">
+                  <span className="stat-card-label">💵 SỐ DƯ KHẢ DỤNG</span>
+                  {lookupResult.wallet.pendingWithdrawn > 0 ? (
+                    <span className="stat-card-sub" style={{ color: '#d97706', fontWeight: 'bold' }}>
+                      (Đang chờ duyệt rút: {formatMoney(lookupResult.wallet.pendingWithdrawn)})
+                    </span>
+                  ) : (
+                    <span className="stat-card-sub">
+                      (Sau 3 ngày • Đã trừ thuế & chia 8-2)
+                    </span>
+                  )}
+                </div>
+                <div className="stat-card-item-right">
+                  <span className="stat-card-value" style={{ color: '#ea580c' }}>
+                    {formatMoney(lookupResult.wallet.withdrawableCommission)}
                   </span>
-                ) : (
-                  <span style={{ fontSize: '11px', color: 'var(--text-muted)', marginBottom: '4px' }}>
-                    (Sau 3 ngày • Trừ thuế & chia 8-2)
-                  </span>
-                )}
-                <span className="stat-card-value">{formatMoney(lookupResult.wallet.withdrawableCommission)}</span>
+                </div>
               </div>
+
               <div className="stat-card-item received">
-                <span className="stat-card-label">ĐÃ NHẬN (ĐÃ THANH TOÁN)</span>
-                <span style={{ fontSize: '11px', color: 'var(--text-muted)', marginBottom: '4px' }}>(Tổng tiền đã rút về bank)</span>
-                <span className="stat-card-value">{formatMoney(lookupResult.wallet.receivedCommission)}</span>
+                <div className="stat-card-item-left">
+                  <span className="stat-card-label">🏦 ĐÃ NHẬN (ĐÃ THANH TOÁN)</span>
+                  <span className="stat-card-sub">(Tổng tiền đã rút về tài khoản bank)</span>
+                </div>
+                <div className="stat-card-item-right">
+                  <span className="stat-card-value" style={{ color: '#9333ea' }}>
+                    {formatMoney(lookupResult.wallet.receivedCommission)}
+                  </span>
+                </div>
               </div>
             </div>
           </div>
@@ -835,7 +873,10 @@ export default function OrderLookupView({ setView: propSetView } = {}) {
                       <i className="fa-regular fa-calendar" style={{ color: 'var(--text-muted)', fontSize: '13px' }}></i>
                       <span>{formatDateTime(o.purchaseTime)}</span>
                     </span>
-                    <span>Mã đơn: <span className="order-id-badge">{o.orderId}</span></span>
+                    <span style={{ display: 'inline-flex', alignItems: 'center' }}>
+                      Mã đơn: <span className="order-id-badge" style={{ marginLeft: '4px' }}>{o.orderId}</span>
+                      <CopyButton text={o.orderId} title="Copy mã đơn hàng" toastMessage={`Đã copy mã đơn: ${o.orderId}`} />
+                    </span>
                   </div>
                   <div className="order-card-title" title={o.productName}>{o.productName}</div>
                   <div className="order-card-commission-row" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px', flexWrap: 'wrap', marginTop: '10px' }}>

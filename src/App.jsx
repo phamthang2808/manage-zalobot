@@ -7,6 +7,7 @@ import { UserDetailModal } from './components/dashboard/UsersTab';
 import OrderLookupView from './components/views/OrderLookupView';
 import FloatingZaloContact from './components/common/FloatingZaloContact';
 import { ProductLandingView } from './components/ProductLandingView';
+import CopyButton from './components/common/CopyButton';
 
 const API_URL_ROOT = import.meta.env.PROD ? "" : (import.meta.env.VITE_API_URL || 'http://localhost:8080');
 
@@ -2977,7 +2978,10 @@ function App() {
                                   <strong title={u.zaloName}>{u.zaloName || 'Vô danh (Chờ đồng bộ)'}</strong>
                                 </td>
                                 <td data-label="Zalo ID" style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                                  <code style={{ color: 'var(--text-muted)', fontSize: '11.5px' }} title={u.zaloId}>{u.zaloId}</code>
+                                  <div style={{ display: 'inline-flex', alignItems: 'center' }}>
+                                    <code style={{ color: 'var(--text-muted)', fontSize: '11.5px' }} title={u.zaloId}>{u.zaloId}</code>
+                                    <CopyButton text={u.zaloId} title="Copy Zalo ID" toastMessage={`Đã copy Zalo ID: ${u.zaloId}`} />
+                                  </div>
                                 </td>
                                 <td data-label="Tài khoản nhận tiền">
                                   <div style={{ fontSize: '13px', fontWeight: '500' }}>{bankAndAcc.bankName || '⚠️ Chưa cập nhật'}</div>

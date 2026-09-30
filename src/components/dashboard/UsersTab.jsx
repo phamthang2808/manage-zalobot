@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useApp } from '../../context/AppContext';
 import { formatMoney, formatDateTime, getBankAndAccount } from '../../utils/formatters';
+import CopyButton from '../common/CopyButton';
 
 export function UserDetailModal({ selectedUser, onClose, orders }) {
   if (!selectedUser) return null;
@@ -260,7 +261,10 @@ export function UserDetailModal({ selectedUser, onClose, orders }) {
                     return (
                       <tr key={o.id || o.orderId} style={{ borderBottom: '1px solid var(--border-color)' }}>
                         <td data-label="Mã đơn" style={{ fontSize: '12px', fontWeight: '600', color: 'var(--text-bright, #0f172a)', fontFamily: 'monospace', whiteSpace: 'nowrap' }}>
-                          {o.orderId}
+                          <div style={{ display: 'inline-flex', alignItems: 'center' }}>
+                            <span>{o.orderId}</span>
+                            <CopyButton text={o.orderId} title="Copy mã đơn hàng" toastMessage={`Đã copy mã đơn: ${o.orderId}`} />
+                          </div>
                         </td>
                         <td data-label="Nền tảng" style={{ whiteSpace: 'nowrap' }}>
                           {isTiktok ? (
@@ -532,7 +536,10 @@ export default function UsersTab() {
                         <strong title={u.zaloName}>{u.zaloName || 'Vô danh (Chờ đồng bộ)'}</strong>
                       </td>
                       <td data-label="Zalo ID" style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                        <code style={{ color: 'var(--text-muted)', fontSize: '11.5px' }} title={u.zaloId}>{u.zaloId}</code>
+                        <div style={{ display: 'inline-flex', alignItems: 'center' }}>
+                          <code style={{ color: 'var(--text-muted)', fontSize: '11.5px' }} title={u.zaloId}>{u.zaloId}</code>
+                          <CopyButton text={u.zaloId} title="Copy Zalo ID" toastMessage={`Đã copy Zalo ID: ${u.zaloId}`} />
+                        </div>
                       </td>
                       <td data-label="Tài khoản nhận tiền">
                         <div style={{ fontSize: '13px', fontWeight: '500' }}>{bankAndAcc.bankName || '⚠️ Chưa cập nhật'}</div>

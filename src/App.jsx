@@ -50,11 +50,11 @@ function App() {
             if (resData && resData.data) {
               window.location.replace(resData.data);
             } else {
-              window.location.replace('https://www.28symues.id.vn/lookup');
+              window.location.replace('https://www.28symues.store/lookup');
             }
           })
           .catch(() => {
-            window.location.replace('https://www.28symues.id.vn/lookup');
+            window.location.replace('https://www.28symues.store/lookup');
           });
       }
     }

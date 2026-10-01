@@ -3,4 +3,4 @@ Allow: /
 Disallow: /api/
 Disallow: /admin/
 
-Sitemap: https://28symues.id.vn/sitemap.xml
+Sitemap: https://28symues.store/sitemap.xml

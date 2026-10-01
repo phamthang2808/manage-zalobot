@@ -143,7 +143,7 @@ export function ProductLandingView({ code, apiRoot = "" }) {
 
   const isTiktok = (info.platform || "").toUpperCase().includes("TIKTOK");
   const platformName = isTiktok ? "TikTok Shop" : "Shopee";
-  const displayHost = "28symues.id.vn";
+  const displayHost = "28symues.store";
 
   return (
     <div className="sym-container">

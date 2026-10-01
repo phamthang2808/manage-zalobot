@@ -454,22 +454,21 @@ export default function OrdersTab() {
         }
       `}} />
       <div className="table-container orders-table-container" style={{ overflowX: 'auto', WebkitOverflowScrolling: 'touch' }}>
-        <table className="orders-table" style={{ tableLayout: 'fixed', width: '100%', minWidth: '860px' }}>
+        <table className="orders-table" style={{ tableLayout: 'fixed', width: '100%', minWidth: '880px' }}>
           <thead>
             <tr>
-              <th style={{ width: '165px' }}>Mã đơn hàng</th>
-              <th style={{ width: '220px' }}>Tên sản phẩm</th>
-              <th style={{ width: '180px' }}>Thành viên / Zalo ID</th>
-              <th style={{ width: '145px', textAlign: 'right' }}>Tích lũy hoa hồng</th>
-              <th style={{ width: '135px' }}>Thời gian</th>
-              <th style={{ width: '105px', textAlign: 'center' }}>Trạng thái</th>
-              <th style={{ width: '105px', textAlign: 'center' }}>Gắn đơn</th>
+              <th style={{ width: '160px' }}>Mã đơn hàng</th>
+              <th style={{ width: '230px' }}>Tên sản phẩm</th>
+              <th style={{ width: '210px' }}>Thành viên / Zalo ID</th>
+              <th style={{ width: '150px', textAlign: 'right' }}>Tích lũy hoa hồng</th>
+              <th style={{ width: '130px' }}>Thời gian</th>
+              <th style={{ width: '120px', textAlign: 'center' }}>Trạng thái</th>
             </tr>
           </thead>
           <tbody>
             {filteredOrders.length === 0 ? (
               <tr className="empty-row">
-                <td colSpan="7" style={{ textAlign: 'center', color: 'var(--text-muted)', padding: '32px 16px' }}>
+                <td colSpan="6" style={{ textAlign: 'center', color: 'var(--text-muted)', padding: '32px 16px' }}>
                   Không tìm thấy đơn hàng {platformFilter} nào phù hợp
                 </td>
               </tr>
@@ -492,17 +491,45 @@ export default function OrdersTab() {
                       </span>
                     </td>
                     <td data-label="Thành viên">
-                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '4px' }}>
-                        <div style={{ fontWeight: '600', fontSize: '13.5px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={orderUser ? orderUser.zaloName : (o.zaloId || 'UNKNOWN')}>
-                          {orderUser ? orderUser.zaloName : <code style={{ color: 'var(--color-danger)', fontSize: '11px' }}>{o.zaloId || 'UNKNOWN'}</code>}
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '4px', minWidth: 0, overflow: 'hidden' }}>
+                          <span style={{ fontWeight: '600', fontSize: '13.5px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={orderUser ? orderUser.zaloName : (o.zaloId || 'UNKNOWN')}>
+                            {orderUser ? orderUser.zaloName : <code style={{ color: 'var(--color-danger)', fontSize: '11px' }}>{o.zaloId || 'UNKNOWN'}</code>}
+                          </span>
+                          {(o.zaloId || o.subId) && (
+                            <CopyButton text={o.zaloId || o.subId} title="Copy Zalo ID" toastMessage={`Đã copy Zalo ID: ${o.zaloId || o.subId}`} />
+                          )}
                         </div>
-                        {(o.zaloId || o.subId) && (
-                          <CopyButton text={o.zaloId || o.subId} title="Copy Zalo ID" toastMessage={`Đã copy Zalo ID: ${o.zaloId || o.subId}`} />
-                        )}
+
+                        <button
+                          type="button"
+                          onClick={() => setSelectedOrderForAssign(o)}
+                          style={{
+                            background: o.manuallyAssigned ? 'rgba(249,115,22,0.12)' : 'var(--bg-main, #f1f5f9)',
+                            color: o.manuallyAssigned ? '#ea580c' : 'var(--text-main, #334155)',
+                            border: `1px solid ${o.manuallyAssigned ? '#fed7aa' : 'var(--border-color, #cbd5e1)'}`,
+                            borderRadius: '6px',
+                            padding: '3px 8px',
+                            fontSize: '11px',
+                            fontWeight: '600',
+                            cursor: 'pointer',
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '4px',
+                            transition: 'all 0.2s ease',
+                            whiteSpace: 'nowrap',
+                            flexShrink: 0
+                          }}
+                          title="Gắn đơn cho thành viên khác"
+                        >
+                          <i className="fa-solid fa-link" style={{ fontSize: '10px' }}></i>
+                          <span>{o.manuallyAssigned ? 'Đổi chủ' : 'Gắn đơn'}</span>
+                        </button>
                       </div>
+
                       {o.subId && o.subId !== o.zaloId && (
                         <div style={{ marginTop: '2px', display: 'flex', alignItems: 'center' }}>
-                          <code style={{ fontSize: '11.5px', color: 'var(--text-muted)' }} title={o.subId}>Sub: {o.subId}</code>
+                          <code style={{ fontSize: '11px', color: 'var(--text-muted)' }} title={o.subId}>Sub: {o.subId}</code>
                           <CopyButton text={o.subId} title="Copy Sub ID" toastMessage={`Đã copy Sub ID: ${o.subId}`} />
                         </div>
                       )}
@@ -532,31 +559,6 @@ export default function OrdersTab() {
                         style={{ fontSize: '11px', padding: '4px 10px' }}>
                         {o.status === 2 || o.status === 'Hoàn thành' || o.status === 'Đã chốt HH' ? 'Hoàn thành (Đã chốt)' : o.status === 3 || o.status === 'Đã hủy' ? 'Đã hủy' : (typeof o.status === 'number' ? (o.status === 2 ? 'Hoàn thành' : o.status === 3 ? 'Đã hủy' : 'Chờ kiểm duyệt') : (o.status || 'Chờ kiểm duyệt'))}
                       </span>
-                    </td>
-                    <td data-label="Gắn đơn" style={{ textAlign: 'center' }}>
-                      <button
-                        type="button"
-                        onClick={() => setSelectedOrderForAssign(o)}
-                        style={{
-                          background: o.manuallyAssigned ? 'rgba(249,115,22,0.12)' : 'var(--bg-main, #f1f5f9)',
-                          color: o.manuallyAssigned ? '#ea580c' : 'var(--text-main, #334155)',
-                          border: `1px solid ${o.manuallyAssigned ? '#fed7aa' : 'var(--border-color, #cbd5e1)'}`,
-                          borderRadius: '8px',
-                          padding: '5px 10px',
-                          fontSize: '11.5px',
-                          fontWeight: '700',
-                          cursor: 'pointer',
-                          display: 'inline-flex',
-                          alignItems: 'center',
-                          gap: '5px',
-                          transition: 'all 0.2s ease',
-                          whiteSpace: 'nowrap'
-                        }}
-                        title="Gắn đơn cho thành viên khác"
-                      >
-                        <i className="fa-solid fa-link" style={{ fontSize: '11px' }}></i>
-                        <span>{o.manuallyAssigned ? 'Đổi chủ' : 'Gắn đơn'}</span>
-                      </button>
                     </td>
                   </tr>
                 );

@@ -536,7 +536,7 @@ body {
   margin: 60px 20px;
   text-align: center;
   box-shadow: 0 10px 30px rgba(234, 88, 12, 0.08);
-  border: 1.5px solid #fed7aa;
+  border: none;
 }
 
 .sym-error-icon {
@@ -585,7 +585,7 @@ body {
   background: rgba(255, 255, 255, 0.94);
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
-  border-bottom: 1px solid rgba(254, 215, 170, 0.6);
+  border-bottom: none;
   position: sticky;
   top: 0;
   z-index: 50;
@@ -605,10 +605,10 @@ body {
 }
 
 .sym-header-back {
-  background: #fff7ed;
-  border: 1px solid #ffedd5;
-  width: 36px;
-  height: 36px;
+  background: transparent;
+  border: none;
+  width: 32px;
+  height: 32px;
   border-radius: 8px;
   display: flex;
   align-items: center;
@@ -623,7 +623,8 @@ body {
 }
 
 .sym-header-back:hover {
-  background: #ffedd5;
+  background: transparent;
+  color: #c2410c;
 }
 
 .sym-brand-logo-img {
@@ -635,15 +636,14 @@ body {
 }
 
 .sym-brand-domain-badge {
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 800;
   color: #ea580c;
-  background: #fff7ed;
-  border: 1px solid #ffedd5;
-  padding: 4px 10px;
-  border-radius: 8px;
+  background: transparent;
+  border: none;
+  padding: 0;
   letter-spacing: 0.2px;
-  box-shadow: 0 1px 4px rgba(234, 88, 12, 0.08);
+  box-shadow: none;
   white-space: nowrap;
 }
 
@@ -660,7 +660,7 @@ body {
   background: #ffffff;
   border-radius: 20px;
   box-shadow: 0 4px 16px rgba(16, 24, 40, 0.04);
-  border: 1px solid #ffedd5;
+  border: none;
   padding: 14px 16px;
 }
 
@@ -685,14 +685,14 @@ body {
   height: 48px;
   border-radius: 50%;
   background: #fff7ed;
-  border: 2.5px solid #f97316;
+  border: none;
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: hidden;
   position: relative;
   flex-shrink: 0;
-  box-shadow: 0 2px 8px rgba(249, 115, 22, 0.22);
+  box-shadow: 0 2px 8px rgba(249, 115, 22, 0.15);
 }
 
 .sym-user-avatar-img {
@@ -745,29 +745,28 @@ body {
   font-family: SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 }
 
-/* Nút tra cứu ví trên 1 hàng không bị bể */
+/* Nút tra cứu ví chỉ để chữ, không viền, không nền */
 .sym-btn-check-wallet {
   white-space: nowrap !important;
   flex-shrink: 0;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #fff7ed, #ffedd5);
-  color: #c24e02;
-  border: 1px solid #fed7aa;
-  font-size: 12px;
+  background: transparent;
+  color: #ea580c;
+  border: none;
+  font-size: 13px;
   font-weight: 800;
-  padding: 8px 14px;
-  border-radius: 999px;
+  padding: 0;
   cursor: pointer;
-  box-shadow: 0 2px 6px rgba(234, 88, 12, 0.1);
+  box-shadow: none;
   transition: all 0.15s ease;
 }
 
 .sym-btn-check-wallet:hover {
-  background: #ea580c;
-  color: #ffffff;
-  border-color: #ea580c;
+  background: transparent;
+  color: #c2410c;
+  text-decoration: underline;
 }
 
 /* Product Card */
@@ -792,7 +791,7 @@ body {
   position: relative;
   flex-shrink: 0;
   background: #f8fafc;
-  border: 1px solid #eaecf0;
+  border: none;
 }
 
 .sym-prod-img {
@@ -829,13 +828,12 @@ body {
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  font-size: 10.5px;
+  font-size: 12px;
   font-weight: 700;
   color: #ea580c;
-  background: #fff7ed;
-  border: 1px solid #ffedd5;
-  padding: 2px 8px;
-  border-radius: 999px;
+  background: transparent;
+  border: none;
+  padding: 0;
   width: fit-content;
 }
 
@@ -862,22 +860,22 @@ body {
 /* Commission Breakdown Box (Gọn gàng, không bị bể số tiền) */
 .sym-breakdown-box {
   background: #fcfcfd;
-  border: 1px solid #eaecf0;
+  border: none;
   border-radius: 16px;
-  padding: 12px 14px;
+  padding: 10px 0;
   display: flex;
   flex-direction: column;
-  gap: 9px;
+  gap: 10px;
 }
 
 .sym-breakdown-title {
   display: flex;
   align-items: center;
-  font-size: 11.5px;
+  font-size: 12px;
   font-weight: 800;
   color: #475467;
   padding-bottom: 6px;
-  border-bottom: 1px dashed #eaecf0;
+  border-bottom: none;
 }
 
 .sym-breakdown-row {
@@ -894,7 +892,7 @@ body {
 
 .sym-row-total {
   padding-top: 6px;
-  border-top: 1px dashed #eaecf0;
+  border-top: none;
 }
 
 .sym-row-label {
@@ -925,42 +923,43 @@ body {
 }
 
 .sym-rate-pill {
-  font-size: 10.5px;
+  font-size: 13px;
   font-weight: 800;
-  padding: 1.5px 6px;
-  border-radius: 6px;
+  padding: 0;
+  background: transparent !important;
+  border: none !important;
 }
 
 .sym-rate-pill-shopee {
-  color: #c24e02;
-  background: #ffedd5;
+  color: #ea580c;
+  background: transparent !important;
 }
 
 .sym-rate-pill-seller {
   color: #027a48;
-  background: #ecfdf3;
+  background: transparent !important;
 }
 
 .sym-rate-pill-total {
-  color: #ffffff;
-  background: #ea580c;
+  color: #ea580c;
+  background: transparent !important;
 }
 
 .sym-val-sub {
   font-weight: 700;
   color: #344054;
-  font-size: 12.5px;
+  font-size: 13px;
   white-space: nowrap;
 }
 
 .sym-val-total {
   font-weight: 900;
   color: #ea580c;
-  font-size: 14.5px;
+  font-size: 15px;
   white-space: nowrap;
 }
 
-/* HÀNG NÚT: MUA NGAY TRÊN SHOPEE + COPY LINK DÀI CÙNG 1 HÀNG (Bo góc nhẹ 8px chữ nhật, chống bể trên mobile) */
+/* HÀNG NÚT: MUA NGAY TRÊN SHOPEE + COPY LINK DÀI CÙNG 1 HÀNG */
 .sym-action-row {
   display: flex;
   align-items: center;
@@ -1065,8 +1064,8 @@ body {
   flex: 1;
   min-width: 0;
   height: 46px;
-  background: linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%);
-  border: 1.5px solid #fdba74;
+  background: #fff7ed;
+  border: none;
   color: #c2410c;
   font-size: 12.5px;
   font-weight: 800;
@@ -1074,7 +1073,7 @@ body {
   border-radius: 8px;
   cursor: pointer;
   white-space: nowrap;
-  box-shadow: 0 3px 10px rgba(234, 88, 12, 0.08);
+  box-shadow: none;
   transition: all 0.2s ease;
   display: inline-flex;
   align-items: center;
@@ -1083,8 +1082,8 @@ body {
 }
 
 .sym-btn-copy-aff-row:hover {
-  background: linear-gradient(135deg, #ffedd5 0%, #fed7aa 100%);
-  border-color: #f97316;
+  background: #ffedd5;
+  border: none;
   color: #9a3412;
   transform: translateY(-1.5px);
 }
@@ -1094,8 +1093,8 @@ body {
 }
 
 .sym-btn-copy-aff-row.is-copied {
-  background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
-  border-color: #6ee7b7;
+  background: #ecfdf5;
+  border: none;
   color: #047857;
 }
 
@@ -1140,7 +1139,7 @@ body {
   display: flex;
   align-items: center;
   padding-bottom: 6px;
-  border-bottom: 1px solid #f2f4f7;
+  border-bottom: none;
 }
 
 .sym-guide-title {
@@ -1161,10 +1160,10 @@ body {
   display: flex;
   align-items: flex-start;
   gap: 8px;
-  background: #fffaf5;
-  border: 1px solid #ffedd5;
-  border-radius: 12px;
-  padding: 9px 12px;
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  padding: 4px 0;
 }
 
 .sym-tip-bullet {

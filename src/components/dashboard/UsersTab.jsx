@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { useApp } from '../../context/AppContext';
 import { formatMoney, formatDateTime, getBankAndAccount } from '../../utils/formatters';
-import CopyButton from '../common/CopyButton';
 
 export function UserDetailModal({ selectedUser, onClose, orders }) {
   if (!selectedUser) return null;
@@ -419,7 +418,7 @@ export default function UsersTab() {
         .users-table-container table.users-table,
         table.users-table {
           display: table !important;
-          min-width: 880px !important;
+          min-width: 1050px !important;
           width: 100% !important;
           table-layout: fixed !important;
           border-collapse: collapse !important;
@@ -433,7 +432,7 @@ export default function UsersTab() {
         }
         .users-table-container table thead th {
           display: table-cell !important;
-          padding: 12px 10px !important;
+          padding: 14px 16px !important;
           white-space: nowrap !important;
           font-weight: 700 !important;
           font-size: 13px !important;
@@ -460,7 +459,7 @@ export default function UsersTab() {
         }
         .users-table-container table tbody tr td {
           display: table-cell !important;
-          padding: 12px 10px !important;
+          padding: 14px 16px !important;
           width: auto !important;
           border-bottom: 1px solid var(--border-color) !important;
           border-top: none !important;
@@ -476,7 +475,7 @@ export default function UsersTab() {
           font-size: 13px !important;
           font-weight: normal !important;
           border-bottom: 1px solid var(--border-color) !important;
-          padding: 12px 10px !important;
+          padding: 14px 16px !important;
         }
         html[data-theme="dark"] .users-table-container table tbody tr,
         html.dark .users-table-container table tbody tr,
@@ -580,17 +579,17 @@ export default function UsersTab() {
           />
         </div>
         <div className="table-container users-table-container" style={{ overflowX: 'auto', WebkitOverflowScrolling: 'touch' }}>
-          <table className="users-table" style={{ tableLayout: 'fixed', width: '100%', minWidth: '880px' }}>
+          <table className="users-table" style={{ tableLayout: 'fixed', width: '100%', minWidth: '1050px' }}>
             <thead>
               <tr>
-                <th style={{ width: '135px' }}>Tên thành viên</th>
-                <th style={{ width: '115px' }}>Zalo ID</th>
-                <th style={{ width: '150px' }}>Tài khoản nhận tiền</th>
-                <th style={{ width: '100px', textAlign: 'right' }} title="Đơn đang chờ Shopee đối soát">Chờ xử lý</th>
-                <th style={{ width: '125px', textAlign: 'right' }}>Tổng đơn hàng</th>
-                <th style={{ width: '115px', textAlign: 'right' }} title="Số tiền có thể rút ngay">Khả dụng rút</th>
-                <th style={{ width: '95px', textAlign: 'right' }}>Đã rút</th>
-                <th style={{ width: '75px', textAlign: 'center' }}>Chi tiết</th>
+                <th style={{ width: '165px' }}>Tên thành viên</th>
+                <th style={{ width: '160px' }}>Zalo ID</th>
+                <th style={{ width: '185px' }}>Tài khoản nhận tiền</th>
+                <th style={{ width: '110px', textAlign: 'right' }} title="Đơn đang chờ Shopee đối soát">Chờ xử lý</th>
+                <th style={{ width: '135px', textAlign: 'right' }}>Tổng đơn hàng</th>
+                <th style={{ width: '130px', textAlign: 'right' }} title="Số tiền có thể rút ngay">Khả dụng rút</th>
+                <th style={{ width: '105px', textAlign: 'right' }}>Đã rút</th>
+                <th style={{ width: '85px', textAlign: 'center' }}>Chi tiết</th>
               </tr>
             </thead>
             <tbody>
@@ -602,17 +601,20 @@ export default function UsersTab() {
                   return (
                     <tr key={u.zaloId}>
                       <td data-label="Tên thành viên" style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                        <strong title={u.zaloName}>{u.zaloName || 'Vô danh (Chờ đồng bộ)'}</strong>
+                        <strong title={u.zaloName} style={{ fontSize: '13.5px' }}>{u.zaloName || 'Vô danh (Chờ đồng bộ)'}</strong>
                       </td>
                       <td data-label="Zalo ID" style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                        <div style={{ display: 'inline-flex', alignItems: 'center' }}>
-                          <code style={{ color: 'var(--text-muted)', fontSize: '11.5px' }} title={u.zaloId}>{u.zaloId}</code>
-                          <CopyButton text={u.zaloId} title="Copy Zalo ID" toastMessage={`Đã copy Zalo ID: ${u.zaloId}`} />
-                        </div>
+                        <code style={{ color: 'var(--text-muted)', fontSize: '12px' }} title={u.zaloId}>{u.zaloId}</code>
                       </td>
-                      <td data-label="Tài khoản nhận tiền">
-                        <div style={{ fontSize: '13px', fontWeight: '500' }}>{bankAndAcc.bankName || '⚠️ Chưa cập nhật'}</div>
-                        {bankAndAcc.accountNumber && <div style={{ fontSize: '11.5px', color: 'var(--text-muted)', marginTop: '2px' }}><code>{bankAndAcc.accountNumber}</code></div>}
+                      <td data-label="Tài khoản nhận tiền" style={{ whiteSpace: 'nowrap' }}>
+                        <div style={{ fontSize: '13px', fontWeight: '600', color: bankAndAcc.bankName ? 'var(--text-bright)' : '#eab308' }}>
+                          {bankAndAcc.bankName || '⚠️ Chưa cập nhật'}
+                        </div>
+                        {bankAndAcc.accountNumber && (
+                          <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginTop: '2px', fontFamily: 'monospace' }}>
+                            <code>{bankAndAcc.accountNumber}</code>
+                          </div>
+                        )}
                       </td>
                       <td data-label="Chờ xử lý" style={{ color: 'var(--color-warning)', textAlign: 'right', fontWeight: '500' }}>{formatMoney(u.wallet?.pendingCommission)}</td>
                       <td data-label="Tổng đơn hàng" style={{ textAlign: 'right', fontWeight: '700', color: 'var(--color-primary, #ea580c)' }}>

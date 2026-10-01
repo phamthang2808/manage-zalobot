@@ -97,8 +97,60 @@ export default function OverviewTab() {
             <i className="fa-solid fa-money-check-dollar" style={{ color: '#f97316', marginRight: '8px' }}></i> Yêu Cầu Rút Tiền Chờ Duyệt Gần Đây
           </h2>
         </div>
-        <div className="table-container">
-          <table>
+        <style dangerouslySetInnerHTML={{ __html: `
+          .overview-table-container {
+            overflow-x: auto !important;
+            -webkit-overflow-scrolling: touch !important;
+            width: 100% !important;
+            display: block !important;
+          }
+          .overview-table-container table {
+            display: table !important;
+            min-width: 780px !important;
+            width: 100% !important;
+            border-collapse: collapse !important;
+          }
+          .overview-table-container table thead {
+            display: table-header-group !important;
+          }
+          .overview-table-container table thead tr {
+            display: table-row !important;
+          }
+          .overview-table-container table thead th {
+            display: table-cell !important;
+            white-space: nowrap !important;
+          }
+          .overview-table-container table tbody {
+            display: table-row-group !important;
+          }
+          .overview-table-container table tbody tr {
+            display: table-row !important;
+            background: transparent !important;
+            border: none !important;
+            border-bottom: 1px solid var(--border-color) !important;
+            border-radius: 0 !important;
+            padding: 0 !important;
+            box-shadow: none !important;
+          }
+          .overview-table-container table tbody tr td {
+            display: table-cell !important;
+            white-space: nowrap !important;
+            border-bottom: 1px solid var(--border-color) !important;
+          }
+          .overview-table-container table tbody tr td::before {
+            display: none !important;
+            content: none !important;
+          }
+          .overview-table-container table tbody tr td[data-label="Số tiền"] {
+            background: transparent !important;
+            border: none !important;
+            border-bottom: 1px solid var(--border-color) !important;
+            box-shadow: none !important;
+            text-shadow: none !important;
+          }
+        `}} />
+        <div className="table-container overview-table-container" style={{ overflowX: 'auto', WebkitOverflowScrolling: 'touch' }}>
+          <table style={{ minWidth: '780px' }}>
             <thead>
               <tr>
                 <th>Mã GD</th><th>Thành viên</th><th>Ngân hàng</th>
@@ -124,10 +176,29 @@ export default function OverviewTab() {
                       <td data-label="Thành viên">{memberUser ? memberUser.zaloName : p.zaloId}</td>
                       <td data-label="Ngân hàng">{bankAndAcc.bankName || 'Chưa cấu hình'}</td>
                       <td data-label="Số tài khoản"><code>{bankAndAcc.accountNumber || 'Chưa cấu hình'}</code></td>
-                      <td data-label="Số tiền" style={{ color: 'var(--color-primary)', fontWeight: 'bold' }}>{formatMoney(p.amount)}</td>
+                      <td data-label="Số tiền" style={{ color: '#10b981', fontWeight: '700', fontSize: '13.5px', background: 'transparent' }}>
+                        {formatMoney(p.amount)}
+                      </td>
                       <td data-label="Thời gian gửi">{formatDateTime(p.createdAt)}</td>
                       <td data-label="Hành động">
-                        <button className="btn btn-success" onClick={() => handleApprovePayout(p.id)}>✓ Phê duyệt</button>
+                        <button
+                          type="button"
+                          onClick={() => handleApprovePayout(p.id)}
+                          style={{
+                            background: 'none',
+                            border: 'none',
+                            color: '#10b981',
+                            fontWeight: '700',
+                            fontSize: '13px',
+                            cursor: 'pointer',
+                            padding: 0,
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '4px'
+                          }}
+                        >
+                          ✓ Phê duyệt
+                        </button>
                       </td>
                     </tr>
                   );

@@ -554,6 +554,20 @@ export default function UsersTab() {
           display: none !important;
           content: none !important;
         }
+        .users-table-container table tbody tr td[data-label="Khả dụng rút"] {
+          background: transparent !important;
+          border: none !important;
+          border-bottom: 1px solid var(--border-color) !important;
+          box-shadow: none !important;
+          text-shadow: none !important;
+        }
+        .users-table-container table tbody tr td[data-label="Chi tiết"] button,
+        .user-view-btn {
+          background: none !important;
+          border: none !important;
+          box-shadow: none !important;
+          padding: 0 !important;
+        }
       `}} />
       <div className="data-card">
         <div className="search-container">
@@ -604,10 +618,28 @@ export default function UsersTab() {
                       <td data-label="Tổng đơn hàng" style={{ textAlign: 'right', fontWeight: '700', color: 'var(--color-primary, #ea580c)' }}>
                         {formatMoney((u.wallet?.pendingCommission || 0) + (u.wallet?.rawCompletedCommission != null ? u.wallet.rawCompletedCommission : (u.wallet?.completedCommission || 0)))}
                       </td>
-                      <td data-label="Khả dụng rút" style={{ color: 'var(--color-success)', fontWeight: '700', textAlign: 'right' }}>{formatMoney(u.wallet?.withdrawableCommission)}</td>
+                      <td data-label="Khả dụng rút" style={{ color: '#10b981', fontWeight: '700', textAlign: 'right', background: 'transparent' }}>
+                        {formatMoney(u.wallet?.withdrawableCommission)}
+                      </td>
                       <td data-label="Đã rút" style={{ textAlign: 'right', color: 'var(--text-muted)' }}>{formatMoney(u.wallet?.receivedCommission)}</td>
                       <td data-label="Chi tiết" style={{ textAlign: 'center' }}>
-                        <button className="user-view-btn" onClick={() => setSelectedUser(u)}>
+                        <button
+                          type="button"
+                          className="user-view-btn"
+                          onClick={() => setSelectedUser(u)}
+                          style={{
+                            background: 'none',
+                            border: 'none',
+                            color: '#ea580c',
+                            fontWeight: '700',
+                            fontSize: '13px',
+                            cursor: 'pointer',
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '4px',
+                            padding: 0
+                          }}
+                        >
                           <i className="fa-regular fa-eye"></i> Xem
                         </button>
                       </td>

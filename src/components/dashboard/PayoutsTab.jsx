@@ -101,6 +101,13 @@ export default function PayoutsTab() {
           color: #94a3b8 !important;
           border-bottom: 1px solid rgba(255, 255, 255, 0.12) !important;
         }
+        .payouts-table-container table tbody tr td[data-label="Số tiền"] {
+          background: transparent !important;
+          border: none !important;
+          border-bottom: 1px solid var(--border-color) !important;
+          box-shadow: none !important;
+          text-shadow: none !important;
+        }
       `}} />
       <div className="data-card">
         <div className="search-container">
@@ -134,6 +141,7 @@ export default function PayoutsTab() {
                 filteredPayouts.map(p => {
                   const memberUser = users.find(u => u.zaloId === p.zaloId);
                   const bankAndAcc = getBankAndAccount(p);
+                  const isCompleted = p.status === 'COMPLETED';
                   return (
                     <tr key={p.id}>
                       <td data-label="Mã GD"><strong>PT_{p.id}</strong></td>
@@ -144,19 +152,35 @@ export default function PayoutsTab() {
                         {bankAndAcc.bankName || 'Chưa cấu hình'}
                       </td>
                       <td data-label="Số tài khoản" style={{ fontSize: '12.5px' }}><code>{bankAndAcc.accountNumber || 'Chưa cấu hình'}</code></td>
-                      <td data-label="Số tiền" style={{ color: 'var(--color-primary, #ea580c)', fontWeight: 'bold', textAlign: 'right' }}>{formatMoney(p.amount)}</td>
+                      <td data-label="Số tiền" style={{ color: '#10b981', fontWeight: '700', fontSize: '13.5px', textAlign: 'right', background: 'transparent' }}>
+                        {formatMoney(p.amount)}
+                      </td>
                       <td data-label="Ngày gửi" style={{ fontSize: '12px' }}>{formatDateTime(p.createdAt)}</td>
                       <td data-label="Phê duyệt" style={{ fontSize: '12px' }}>{p.completedAt ? formatDateTime(p.completedAt) : '-'}</td>
                       <td data-label="Trạng thái" style={{ textAlign: 'center' }}>
-                        <span className={`badge ${p.status === 'COMPLETED' ? 'badge-completed' : 'badge-pending'}`}>
-                          {p.status === 'COMPLETED' ? 'Đã thanh toán' : 'Chờ duyệt'}
+                        <span style={{ color: isCompleted ? '#10b981' : '#f59e0b', fontWeight: '700', fontSize: '13px' }}>
+                          {isCompleted ? 'Đã thanh toán' : 'Chờ duyệt'}
                         </span>
                       </td>
                       <td data-label="Thao tác" style={{ textAlign: 'center' }}>
                         {p.status === 'PENDING' ? (
-                          <button className="btn btn-success" style={{ padding: '4px 12px', fontSize: '12px', borderRadius: '6px' }} onClick={() => handleApprovePayout(p.id)}>✓ Duyệt</button>
+                          <button
+                            type="button"
+                            onClick={() => handleApprovePayout(p.id)}
+                            style={{
+                              background: 'none',
+                              border: 'none',
+                              color: '#10b981',
+                              fontWeight: '700',
+                              fontSize: '13px',
+                              cursor: 'pointer',
+                              padding: 0
+                            }}
+                          >
+                            ✓ Duyệt
+                          </button>
                         ) : (
-                          <span style={{ color: 'var(--color-success)', fontSize: '16px', fontWeight: 'bold' }}>✓</span>
+                          <span style={{ color: '#10b981', fontSize: '16px', fontWeight: 'bold' }}>✓</span>
                         )}
                       </td>
                     </tr>

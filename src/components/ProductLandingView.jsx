@@ -141,6 +141,17 @@ export function ProductLandingView({ code, apiRoot = "" }) {
   const sellerComm = info.sellerCommissionMoney || 0;
   const hasSplit = shopeeComm > 0 || sellerComm > 0;
 
+  const formatRate = (rate) => {
+    if (!rate) return "";
+    const s = String(rate).trim();
+    if (/^\d+(\.\d+)?$/.test(s)) return s + "%";
+    return s;
+  };
+
+  const shopeeRate = formatRate(info.shopeeRateText || info.commissionRateText) || (shopeeComm > 0 && productPrice > 0 ? `${Math.round((shopeeComm / productPrice) * 100)}%` : "0%");
+  const sellerRate = formatRate(info.sellerRateText) || (sellerComm === 0 ? "0%" : (productPrice > 0 ? `${Math.round((sellerComm / productPrice) * 100)}%` : "0%"));
+  const totalRate = formatRate(info.commissionRateText) || shopeeRate;
+
   const isTiktok = (info.platform || "").toUpperCase().includes("TIKTOK");
   const platformName = isTiktok ? "TikTok Shop" : "Shopee";
   const displayHost = "28symues.store";
@@ -228,73 +239,63 @@ export function ProductLandingView({ code, apiRoot = "" }) {
             </div>
           </div>
 
-          {/* Bảng Hoa Hồng Sản Phẩm (Đã xóa chữ Minh bạch 100%, không bị bể số tiền) */}
+          {/* Bảng Hoa Hồng Sản Phẩm (Đã căn thẳng hàng cột % hoa hồng) */}
           <div className="sym-breakdown-box">
             <div className="sym-breakdown-title">
               <span>📊 THÔNG TIN HOA HỒNG SẢN PHẨM</span>
             </div>
 
-            {/* Giá tham khảo nếu có */}
-            {productPrice > 0 && (
-              <div className="sym-breakdown-row">
-                <div className="sym-row-label">
-                  <span className="sym-row-bullet">💵</span>
-                  <span>Giá tham khảo:</span>
-                </div>
-                <div className="sym-row-value">
-                  <span className="sym-val-price">đ{formatVnd(productPrice)}</span>
-                </div>
-              </div>
-            )}
+            <div className="sym-breakdown-grid">
+              {/* Giá tham khảo nếu có */}
+              {productPrice > 0 && (
+                <>
+                  <div className="sym-row-label">
+                    <span className="sym-row-bullet">💵</span>
+                    <span>Giá tham khảo:</span>
+                  </div>
+                  <div className="sym-amt-col sym-val-price" style={{ gridColumn: '2 / span 2', textAlign: 'right' }}>
+                    đ{formatVnd(productPrice)}
+                  </div>
+                </>
+              )}
 
-            {/* Chia 2 phần hoa hồng: Shopee & Shop (label gọn, value nowrap không bị bể dòng) */}
-            {hasSplit && (
-              <>
-                <div className="sym-breakdown-row sym-row-subcom">
+              {/* Chia 2 phần hoa hồng: Shopee & Shop (thẳng hàng tuyệt đối cả cột % và cột số tiền) */}
+              {hasSplit && (
+                <>
                   <div className="sym-row-label">
                     <span className="sym-row-bullet">🔸</span>
                     <span>Hoa hồng Shopee:</span>
                   </div>
-                  <div className="sym-row-value">
-                    {info.shopeeRateText && (
-                      <span className="sym-rate-pill sym-rate-pill-shopee">{info.shopeeRateText}</span>
-                    )}
-                    <span className="sym-val-sub">
-                      ~ {formatVnd(shopeeComm)}
-                    </span>
+                  <div className="sym-rate-col sym-rate-shopee">
+                    {shopeeRate}
                   </div>
-                </div>
+                  <div className="sym-amt-col sym-val-sub">
+                    ~ {formatVnd(shopeeComm)}
+                  </div>
 
-                <div className="sym-breakdown-row sym-row-subcom">
                   <div className="sym-row-label">
                     <span className="sym-row-bullet">🔹</span>
                     <span>Hoa hồng Shop:</span>
                   </div>
-                  <div className="sym-row-value">
-                    {info.sellerRateText && (
-                      <span className="sym-rate-pill sym-rate-pill-seller">{info.sellerRateText}</span>
-                    )}
-                    <span className="sym-val-sub">
-                      ~ {formatVnd(sellerComm)}
-                    </span>
+                  <div className="sym-rate-col sym-rate-seller">
+                    {sellerRate}
                   </div>
-                </div>
-              </>
-            )}
+                  <div className="sym-amt-col sym-val-sub">
+                    ~ {formatVnd(sellerComm)}
+                  </div>
+                </>
+              )}
 
-            {/* Dòng Tổng hoa hồng */}
-            <div className="sym-breakdown-row sym-row-total">
-              <div className="sym-row-label">
+              {/* Dòng Tổng hoa hồng */}
+              <div className="sym-row-label sym-label-total">
                 <span className="sym-row-bullet">💰</span>
                 <span><strong>Tổng hoa hồng:</strong></span>
               </div>
-              <div className="sym-row-value">
-                {info.commissionRateText && (
-                  <span className="sym-rate-pill sym-rate-pill-total">{info.commissionRateText}</span>
-                )}
-                <span className="sym-val-total">
-                  ~ {rawComm > 0 ? formatVnd(rawComm) : "Chờ cập nhật"}
-                </span>
+              <div className="sym-rate-col sym-rate-total">
+                {totalRate}
+              </div>
+              <div className="sym-amt-col sym-val-total">
+                ~ {rawComm > 0 ? formatVnd(rawComm) : "Chờ cập nhật"}
               </div>
             </div>
           </div>
@@ -857,12 +858,12 @@ body {
   opacity: 1 !important;
 }
 
-/* Commission Breakdown Box (Gọn gàng, không bị bể số tiền) */
+/* Commission Breakdown Grid (Căn thẳng hàng tuyệt đối cột % và cột số tiền) */
 .sym-breakdown-box {
   background: #fcfcfd;
   border: none;
   border-radius: 16px;
-  padding: 10px 0;
+  padding: 8px 0;
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -874,25 +875,17 @@ body {
   font-size: 12px;
   font-weight: 800;
   color: #475467;
-  padding-bottom: 6px;
+  padding-bottom: 2px;
   border-bottom: none;
 }
 
-.sym-breakdown-row {
-  display: flex;
+.sym-breakdown-grid {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
   align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-  font-size: 13px;
-}
-
-.sym-row-subcom {
-  color: #475467;
-}
-
-.sym-row-total {
-  padding-top: 6px;
-  border-top: none;
+  row-gap: 10px;
+  column-gap: 14px;
+  width: 100%;
 }
 
 .sym-row-label {
@@ -901,20 +894,40 @@ body {
   gap: 6px;
   color: #334155;
   font-weight: 600;
+  font-size: 13px;
   white-space: nowrap;
-  flex-shrink: 0;
 }
 
 .sym-row-bullet {
   font-size: 13px;
 }
 
-.sym-row-value {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  white-space: nowrap !important;
-  flex-shrink: 0;
+.sym-rate-col {
+  text-align: right;
+  font-size: 13.5px;
+  font-weight: 800;
+  white-space: nowrap;
+  min-width: 36px;
+}
+
+.sym-rate-shopee {
+  color: #ea580c;
+}
+
+.sym-rate-seller {
+  color: #059669;
+}
+
+.sym-rate-total {
+  color: #ea580c;
+  font-size: 14px;
+  font-weight: 900;
+}
+
+.sym-amt-col {
+  text-align: right;
+  white-space: nowrap;
+  font-size: 13px;
 }
 
 .sym-val-price {
@@ -922,41 +935,16 @@ body {
   color: #0f172a;
 }
 
-.sym-rate-pill {
-  font-size: 13px;
-  font-weight: 800;
-  padding: 0;
-  background: transparent !important;
-  border: none !important;
-}
-
-.sym-rate-pill-shopee {
-  color: #ea580c;
-  background: transparent !important;
-}
-
-.sym-rate-pill-seller {
-  color: #027a48;
-  background: transparent !important;
-}
-
-.sym-rate-pill-total {
-  color: #ea580c;
-  background: transparent !important;
-}
-
 .sym-val-sub {
   font-weight: 700;
   color: #344054;
   font-size: 13px;
-  white-space: nowrap;
 }
 
 .sym-val-total {
   font-weight: 900;
   color: #ea580c;
   font-size: 15px;
-  white-space: nowrap;
 }
 
 /* HÀNG NÚT: MUA NGAY TRÊN SHOPEE + COPY LINK DÀI CÙNG 1 HÀNG */

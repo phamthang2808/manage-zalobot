@@ -3,7 +3,8 @@ import { useApp } from './context/AppContext';
 import ThemeToggle from './components/common/ThemeToggle';
 import RunningCatMascot from './components/common/RunningCatMascot';
 import OrdersTab from './components/dashboard/OrdersTab';
-import { UserDetailModal } from './components/dashboard/UsersTab';
+import UsersTab from './components/dashboard/UsersTab';
+import PayoutsTab from './components/dashboard/PayoutsTab';
 import OrderLookupView from './components/views/OrderLookupView';
 import FloatingZaloContact from './components/common/FloatingZaloContact';
 import { ProductLandingView } from './components/ProductLandingView';
@@ -2937,178 +2938,17 @@ function App() {
               )}
 
               {/* Tab 2: MEMBERS MANAGEMENT */}
-              {activeTab === 'users' && (
-                <div className="data-card">
-                  <div className="search-container">
-                    <input 
-                      type="text" 
-                      className="form-control" 
-                      placeholder="Tìm kiếm thành viên (Tên/Zalo ID)..."
-                      value={userSearch}
-                      onChange={(e) => setUserSearch(e.target.value)}
-                    />
-                  </div>
-                  <div className="table-container">
-                    <table style={{ tableLayout: 'fixed', width: '100%' }}>
-                      <thead>
-                        <tr>
-                          <th style={{ width: '130px' }}>Tên thành viên</th>
-                          <th style={{ width: '110px' }}>Zalo ID</th>
-                          <th style={{ width: '150px' }}>Tài khoản nhận tiền</th>
-                          <th style={{ width: '95px', textAlign: 'right' }} title="Đơn đang chờ Shopee đối soát">Chờ xử lý</th>
-                          <th style={{ width: '120px', textAlign: 'right' }}>Tổng đơn hàng</th>
-                          <th style={{ width: '105px', textAlign: 'right' }} title="Số tiền có thể rút ngay (đơn hoàn thành quá 3 ngày, trừ đã rút)">Khả dụng rút</th>
-                          <th style={{ width: '90px', textAlign: 'right' }}>Đã rút</th>
-                          <th style={{ width: '70px', textAlign: 'center' }}>Chi tiết</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {filteredUsers.length === 0 ? (
-                          <tr className="empty-row">
-                            <td colSpan="8" style={{ textAlign: 'center', color: 'var(--text-muted)' }}>
-                              Không tìm thấy thành viên phù hợp
-                            </td>
-                          </tr>
-                        ) : (
-                          filteredUsers.map(u => {
-                            const bankAndAcc = getBankAndAccount(u);
-                            return (
-                              <tr key={u.zaloId}>
-                                <td data-label="Tên thành viên" style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                                  <strong title={u.zaloName}>{u.zaloName || 'Vô danh (Chờ đồng bộ)'}</strong>
-                                </td>
-                                <td data-label="Zalo ID" style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                                  <div style={{ display: 'inline-flex', alignItems: 'center' }}>
-                                    <code style={{ color: 'var(--text-muted)', fontSize: '11.5px' }} title={u.zaloId}>{u.zaloId}</code>
-                                    <CopyButton text={u.zaloId} title="Copy Zalo ID" toastMessage={`Đã copy Zalo ID: ${u.zaloId}`} />
-                                  </div>
-                                </td>
-                                <td data-label="Tài khoản nhận tiền">
-                                  <div style={{ fontSize: '13px', fontWeight: '500' }}>{bankAndAcc.bankName || '⚠️ Chưa cập nhật'}</div>
-                                  {bankAndAcc.accountNumber && <div style={{ fontSize: '11.5px', color: 'var(--text-muted)', marginTop: '2px' }}><code>{bankAndAcc.accountNumber}</code></div>}
-                                </td>
-                                <td data-label="Chờ xử lý" style={{ color: 'var(--color-warning)', textAlign: 'right', fontWeight: '500' }}>
-                                  {formatMoney(u.wallet?.pendingCommission)}
-                                </td>
-                                <td data-label="Tổng đơn hàng" style={{ textAlign: 'right', fontWeight: '700', color: 'var(--color-primary, #ea580c)' }}>
-                                  {formatMoney((u.wallet?.pendingCommission || 0) + (u.wallet?.rawCompletedCommission != null ? u.wallet.rawCompletedCommission : (u.wallet?.completedCommission || 0)))}
-                                </td>
-                                <td data-label="Khả dụng rút" style={{ color: 'var(--color-success)', fontWeight: '700', textAlign: 'right' }}>
-                                  {formatMoney(u.wallet?.withdrawableCommission)}
-                                </td>
-                                <td data-label="Đã rút" style={{ textAlign: 'right', color: 'var(--text-muted)' }}>
-                                  {formatMoney(u.wallet?.receivedCommission)}
-                                </td>
-                                <td data-label="Chi tiết" style={{ textAlign: 'center' }}>
-                                  <button
-                                    className="btn"
-                                    onClick={() => setSelectedUser(u)}
-                                    style={{ padding: '4px 10px', fontSize: '12px', display: 'inline-flex', alignItems: 'center', gap: '4px' }}
-                                  >
-                                    <i className="fa-regular fa-eye"></i> Xem
-                                  </button>
-                                </td>
-                              </tr>
-                            );
-                          })
-                        )}
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-              )}
+              {activeTab === 'users' && <UsersTab />}
 
               {/* Tab 3: ORDERS LIST */}
               {activeTab === 'orders' && <OrdersTab />}
 
-
               {/* Tab 4: PAYOUTS LIST */}
-              {activeTab === 'payouts' && (
-                <div className="data-card">
-                  <div className="search-container">
-                    <input 
-                      type="text" 
-                      className="form-control" 
-                      placeholder="Tìm kiếm lệnh rút (Tên/Zalo ID/Mã GD)..."
-                      value={payoutSearch}
-                      onChange={(e) => setPayoutSearch(e.target.value)}
-                    />
-                  </div>
-                  <div className="table-container">
-                    <table>
-                      <thead>
-                        <tr>
-                          <th>Mã giao dịch</th>
-                          <th>Thành viên</th>
-                          <th>Ngân hàng</th>
-                          <th>Số tài khoản</th>
-                          <th>Số tiền yêu cầu</th>
-                          <th>Ngày yêu cầu</th>
-                          <th>Ngày phê duyệt</th>
-                          <th>Trạng thái</th>
-                          <th>Duyệt nhanh</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {filteredPayouts.length === 0 ? (
-                          <tr className="empty-row">
-                            <td colSpan="9" style={{ textAlign: 'center', color: 'var(--text-muted)' }}>
-                              Không tìm thấy yêu cầu rút tiền nào
-                            </td>
-                          </tr>
-                        ) : (
-                          filteredPayouts.map(p => {
-                            const user = users.find(u => u.zaloId === p.zaloId);
-                            const bankAndAcc = getBankAndAccount(p);
-                            return (
-                              <tr key={p.id}>
-                                <td data-label="Mã GD"><strong>PT_{p.id}</strong></td>
-                                <td data-label="Thành viên">{user ? user.zaloName : p.zaloId}</td>
-                                <td data-label="Ngân hàng">{bankAndAcc.bankName || 'Chưa cấu hình'}</td>
-                                <td data-label="Số tài khoản" style={{ fontSize: '13px' }}><code>{bankAndAcc.accountNumber || 'Chưa cấu hình'}</code></td>
-                                <td data-label="Số tiền" style={{ color: 'var(--color-primary)', fontWeight: 'bold' }}>{formatMoney(p.amount)}</td>
-                                <td data-label="Ngày gửi">{formatDateTime(p.createdAt)}</td>
-                                <td data-label="Phê duyệt">{formatDateTime(p.completedAt)}</td>
-                                <td data-label="Trạng thái">
-                                  <span className={`badge ${
-                                    p.status === 'COMPLETED' ? 'badge-completed' : 'badge-pending'
-                                  }`}>
-                                    {p.status === 'COMPLETED' ? 'Đã thanh toán' : 'Chờ duyệt'}
-                                  </span>
-                                </td>
-                                <td data-label="Thao tác">
-                                  {p.status === 'PENDING' ? (
-                                    <button 
-                                      className="btn btn-success"
-                                      onClick={() => handleApprovePayout(p.id)}
-                                    >
-                                      ✓ Duyệt
-                                    </button>
-                                  ) : (
-                                    <span style={{ color: 'var(--color-success)', fontSize: '18px' }}>✓</span>
-                                  )}
-                                </td>
-                              </tr>
-                            );
-                          })
-                        )}
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-              )}
+              {activeTab === 'payouts' && <PayoutsTab />}
             </>
           )}
         </section>
       </main>
-
-      {selectedUser && (
-        <UserDetailModal
-          selectedUser={selectedUser}
-          onClose={() => setSelectedUser(null)}
-          orders={orders}
-        />
-      )}
       <FloatingZaloContact />
       {renderMobileBottomNav()}
     </div>

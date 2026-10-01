@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useApp } from '../../context/AppContext';
 import { formatDateTime, formatMoney } from '../../utils/formatters';
-import CopyButton from '../common/CopyButton';
 import AssignOrderModal from './AssignOrderModal';
 
 // Helper to reliably parse any date into YYYY-MM-DD
@@ -480,10 +479,7 @@ export default function OrdersTab() {
                 return (
                   <tr key={o.id}>
                     <td data-label="Mã đơn">
-                      <div style={{ display: 'inline-flex', alignItems: 'center' }}>
-                        <code className="order-id-code" style={{ fontSize: '12px' }}>{o.orderId}</code>
-                        <CopyButton text={o.orderId} title="Copy mã đơn hàng" toastMessage={`Đã copy mã đơn: ${o.orderId}`} />
-                      </div>
+                      <code className="order-id-code" style={{ fontSize: '12px' }}>{o.orderId}</code>
                     </td>
                     <td data-label="Sản phẩm" title={o.productName}>
                       <span style={{ fontWeight: '600', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
@@ -491,14 +487,9 @@ export default function OrdersTab() {
                       </span>
                     </td>
                     <td data-label="Thành viên">
-                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '4px', minWidth: 0, overflow: 'hidden' }}>
-                          <span style={{ fontWeight: '600', fontSize: '13.5px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={orderUser ? orderUser.zaloName : (o.zaloId || 'UNKNOWN')}>
-                            {orderUser ? orderUser.zaloName : <code style={{ color: 'var(--color-danger)', fontSize: '11px' }}>{o.zaloId || 'UNKNOWN'}</code>}
-                          </span>
-                          {(o.zaloId || o.subId) && (
-                            <CopyButton text={o.zaloId || o.subId} title="Copy Zalo ID" toastMessage={`Đã copy Zalo ID: ${o.zaloId || o.subId}`} />
-                          )}
+                      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '5px' }}>
+                        <div style={{ fontWeight: '600', fontSize: '13.5px', maxWidth: '100%', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={orderUser ? orderUser.zaloName : (o.zaloId || 'UNKNOWN')}>
+                          {orderUser ? orderUser.zaloName : <code style={{ color: 'var(--color-danger)', fontSize: '11px' }}>{o.zaloId || 'UNKNOWN'}</code>}
                         </div>
 
                         <button
@@ -509,7 +500,7 @@ export default function OrdersTab() {
                             color: o.manuallyAssigned ? '#ea580c' : 'var(--text-main, #334155)',
                             border: `1px solid ${o.manuallyAssigned ? '#fed7aa' : 'var(--border-color, #cbd5e1)'}`,
                             borderRadius: '6px',
-                            padding: '3px 8px',
+                            padding: '2.5px 8px',
                             fontSize: '11px',
                             fontWeight: '600',
                             cursor: 'pointer',
@@ -517,8 +508,7 @@ export default function OrdersTab() {
                             alignItems: 'center',
                             gap: '4px',
                             transition: 'all 0.2s ease',
-                            whiteSpace: 'nowrap',
-                            flexShrink: 0
+                            whiteSpace: 'nowrap'
                           }}
                           title="Gắn đơn cho thành viên khác"
                         >
@@ -530,7 +520,6 @@ export default function OrdersTab() {
                       {o.subId && o.subId !== o.zaloId && (
                         <div style={{ marginTop: '2px', display: 'flex', alignItems: 'center' }}>
                           <code style={{ fontSize: '11px', color: 'var(--text-muted)' }} title={o.subId}>Sub: {o.subId}</code>
-                          <CopyButton text={o.subId} title="Copy Sub ID" toastMessage={`Đã copy Sub ID: ${o.subId}`} />
                         </div>
                       )}
                       {o.manuallyAssigned && (

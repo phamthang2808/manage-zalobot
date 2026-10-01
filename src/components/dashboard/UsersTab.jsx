@@ -227,9 +227,9 @@ export function UserDetailModal({ selectedUser, onClose, orders }) {
             </div>
           </div>
 
-          {/* Bảng đơn hàng dành cho Desktop / Máy tính bảng */}
-          <div className="table-container user-orders-table-desktop" style={{ maxHeight: '420px', overflowY: 'auto', border: '1px solid var(--border-color, #e2e8f0)', borderRadius: '12px' }}>
-            <table style={{ width: '100%', minWidth: '700px', borderCollapse: 'collapse', textAlign: 'left' }}>
+          {/* Bảng đơn hàng dành cho Desktop / Mobile (Cuộn ngang) */}
+          <div className="table-container user-orders-modal-table-container" style={{ maxHeight: '420px', overflowY: 'auto', overflowX: 'auto', WebkitOverflowScrolling: 'touch', border: '1px solid var(--border-color, #e2e8f0)', borderRadius: '12px' }}>
+            <table style={{ width: '100%', minWidth: '780px', borderCollapse: 'collapse', textAlign: 'left' }}>
               <thead style={{ position: 'sticky', top: 0, zIndex: 5 }}>
                 <tr style={{ background: 'var(--bg-main, #f1f5f9)', borderBottom: '2px solid var(--border-color, #cbd5e1)' }}>
                   <th style={{ padding: '12px 14px', color: 'var(--text-bright, #0f172a)', fontWeight: '800', fontSize: '12.5px', whiteSpace: 'nowrap', width: '140px' }}>Mã đơn</th>
@@ -261,10 +261,7 @@ export function UserDetailModal({ selectedUser, onClose, orders }) {
                     return (
                       <tr key={o.id || o.orderId} style={{ borderBottom: '1px solid var(--border-color)' }}>
                         <td data-label="Mã đơn" style={{ fontSize: '12px', fontWeight: '600', color: 'var(--text-bright, #0f172a)', fontFamily: 'monospace', whiteSpace: 'nowrap' }}>
-                          <div style={{ display: 'inline-flex', alignItems: 'center' }}>
-                            <span>{o.orderId}</span>
-                            <CopyButton text={o.orderId} title="Copy mã đơn hàng" toastMessage={`Đã copy mã đơn: ${o.orderId}`} />
-                          </div>
+                          <span>{o.orderId}</span>
                         </td>
                         <td data-label="Nền tảng" style={{ whiteSpace: 'nowrap' }}>
                           {isTiktok ? (
@@ -329,95 +326,6 @@ export function UserDetailModal({ selectedUser, onClose, orders }) {
                 </tfoot>
               )}
             </table>
-          </div>
-
-          {/* Danh sách thẻ đơn hàng tối ưu dành riêng cho Mobile (Không cần cuộn ngang) */}
-          <div className="user-orders-mobile-list">
-            {paginatedOrders.length === 0 ? (
-              <div style={{ textAlign: 'center', padding: '30px 16px', color: 'var(--text-muted)', background: 'var(--bg-card)', borderRadius: '12px', border: '1px dashed var(--border-color)' }}>
-                Không có đơn hàng nào phù hợp với bộ lọc này.
-              </div>
-            ) : (
-              <>
-                {paginatedOrders.map(o => {
-                  const isTiktok = getPlatform(o) === 'TikTok Shop';
-                  const isCancelled = isOrderCancelled(o);
-                  const isCompleted = o.status === 'Hoàn thành' || o.status === 'Đã chốt HH' || o.status === 'Đã chốt' || o.status === 2 || o.status === 'SETTLED';
-                  const rawCommission = getCommission(o);
-                  const afterTax = rawCommission * 0.9;
-                  const afterDeduction = afterTax * 0.8;
-                  const rawTime = o.purchaseTime || o.orderDate || o.createdTime || o.completeTime;
-                  return (
-                    <div key={o.id || o.orderId} className="user-order-mobile-card">
-                      <div className="mobile-order-card-header">
-                        <div className="mobile-order-id-wrap">
-                          <span className={`mobile-platform-tag ${isTiktok ? 'tiktok' : 'shopee'}`}>
-                            {isTiktok ? 'TikTok' : 'Shopee'}
-                          </span>
-                          <span className="mobile-order-code">{o.orderId}</span>
-                        </div>
-                        <span className={`badge ${isCompleted ? 'badge-completed' : isCancelled ? 'badge-cancelled' : 'badge-pending'}`}>
-                          {isCompleted ? 'Hoàn thành' : isCancelled ? 'Hủy' : (o.status || 'Chờ xử lý')}
-                        </span>
-                      </div>
-
-                      <div className="mobile-order-product-name">
-                        {o.productName || 'Không có tên sản phẩm'}
-                      </div>
-
-                      <div className="mobile-order-finance-box">
-                        <div className="mobile-finance-col">
-                          <span className="finance-col-label">HH Gốc</span>
-                          <span className="finance-col-val">{formatMoney(rawCommission)}</span>
-                        </div>
-                        <div className="mobile-finance-col">
-                          <span className="finance-col-label">Sau thuế (10%)</span>
-                          <span className="finance-col-val tax">{formatMoney(afterTax)}</span>
-                        </div>
-                        <div className="mobile-finance-col highlight">
-                          <span className="finance-col-label">Thực nhận (80%)</span>
-                          <span className="finance-col-val net">{formatMoney(afterDeduction)}</span>
-                        </div>
-                      </div>
-
-                      <div className="mobile-order-footer">
-                        <span className="mobile-order-time">
-                          <i className="fa-regular fa-clock" style={{ marginRight: '4px' }}></i>
-                          {formatDateTime(rawTime)}
-                        </span>
-                      </div>
-                    </div>
-                  );
-                })}
-
-                {/* Thẻ tổng cộng trang trên Mobile */}
-                <div className="user-order-mobile-summary-card">
-                  <div className="mobile-summary-header">
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontWeight: '800', fontSize: '13.5px', color: 'var(--text-bright)' }}>
-                      <span>📊 Tổng cộng trang {safePage}</span>
-                      <span className="mobile-summary-pill">{paginatedOrders.length} đơn{platformFilter !== 'ALL' ? ` ${platformFilter}` : ''}</span>
-                    </div>
-                    <span style={{ fontSize: '11.5px', color: 'var(--text-muted)', fontWeight: '600' }}>
-                      Trang {safePage}/{totalPages}
-                    </span>
-                  </div>
-                  <div className="mobile-summary-body">
-                    <div className="mobile-summary-row">
-                      <span>Tổng HH Gốc:</span>
-                      <strong>{formatMoney(pageTotalGross)}</strong>
-                    </div>
-                    <div className="mobile-summary-row">
-                      <span>Sau thuế (10%):</span>
-                      <strong style={{ color: 'var(--color-warning, #d97706)' }}>{formatMoney(pageTotalAfterTax)}</strong>
-                    </div>
-                    <div className="mobile-summary-row highlight">
-                      <span>Thực nhận (80%):</span>
-                      <strong style={{ color: 'var(--color-success, #16a34a)', fontSize: '15px' }}>{formatMoney(pageTotalNet)}</strong>
-                    </div>
-                  </div>
-                </div>
-              </>
-            )}
           </div>
 
           {/* Thanh phân trang */}
@@ -590,6 +498,61 @@ export default function UsersTab() {
           background: #1b1e28 !important;
           color: #94a3b8 !important;
           border-bottom: 1px solid rgba(255, 255, 255, 0.12) !important;
+        }
+        .user-orders-modal-table-container {
+          overflow-x: auto !important;
+          -webkit-overflow-scrolling: touch !important;
+          display: block !important;
+        }
+        .user-orders-modal-table-container table {
+          display: table !important;
+          min-width: 780px !important;
+          width: 100% !important;
+          border-collapse: collapse !important;
+        }
+        .user-orders-modal-table-container table thead {
+          display: table-header-group !important;
+        }
+        .user-orders-modal-table-container table thead tr {
+          display: table-row !important;
+        }
+        .user-orders-modal-table-container table thead th {
+          display: table-cell !important;
+          white-space: nowrap !important;
+        }
+        .user-orders-modal-table-container table tbody {
+          display: table-row-group !important;
+        }
+        .user-orders-modal-table-container table tbody tr {
+          display: table-row !important;
+          background: transparent !important;
+          border-radius: 0 !important;
+          border: none !important;
+          border-bottom: 1px solid var(--border-color) !important;
+          box-shadow: none !important;
+        }
+        .user-orders-modal-table-container table tbody tr td {
+          display: table-cell !important;
+          white-space: nowrap !important;
+          border-bottom: 1px solid var(--border-color) !important;
+        }
+        .user-orders-modal-table-container table tbody tr td::before {
+          display: none !important;
+          content: none !important;
+        }
+        .user-orders-modal-table-container table tfoot {
+          display: table-footer-group !important;
+        }
+        .user-orders-modal-table-container table tfoot tr {
+          display: table-row !important;
+        }
+        .user-orders-modal-table-container table tfoot td {
+          display: table-cell !important;
+          white-space: nowrap !important;
+        }
+        .user-orders-modal-table-container table tfoot td::before {
+          display: none !important;
+          content: none !important;
         }
       `}} />
       <div className="data-card">

@@ -500,6 +500,98 @@ export default function UsersTab() {
 
   return (
     <>
+      <style dangerouslySetInnerHTML={{ __html: `
+        .users-table-container {
+          overflow-x: auto !important;
+          -webkit-overflow-scrolling: touch !important;
+          width: 100% !important;
+          display: block !important;
+        }
+        .users-table-container table,
+        .users-table-container table.users-table,
+        table.users-table {
+          display: table !important;
+          min-width: 880px !important;
+          width: 100% !important;
+          table-layout: fixed !important;
+          border-collapse: collapse !important;
+        }
+        .users-table-container table thead {
+          display: table-header-group !important;
+        }
+        .users-table-container table thead tr {
+          display: table-row !important;
+          background: var(--bg-main, #f1f5f9) !important;
+        }
+        .users-table-container table thead th {
+          display: table-cell !important;
+          padding: 12px 10px !important;
+          white-space: nowrap !important;
+          font-weight: 700 !important;
+          font-size: 13px !important;
+          border-bottom: 2px solid var(--border-color) !important;
+        }
+        .users-table-container table tbody {
+          display: table-row-group !important;
+          gap: 0 !important;
+        }
+        .users-table-container table tbody tr {
+          display: table-row !important;
+          background: transparent !important;
+          border: none !important;
+          border-bottom: 1px solid var(--border-color) !important;
+          border-radius: 0 !important;
+          padding: 0 !important;
+          box-shadow: none !important;
+          margin: 0 !important;
+        }
+        .users-table-container table tbody tr:hover {
+          background: rgba(249, 115, 22, 0.04) !important;
+          border-color: var(--border-color) !important;
+          box-shadow: none !important;
+        }
+        .users-table-container table tbody tr td {
+          display: table-cell !important;
+          padding: 12px 10px !important;
+          width: auto !important;
+          border-bottom: 1px solid var(--border-color) !important;
+          border-top: none !important;
+          box-shadow: none !important;
+          font-size: 13px !important;
+          vertical-align: middle !important;
+        }
+        .users-table-container table tbody tr td::before {
+          display: none !important;
+          content: none !important;
+        }
+        .users-table-container table tbody tr td[data-label="Tên thành viên"] {
+          font-size: 13px !important;
+          font-weight: normal !important;
+          border-bottom: 1px solid var(--border-color) !important;
+          padding: 12px 10px !important;
+        }
+        html[data-theme="dark"] .users-table-container table tbody tr,
+        html.dark .users-table-container table tbody tr,
+        body.dark .users-table-container table tbody tr {
+          background: transparent !important;
+          border: none !important;
+          border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+          border-radius: 0 !important;
+          box-shadow: none !important;
+        }
+        html[data-theme="dark"] .users-table-container table tbody tr:hover,
+        html.dark .users-table-container table tbody tr:hover,
+        body.dark .users-table-container table tbody tr:hover {
+          background: rgba(255, 255, 255, 0.04) !important;
+        }
+        html[data-theme="dark"] .users-table-container table thead th,
+        html.dark .users-table-container table thead th,
+        body.dark .users-table-container table thead th {
+          background: #1b1e28 !important;
+          color: #94a3b8 !important;
+          border-bottom: 1px solid rgba(255, 255, 255, 0.12) !important;
+        }
+      `}} />
       <div className="data-card">
         <div className="search-container">
           <input
@@ -510,18 +602,18 @@ export default function UsersTab() {
             onChange={e => setUserSearch(e.target.value)}
           />
         </div>
-        <div className="table-container">
-          <table style={{ tableLayout: 'fixed', width: '100%' }}>
+        <div className="table-container users-table-container" style={{ overflowX: 'auto', WebkitOverflowScrolling: 'touch' }}>
+          <table className="users-table" style={{ tableLayout: 'fixed', width: '100%', minWidth: '880px' }}>
             <thead>
               <tr>
-                <th style={{ width: '130px' }}>Tên thành viên</th>
-                <th style={{ width: '110px' }}>Zalo ID</th>
+                <th style={{ width: '135px' }}>Tên thành viên</th>
+                <th style={{ width: '115px' }}>Zalo ID</th>
                 <th style={{ width: '150px' }}>Tài khoản nhận tiền</th>
-                <th style={{ width: '95px', textAlign: 'right' }} title="Đơn đang chờ Shopee đối soát">Chờ xử lý</th>
-                <th style={{ width: '120px', textAlign: 'right' }}>Tổng đơn hàng</th>
-                <th style={{ width: '105px', textAlign: 'right' }} title="Số tiền có thể rút ngay">Khả dụng rút</th>
-                <th style={{ width: '90px', textAlign: 'right' }}>Đã rút</th>
-                <th style={{ width: '70px', textAlign: 'center' }}>Chi tiết</th>
+                <th style={{ width: '100px', textAlign: 'right' }} title="Đơn đang chờ Shopee đối soát">Chờ xử lý</th>
+                <th style={{ width: '125px', textAlign: 'right' }}>Tổng đơn hàng</th>
+                <th style={{ width: '115px', textAlign: 'right' }} title="Số tiền có thể rút ngay">Khả dụng rút</th>
+                <th style={{ width: '95px', textAlign: 'right' }}>Đã rút</th>
+                <th style={{ width: '75px', textAlign: 'center' }}>Chi tiết</th>
               </tr>
             </thead>
             <tbody>

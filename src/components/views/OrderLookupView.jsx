@@ -863,27 +863,22 @@ export default function OrderLookupView({ setView: propSetView } = {}) {
                   </div>
                   <div className="order-card-title" title={o.productName}>{o.productName}</div>
                   <div className="order-card-commission-row" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px', flexWrap: 'wrap', marginTop: '10px' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
                       <span style={{
-                        background: o.status === 'Hoàn thành' ? '#ecfdf5' : o.status === 'Hủy' ? '#fef2f2' : '#fff7ed',
-                        color: o.status === 'Hoàn thành' ? '#059669' : o.status === 'Hủy' ? '#dc2626' : '#ea580c',
-                        border: `1px solid ${o.status === 'Hoàn thành' ? '#a7f3d0' : o.status === 'Hủy' ? '#fca5a5' : '#fed7aa'}`,
-                        fontSize: '11.5px', padding: '4px 10px', borderRadius: '20px', fontWeight: '800'
+                        color: o.status === 'Hoàn thành' ? '#059669' : (o.status === 'Hủy' || o.status === 'Đã hủy') ? '#dc2626' : '#ea580c',
+                        fontSize: '12.5px',
+                        fontWeight: '700'
                       }}>
                         {o.status}
                       </span>
                       {o.status === 'Hoàn thành' && o.completeTime && (
-                        <span className="order-complete-time-badge" style={{
-                          fontSize: '11.5px',
+                        <span className="order-complete-time-text" style={{
+                          fontSize: '12px',
                           color: '#059669',
                           fontWeight: '600',
                           display: 'inline-flex',
                           alignItems: 'center',
-                          gap: '4px',
-                          background: 'rgba(5, 150, 105, 0.08)',
-                          padding: '3px 8px',
-                          borderRadius: '12px',
-                          border: '1px solid rgba(5, 150, 105, 0.2)'
+                          gap: '4px'
                         }} title="Thời điểm đơn hàng hoàn thành">
                           <i className="fa-regular fa-calendar-check" style={{ fontSize: '11px' }}></i>
                           <span>Hoàn thành: {formatDateTime(o.completeTime)}</span>

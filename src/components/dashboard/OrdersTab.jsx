@@ -360,8 +360,101 @@ export default function OrdersTab() {
       </div>
 
       {/* Responsive Orders Table */}
-      <div className="table-container" style={{ overflowX: 'auto' }}>
-        <table style={{ tableLayout: 'fixed', width: '100%', minWidth: '860px' }}>
+      <style dangerouslySetInnerHTML={{ __html: `
+        .orders-table-container {
+          overflow-x: auto !important;
+          -webkit-overflow-scrolling: touch !important;
+          width: 100% !important;
+          display: block !important;
+        }
+        .orders-table-container table,
+        .orders-table-container table.orders-table,
+        table.orders-table {
+          display: table !important;
+          min-width: 860px !important;
+          width: 100% !important;
+          table-layout: fixed !important;
+          border-collapse: collapse !important;
+        }
+        .orders-table-container table thead {
+          display: table-header-group !important;
+        }
+        .orders-table-container table thead tr {
+          display: table-row !important;
+          background: var(--bg-main, #f1f5f9) !important;
+        }
+        .orders-table-container table thead th {
+          display: table-cell !important;
+          padding: 12px 10px !important;
+          white-space: nowrap !important;
+          font-weight: 700 !important;
+          font-size: 13px !important;
+          border-bottom: 2px solid var(--border-color) !important;
+        }
+        .orders-table-container table tbody {
+          display: table-row-group !important;
+          gap: 0 !important;
+        }
+        .orders-table-container table tbody tr {
+          display: table-row !important;
+          background: transparent !important;
+          border: none !important;
+          border-bottom: 1px solid var(--border-color) !important;
+          border-radius: 0 !important;
+          padding: 0 !important;
+          box-shadow: none !important;
+          margin: 0 !important;
+        }
+        .orders-table-container table tbody tr:hover {
+          background: rgba(249, 115, 22, 0.04) !important;
+          border-color: var(--border-color) !important;
+          box-shadow: none !important;
+        }
+        .orders-table-container table tbody tr td {
+          display: table-cell !important;
+          padding: 12px 10px !important;
+          width: auto !important;
+          border-bottom: 1px solid var(--border-color) !important;
+          border-top: none !important;
+          box-shadow: none !important;
+          font-size: 13px !important;
+          vertical-align: middle !important;
+        }
+        .orders-table-container table tbody tr td::before {
+          display: none !important;
+          content: none !important;
+        }
+        .orders-table-container table tbody tr td[data-label="Sản phẩm"],
+        .orders-table-container table tbody tr td[data-label="Mã đơn"] {
+          font-size: 13px !important;
+          font-weight: normal !important;
+          border-bottom: 1px solid var(--border-color) !important;
+          padding: 12px 10px !important;
+        }
+        html[data-theme="dark"] .orders-table-container table tbody tr,
+        html.dark .orders-table-container table tbody tr,
+        body.dark .orders-table-container table tbody tr {
+          background: transparent !important;
+          border: none !important;
+          border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+          border-radius: 0 !important;
+          box-shadow: none !important;
+        }
+        html[data-theme="dark"] .orders-table-container table tbody tr:hover,
+        html.dark .orders-table-container table tbody tr:hover,
+        body.dark .orders-table-container table tbody tr:hover {
+          background: rgba(255, 255, 255, 0.04) !important;
+        }
+        html[data-theme="dark"] .orders-table-container table thead th,
+        html.dark .orders-table-container table thead th,
+        body.dark .orders-table-container table thead th {
+          background: #1b1e28 !important;
+          color: #94a3b8 !important;
+          border-bottom: 1px solid rgba(255, 255, 255, 0.12) !important;
+        }
+      `}} />
+      <div className="table-container orders-table-container" style={{ overflowX: 'auto', WebkitOverflowScrolling: 'touch' }}>
+        <table className="orders-table" style={{ tableLayout: 'fixed', width: '100%', minWidth: '860px' }}>
           <thead>
             <tr>
               <th style={{ width: '165px' }}>Mã đơn hàng</th>

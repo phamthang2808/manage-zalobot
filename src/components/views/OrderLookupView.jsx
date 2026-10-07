@@ -912,7 +912,7 @@ export default function OrderLookupView({ setView: propSetView } = {}) {
                     </div>
                   </div>
 
-                  {/* Hướng dẫn & Quy tắc bắt buộc */}
+                  {/* Hướng dẫn & Quy tắc */}
                   <div style={{
                     background: 'rgba(249, 115, 22, 0.04)',
                     borderLeft: '3px solid #f97316',
@@ -923,17 +923,24 @@ export default function OrderLookupView({ setView: propSetView } = {}) {
                     color: 'var(--text-main)',
                     marginBottom: '14px'
                   }}>
-                    <div style={{ fontWeight: '700', color: '#ea580c', marginBottom: '4px' }}>
-                      📌 Hướng dẫn & Quy tắc nhận thưởng:
+                    <div style={{ fontWeight: '700', color: '#ea580c', marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                      <i className="fa-solid fa-circle-info" style={{ fontSize: '13px' }}></i>
+                      <span>Hướng dẫn & Quy tắc nhận thưởng:</span>
                     </div>
-                    <div style={{ marginBottom: '4px' }}>
-                      • Gửi mã cho bạn bè, người được giới thiệu vào nhóm Zalo gõ: <strong style={{ color: '#ea580c', fontFamily: 'monospace' }}>/gt_{lookupResult.referralCode ? lookupResult.referralCode.replace(/^GT/i, '') : ''}</strong> để lưu liên kết.
+
+                    <div style={{ display: 'flex', alignItems: 'flex-start', gap: '8px', marginBottom: '6px' }}>
+                      <i className="fa-solid fa-paper-plane" style={{ color: '#ea580c', width: '16px', textAlign: 'center', flexShrink: 0, marginTop: '3px', fontSize: '12px' }}></i>
+                      <span>Gửi mã cho bạn bè, người được giới thiệu vào nhóm Zalo gõ: <strong style={{ color: '#ea580c', fontFamily: 'monospace' }}>/gt_{lookupResult.referralCode ? lookupResult.referralCode.replace(/^GT/i, '') : ''}</strong> để lưu liên kết.</span>
                     </div>
-                    <div style={{ marginBottom: '4px' }}>
-                      • <strong style={{ color: '#ef4444' }}>⚠️ Quy tắc bất biến:</strong> Người được giới thiệu <u>chỉ được phép nhập mã người giới thiệu 1 lần duy nhất trong đời</u>.
+
+                    <div style={{ display: 'flex', alignItems: 'flex-start', gap: '8px', marginBottom: '6px' }}>
+                      <i className="fa-solid fa-circle-exclamation" style={{ color: '#ef4444', width: '16px', textAlign: 'center', flexShrink: 0, marginTop: '3px', fontSize: '12px' }}></i>
+                      <span><strong style={{ color: '#ef4444' }}>Quy tắc:</strong> Người được giới thiệu <u>chỉ được phép nhập mã người giới thiệu 1 lần duy nhất trong đời</u>.</span>
                     </div>
-                    <div>
-                      • <strong>💰 Điều kiện nhận thưởng:</strong> Khi bạn bè tích lũy hoa hồng hoàn thành đạt từ <strong>50.000đ</strong> trở lên, bạn sẽ nhận ngay <strong>+10.000đ</strong> cộng thẳng vào số dư ví rút tiền!
+
+                    <div style={{ display: 'flex', alignItems: 'flex-start', gap: '8px' }}>
+                      <i className="fa-solid fa-gift" style={{ color: '#ea580c', width: '16px', textAlign: 'center', flexShrink: 0, marginTop: '3px', fontSize: '12px' }}></i>
+                      <span><strong>Điều kiện nhận thưởng:</strong> Khi bạn bè tích lũy hoa hồng hoàn thành đạt từ <strong>50.000đ</strong> trở lên, bạn sẽ nhận ngay <strong>+10.000đ</strong> cộng thẳng vào số dư ví rút tiền!</span>
                     </div>
                   </div>
 
@@ -945,19 +952,28 @@ export default function OrderLookupView({ setView: propSetView } = {}) {
                     textAlign: 'center'
                   }}>
                     <div style={{ background: 'var(--bg-main)', border: '1px solid var(--border-color)', borderRadius: '10px', padding: '10px 4px' }}>
-                      <div style={{ fontSize: '10.5px', color: 'var(--text-muted)', fontWeight: '600' }}>ĐÃ GIỚI THIỆU</div>
+                      <div style={{ fontSize: '10.5px', color: 'var(--text-muted)', fontWeight: '600', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}>
+                        <i className="fa-solid fa-users" style={{ fontSize: '10px' }}></i>
+                        <span>ĐÃ GIỚI THIỆU</span>
+                      </div>
                       <div style={{ fontSize: '16px', fontWeight: '800', color: 'var(--text-bright)', marginTop: '2px' }}>
                         {lookupResult.wallet?.referralCount || 0} bạn
                       </div>
                     </div>
                     <div style={{ background: 'var(--bg-main)', border: '1px solid var(--border-color)', borderRadius: '10px', padding: '10px 4px' }}>
-                      <div style={{ fontSize: '10.5px', color: 'var(--text-muted)', fontWeight: '600' }}>ĐẠT MỐC 50K</div>
+                      <div style={{ fontSize: '10.5px', color: 'var(--text-muted)', fontWeight: '600', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}>
+                        <i className="fa-solid fa-circle-check" style={{ fontSize: '10px', color: '#059669' }}></i>
+                        <span>ĐẠT MỐC 50K</span>
+                      </div>
                       <div style={{ fontSize: '16px', fontWeight: '800', color: '#059669', marginTop: '2px' }}>
                         {lookupResult.wallet?.completedReferralCount || 0} bạn
                       </div>
                     </div>
                     <div style={{ background: 'var(--bg-main)', border: '1px solid var(--border-color)', borderRadius: '10px', padding: '10px 4px' }}>
-                      <div style={{ fontSize: '10.5px', color: 'var(--text-muted)', fontWeight: '600' }}>TIỀN THƯỞNG</div>
+                      <div style={{ fontSize: '10.5px', color: 'var(--text-muted)', fontWeight: '600', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}>
+                        <i className="fa-solid fa-coins" style={{ fontSize: '10px', color: '#ea580c' }}></i>
+                        <span>TIỀN THƯỞNG</span>
+                      </div>
                       <div style={{ fontSize: '16px', fontWeight: '800', color: '#ea580c', marginTop: '2px' }}>
                         {formatMoney(lookupResult.wallet?.referralBonus || 0)}
                       </div>
@@ -966,8 +982,9 @@ export default function OrderLookupView({ setView: propSetView } = {}) {
 
                   {/* Thông tin người đã giới thiệu bạn (nếu có) */}
                   {lookupResult.hasReferrer && (
-                    <div style={{ marginTop: '12px', fontSize: '11.5px', color: 'var(--text-muted)', textAlign: 'center', fontStyle: 'italic' }}>
-                      ✨ Bạn đã được giới thiệu bởi thành viên: <strong style={{ color: 'var(--text-bright)' }}>{lookupResult.referrerName || 'Thành viên Zalo'}</strong>
+                    <div style={{ marginTop: '12px', fontSize: '11.5px', color: 'var(--text-muted)', textAlign: 'center', fontStyle: 'italic', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '5px' }}>
+                      <i className="fa-solid fa-handshake" style={{ color: '#ea580c', fontSize: '12px' }}></i>
+                      <span>Bạn đã được giới thiệu bởi thành viên: <strong style={{ color: 'var(--text-bright)' }}>{lookupResult.referrerName || 'Thành viên Zalo'}</strong></span>
                     </div>
                   )}
                 </div>

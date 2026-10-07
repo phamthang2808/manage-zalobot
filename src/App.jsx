@@ -2715,29 +2715,49 @@ function App() {
 
         {/* Sidebar Footer */}
         <div className="sidebar-footer">
-          <div className="sidebar-user-box">
-            {user?.avatarUrl ? (
-              <img 
-                src={user.avatarUrl} 
-                alt="Avatar" 
-                referrerPolicy="no-referrer"
-                style={{ width: '34px', height: '34px', borderRadius: '50%', border: '2px solid #fed7aa', flexShrink: 0 }} 
-              />
-            ) : (
-              <div className="avatar" style={{ margin: 0, width: '34px', height: '34px', fontSize: '12px', flexShrink: 0 }}>{(user?.fullName || 'PT').substring(0, 2).toUpperCase()}</div>
-            )}
-            <div style={{ overflow: 'hidden', flex: 1, minWidth: 0 }}>
-              <div className="sidebar-user-name" title={user?.fullName}>{user?.fullName}</div>
-              <div className="sidebar-user-role">{user?.role}</div>
+          <div className="sidebar-user-card">
+            <div className="sidebar-user-avatar-wrap">
+              {user?.avatarUrl ? (
+                <img 
+                  src={user.avatarUrl} 
+                  alt={user?.fullName || 'Avatar'} 
+                  referrerPolicy="no-referrer"
+                  className="sidebar-user-avatar"
+                />
+              ) : (
+                <div className="sidebar-user-avatar-placeholder">
+                  {(user?.fullName || 'PT').substring(0, 2).toUpperCase()}
+                </div>
+              )}
+              <span className="sidebar-user-status-dot" title="Đang trực tuyến"></span>
+            </div>
+
+            <div className="sidebar-user-info">
+              <div className="sidebar-user-name" title={user?.fullName || 'Tài khoản'}>
+                {user?.fullName || 'Thắng Phạm'}
+              </div>
+              <div className="sidebar-user-role-badge">
+                <span className="sidebar-user-role-icon">✦</span>
+                <span>{user?.role || 'SUPER_ADMIN'}</span>
+              </div>
             </div>
           </div>
-          <button 
-            className="sidebar-logout-btn"
-            onClick={handleLogout} 
-          >
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
-            Đăng xuất
-          </button>
+
+          <div className="sidebar-footer-actions">
+            <ThemeToggle className="sidebar-theme-toggle" />
+            <button 
+              className="sidebar-logout-btn"
+              onClick={handleLogout}
+              title="Đăng xuất khỏi hệ thống"
+            >
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                <polyline points="16 17 21 12 16 7"/>
+                <line x1="21" y1="12" x2="9" y2="12"/>
+              </svg>
+              <span>Đăng xuất</span>
+            </button>
+          </div>
         </div>
       </aside>
 

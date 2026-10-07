@@ -577,21 +577,25 @@ export default function OrderLookupView({ setView: propSetView } = {}) {
         .stat-card-item.completed { background: linear-gradient(135deg, rgba(209,250,229,0.6) 0%, var(--bg-card) 100%); border-color: #6ee7b7; }
         .stat-card-item.withdrawable { background: linear-gradient(135deg, rgba(255,237,213,0.6) 0%, var(--bg-card) 100%); border-color: #fdba74; }
         .stat-card-item.received { background: linear-gradient(135deg, rgba(243,232,255,0.6) 0%, var(--bg-card) 100%); border-color: #c084fc; }
+        .stat-card-item.referral { background: linear-gradient(135deg, rgba(254,205,211,0.6) 0%, var(--bg-card) 100%); border-color: #fda4af; }
         html[data-theme="dark"] .stat-card-item.total, body.dark .stat-card-item.total { background: linear-gradient(145deg, rgba(59, 130, 246, 0.22), #0f172a 90%) !important; border-color: rgba(96, 165, 250, 0.65) !important; box-shadow: 0 4px 20px rgba(59, 130, 246, 0.25), inset 0 0 12px rgba(96, 165, 250, 0.12) !important; }
         html[data-theme="dark"] .stat-card-item.pending, body.dark .stat-card-item.pending { background: linear-gradient(145deg, rgba(245, 158, 11, 0.22), #0f172a 90%) !important; border-color: rgba(251, 191, 36, 0.65) !important; box-shadow: 0 4px 20px rgba(245, 158, 11, 0.22), inset 0 0 12px rgba(251, 191, 36, 0.12) !important; }
         html[data-theme="dark"] .stat-card-item.completed, body.dark .stat-card-item.completed { background: linear-gradient(145deg, rgba(16, 185, 129, 0.22), #0f172a 90%) !important; border-color: rgba(52, 211, 153, 0.65) !important; box-shadow: 0 4px 20px rgba(16, 185, 129, 0.22), inset 0 0 12px rgba(52, 211, 153, 0.12) !important; }
         html[data-theme="dark"] .stat-card-item.withdrawable, body.dark .stat-card-item.withdrawable { background: linear-gradient(145deg, rgba(249, 115, 22, 0.22), #0f172a 90%) !important; border-color: rgba(251, 146, 60, 0.65) !important; box-shadow: 0 4px 20px rgba(249, 115, 22, 0.25), inset 0 0 12px rgba(251, 146, 60, 0.12) !important; }
         html[data-theme="dark"] .stat-card-item.received, body.dark .stat-card-item.received { background: linear-gradient(145deg, rgba(168, 85, 247, 0.22), #0f172a 90%) !important; border-color: rgba(192, 132, 252, 0.65) !important; box-shadow: 0 4px 20px rgba(168, 85, 247, 0.25), inset 0 0 12px rgba(192, 132, 252, 0.12) !important; }
+        html[data-theme="dark"] .stat-card-item.referral, body.dark .stat-card-item.referral { background: linear-gradient(145deg, rgba(244, 63, 94, 0.22), #0f172a 90%) !important; border-color: rgba(251, 113, 133, 0.65) !important; box-shadow: 0 4px 20px rgba(244, 63, 94, 0.22), inset 0 0 12px rgba(251, 113, 133, 0.12) !important; }
         .stat-card-item.total .stat-card-value { color: #2563eb; }
         .stat-card-item.pending .stat-card-value { color: #d97706; }
         .stat-card-item.completed .stat-card-value { color: #059669; }
         .stat-card-item.withdrawable .stat-card-value { color: #ea580c; }
         .stat-card-item.received .stat-card-value { color: #9333ea; }
+        .stat-card-item.referral .stat-card-value { color: #e11d48; }
         html[data-theme="dark"] .stat-card-item.total .stat-card-value, body.dark .stat-card-item.total .stat-card-value { color: #60a5fa !important; text-shadow: 0 0 12px rgba(96, 165, 250, 0.4); }
         html[data-theme="dark"] .stat-card-item.pending .stat-card-value, body.dark .stat-card-item.pending .stat-card-value { color: #fbbf24 !important; text-shadow: 0 0 12px rgba(251, 191, 36, 0.4); }
         html[data-theme="dark"] .stat-card-item.completed .stat-card-value, body.dark .stat-card-item.completed .stat-card-value { color: #34d399 !important; text-shadow: 0 0 12px rgba(52, 211, 153, 0.4); }
         html[data-theme="dark"] .stat-card-item.withdrawable .stat-card-value, body.dark .stat-card-item.withdrawable .stat-card-value { color: #fb923c !important; text-shadow: 0 0 12px rgba(251, 146, 60, 0.4); }
         html[data-theme="dark"] .stat-card-item.received .stat-card-value, body.dark .stat-card-item.received .stat-card-value { color: #c084fc !important; text-shadow: 0 0 12px rgba(192, 132, 252, 0.4); }
+        html[data-theme="dark"] .stat-card-item.referral .stat-card-value, body.dark .stat-card-item.referral .stat-card-value { color: #fb7185 !important; text-shadow: 0 0 12px rgba(251, 113, 133, 0.4); }
         .stat-card-label { font-size: 11px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 4px; font-weight: 700; letter-spacing: 0.5px; }
         .stat-card-sub { font-size: 11px; color: var(--text-muted); opacity: 0.85; margin-bottom: 6px; line-height: 1.3; }
         .stat-card-value { font-family: var(--font-heading); font-size: 23px; font-weight: 800; color: var(--text-bright); letter-spacing: -0.3px; }
@@ -723,6 +727,143 @@ export default function OrderLookupView({ setView: propSetView } = {}) {
             )}
           </div>
 
+          {/* Referral Card */}
+          {lookupResult.referralCode && (
+            <div className="lookup-card referral-card-section" style={{
+              marginBottom: '24px',
+              background: 'linear-gradient(145deg, rgba(249, 115, 22, 0.05) 0%, var(--bg-card) 100%)',
+              border: '1.5px solid rgba(249, 115, 22, 0.35)',
+              boxShadow: '0 4px 20px -2px rgba(249, 115, 22, 0.1)'
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '14px', flexWrap: 'wrap', gap: '8px' }}>
+                <h3 className="stats-section-title" style={{ margin: 0, color: 'var(--text-bright)', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <span>🎁 Giới Thiệu Bạn Bè</span>
+                </h3>
+                <span style={{
+                  background: 'linear-gradient(135deg, #f97316, #ea580c)',
+                  color: '#fff',
+                  fontSize: '11px',
+                  fontWeight: '800',
+                  padding: '3px 10px',
+                  borderRadius: '20px',
+                  boxShadow: '0 2px 6px rgba(234, 88, 12, 0.3)'
+                }}>
+                  Thưởng +10.000đ / người
+                </span>
+              </div>
+
+              {/* Mã giới thiệu & Copy box */}
+              <div style={{
+                background: 'var(--bg-main)',
+                border: '1px solid var(--border-color)',
+                borderRadius: '12px',
+                padding: '14px 16px',
+                marginBottom: '14px'
+              }}>
+                <div style={{ fontSize: '11.5px', fontWeight: '700', color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: '6px' }}>
+                  MÃ GIỚI THIỆU CỦA BẠN
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '10px', flexWrap: 'wrap' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                    <span style={{
+                      fontFamily: 'monospace',
+                      fontSize: '22px',
+                      fontWeight: '900',
+                      letterSpacing: '2px',
+                      color: '#ea580c'
+                    }}>
+                      {lookupResult.referralCode}
+                    </span>
+                  </div>
+                  <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        navigator.clipboard.writeText(lookupResult.referralCode);
+                        showToast('Đã sao chép mã giới thiệu!', 'success');
+                      }}
+                      className="lookup-admin-link"
+                      style={{ padding: '6px 12px', fontSize: '12px', display: 'flex', alignItems: 'center', gap: '5px' }}
+                    >
+                      <i className="fa-regular fa-copy"></i> Copy Mã
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const cmd = `/gt ${lookupResult.referralCode}`;
+                        navigator.clipboard.writeText(cmd);
+                        showToast(`Đã sao chép cú pháp: ${cmd}`, 'success');
+                      }}
+                      className="lookup-btn"
+                      style={{ width: 'auto', padding: '6px 14px', fontSize: '12px', display: 'flex', alignItems: 'center', gap: '5px' }}
+                    >
+                      <i className="fa-solid fa-paper-plane"></i> Copy cú pháp /gt
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              {/* Hướng dẫn & Quy tắc bắt buộc */}
+              <div style={{
+                background: 'rgba(249, 115, 22, 0.04)',
+                borderLeft: '3px solid #f97316',
+                borderRadius: '0 8px 8px 0',
+                padding: '12px 14px',
+                fontSize: '12.5px',
+                lineHeight: '1.6',
+                color: 'var(--text-main)',
+                marginBottom: '14px'
+              }}>
+                <div style={{ fontWeight: '700', color: '#ea580c', marginBottom: '4px' }}>
+                  📌 Hướng dẫn & Quy tắc nhận thưởng:
+                </div>
+                <div style={{ marginBottom: '4px' }}>
+                  • Gửi mã cho bạn bè, người được giới thiệu vào nhóm Zalo gõ: <strong style={{ color: '#ea580c', fontFamily: 'monospace' }}>/gt {lookupResult.referralCode}</strong> để lưu liên kết.
+                </div>
+                <div style={{ marginBottom: '4px' }}>
+                  • <strong style={{ color: '#ef4444' }}>⚠️ Quy tắc bất biến:</strong> Người được giới thiệu <u>chỉ được phép nhập mã người giới thiệu 1 lần duy nhất trong đời</u>.
+                </div>
+                <div>
+                  • <strong>💰 Điều kiện nhận thưởng:</strong> Khi bạn bè tích lũy hoa hồng hoàn thành đạt từ <strong>50.000đ</strong> trở lên, bạn sẽ nhận ngay <strong>+10.000đ</strong> cộng thẳng vào số dư ví rút tiền!
+                </div>
+              </div>
+
+              {/* Thống kê giới thiệu */}
+              <div style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(3, 1fr)',
+                gap: '8px',
+                textAlign: 'center'
+              }}>
+                <div style={{ background: 'var(--bg-main)', border: '1px solid var(--border-color)', borderRadius: '10px', padding: '10px 4px' }}>
+                  <div style={{ fontSize: '10.5px', color: 'var(--text-muted)', fontWeight: '600' }}>ĐÃ GIỚI THIỆU</div>
+                  <div style={{ fontSize: '16px', fontWeight: '800', color: 'var(--text-bright)', marginTop: '2px' }}>
+                    {lookupResult.wallet?.referralCount || 0} bạn
+                  </div>
+                </div>
+                <div style={{ background: 'var(--bg-main)', border: '1px solid var(--border-color)', borderRadius: '10px', padding: '10px 4px' }}>
+                  <div style={{ fontSize: '10.5px', color: 'var(--text-muted)', fontWeight: '600' }}>ĐẠT MỐC 50K</div>
+                  <div style={{ fontSize: '16px', fontWeight: '800', color: '#059669', marginTop: '2px' }}>
+                    {lookupResult.wallet?.completedReferralCount || 0} bạn
+                  </div>
+                </div>
+                <div style={{ background: 'var(--bg-main)', border: '1px solid var(--border-color)', borderRadius: '10px', padding: '10px 4px' }}>
+                  <div style={{ fontSize: '10.5px', color: 'var(--text-muted)', fontWeight: '600' }}>TIỀN THƯỞNG</div>
+                  <div style={{ fontSize: '16px', fontWeight: '800', color: '#ea580c', marginTop: '2px' }}>
+                    {formatMoney(lookupResult.wallet?.referralBonus || 0)}
+                  </div>
+                </div>
+              </div>
+
+              {/* Thông tin người đã giới thiệu bạn (nếu có) */}
+              {lookupResult.hasReferrer && (
+                <div style={{ marginTop: '12px', fontSize: '11.5px', color: 'var(--text-muted)', textAlign: 'center', fontStyle: 'italic' }}>
+                  ✨ Bạn đã được giới thiệu bởi thành viên: <strong style={{ color: 'var(--text-bright)' }}>{lookupResult.referrerName || 'Thành viên Zalo'}</strong>
+                </div>
+              )}
+            </div>
+          )}
+
           {/* Wallet Stats */}
           <div className="stats-container">
             <h3 className="stats-section-title">💰 Thống Kê Hoa Hồng của: <span style={{ color: '#ea580c' }}>{lookupResult.zaloName}</span></h3>
@@ -761,7 +902,7 @@ export default function OrderLookupView({ setView: propSetView } = {}) {
                   </span>
                 ) : (
                   <span className="stat-card-sub">
-                    (Sau 3 ngày • Đã trừ thuế & chia 8-2)
+                    (Sau 3 ngày • Đã trừ thuế & chia 8-2{lookupResult.wallet?.referralBonus > 0 ? ` • Gồm +${formatMoney(lookupResult.wallet.referralBonus)} thưởng GT` : ''})
                   </span>
                 )}
                 <span className="stat-card-value">
@@ -776,6 +917,16 @@ export default function OrderLookupView({ setView: propSetView } = {}) {
                   {formatMoney(lookupResult.wallet.receivedCommission)}
                 </span>
               </div>
+
+              {lookupResult.wallet?.referralBonus > 0 && (
+                <div className="stat-card-item referral" style={{ gridColumn: 'span 2' }}>
+                  <span className="stat-card-label">🎁 THƯỞNG GIỚI THIỆU BẠN BÈ</span>
+                  <span className="stat-card-sub">(Đã hoàn thành mốc 50k • Đã cộng thẳng vào số dư khả dụng)</span>
+                  <span className="stat-card-value">
+                    +{formatMoney(lookupResult.wallet.referralBonus)}
+                  </span>
+                </div>
+              )}
             </div>
           </div>
 

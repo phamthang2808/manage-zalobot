@@ -791,7 +791,7 @@ export default function OrderLookupView({ setView: propSetView } = {}) {
                     flexShrink: 0
                   }}
                 >
-                  <span>{referralExpanded ? 'Thu gọn' : 'Mở ra'}</span>
+                  <span>{referralExpanded ? 'Thu gọn' : 'Chi tiết'}</span>
                   <i className={`fa-solid fa-chevron-${referralExpanded ? 'up' : 'down'}`} style={{ fontSize: '11px' }}></i>
                 </button>
               </div>

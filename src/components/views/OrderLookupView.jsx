@@ -570,9 +570,9 @@ export default function OrderLookupView({ setView: propSetView } = {}) {
         .lookup-error { width: 100%; max-width: 600px; background: rgba(239,68,68,0.08); border: 1px solid rgba(239,68,68,0.3); color: #ef4444; padding: 12px 16px; border-radius: 12px; margin-bottom: 20px; font-size: 13.5px; font-weight: 600; }
         .stats-container { width: 100%; max-width: 600px; margin-bottom: 24px; }
         .stats-section-title { font-family: var(--font-heading); font-size: 16.5px; font-weight: 700; margin-bottom: 12px; color: var(--text-bright); display: flex; align-items: center; gap: 8px; letter-spacing: -0.2px; }
-        .stats-cards-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; width: 100%; }
-        .stats-cards-grid > :first-child { grid-column: span 2; }
-        .stat-card-item { border-radius: 14px; padding: 16px; border: 1.5px solid var(--border-color); display: flex; flex-direction: column; box-shadow: 0 4px 12px rgba(0,0,0,0.04); background: var(--bg-card); transition: all 0.2s ease; width: 100%; box-sizing: border-box; }
+        .stats-cards-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; width: 100%; }
+        .stats-cards-grid > :first-child { grid-column: 1 / -1; }
+        .stat-card-item { border-radius: 14px; padding: 16px; border: 1.5px solid var(--border-color); display: flex; flex-direction: column; justify-content: space-between; min-height: 105px; box-shadow: 0 4px 12px rgba(0,0,0,0.04); background: var(--bg-card); transition: all 0.2s ease; width: 100%; box-sizing: border-box; }
         .stat-card-item.total { background: linear-gradient(135deg, rgba(219,234,254,0.6) 0%, var(--bg-card) 100%); border-color: #93c5fd; }
         .stat-card-item.pending { background: linear-gradient(135deg, rgba(254,243,199,0.6) 0%, var(--bg-card) 100%); border-color: #fcd34d; }
         .stat-card-item.completed { background: linear-gradient(135deg, rgba(209,250,229,0.6) 0%, var(--bg-card) 100%); border-color: #6ee7b7; }
@@ -622,8 +622,13 @@ export default function OrderLookupView({ setView: propSetView } = {}) {
         .pin-box-item.active { border-color: #f97316; box-shadow: 0 0 0 2px rgba(249, 115, 22, 0.2); }
         .pin-dot-bullet { width: 12px; height: 12px; border-radius: 50%; background: #ea580c; box-shadow: 0 0 6px rgba(234, 88, 12, 0.5); }
         .pin-hidden-input { position: absolute; opacity: 0; pointer-events: auto; width: calc(100% - 50px); height: 100%; top: 0; left: 0; z-index: 2; }
-        @media (max-width: 480px) { .pin-box-item { width: 36px; height: 44px; font-size: 17px; border-radius: 9px; } .pin-digit-dots { gap: 6px; } }
-        @media (max-width: 480px) { .stats-cards-grid { grid-template-columns: 1fr; } .stats-cards-grid > :first-child { grid-column: span 1; } .lookup-card { padding: 16px; } .stat-card-value { font-size: 20px; } .lookup-banner-img-wrap { width: 100%; max-width: 280px; } }
+        @media (max-width: 640px) { 
+          .stats-cards-grid { grid-template-columns: 1fr !important; gap: 12px !important; } 
+          .stats-cards-grid > * { grid-column: 1 / -1 !important; width: 100% !important; min-height: auto !important; } 
+          .lookup-card { padding: 16px; } 
+          .stat-card-value { font-size: 22px; } 
+          .lookup-banner-img-wrap { width: 100%; max-width: 280px; } 
+        }
       `}} />
 
       <ToastNotification />
@@ -728,198 +733,13 @@ export default function OrderLookupView({ setView: propSetView } = {}) {
             )}
           </div>
 
-          {/* Referral Card (Mặc định ẩn gọn, có nút mở ra) */}
-          {lookupResult.referralCode && (
-            <div className="lookup-card referral-card-section" style={{
-              marginBottom: '20px',
-              padding: referralExpanded ? '20px' : '14px 18px',
-              background: 'linear-gradient(145deg, rgba(249, 115, 22, 0.05) 0%, var(--bg-card) 100%)',
-              border: '1.5px solid rgba(249, 115, 22, 0.35)',
-              boxShadow: '0 4px 16px -2px rgba(249, 115, 22, 0.08)',
-              transition: 'all 0.25s ease'
-            }}>
-              {/* Header: Click để Mở ra / Thu gọn */}
-              <div 
-                onClick={() => setReferralExpanded(!referralExpanded)}
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  cursor: 'pointer',
-                  userSelect: 'none',
-                  flexWrap: 'nowrap',
-                  gap: '8px'
-                }}
-              >
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap', minWidth: 0 }}>
-                  <span style={{ fontSize: '18px' }}>🎁</span>
-                  <strong style={{ fontSize: '14.5px', color: 'var(--text-bright)', letterSpacing: '-0.2px' }}>
-                    Giới Thiệu Bạn Bè
-                  </strong>
-                  <span style={{
-                    background: 'linear-gradient(135deg, #f97316, #ea580c)',
-                    color: '#fff',
-                    fontSize: '11px',
-                    fontWeight: '700',
-                    padding: '2px 8px',
-                    borderRadius: '20px'
-                  }}>
-                    +10.000đ / người
-                  </span>
-                  {!referralExpanded && (
-                    <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
-                      • Mã: <strong style={{ color: '#ea580c', fontFamily: 'monospace', letterSpacing: '0.5px' }}>{lookupResult.referralCode}</strong>
-                    </span>
-                  )}
-                </div>
-
-                <button 
-                  type="button"
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '5px',
-                    background: referralExpanded ? 'var(--bg-main)' : 'rgba(249, 115, 22, 0.1)',
-                    border: '1px solid ' + (referralExpanded ? 'var(--border-color)' : 'rgba(249, 115, 22, 0.4)'),
-                    borderRadius: '20px',
-                    padding: '5px 12px',
-                    color: '#ea580c',
-                    fontSize: '12px',
-                    fontWeight: '700',
-                    cursor: 'pointer',
-                    whiteSpace: 'nowrap',
-                    flexShrink: 0
-                  }}
-                >
-                  <span>{referralExpanded ? 'Thu gọn' : 'Chi tiết'}</span>
-                  <i className={`fa-solid fa-chevron-${referralExpanded ? 'up' : 'down'}`} style={{ fontSize: '11px' }}></i>
-                </button>
-              </div>
-
-              {/* Nội dung chi tiết: Chỉ hiện khi referralExpanded === true */}
-              {referralExpanded && (
-                <div style={{ marginTop: '16px', paddingTop: '14px', borderTop: '1px dashed var(--border-color)' }}>
-                  {/* Mã giới thiệu & Copy box */}
-                  <div style={{
-                    background: 'var(--bg-main)',
-                    border: '1px solid var(--border-color)',
-                    borderRadius: '12px',
-                    padding: '14px 16px',
-                    marginBottom: '14px'
-                  }}>
-                    <div style={{ fontSize: '11.5px', fontWeight: '700', color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: '6px' }}>
-                      MÃ GIỚI THIỆU CỦA BẠN
-                    </div>
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '10px', flexWrap: 'wrap' }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                        <span style={{
-                          fontFamily: 'monospace',
-                          fontSize: '22px',
-                          fontWeight: '900',
-                          letterSpacing: '2px',
-                          color: '#ea580c'
-                        }}>
-                          {lookupResult.referralCode}
-                        </span>
-                      </div>
-                      <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-                        <button
-                          type="button"
-                          onClick={() => {
-                            navigator.clipboard.writeText(lookupResult.referralCode);
-                            showToast('Đã sao chép mã giới thiệu!', 'success');
-                          }}
-                          className="lookup-admin-link"
-                          style={{ padding: '6px 12px', fontSize: '12px', display: 'flex', alignItems: 'center', gap: '5px' }}
-                        >
-                          <i className="fa-regular fa-copy"></i> Copy Mã
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => {
-                            const cmd = `/gt ${lookupResult.referralCode}`;
-                            navigator.clipboard.writeText(cmd);
-                            showToast(`Đã sao chép cú pháp: ${cmd}`, 'success');
-                          }}
-                          className="lookup-btn"
-                          style={{ width: 'auto', padding: '6px 14px', fontSize: '12px', display: 'flex', alignItems: 'center', gap: '5px' }}
-                        >
-                          <i className="fa-solid fa-paper-plane"></i> Copy cú pháp /gt
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Hướng dẫn & Quy tắc bắt buộc */}
-                  <div style={{
-                    background: 'rgba(249, 115, 22, 0.04)',
-                    borderLeft: '3px solid #f97316',
-                    borderRadius: '0 8px 8px 0',
-                    padding: '12px 14px',
-                    fontSize: '12.5px',
-                    lineHeight: '1.6',
-                    color: 'var(--text-main)',
-                    marginBottom: '14px'
-                  }}>
-                    <div style={{ fontWeight: '700', color: '#ea580c', marginBottom: '4px' }}>
-                      📌 Hướng dẫn & Quy tắc nhận thưởng:
-                    </div>
-                    <div style={{ marginBottom: '4px' }}>
-                      • Gửi mã cho bạn bè, người được giới thiệu vào nhóm Zalo gõ: <strong style={{ color: '#ea580c', fontFamily: 'monospace' }}>/gt {lookupResult.referralCode}</strong> để lưu liên kết.
-                    </div>
-                    <div style={{ marginBottom: '4px' }}>
-                      • <strong style={{ color: '#ef4444' }}>⚠️ Quy tắc bất biến:</strong> Người được giới thiệu <u>chỉ được phép nhập mã người giới thiệu 1 lần duy nhất trong đời</u>.
-                    </div>
-                    <div>
-                      • <strong>💰 Điều kiện nhận thưởng:</strong> Khi bạn bè tích lũy hoa hồng hoàn thành đạt từ <strong>50.000đ</strong> trở lên, bạn sẽ nhận ngay <strong>+10.000đ</strong> cộng thẳng vào số dư ví rút tiền!
-                    </div>
-                  </div>
-
-                  {/* Thống kê giới thiệu */}
-                  <div style={{
-                    display: 'grid',
-                    gridTemplateColumns: 'repeat(3, 1fr)',
-                    gap: '8px',
-                    textAlign: 'center'
-                  }}>
-                    <div style={{ background: 'var(--bg-main)', border: '1px solid var(--border-color)', borderRadius: '10px', padding: '10px 4px' }}>
-                      <div style={{ fontSize: '10.5px', color: 'var(--text-muted)', fontWeight: '600' }}>ĐÃ GIỚI THIỆU</div>
-                      <div style={{ fontSize: '16px', fontWeight: '800', color: 'var(--text-bright)', marginTop: '2px' }}>
-                        {lookupResult.wallet?.referralCount || 0} bạn
-                      </div>
-                    </div>
-                    <div style={{ background: 'var(--bg-main)', border: '1px solid var(--border-color)', borderRadius: '10px', padding: '10px 4px' }}>
-                      <div style={{ fontSize: '10.5px', color: 'var(--text-muted)', fontWeight: '600' }}>ĐẠT MỐC 50K</div>
-                      <div style={{ fontSize: '16px', fontWeight: '800', color: '#059669', marginTop: '2px' }}>
-                        {lookupResult.wallet?.completedReferralCount || 0} bạn
-                      </div>
-                    </div>
-                    <div style={{ background: 'var(--bg-main)', border: '1px solid var(--border-color)', borderRadius: '10px', padding: '10px 4px' }}>
-                      <div style={{ fontSize: '10.5px', color: 'var(--text-muted)', fontWeight: '600' }}>TIỀN THƯỞNG</div>
-                      <div style={{ fontSize: '16px', fontWeight: '800', color: '#ea580c', marginTop: '2px' }}>
-                        {formatMoney(lookupResult.wallet?.referralBonus || 0)}
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Thông tin người đã giới thiệu bạn (nếu có) */}
-                  {lookupResult.hasReferrer && (
-                    <div style={{ marginTop: '12px', fontSize: '11.5px', color: 'var(--text-muted)', textAlign: 'center', fontStyle: 'italic' }}>
-                      ✨ Bạn đã được giới thiệu bởi thành viên: <strong style={{ color: 'var(--text-bright)' }}>{lookupResult.referrerName || 'Thành viên Zalo'}</strong>
-                    </div>
-                  )}
-                </div>
-              )}
-            </div>
-          )}
-
           {/* Wallet Stats */}
           <div className="stats-container">
             <h3 className="stats-section-title">💰 Thống Kê Hoa Hồng của: <span style={{ color: '#ea580c' }}>{lookupResult.zaloName}</span></h3>
             
             <div className="stats-cards-grid">
-              {/* Thẻ 0: Tổng tích lũy (Hoàn thành + Chờ) - Chiếm full hàng ngang 2 cột */}
-              <div className="stat-card-item total">
+              {/* Thẻ 0: Tổng tích lũy (Hoàn thành + Chờ) - Chiếm full hàng ngang */}
+              <div className="stat-card-item total" style={{ gridColumn: '1 / -1' }}>
                 <span className="stat-card-label">🌟 TỔNG TÍCH LŨY (HOÀN THÀNH + CHỜ)</span>
                 <span className="stat-card-sub">(Toàn bộ hoa hồng tích lũy)</span>
                 <span className="stat-card-value primary">
@@ -1008,6 +828,193 @@ export default function OrderLookupView({ setView: propSetView } = {}) {
               </div>
             )}
           </div>
+
+          {/* Referral Card (Đặt ở dưới phần Ví & Rút tiền, trước danh sách đơn hàng) */}
+          {lookupResult.referralCode && (
+            <div className="lookup-card referral-card-section" style={{
+              marginBottom: '24px',
+              padding: referralExpanded ? '20px' : '14px 18px',
+              background: 'linear-gradient(145deg, rgba(249, 115, 22, 0.05) 0%, var(--bg-card) 100%)',
+              border: '1.5px solid rgba(249, 115, 22, 0.35)',
+              boxShadow: '0 4px 16px -2px rgba(249, 115, 22, 0.08)',
+              transition: 'all 0.25s ease'
+            }}>
+              {/* Header: Click để Mở ra / Thu gọn */}
+              <div 
+                onClick={() => setReferralExpanded(!referralExpanded)}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  cursor: 'pointer',
+                  userSelect: 'none',
+                  flexWrap: 'nowrap',
+                  gap: '8px'
+                }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap', minWidth: 0 }}>
+                  <span style={{ fontSize: '18px' }}>🎁</span>
+                  <strong style={{ fontSize: '14.5px', color: 'var(--text-bright)', letterSpacing: '-0.2px' }}>
+                    Giới Thiệu Bạn Bè
+                  </strong>
+                  <span style={{
+                    background: 'linear-gradient(135deg, #f97316, #ea580c)',
+                    color: '#fff',
+                    fontSize: '11px',
+                    fontWeight: '700',
+                    padding: '2px 8px',
+                    borderRadius: '20px'
+                  }}>
+                    +10.000đ / người
+                  </span>
+                  {!referralExpanded && (
+                    <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
+                      • Mã: <strong style={{ color: '#ea580c', fontFamily: 'monospace', letterSpacing: '0.5px' }}>{lookupResult.referralCode ? lookupResult.referralCode.replace(/^GT/i, '') : ''}</strong>
+                    </span>
+                  )}
+                </div>
+
+                <button 
+                  type="button"
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '5px',
+                    background: referralExpanded ? 'var(--bg-main)' : 'rgba(249, 115, 22, 0.1)',
+                    border: '1px solid ' + (referralExpanded ? 'var(--border-color)' : 'rgba(249, 115, 22, 0.4)'),
+                    borderRadius: '20px',
+                    padding: '5px 12px',
+                    color: '#ea580c',
+                    fontSize: '12px',
+                    fontWeight: '700',
+                    cursor: 'pointer',
+                    whiteSpace: 'nowrap',
+                    flexShrink: 0
+                  }}
+                >
+                  <span>{referralExpanded ? 'Thu gọn' : 'Chi tiết'}</span>
+                  <i className={`fa-solid fa-chevron-${referralExpanded ? 'up' : 'down'}`} style={{ fontSize: '11px' }}></i>
+                </button>
+              </div>
+
+              {/* Nội dung chi tiết: Chỉ hiện khi referralExpanded === true */}
+              {referralExpanded && (
+                <div style={{ marginTop: '16px', paddingTop: '14px', borderTop: '1px dashed var(--border-color)' }}>
+                  {/* Mã giới thiệu & Copy box */}
+                  <div style={{
+                    background: 'var(--bg-main)',
+                    border: '1px solid var(--border-color)',
+                    borderRadius: '12px',
+                    padding: '14px 16px',
+                    marginBottom: '14px'
+                  }}>
+                    <div style={{ fontSize: '11.5px', fontWeight: '700', color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: '6px' }}>
+                      MÃ GIỚI THIỆU CỦA BẠN
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '10px', flexWrap: 'wrap' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                        <span style={{
+                          fontFamily: 'monospace',
+                          fontSize: '24px',
+                          fontWeight: '900',
+                          letterSpacing: '2px',
+                          color: '#ea580c'
+                        }}>
+                          {lookupResult.referralCode ? lookupResult.referralCode.replace(/^GT/i, '') : ''}
+                        </span>
+                      </div>
+                      <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const code = lookupResult.referralCode ? lookupResult.referralCode.replace(/^GT/i, '') : '';
+                            navigator.clipboard.writeText(code);
+                            showToast(`Đã sao chép mã giới thiệu: ${code}`, 'success');
+                          }}
+                          className="lookup-admin-link"
+                          style={{ padding: '6px 12px', fontSize: '12px', display: 'flex', alignItems: 'center', gap: '5px' }}
+                        >
+                          <i className="fa-regular fa-copy"></i> Copy Mã
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const code = lookupResult.referralCode ? lookupResult.referralCode.replace(/^GT/i, '') : '';
+                            const cmd = `/gt_${code}`;
+                            navigator.clipboard.writeText(cmd);
+                            showToast(`Đã sao chép cú pháp: ${cmd}`, 'success');
+                          }}
+                          className="lookup-btn"
+                          style={{ width: 'auto', padding: '6px 14px', fontSize: '12px', display: 'flex', alignItems: 'center', gap: '5px' }}
+                        >
+                          <i className="fa-solid fa-paper-plane"></i> Copy cú pháp /gt_{lookupResult.referralCode ? lookupResult.referralCode.replace(/^GT/i, '') : ''}
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Hướng dẫn & Quy tắc bắt buộc */}
+                  <div style={{
+                    background: 'rgba(249, 115, 22, 0.04)',
+                    borderLeft: '3px solid #f97316',
+                    borderRadius: '0 8px 8px 0',
+                    padding: '12px 14px',
+                    fontSize: '12.5px',
+                    lineHeight: '1.6',
+                    color: 'var(--text-main)',
+                    marginBottom: '14px'
+                  }}>
+                    <div style={{ fontWeight: '700', color: '#ea580c', marginBottom: '4px' }}>
+                      📌 Hướng dẫn & Quy tắc nhận thưởng:
+                    </div>
+                    <div style={{ marginBottom: '4px' }}>
+                      • Gửi mã cho bạn bè, người được giới thiệu vào nhóm Zalo gõ: <strong style={{ color: '#ea580c', fontFamily: 'monospace' }}>/gt_{lookupResult.referralCode ? lookupResult.referralCode.replace(/^GT/i, '') : ''}</strong> để lưu liên kết.
+                    </div>
+                    <div style={{ marginBottom: '4px' }}>
+                      • <strong style={{ color: '#ef4444' }}>⚠️ Quy tắc bất biến:</strong> Người được giới thiệu <u>chỉ được phép nhập mã người giới thiệu 1 lần duy nhất trong đời</u>.
+                    </div>
+                    <div>
+                      • <strong>💰 Điều kiện nhận thưởng:</strong> Khi bạn bè tích lũy hoa hồng hoàn thành đạt từ <strong>50.000đ</strong> trở lên, bạn sẽ nhận ngay <strong>+10.000đ</strong> cộng thẳng vào số dư ví rút tiền!
+                    </div>
+                  </div>
+
+                  {/* Thống kê giới thiệu */}
+                  <div style={{
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(3, 1fr)',
+                    gap: '8px',
+                    textAlign: 'center'
+                  }}>
+                    <div style={{ background: 'var(--bg-main)', border: '1px solid var(--border-color)', borderRadius: '10px', padding: '10px 4px' }}>
+                      <div style={{ fontSize: '10.5px', color: 'var(--text-muted)', fontWeight: '600' }}>ĐÃ GIỚI THIỆU</div>
+                      <div style={{ fontSize: '16px', fontWeight: '800', color: 'var(--text-bright)', marginTop: '2px' }}>
+                        {lookupResult.wallet?.referralCount || 0} bạn
+                      </div>
+                    </div>
+                    <div style={{ background: 'var(--bg-main)', border: '1px solid var(--border-color)', borderRadius: '10px', padding: '10px 4px' }}>
+                      <div style={{ fontSize: '10.5px', color: 'var(--text-muted)', fontWeight: '600' }}>ĐẠT MỐC 50K</div>
+                      <div style={{ fontSize: '16px', fontWeight: '800', color: '#059669', marginTop: '2px' }}>
+                        {lookupResult.wallet?.completedReferralCount || 0} bạn
+                      </div>
+                    </div>
+                    <div style={{ background: 'var(--bg-main)', border: '1px solid var(--border-color)', borderRadius: '10px', padding: '10px 4px' }}>
+                      <div style={{ fontSize: '10.5px', color: 'var(--text-muted)', fontWeight: '600' }}>TIỀN THƯỞNG</div>
+                      <div style={{ fontSize: '16px', fontWeight: '800', color: '#ea580c', marginTop: '2px' }}>
+                        {formatMoney(lookupResult.wallet?.referralBonus || 0)}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Thông tin người đã giới thiệu bạn (nếu có) */}
+                  {lookupResult.hasReferrer && (
+                    <div style={{ marginTop: '12px', fontSize: '11.5px', color: 'var(--text-muted)', textAlign: 'center', fontStyle: 'italic' }}>
+                      ✨ Bạn đã được giới thiệu bởi thành viên: <strong style={{ color: 'var(--text-bright)' }}>{lookupResult.referrerName || 'Thành viên Zalo'}</strong>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          )}
 
           {/* Orders List */}
           <div className="orders-container">

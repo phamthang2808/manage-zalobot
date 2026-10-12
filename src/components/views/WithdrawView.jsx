@@ -3,48 +3,42 @@ import { useApp } from '../../context/AppContext';
 import { formatMoney, formatDateTime } from '../../utils/formatters';
 
 export default function WithdrawView() {
-  const { API_URL_ROOT, user, setView, showToast } = useApp();
-  const [wallet, setWallet] = useState({
-    balance: 0,
-    totalEarned: 0,
-    totalWithdrawn: 0,
-    pendingWithdraw: 0,
-    bankName: '',
-    accountNumber: '',
-    accountName: '',
-    zaloId: ''
-  });
+  const { API_URL_ROOT, user, showToast, setView } = useApp();
+  const [wallet, setWallet] = useState({ balance: 0, totalEarned: 0, received: 0, pending: 0 });
   const [payouts, setPayouts] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  // Form rút tiền state
   const [amountInput, setAmountInput] = useState('');
   const [submitting, setSubmitting] = useState(false);
+
+  // Bank Info State
+  const [bankName, setBankName] = useState(user?.bankName || '');
+  const [accountNumber, setAccountNumber] = useState(user?.accountNumber || '');
+  const [accountName, setAccountName] = useState(user?.accountName || user?.fullName || '');
+  const [isEditingBank, setIsEditingBank] = useState(false);
+  const [savingBank, setSavingBank] = useState(false);
 
   const fetchWalletAndPayouts = async () => {
     setLoading(true);
     try {
       const token = sessionStorage.getItem('adminToken') || '';
-      const [wRes, pRes] = await Promise.all([
-        fetch(`${API_URL_ROOT}/api/user/wallet`, {
-          headers: { 'Authorization': `Bearer ${token}` },
-          credentials: 'include'
-        }),
-        fetch(`${API_URL_ROOT}/api/user/payouts`, {
-          headers: { 'Authorization': `Bearer ${token}` },
-          credentials: 'include'
-        })
+      const [resWallet, resPayouts] = await Promise.all([
+        fetch(`${API_URL_ROOT}/api/user/wallet`, { headers: { 'Authorization': `Bearer ${token}` }, credentials: 'include' }),
+        fetch(`${API_URL_ROOT}/api/user/payouts`, { headers: { 'Authorization': `Bearer ${token}` }, credentials: 'include' })
       ]);
 
-      const wData = await wRes.json();
-      const pData = await pRes.json();
+      const dataWallet = await resWallet.json();
+      const dataPayouts = await resPayouts.json();
 
-      if (wRes.ok && wData.data) {
-        setWallet(wData.data);
+      if (resWallet.ok && dataWallet.data) {
+        setWallet(dataWallet.data);
       }
-      if (pRes.ok && pData.data) {
-        setPayouts(pData.data);
+      if (resPayouts.ok && dataPayouts.data) {
+        setPayouts(dataPayouts.data || []);
       }
     } catch (err) {
-      showToast(err.message || 'Không thể tải thông tin ví', 'error');
+      showToast('Lỗi khi tải thông tin ví: ' + err.message, 'error');
     } finally {
       setLoading(false);
     }
@@ -54,22 +48,67 @@ export default function WithdrawView() {
     fetchWalletAndPayouts();
   }, []);
 
+  useEffect(() => {
+    if (user) {
+      setBankName(user.bankName || '');
+      setAccountNumber(user.accountNumber || '');
+      setAccountName(user.accountName || user.fullName || '');
+    }
+  }, [user]);
+
+  const handleSaveBank = async (e) => {
+    e.preventDefault();
+    if (!bankName.trim() || !accountNumber.trim() || !accountName.trim()) {
+      showToast('Vui lòng điền đầy đủ Tên ngân hàng, Số tài khoản và Tên chủ tài khoản!', 'warning');
+      return;
+    }
+
+    setSavingBank(true);
+    try {
+      const token = sessionStorage.getItem('adminToken') || '';
+      const res = await fetch(`${API_URL_ROOT}/api/user/profile`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          bankName: bankName.trim(),
+          accountNumber: accountNumber.trim(),
+          accountName: accountName.trim().toUpperCase()
+        }),
+        credentials: 'include'
+      });
+      const data = await res.json();
+      if (res.ok) {
+        showToast('Đã lưu thông tin tài khoản ngân hàng thành công! 🎉', 'success');
+        setIsEditingBank(false);
+      } else {
+        showToast(data.message || 'Lỗi cập nhật ngân hàng', 'error');
+      }
+    } catch (err) {
+      showToast(err.message || 'Lỗi server khi lưu ngân hàng', 'error');
+    } finally {
+      setSavingBank(false);
+    }
+  };
+
   const handleRequestPayout = async (e) => {
     e.preventDefault();
-    const amount = parseFloat(amountInput.replace(/[^0-9]/g, ''));
-    if (isNaN(amount) || amount < 50000) {
-      showToast('Số tiền rút tối thiểu là 50,000 đ', 'warning');
+    const cleanAmount = parseFloat(amountInput.replace(/[^\d]/g, ''));
+    if (!cleanAmount || cleanAmount < 50000) {
+      showToast('Số tiền rút tối thiểu là 50,000đ!', 'warning');
       return;
     }
 
-    if (amount > wallet.balance) {
-      showToast(`Số dư khả dụng (${formatMoney(wallet.balance)}) không đủ!`, 'error');
+    if (cleanAmount > (wallet.balance || 0)) {
+      showToast('Số tiền rút vượt quá số dư khả dụng hiện tại!', 'error');
       return;
     }
 
-    if (!wallet.bankName || !wallet.accountNumber) {
-      showToast('Vui lòng cập nhật thông tin ngân hàng trước khi rút tiền!', 'warning');
-      setView('account');
+    if (!accountNumber || !bankName) {
+      showToast('Vui lòng cập nhật số tài khoản ngân hàng trước khi rút tiền!', 'warning');
+      setIsEditingBank(true);
       return;
     }
 
@@ -83,20 +122,22 @@ export default function WithdrawView() {
           'Authorization': `Bearer ${token}`
         },
         body: JSON.stringify({
-          amount: amount,
-          bankName: wallet.bankName,
-          accountNumber: wallet.accountNumber,
-          accountName: wallet.accountName
+          amount: cleanAmount,
+          bankName: bankName,
+          accountNumber: accountNumber,
+          accountName: accountName
         }),
         credentials: 'include'
       });
 
-      const resData = await res.json();
-      if (!res.ok) throw new Error(resData.message || 'Lỗi gửi yêu cầu rút tiền');
-
-      showToast(resData.message || 'Đã gửi yêu cầu rút tiền thành công! 🎉', 'success');
-      setAmountInput('');
-      fetchWalletAndPayouts();
+      const data = await res.json();
+      if (res.ok) {
+        showToast('Đã gửi yêu cầu rút tiền thành công! Admin sẽ duyệt sớm nhất. 🎉', 'success');
+        setAmountInput('');
+        fetchWalletAndPayouts();
+      } else {
+        showToast(data.message || 'Không thể tạo yêu cầu rút tiền', 'error');
+      }
     } catch (err) {
       showToast(err.message || 'Lỗi gửi yêu cầu rút tiền', 'error');
     } finally {
@@ -105,310 +146,312 @@ export default function WithdrawView() {
   };
 
   return (
-    <div className="withdraw-view-container" style={{ maxWidth: '1000px', margin: '0 auto', padding: '24px 16px' }}>
-      {/* Wallet Cards */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(210px, 1fr))', gap: '14px', marginBottom: '24px' }}>
-        <div style={{
-          background: 'linear-gradient(135deg, #ea580c 0%, #c2410c 100%)',
-          borderRadius: '18px',
-          padding: '20px 22px',
-          color: '#fff',
-          boxShadow: '0 8px 20px rgba(234, 88, 12, 0.25)'
-        }}>
-          <div style={{ fontSize: '11.5px', fontWeight: '800', opacity: 0.9, textTransform: 'uppercase', letterSpacing: '0.6px', marginBottom: '8px' }}>
-            Số Dư Khả Dụng (Có Thể Rút)
-          </div>
-          <div style={{ fontSize: '26px', fontWeight: '900', letterSpacing: '-0.5px' }}>
-            {formatMoney(wallet.balance)}
-          </div>
-          <div style={{ fontSize: '12px', opacity: 0.85, marginTop: '6px' }}>
-            Hoa hồng từ các đơn đã hoàn thành
-          </div>
-        </div>
+    <div className="withdraw-view-wrapper" style={{ width: '100%', maxWidth: '800px', margin: '0 auto' }}>
+      {/* 4 Thẻ Thống Kê Ví Tiền Chuẩn Bê Từ OrderLookupView */}
+      <div className="stats-container" style={{ width: '100%', marginBottom: '22px' }}>
+        <h3 className="stats-section-title" style={{ fontSize: '17px', fontWeight: '800', marginBottom: '14px', color: 'var(--text-bright)' }}>
+          💳 Ví Tiền Hoa Hồng & Rút Tiền: <span style={{ color: 'var(--color-primary, #ea580c)' }}>{user?.fullName || user?.email}</span>
+        </h3>
 
-        <div style={{
-          background: 'var(--bg-card, #fff)',
-          border: '1.5px solid var(--border-color, #e2e8f0)',
-          borderRadius: '18px',
-          padding: '20px 22px',
-          boxShadow: '0 2px 8px rgba(0,0,0,0.03)'
-        }}>
-          <div style={{ fontSize: '11.5px', fontWeight: '800', color: 'var(--text-muted, #64748b)', textTransform: 'uppercase', letterSpacing: '0.6px', marginBottom: '8px' }}>
-            Tổng Hoa Hồng Đã Kiếm
+        <div className="stats-cards-grid">
+          {/* Thẻ 1: Số dư khả dụng (Toàn bộ hàng ngang) */}
+          <div className="stat-card-item withdrawable" style={{ gridColumn: '1 / -1' }}>
+            <span className="stat-card-label">💵 SỐ DƯ KHẢ DỤNG (CÓ THỂ RÚT NGAY)</span>
+            <span className="stat-card-sub">(Hoa hồng từ các đơn Shopee, TikTok Shop, Lazada đã hoàn thành)</span>
+            <span className="stat-card-value">
+              {formatMoney(wallet.balance)}
+            </span>
           </div>
-          <div style={{ fontSize: '24px', fontWeight: '900', color: 'var(--text-bright, #0f172a)' }}>
-            {formatMoney(wallet.totalEarned)}
-          </div>
-          <div style={{ fontSize: '12px', color: 'var(--text-muted, #94a3b8)', marginTop: '6px' }}>
-            Tổng tích lũy hợp nhất (Web + Zalo)
-          </div>
-        </div>
 
-        <div style={{
-          background: 'var(--bg-card, #fff)',
-          border: '1.5px solid var(--border-color, #e2e8f0)',
-          borderRadius: '18px',
-          padding: '20px 22px',
-          boxShadow: '0 2px 8px rgba(0,0,0,0.03)'
-        }}>
-          <div style={{ fontSize: '11.5px', fontWeight: '800', color: 'var(--text-muted, #64748b)', textTransform: 'uppercase', letterSpacing: '0.6px', marginBottom: '8px' }}>
-            Đã Thanh Toán Thành Công
+          {/* Thẻ 2: Tổng hoa hồng đã kiếm */}
+          <div className="stat-card-item total">
+            <span className="stat-card-label">🌟 TỔNG HOA HỒNG ĐÃ KIẾM</span>
+            <span className="stat-card-sub">(Toàn bộ hoa hồng tích lũy)</span>
+            <span className="stat-card-value primary">
+              {formatMoney(wallet.totalEarned)}
+            </span>
           </div>
-          <div style={{ fontSize: '24px', fontWeight: '900', color: '#059669' }}>
-            {formatMoney(wallet.totalWithdrawn)}
-          </div>
-          <div style={{ fontSize: '12px', color: '#059669', fontWeight: '700', marginTop: '6px' }}>
-            Đã chuyển về tài khoản ngân hàng
-          </div>
-        </div>
 
-        <div style={{
-          background: 'var(--bg-card, #fff)',
-          border: '1.5px solid var(--border-color, #e2e8f0)',
-          borderRadius: '18px',
-          padding: '20px 22px',
-          boxShadow: '0 2px 8px rgba(0,0,0,0.03)'
-        }}>
-          <div style={{ fontSize: '11.5px', fontWeight: '800', color: 'var(--text-muted, #64748b)', textTransform: 'uppercase', letterSpacing: '0.6px', marginBottom: '8px' }}>
-            Đang Chờ Admin Chuyển
+          {/* Thẻ 3: Đã thanh toán thành công */}
+          <div className="stat-card-item received">
+            <span className="stat-card-label">🏦 ĐÃ RÚT VỀ TÀI KHOẢN BANK</span>
+            <span className="stat-card-sub">(Tiền đã được chuyển khoản)</span>
+            <span className="stat-card-value">
+              {formatMoney(wallet.received)}
+            </span>
           </div>
-          <div style={{ fontSize: '24px', fontWeight: '900', color: '#d97706' }}>
-            {formatMoney(wallet.pendingWithdraw)}
-          </div>
-          <div style={{ fontSize: '12px', color: '#d97706', fontWeight: '700', marginTop: '6px' }}>
-            Lệnh rút đang được xử lý
+
+          {/* Thẻ 4: Đang chờ admin duyệt */}
+          <div className="stat-card-item pending" style={{ gridColumn: '1 / -1' }}>
+            <span className="stat-card-label">⏳ ĐANG CHỜ ADMIN CHUYỂN KHOẢN</span>
+            <span className="stat-card-sub">(Lệnh rút đang trong hàng đợi xử lý)</span>
+            <span className="stat-card-value">
+              {formatMoney(wallet.pending)}
+            </span>
           </div>
         </div>
       </div>
 
-      {/* Request Payout Form */}
-      <div style={{
-        background: 'var(--bg-card, #fff)',
-        border: '1.5px solid var(--border-color, #e2e8f0)',
-        borderRadius: '18px',
-        padding: '24px',
-        marginBottom: '24px',
-        boxShadow: '0 4px 15px rgba(0,0,0,0.03)'
-      }}>
-        <h2 style={{ fontSize: '16px', fontWeight: '800', margin: '0 0 16px 0', color: 'var(--text-bright, #0f172a)' }}>
-          💳 Tạo Lệnh Rút Tiền
-        </h2>
+      {/* Thẻ 1: Tạo Lệnh Rút Tiền Chuẩn Giao Diện OrderLookupView */}
+      <div className="lookup-card" style={{ marginBottom: '24px' }}>
+        <h3 className="stats-section-title" style={{ margin: 0, marginBottom: '10px' }}>
+          💸 Tạo Lệnh Rút Tiền Về Ngân Hàng
+        </h3>
+        <p style={{ fontSize: '13px', color: 'var(--text-muted)', margin: '0 0 16px 0', lineHeight: '1.5' }}>
+          Số dư khả dụng tối thiểu để rút là <b>50,000đ</b>. Tiền hoa hồng sẽ được admin duyệt và chuyển khoản trực tiếp vào số tài khoản ngân hàng thụ hưởng của bạn.
+        </p>
 
-        {/* Bank info summary */}
-        {wallet.bankName && wallet.accountNumber ? (
-          <div style={{
-            background: 'var(--bg-main, #f8fafc)',
-            border: '1px solid var(--border-color, #e2e8f0)',
-            borderRadius: '12px',
-            padding: '14px 18px',
-            marginBottom: '18px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            flexWrap: 'wrap',
-            gap: '10px'
-          }}>
-            <div>
-              <div style={{ fontSize: '12px', fontWeight: '800', color: 'var(--text-muted, #64748b)' }}>TÀI KHOẢN NHẬN TIỀN</div>
-              <div style={{ fontSize: '14px', fontWeight: '800', color: 'var(--text-bright, #0f172a)', marginTop: '2px' }}>
-                {wallet.bankName} — <span style={{ fontFamily: 'monospace' }}>{wallet.accountNumber}</span>
-                {wallet.accountName && ` (${wallet.accountName})`}
+        {/* Thông tin tài khoản ngân hàng */}
+        <div style={{
+          background: 'var(--bg-main)',
+          border: '1px solid var(--border-color)',
+          borderRadius: '12px',
+          padding: '14px 16px',
+          marginBottom: '16px'
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: isEditingBank ? '12px' : 0 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+              <div style={{ width: '36px', height: '36px', borderRadius: '10px', background: 'rgba(249, 115, 22, 0.12)', color: 'var(--color-primary, #ea580c)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '16px' }}>
+                <i className="fa-solid fa-credit-card"></i>
+              </div>
+              <div>
+                <div style={{ fontSize: '11px', fontWeight: '800', color: 'var(--text-muted)', textTransform: 'uppercase' }}>
+                  Tài Khoản Thụ Hưởng Nhận Tiền
+                </div>
+                {accountNumber ? (
+                  <div style={{ fontSize: '13.5px', fontWeight: '800', color: 'var(--text-bright)', marginTop: '2px' }}>
+                    {bankName} • <span style={{ fontFamily: 'monospace' }}>{accountNumber}</span> • {accountName}
+                  </div>
+                ) : (
+                  <div style={{ fontSize: '13px', color: '#dc2626', fontWeight: '700', marginTop: '2px' }}>
+                    ⚠️ Chưa thiết lập số tài khoản ngân hàng
+                  </div>
+                )}
               </div>
             </div>
             <button
               type="button"
-              onClick={() => setView('account')}
-              style={{
-                background: 'none',
-                border: 'none',
-                color: '#2563eb',
-                fontSize: '12px',
-                fontWeight: '700',
-                cursor: 'pointer',
-                textDecoration: 'underline'
-              }}
+              onClick={() => setIsEditingBank(!isEditingBank)}
+              className="lookup-admin-link"
+              style={{ fontSize: '11.5px', padding: '5px 12px' }}
             >
-              Đổi tài khoản ngân hàng
+              {isEditingBank ? 'Đóng' : (accountNumber ? 'Thay đổi' : 'Cập nhật ngay')}
             </button>
           </div>
+
+          {/* Form chỉnh sửa ngân hàng */}
+          {isEditingBank && (
+            <form onSubmit={handleSaveBank} style={{ marginTop: '12px', borderTop: '1px dashed var(--border-color)', paddingTop: '12px' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '10px', marginBottom: '12px' }}>
+                <div>
+                  <label className="lookup-label">Ngân Hàng (VD: MBBank, VCB...)</label>
+                  <input
+                    type="text"
+                    className="lookup-input"
+                    placeholder="VD: MBBank, Techcombank..."
+                    value={bankName}
+                    onChange={e => setBankName(e.target.value)}
+                  />
+                </div>
+                <div>
+                  <label className="lookup-label">Số Tài Khoản</label>
+                  <input
+                    type="text"
+                    className="lookup-input"
+                    placeholder="Nhập số tài khoản..."
+                    value={accountNumber}
+                    onChange={e => setAccountNumber(e.target.value)}
+                  />
+                </div>
+                <div>
+                  <label className="lookup-label">Tên Chủ Tài Khoản (Không dấu)</label>
+                  <input
+                    type="text"
+                    className="lookup-input"
+                    placeholder="VD: NGUYEN VAN A"
+                    value={accountName}
+                    onChange={e => setAccountName(e.target.value.toUpperCase())}
+                  />
+                </div>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '8px' }}>
+                <button
+                  type="button"
+                  onClick={() => setIsEditingBank(false)}
+                  className="lookup-admin-link"
+                >
+                  Hủy
+                </button>
+                <button
+                  type="submit"
+                  disabled={savingBank}
+                  className="lookup-btn"
+                  style={{ width: 'auto', padding: '8px 18px', fontSize: '13px' }}
+                >
+                  {savingBank ? 'Đang lưu...' : 'Lưu Ngân Hàng'}
+                </button>
+              </div>
+            </form>
+          )}
+        </div>
+
+        {/* Input nhập số tiền rút */}
+        {wallet.balance >= 50000 ? (
+          <form onSubmit={handleRequestPayout}>
+            <div className="lookup-input-group">
+              <label className="lookup-label">Số Tiền Muốn Rút (đ)</label>
+              <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
+                <input
+                  type="text"
+                  className="lookup-input"
+                  placeholder={`Tối thiểu 50.000đ • Tối đa ${formatMoney(wallet.balance)}`}
+                  value={amountInput}
+                  onChange={e => {
+                    const raw = e.target.value.replace(/[^\d]/g, '');
+                    setAmountInput(raw ? new Intl.NumberFormat('vi-VN').format(parseFloat(raw)) : '');
+                  }}
+                />
+                <button
+                  type="button"
+                  className="lookup-admin-link"
+                  style={{
+                    position: 'absolute',
+                    right: '8px',
+                    fontSize: '11px',
+                    padding: '5px 10px',
+                    background: 'rgba(249, 115, 22, 0.12)',
+                    color: 'var(--color-primary, #ea580c)',
+                    borderColor: 'rgba(249, 115, 22, 0.3)'
+                  }}
+                  onClick={() => setAmountInput(new Intl.NumberFormat('vi-VN').format(wallet.balance))}
+                >
+                  Rút hết
+                </button>
+              </div>
+            </div>
+
+            <button
+              type="submit"
+              disabled={submitting || !amountInput}
+              className="lookup-btn"
+              style={{ marginTop: '8px' }}
+            >
+              {submitting ? (
+                <>
+                  <div className="lookup-spinner"></div>
+                  <span>Đang xử lý yêu cầu...</span>
+                </>
+              ) : (
+                <>
+                  <i className="fa-solid fa-paper-plane"></i>
+                  <span>Gửi Yêu Cầu Rút Tiền</span>
+                </>
+              )}
+            </button>
+          </form>
         ) : (
           <div style={{
-            background: '#fffbeb',
-            border: '1.5px solid #fef3c7',
+            padding: '16px',
+            background: 'rgba(239, 68, 68, 0.08)',
+            border: '1px dashed rgba(239, 68, 68, 0.3)',
             borderRadius: '12px',
-            padding: '14px 18px',
-            marginBottom: '18px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            flexWrap: 'wrap',
-            gap: '10px'
+            textAlign: 'center',
+            color: '#dc2626',
+            fontSize: '13px',
+            fontWeight: '600'
           }}>
-            <span style={{ fontSize: '13px', color: '#b45309', fontWeight: '700' }}>
-              ⚠️ Bạn chưa cập nhật số tài khoản ngân hàng để nhận tiền!
-            </span>
-            <button
-              type="button"
-              onClick={() => setView('account')}
-              style={{
-                padding: '7px 14px',
-                borderRadius: '8px',
-                border: 'none',
-                background: '#d97706',
-                color: '#fff',
-                fontSize: '12px',
-                fontWeight: '800',
-                cursor: 'pointer'
-              }}
-            >
-              Cập nhật ngay
-            </button>
+            🔒 Số dư khả dụng hiện tại là <b>{formatMoney(wallet.balance)}</b> (Cần tối thiểu 50,000đ để tạo lệnh rút tiền). Hãy tiếp tục tạo link mua sắm để tích lũy hoa hồng nhé!
           </div>
         )}
-
-        <form onSubmit={handleRequestPayout}>
-          <div style={{ marginBottom: '16px' }}>
-            <label style={{ display: 'block', fontSize: '13px', fontWeight: '800', color: 'var(--text-bright, #0f172a)', marginBottom: '8px' }}>
-              Số tiền muốn rút (VNĐ, tối thiểu 50,000 đ):
-            </label>
-            <div style={{ display: 'flex', gap: '10px' }}>
-              <input
-                type="number"
-                min="50000"
-                step="1000"
-                value={amountInput}
-                onChange={(e) => setAmountInput(e.target.value)}
-                placeholder="Nhập số tiền cần rút..."
-                style={{
-                  flex: '1',
-                  padding: '12px 16px',
-                  borderRadius: '12px',
-                  border: '1.5px solid var(--border-color, #cbd5e1)',
-                  background: 'var(--bg-main, #f8fafc)',
-                  color: 'var(--text-bright, #0f172a)',
-                  fontSize: '15px',
-                  fontWeight: '700',
-                  outline: 'none'
-                }}
-              />
-              <button
-                type="button"
-                onClick={() => setAmountInput(String(Math.floor(wallet.balance)))}
-                style={{
-                  padding: '10px 18px',
-                  borderRadius: '12px',
-                  border: '1px solid #fed7aa',
-                  background: '#fff7ed',
-                  color: '#ea580c',
-                  fontSize: '13px',
-                  fontWeight: '800',
-                  cursor: 'pointer'
-                }}
-              >
-                Rút tất cả
-              </button>
-            </div>
-          </div>
-
-          <button
-            type="submit"
-            disabled={submitting || wallet.balance < 50000 || !amountInput}
-            style={{
-              padding: '12px 28px',
-              borderRadius: '12px',
-              border: 'none',
-              background: submitting || wallet.balance < 50000 || !amountInput ? '#94a3b8' : 'linear-gradient(135deg, #ea580c 0%, #c2410c 100%)',
-              color: '#fff',
-              fontSize: '14px',
-              fontWeight: '800',
-              cursor: submitting || wallet.balance < 50000 || !amountInput ? 'not-allowed' : 'pointer',
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '8px',
-              boxShadow: '0 4px 12px rgba(234, 88, 12, 0.25)'
-            }}
-          >
-            {submitting ? (
-              <>
-                <i className="fa-solid fa-spinner fa-spin"></i>
-                <span>Đang gửi yêu cầu...</span>
-              </>
-            ) : (
-              <>
-                <i className="fa-solid fa-paper-plane"></i>
-                <span>Gửi Yêu Cầu Rút Tiền</span>
-              </>
-            )}
-          </button>
-        </form>
       </div>
 
-      {/* Payouts History Table */}
-      <div style={{
-        background: 'var(--bg-card, #fff)',
-        border: '1.5px solid var(--border-color, #e2e8f0)',
-        borderRadius: '18px',
-        overflow: 'hidden',
-        boxShadow: '0 4px 15px rgba(0,0,0,0.03)'
-      }}>
-        <div style={{ padding: '18px 24px', borderBottom: '1px solid var(--border-color, #f1f5f9)' }}>
-          <h2 style={{ fontSize: '16px', fontWeight: '800', margin: 0, color: 'var(--text-bright, #0f172a)' }}>
-            📜 Lịch Sử Yêu Cầu Rút Tiền
-          </h2>
+      {/* Thẻ 2: Lịch Sử Yêu Cầu Rút Tiền Chuẩn Giao Diện */}
+      <div className="orders-container" style={{ width: '100%' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '14px' }}>
+          <h3 className="stats-section-title" style={{ fontSize: '16px', fontWeight: '800', margin: 0, color: 'var(--text-bright)' }}>
+            📜 Lịch Sử Yêu Cầu Rút Tiền ({payouts.length})
+          </h3>
+          <button
+            type="button"
+            onClick={fetchWalletAndPayouts}
+            style={{
+              background: 'none',
+              border: 'none',
+              color: 'var(--color-primary, #ea580c)',
+              fontSize: '12.5px',
+              fontWeight: '700',
+              cursor: 'pointer',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '5px'
+            }}
+          >
+            <i className="fa-solid fa-rotate-right"></i>
+            <span>Làm mới</span>
+          </button>
         </div>
 
         {payouts.length === 0 ? (
-          <div style={{ padding: '40px', textAlign: 'center', color: 'var(--text-muted, #64748b)' }}>
-            <p style={{ margin: 0, fontSize: '13px' }}>Bạn chưa tạo lệnh rút tiền nào.</p>
+          <div className="lookup-card" style={{ padding: '36px 20px', textAlign: 'center', color: 'var(--text-muted)' }}>
+            <i className="fa-solid fa-receipt" style={{ fontSize: '28px', color: 'var(--text-subtle)', marginBottom: '8px' }}></i>
+            <div style={{ fontSize: '13.5px', fontWeight: '700', color: 'var(--text-bright)' }}>Chưa có yêu cầu rút tiền nào</div>
+            <p style={{ margin: '4px 0 0 0', fontSize: '12px' }}>Các lệnh rút tiền của bạn sẽ được hiển thị và cập nhật trạng thái tại đây.</p>
           </div>
         ) : (
-          <div style={{ overflowX: 'auto' }}>
-            <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
-              <thead>
-                <tr style={{ background: 'var(--bg-main, #f8fafc)', borderBottom: '1.5px solid var(--border-color, #e2e8f0)' }}>
-                  <th style={{ padding: '12px 18px', fontSize: '11px', fontWeight: '800', color: 'var(--text-muted, #64748b)', textTransform: 'uppercase' }}>Mã lệnh</th>
-                  <th style={{ padding: '12px 18px', fontSize: '11px', fontWeight: '800', color: 'var(--text-muted, #64748b)', textTransform: 'uppercase' }}>Số tiền</th>
-                  <th style={{ padding: '12px 18px', fontSize: '11px', fontWeight: '800', color: 'var(--text-muted, #64748b)', textTransform: 'uppercase' }}>Tài khoản nhận</th>
-                  <th style={{ padding: '12px 18px', fontSize: '11px', fontWeight: '800', color: 'var(--text-muted, #64748b)', textTransform: 'uppercase' }}>Thời gian</th>
-                  <th style={{ padding: '12px 18px', fontSize: '11px', fontWeight: '800', color: 'var(--text-muted, #64748b)', textTransform: 'uppercase', textAlign: 'center' }}>Trạng thái</th>
-                </tr>
-              </thead>
-              <tbody>
-                {payouts.map((p) => {
-                  const isCompleted = p.status === 'COMPLETED';
-                  return (
-                    <tr key={p.id} style={{ borderBottom: '1px solid var(--border-color, #f1f5f9)' }}>
-                      <td style={{ padding: '14px 18px', fontFamily: 'monospace', fontSize: '12.5px', fontWeight: '700' }}>
-                        #{p.id}
-                      </td>
-                      <td style={{ padding: '14px 18px', fontSize: '14px', fontWeight: '900', color: '#ea580c' }}>
-                        {formatMoney(p.amount)}
-                      </td>
-                      <td style={{ padding: '14px 18px', fontSize: '13px', fontWeight: '600' }}>
-                        {p.bankName} - {p.accountNumber} {p.accountName ? `(${p.accountName})` : ''}
-                      </td>
-                      <td style={{ padding: '14px 18px', fontSize: '12px', color: 'var(--text-muted, #64748b)' }}>
-                        {formatDateTime(p.createdAt)}
-                      </td>
-                      <td style={{ padding: '14px 18px', textAlign: 'center' }}>
-                        <span style={{
-                          padding: '4px 12px',
-                          borderRadius: '12px',
-                          fontSize: '11.5px',
-                          fontWeight: '800',
-                          background: isCompleted ? '#ecfdf5' : '#fffbeb',
-                          color: isCompleted ? '#059669' : '#d97706',
-                          border: `1px solid ${isCompleted ? '#a7f3d0' : '#fde68a'}`
-                        }}>
-                          {isCompleted ? '✓ Đã chuyển' : '⏳ Chờ duyệt'}
-                        </span>
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
+          payouts.map((p, idx) => {
+            const isDone = p.status === 'COMPLETED' || p.status === 'Đã chuyển' || p.status === 'Đã duyệt';
+            const isReject = p.status === 'REJECTED' || p.status === 'Đã hủy' || p.status === 'Từ chối';
+            const statusText = isDone ? 'Đã chuyển tiền' : (isReject ? 'Đã từ chối' : 'Đang chờ Admin duyệt');
+            const statusColor = isDone ? '#059669' : (isReject ? '#dc2626' : '#d97706');
+
+            return (
+              <div key={p.id || idx} className="order-card-item">
+                <div className="order-card-header">
+                  <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
+                    <i className="fa-regular fa-clock" style={{ color: 'var(--text-muted)', fontSize: '13px' }}></i>
+                    <span>{formatDateTime(p.createdAt || p.requestTime)}</span>
+                  </span>
+                  <span style={{
+                    display: 'inline-block',
+                    padding: '3px 10px',
+                    borderRadius: '12px',
+                    fontSize: '11px',
+                    fontWeight: '800',
+                    background: isDone ? 'rgba(5, 150, 105, 0.12)' : (isReject ? 'rgba(220, 38, 38, 0.12)' : 'rgba(217, 119, 6, 0.12)'),
+                    color: statusColor
+                  }}>
+                    {statusText}
+                  </span>
+                </div>
+
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '10px' }}>
+                  <div>
+                    <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>Tài khoản nhận:</div>
+                    <div style={{ fontSize: '13.5px', fontWeight: '800', color: 'var(--text-bright)', marginTop: '2px' }}>
+                      {p.bankName} • <span style={{ fontFamily: 'monospace' }}>{p.accountNumber}</span>
+                    </div>
+                    {p.accountName && (
+                      <div style={{ fontSize: '11.5px', color: 'var(--text-subtle)' }}>
+                        Chủ TK: {p.accountName}
+                      </div>
+                    )}
+                  </div>
+                  <div style={{ textAlign: 'right' }}>
+                    <div style={{ fontSize: '11.5px', color: 'var(--text-muted)' }}>Số tiền rút:</div>
+                    <div style={{ fontSize: '18px', fontWeight: '900', color: 'var(--color-primary, #ea580c)', marginTop: '2px' }}>
+                      {formatMoney(p.amount)}
+                    </div>
+                  </div>
+                </div>
+
+                {p.adminNote && (
+                  <div style={{ marginTop: '10px', padding: '8px 12px', background: 'var(--bg-main)', borderRadius: '8px', fontSize: '12px', color: 'var(--text-muted)', borderLeft: '3px solid var(--color-primary, #ea580c)' }}>
+                    Ghi chú Admin: <b>{p.adminNote}</b>
+                  </div>
+                )}
+              </div>
+            );
+          })
         )}
       </div>
     </div>

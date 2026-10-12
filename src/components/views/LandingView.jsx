@@ -4,6 +4,7 @@ import MobileBottomNav from '../common/MobileBottomNav';
 import ToastNotification from '../common/ToastNotification';
 import ThemeToggle from '../common/ThemeToggle';
 import RunningCatMascot from '../common/RunningCatMascot';
+import ConvertView from './ConvertView';
 
 export default function LandingView() {
   const { view, setView, token, user, isAdmin, theme, toggleTheme, mobileMenuOpen, setMobileMenuOpen, handleLogout, showToast, windowWidth } = useApp();
@@ -86,15 +87,22 @@ export default function LandingView() {
           </button>
         </div>
 
-        {/* MENU TRƯỚC ĐÂY: GIỮ NGUYÊN 100% Ở CHÍNH GIỮA */}
+        {/* MENU TRỰC TIẾP: TRANG CHỦ & CÁC TIỆN ÍCH THÀNH VIÊN */}
         <nav className={`landing-nav${mobileMenuOpen ? ' open' : ''}`}>
           <a href="#home" onClick={() => setMobileMenuOpen(false)}>Trang chủ</a>
-          <a href="#features" onClick={() => setMobileMenuOpen(false)}>Tính năng</a>
-          <a href="#steps" onClick={() => setMobileMenuOpen(false)}>Hướng dẫn</a>
-          <a href="#pricing" onClick={() => setMobileMenuOpen(false)}>Bảng giá</a>
-          <a href="#" onClick={e => { e.preventDefault(); setView('lookup'); window.history.pushState({}, '', '/?view=lookup'); setMobileMenuOpen(false); }} style={{ color: '#ea580c', fontWeight: '700' }}>
-            <i className="fa-thin fa-magnifying-glass" style={{ marginRight: '6px' }}></i>Tra cứu đơn hàng
+          <a href="#member-converter" onClick={() => setMobileMenuOpen(false)} style={{ color: 'var(--color-primary, #ea580c)', fontWeight: '700' }}>
+            <i className="fa-solid fa-bolt" style={{ marginRight: '5px' }}></i>Chuyển đổi link
           </a>
+          <a href="#" onClick={e => { e.preventDefault(); setView('orders'); window.history.pushState({}, '', '/?view=orders'); setMobileMenuOpen(false); }}>
+            <i className="fa-solid fa-boxes-stacked" style={{ marginRight: '5px' }}></i>Đơn hàng
+          </a>
+          <a href="#" onClick={e => { e.preventDefault(); setView('withdraw'); window.history.pushState({}, '', '/?view=withdraw'); setMobileMenuOpen(false); }}>
+            <i className="fa-solid fa-wallet" style={{ marginRight: '5px' }}></i>Ví &amp; Rút tiền
+          </a>
+          <a href="#" onClick={e => { e.preventDefault(); setView('lookup'); window.history.pushState({}, '', '/?view=lookup'); setMobileMenuOpen(false); }}>
+            <i className="fa-thin fa-magnifying-glass" style={{ marginRight: '5px' }}></i>Tra cứu Zalo
+          </a>
+          <a href="#pricing" onClick={() => setMobileMenuOpen(false)}>Bảng giá</a>
           <div className="mobile-nav-actions">
             {token ? (
               <>
@@ -174,13 +182,127 @@ export default function LandingView() {
         <p className="hero-subtitle" style={{ color: 'var(--text-muted)', fontSize: '16px', maxWidth: '780px', margin: '0 auto 16px', lineHeight: '1.6' }}>
           Biến mọi liên kết mua sắm trong nhóm chat Zalo của bạn thành nguồn thu nhập thụ động chỉ trong vài giây. Tiện lợi, tự động, ghi nhận sub_id chuẩn xác và hoàn toàn minh bạch.
         </p>
-        <div className="hero-buttons" style={{ justifyContent: 'center', marginBottom: '0px' }}>
-            <a href="#automation-features" className="btn btn-hero-1">Bắt đầu ngay</a>
+        <div className="hero-buttons" style={{ justifyContent: 'center', marginBottom: '10px' }}>
+            <a href="#member-converter" className="btn btn-hero-1">
+              <i className="fa-solid fa-bolt" style={{ marginRight: '6px' }}></i>Chuyển đổi link ngay
+            </a>
             <button onClick={() => { setView('lookup'); window.history.pushState({}, '', '/?view=lookup'); }} className="btn btn-hero-2">
               <i className="fa-thin fa-magnifying-glass"></i> Tra cứu đơn hàng
             </button>
             <a href="#pricing" className="btn btn-hero-3">Xem bảng giá</a>
           </div>
+        </section>
+
+        {/* Section: TIỆN ÍCH THÀNH VIÊN TRỰC TIẾP TRÊN TRANG CHỦ */}
+        <section id="member-converter" className="landing-block-container reveal-on-scroll" style={{ padding: '24px 20px', marginTop: '12px', marginBottom: '24px' }}>
+          <div style={{ textAlign: 'center', marginBottom: '18px' }}>
+            <span style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '6px',
+              padding: '6px 14px',
+              borderRadius: '20px',
+              background: 'rgba(249, 115, 22, 0.12)',
+              color: 'var(--color-primary, #ea580c)',
+              fontSize: '12px',
+              fontWeight: '800'
+            }}>
+              <i className="fa-solid fa-bolt"></i> CÔNG CỤ TIỆN ÍCH THÀNH VIÊN
+            </span>
+            <h2 className="section-title" style={{ fontSize: '28px', fontWeight: '800', marginTop: '10px', marginBottom: '8px' }}>
+              Tạo Link Tiếp Thị &amp; Mua Sắm Hoàn Tiền Trực Tiếp
+            </h2>
+            <p className="section-subtitle" style={{ fontSize: '14.5px', maxWidth: '680px', margin: '0 auto' }}>
+              Dán bất kỳ link sản phẩm từ Shopee, TikTok Shop, Lazada hoặc ShopeeFood để nhận link affiliate có gắn mã định danh cá nhân hoàn tiền tự động!
+            </p>
+          </div>
+
+          {/* 3 Quick Cards Chuyển Đổi Nhanh Sang Đơn Hàng / Ví Tiền / Liên Kết Zalo */}
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+            gap: '12px',
+            maxWidth: '800px',
+            margin: '0 auto 20px'
+          }}>
+            <button
+              type="button"
+              onClick={() => { setView('orders'); window.history.pushState({}, '', '/?view=orders'); }}
+              className="lookup-card"
+              style={{
+                padding: '14px 16px',
+                margin: 0,
+                display: 'flex',
+                alignItems: 'center',
+                gap: '10px',
+                cursor: 'pointer',
+                textAlign: 'left',
+                transition: 'all 0.2s ease',
+                border: '1px solid var(--border-color)'
+              }}
+            >
+              <div style={{ width: '36px', height: '36px', borderRadius: '10px', background: 'rgba(2, 132, 199, 0.12)', color: '#0284c7', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '16px', flexShrink: 0 }}>
+                <i className="fa-solid fa-boxes-stacked"></i>
+              </div>
+              <div>
+                <div style={{ fontSize: '13px', fontWeight: '800', color: 'var(--text-bright)' }}>Đơn Hàng Đã Đặt</div>
+                <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>Xem đơn Web &amp; Zalo</div>
+              </div>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => { setView('withdraw'); window.history.pushState({}, '', '/?view=withdraw'); }}
+              className="lookup-card"
+              style={{
+                padding: '14px 16px',
+                margin: 0,
+                display: 'flex',
+                alignItems: 'center',
+                gap: '10px',
+                cursor: 'pointer',
+                textAlign: 'left',
+                transition: 'all 0.2s ease',
+                border: '1px solid var(--border-color)'
+              }}
+            >
+              <div style={{ width: '36px', height: '36px', borderRadius: '10px', background: 'rgba(16, 185, 129, 0.12)', color: '#10b981', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '16px', flexShrink: 0 }}>
+                <i className="fa-solid fa-wallet"></i>
+              </div>
+              <div>
+                <div style={{ fontSize: '13px', fontWeight: '800', color: 'var(--text-bright)' }}>Ví Tiền &amp; Rút Tiền</div>
+                <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>Xem số dư &amp; rút tiền</div>
+              </div>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => { setView('account'); window.history.pushState({}, '', '/?view=account'); }}
+              className="lookup-card"
+              style={{
+                padding: '14px 16px',
+                margin: 0,
+                display: 'flex',
+                alignItems: 'center',
+                gap: '10px',
+                cursor: 'pointer',
+                textAlign: 'left',
+                transition: 'all 0.2s ease',
+                border: '1px solid var(--border-color)'
+              }}
+            >
+              <div style={{ width: '36px', height: '36px', borderRadius: '10px', background: 'rgba(249, 115, 22, 0.12)', color: 'var(--color-primary, #ea580c)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '16px', flexShrink: 0 }}>
+                <i className="fa-solid fa-link"></i>
+              </div>
+              <div>
+                <div style={{ fontSize: '13px', fontWeight: '800', color: 'var(--text-bright)' }}>Liên Kết Zalo ID</div>
+                <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>Đồng bộ đơn Bot Zalo</div>
+              </div>
+            </button>
+          </div>
+
+          {/* Công Cụ Chuyển Đổi Link Trực Tiếp Ngay Tại Trang Chủ */}
+          <ConvertView />
         </section>
 
         {/* Section 2: Zig-Zag Alternating Showcase Section (Moved UP as requested) */}

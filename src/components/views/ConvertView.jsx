@@ -219,48 +219,80 @@ export default function ConvertView() {
           </div>
         </div>
 
-        {/* CÁC ICON NỀN TẢNG ĐỒNG BỘ VỚI WEB */}
-        <div className="lookup-tabs" style={{ marginBottom: '16px' }}>
-          <button 
-            type="button"
-            className={`lookup-tab ${activePlatform === 'ALL' ? 'active' : ''}`} 
-            onClick={() => setActivePlatform('ALL')}
-          >
-            <i className="fa-solid fa-bolt" style={{ color: activePlatform === 'ALL' ? '#fff' : '#ea580c' }}></i>
-            <span>Tất cả sàn</span>
-          </button>
-          <button 
-            type="button"
-            className={`lookup-tab ${activePlatform === 'shopee' ? 'active' : ''}`} 
-            onClick={() => setActivePlatform('shopee')}
-          >
-            <i className="fa-solid fa-bag-shopping" style={{ color: activePlatform === 'shopee' ? '#fff' : '#ea580c' }}></i>
+        {/* CÁC NỀN TẢNG ĐƯỢC HỖ TRỢ CHUYỂN ĐỔI (HIỂN THỊ RÕ 4 LOẠI SÀN) */}
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: '8px',
+          flexWrap: 'wrap',
+          marginBottom: '16px'
+        }}>
+          <span style={{ fontSize: '12px', color: 'var(--text-muted)', fontWeight: '600', marginRight: '2px' }}>
+            Hỗ trợ 4 sàn:
+          </span>
+          <div style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '6px',
+            padding: '5px 12px',
+            borderRadius: '12px',
+            background: 'rgba(234, 88, 12, 0.12)',
+            color: '#ea580c',
+            border: '1px solid rgba(234, 88, 12, 0.25)',
+            fontSize: '12px',
+            fontWeight: '700'
+          }}>
+            <i className="fa-solid fa-bag-shopping"></i>
             <span>Shopee</span>
-          </button>
-          <button 
-            type="button"
-            className={`lookup-tab ${activePlatform === 'tiktok' ? 'active' : ''}`} 
-            onClick={() => setActivePlatform('tiktok')}
-          >
-            <i className="fa-brands fa-tiktok" style={{ color: activePlatform === 'tiktok' ? '#fff' : 'inherit' }}></i>
+          </div>
+
+          <div style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '6px',
+            padding: '5px 12px',
+            borderRadius: '12px',
+            background: 'var(--bg-main)',
+            color: 'var(--text-bright)',
+            border: '1px solid var(--border-color)',
+            fontSize: '12px',
+            fontWeight: '700'
+          }}>
+            <i className="fa-brands fa-tiktok"></i>
             <span>TikTok Shop</span>
-          </button>
-          <button 
-            type="button"
-            className={`lookup-tab ${activePlatform === 'lazada' ? 'active' : ''}`} 
-            onClick={() => setActivePlatform('lazada')}
-          >
-            <i className="fa-solid fa-heart" style={{ color: activePlatform === 'lazada' ? '#fff' : '#0284c7' }}></i>
+          </div>
+
+          <div style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '6px',
+            padding: '5px 12px',
+            borderRadius: '12px',
+            background: 'rgba(2, 132, 199, 0.12)',
+            color: '#0284c7',
+            border: '1px solid rgba(2, 132, 199, 0.25)',
+            fontSize: '12px',
+            fontWeight: '700'
+          }}>
+            <i className="fa-solid fa-heart"></i>
             <span>Lazada</span>
-          </button>
-          <button 
-            type="button"
-            className={`lookup-tab ${activePlatform === 'shopeefood' ? 'active' : ''}`} 
-            onClick={() => setActivePlatform('shopeefood')}
-          >
-            <i className="fa-solid fa-utensils" style={{ color: activePlatform === 'shopeefood' ? '#fff' : '#dc2626' }}></i>
+          </div>
+
+          <div style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '6px',
+            padding: '5px 12px',
+            borderRadius: '12px',
+            background: 'rgba(220, 38, 38, 0.12)',
+            color: '#dc2626',
+            border: '1px solid rgba(220, 38, 38, 0.25)',
+            fontSize: '12px',
+            fontWeight: '700'
+          }}>
+            <i className="fa-solid fa-utensils"></i>
             <span>ShopeeFood</span>
-          </button>
+          </div>
         </div>
 
         {/* Input Textarea Form */}
@@ -274,18 +306,17 @@ export default function ConvertView() {
             </label>
             <textarea
               className="lookup-input"
-              rows={4}
+              rows={3}
               value={inputText}
               onChange={(e) => setInputText(e.target.value)}
-              placeholder={`Ví dụ:\nhttps://shopee.vn/product/123/456...\nhttps://vt.tiktok.com/ZSxxx...\nhttps://s.lazada.vn/s.xxx...\nhttps://shopeefood.vn/ha-noi/...`}
               style={{
                 width: '100%',
                 resize: 'vertical',
-                minHeight: '120px',
-                lineHeight: '1.6',
+                minHeight: '85px',
+                lineHeight: '1.5',
                 fontFamily: 'monospace',
                 fontSize: '13px',
-                padding: '14px',
+                padding: '12px 14px',
                 borderRadius: '14px'
               }}
             />
@@ -316,7 +347,7 @@ export default function ConvertView() {
                 </>
               ) : (
                 <>
-                  <i className="fa-solid fa-wand-magic-sparkles"></i>
+                  <i className="fa-solid fa-arrows-rotate"></i>
                   <span>Chuyển Đổi Link Ngay</span>
                 </>
               )}

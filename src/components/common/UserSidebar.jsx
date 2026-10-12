@@ -123,15 +123,8 @@ export default function UserSidebar({ sidebarOpen, setSidebarOpen }) {
     <>
       {sidebarOpen && (
         <div 
-          className="sidebar-overlay" 
+          className="user-sidebar-overlay" 
           onClick={() => setSidebarOpen(false)}
-          style={{
-            position: 'fixed',
-            inset: 0,
-            background: 'rgba(0, 0, 0, 0.45)',
-            backdropFilter: 'blur(4px)',
-            zIndex: 998
-          }}
         />
       )}
 
@@ -143,7 +136,7 @@ export default function UserSidebar({ sidebarOpen, setSidebarOpen }) {
         width: '260px',
         background: 'var(--bg-card)',
         borderRight: '1px solid var(--border-color)',
-        zIndex: 999,
+        zIndex: 100000,
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'space-between',
@@ -172,8 +165,8 @@ export default function UserSidebar({ sidebarOpen, setSidebarOpen }) {
             />
           </div>
 
-          {/* Section 1: MENU ĐIỀU HƯỚNG CHÍNH (Trang chủ, Tra cứu, Bảng giá, Blog) */}
-          <div style={{ marginBottom: '18px' }}>
+          {/* Section 1: MENU ĐIỀU HƯỚNG CHÍNH (Trang chủ, Tra cứu, Bảng giá, Blog) - CHỈ HIỂN THỊ TRÊN MOBILE */}
+          <div className="show-on-mobile" style={{ marginBottom: '18px' }}>
             <div style={{
               fontSize: '11px',
               fontWeight: '600',
@@ -187,13 +180,13 @@ export default function UserSidebar({ sidebarOpen, setSidebarOpen }) {
               gap: '6px'
             }}>
               <i className="fa-solid fa-compass" style={{ fontSize: '11px' }}></i>
-              <span>Khám Phá & Tra Cứu</span>
+              <span>Menu Điều Hướng</span>
             </div>
             {renderNavList(mainNavTabs)}
           </div>
 
-          {/* Section 2: TIỆN ÍCH THÀNH VIÊN */}
-          <div style={{ marginBottom: '16px' }}>
+          {/* Section 2: TIỆN ÍCH THÀNH VIÊN - CHỈ HIỂN THỊ TRÊN LAPTOP / DESKTOP (vì Mobile đã có Bottom Nav) */}
+          <div className="hide-on-mobile" style={{ marginBottom: '16px' }}>
             <div style={{
               fontSize: '11px',
               fontWeight: '600',

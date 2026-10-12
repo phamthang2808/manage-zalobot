@@ -8122,14 +8122,37 @@ body.dark .stat-card-item.referral .stat-card-value { color: #fb7185 !important;
   display: none;
 }
 
+.user-sidebar {
+  z-index: 100000 !important;
+}
+
+.user-sidebar-overlay {
+  display: block;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
+  z-index: 99990 !important;
+  animation: fadeIn 0.2s ease-out;
+}
+
+@media (min-width: 993px) {
+  .show-on-mobile {
+    display: none !important;
+  }
+}
+
 @media (max-width: 992px) {
   .user-sidebar {
     transform: translateX(-100%);
     box-shadow: none;
+    z-index: 100000 !important;
   }
   .user-sidebar.open {
     transform: translateX(0) !important;
     box-shadow: 6px 0 30px rgba(0, 0, 0, 0.3) !important;
+    z-index: 100000 !important;
   }
   .user-workspace-content {
     margin-left: 0 !important;
@@ -8138,9 +8161,6 @@ body.dark .stat-card-item.referral .stat-card-value { color: #fb7185 !important;
   .workspace-sidebar-toggle {
     display: inline-flex !important;
   }
-}
-
-@media (max-width: 768px) {
   .hide-on-mobile {
     display: none !important;
   }

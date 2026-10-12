@@ -149,30 +149,7 @@ export default function WorkspaceTopBar({ setSidebarOpen }) {
       <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexShrink: 0 }}>
         <ThemeToggle />
 
-        {isAdmin && view !== 'lookup' && (
-          <button
-            onClick={() => { setView('admin'); sessionStorage.setItem('adminView', 'admin'); }}
-            className="hide-on-mobile"
-            style={{
-              alignItems: 'center',
-              gap: '6px',
-              padding: '7px 14px',
-              borderRadius: '20px',
-              background: 'linear-gradient(135deg, #f97316, #ea580c)',
-              color: '#fff',
-              fontSize: '12.5px',
-              fontWeight: '600',
-              fontFamily: 'var(--font-sans)',
-              border: 'none',
-              cursor: 'pointer',
-              boxShadow: '0 2px 10px rgba(249,115,22,0.3)',
-              whiteSpace: 'nowrap'
-            }}
-          >
-            <i className="fa-solid fa-shield-halved"></i>
-            <span>Quản trị</span>
-          </button>
-        )}
+        {/* Quản trị đã có ở menu trái trên laptop và menu đáy trên mobile */}
 
         {token ? (
           <div

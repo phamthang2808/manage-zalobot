@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
 
 export default function AnnouncementModal({ apiRoot, previewData = null, onClose = null }) {
   const [announcement, setAnnouncement] = useState(previewData);
@@ -181,25 +182,34 @@ export default function AnnouncementModal({ apiRoot, previewData = null, onClose
 
   const getFullImageUrl = (url) => {
     if (!url) return '';
-    if (url.startsWith('http://') || url.startsWith('https://') || url.startsWith('data:')) {
+    if (url.startsWith('blob:') || url.startsWith('data:') || url.startsWith('http://') || url.startsWith('https://')) {
       return url;
     }
+    let clean = url;
+    if (clean.startsWith('/uploads/announcements/')) {
+      const filename = clean.replace('/uploads/announcements/', '');
+      clean = `/api/public/announcement/image/${filename}`;
+    }
     const root = apiRoot || '';
-    return `${root}${url}`;
+    return `${root}${clean}`;
   };
 
   const bannerImg = getFullImageUrl(announcement.imageUrl);
 
-  return (
+  return createPortal(
     <div style={{
       position: 'fixed',
-      inset: 0,
-      zIndex: 999999,
+      top: 0,
+      left: 0,
+      width: '100vw',
+      height: '100vh',
+      zIndex: 9999999,
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
       padding: '16px',
-      background: 'rgba(15, 23, 42, 0.65)',
+      boxSizing: 'border-box',
+      background: 'rgba(15, 23, 42, 0.75)',
       backdropFilter: 'blur(8px)',
       WebkitBackdropFilter: 'blur(8px)',
       animation: 'symFadeIn 0.25s ease-out'
@@ -357,6 +367,7 @@ export default function AnnouncementModal({ apiRoot, previewData = null, onClose
           to { opacity: 1; transform: scale(1); }
         }
       `}</style>
-    </div>
+    </div>,
+    document.body
   );
 }

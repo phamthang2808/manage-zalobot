@@ -9,6 +9,7 @@ export default function AdminAnnouncementTab() {
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [previewOpen, setPreviewOpen] = useState(false);
+  const [localPreview, setLocalPreview] = useState('');
 
   // Announcement state
   const [formData, setFormData] = useState({
@@ -18,6 +19,25 @@ export default function AdminAnnouncementTab() {
     targetUrl: '',
     content: ''
   });
+
+  const normalizeImgUrl = (url) => {
+    if (!url) return '';
+    if (url.startsWith('/uploads/announcements/')) {
+      const filename = url.replace('/uploads/announcements/', '');
+      return `/api/public/announcement/image/${filename}`;
+    }
+    return url;
+  };
+
+  const resolveBannerUrl = (url) => {
+    if (!url) return '';
+    if (url.startsWith('blob:') || url.startsWith('data:') || url.startsWith('http://') || url.startsWith('https://')) {
+      return url;
+    }
+    const clean = normalizeImgUrl(url);
+    const root = API_URL_ROOT || '';
+    return `${root}${clean}`;
+  };
 
   const fetchAnnouncement = async () => {
     setLoading(true);
@@ -34,7 +54,7 @@ export default function AdminAnnouncementTab() {
           setFormData({
             active: resData.data.active !== undefined ? resData.data.active : true,
             title: resData.data.title || '',
-            imageUrl: resData.data.imageUrl || '',
+            imageUrl: normalizeImgUrl(resData.data.imageUrl || ''),
             targetUrl: resData.data.targetUrl || '',
             content: resData.data.content || ''
           });
@@ -119,6 +139,12 @@ export default function AdminAnnouncementTab() {
     const file = e.target.files?.[0];
     if (!file) return;
 
+    // Hiển thị ngay ảnh preview dạng blob cho admin
+    try {
+      const blobUrl = URL.createObjectURL(file);
+      setLocalPreview(blobUrl);
+    } catch (e) {}
+
     setUploading(true);
     try {
       const token = sessionStorage.getItem('adminToken') || '';
@@ -134,7 +160,7 @@ export default function AdminAnnouncementTab() {
 
       const resData = await res.json();
       if (res.ok && (resData.imageUrl || resData.url)) {
-        const url = resData.imageUrl || resData.url;
+        const url = normalizeImgUrl(resData.imageUrl || resData.url);
         setFormData(prev => ({ ...prev, imageUrl: url }));
         showToast('Upload ảnh banner thành công!', 'success');
       } else {
@@ -282,17 +308,23 @@ export default function AdminAnnouncementTab() {
                 </label>
               </div>
 
-              {formData.imageUrl && (
-                <div style={{ marginTop: '10px', borderRadius: '12px', overflow: 'hidden', border: '1px solid var(--border-color)', maxWidth: '280px', position: 'relative' }}>
+              {(localPreview || formData.imageUrl) && (
+                <div style={{ marginTop: '10px', borderRadius: '12px', overflow: 'hidden', border: '1px solid var(--border-color)', maxWidth: '340px', position: 'relative', background: 'var(--bg-secondary, rgba(0,0,0,0.04))' }}>
                   <img
-                    src={formData.imageUrl.startsWith('/') && !formData.imageUrl.startsWith('//') ? `${API_URL_ROOT}${formData.imageUrl}` : formData.imageUrl}
+                    src={localPreview || resolveBannerUrl(formData.imageUrl)}
                     alt="Preview banner"
-                    style={{ width: '100%', maxHeight: '140px', objectFit: 'cover', display: 'block' }}
+                    onError={(e) => {
+                      console.warn('Banner load error:', e.target.src);
+                    }}
+                    style={{ width: '100%', maxHeight: '160px', objectFit: 'cover', display: 'block' }}
                   />
                   <button
                     type="button"
-                    onClick={() => setFormData({ ...formData, imageUrl: '' })}
-                    style={{ position: 'absolute', top: '6px', right: '6px', background: 'rgba(0,0,0,0.6)', color: '#fff', border: 'none', borderRadius: '50%', width: '22px', height: '22px', cursor: 'pointer', fontSize: '12px' }}
+                    onClick={() => {
+                      setLocalPreview('');
+                      setFormData(prev => ({ ...prev, imageUrl: '' }));
+                    }}
+                    style={{ position: 'absolute', top: '6px', right: '6px', background: 'rgba(0,0,0,0.65)', color: '#fff', border: 'none', borderRadius: '50%', width: '24px', height: '24px', cursor: 'pointer', fontSize: '13px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                     title="Xóa ảnh"
                   >
                     ×
@@ -364,6 +396,7 @@ export default function AdminAnnouncementTab() {
           apiRoot={API_URL_ROOT}
           previewData={{
             ...formData,
+            imageUrl: localPreview || formData.imageUrl,
             id: 'preview',
             updatedAt: 'now'
           }}

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useApp } from '../../context/AppContext';
 import { formatMoney, formatDateTime } from '../../utils/formatters';
+import CopyButton from '../common/CopyButton';
 
 export default function WithdrawView() {
   const { API_URL_ROOT, user, showToast, setView } = useApp();
@@ -178,74 +179,125 @@ export default function WithdrawView() {
           Tiền hoa hồng của đơn Shopee &quot;Hoàn thành&quot; sau 3 ngày (đơn TikTok rút ngay khi hoàn thành) sẽ tự động chuyển xuống ví khả dụng để rút (đã trừ thuế và chia 8-2). Lệnh rút tiền sau khi gửi sẽ được duyệt thủ công bởi Trưởng nhóm Phạm Thắng.
         </p>
 
-        {/* Thông tin tài khoản thụ hưởng nhận tiền (Giao diện thẻ ngân hàng Fintech hiện đại) */}
+        {/* Thông tin tài khoản thụ hưởng nhận tiền (Thiết kế thẻ ngân hàng sang trọng, cực kỳ rõ ràng, dễ nhìn) */}
         {user?.accountNumber ? (
           <div style={{
-            background: 'var(--bg-main)',
-            border: '1.5px solid var(--border-color)',
-            borderRadius: '14px',
-            padding: '14px 18px',
-            marginBottom: '16px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            flexWrap: 'wrap',
-            gap: '12px',
-            boxShadow: '0 2px 8px rgba(0, 0, 0, 0.02)'
+            background: 'var(--bg-main, #0f172a)',
+            border: '1.5px solid var(--border-color, rgba(255, 255, 255, 0.12))',
+            borderRadius: '16px',
+            padding: '16px 18px',
+            marginBottom: '18px',
+            boxShadow: '0 4px 16px rgba(0, 0, 0, 0.08)',
+            position: 'relative'
           }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
-              <div style={{
-                width: '44px',
-                height: '44px',
-                borderRadius: '12px',
-                background: 'rgba(2, 132, 199, 0.12)',
-                color: '#0284c7',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontSize: '18px',
-                border: '1px solid rgba(2, 132, 199, 0.25)',
-                flexShrink: 0
-              }}>
-                <i className="fa-solid fa-building-columns"></i>
+            {/* Header: Label + Ngân hàng & Nút Thay đổi */}
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <div style={{
+                  width: '36px',
+                  height: '36px',
+                  borderRadius: '10px',
+                  background: 'rgba(2, 132, 199, 0.15)',
+                  color: '#0284c7',
+                  border: '1px solid rgba(2, 132, 199, 0.3)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontSize: '16px',
+                  flexShrink: 0
+                }}>
+                  <i className="fa-solid fa-building-columns"></i>
+                </div>
+                <div>
+                  <div style={{ fontSize: '10.5px', fontWeight: '800', color: 'var(--text-muted, #94a3b8)', textTransform: 'uppercase', letterSpacing: '0.6px' }}>
+                    NGÂN HÀNG THỤ HƯỞNG
+                  </div>
+                  <div style={{ fontSize: '15px', fontWeight: '800', color: 'var(--text-bright, #ffffff)', lineHeight: '1.2' }}>
+                    {user.bankName || user.bankCode || 'Ngân hàng thụ hưởng'}
+                  </div>
+                </div>
               </div>
+
+              <button
+                type="button"
+                onClick={() => setView('account')}
+                style={{
+                  fontSize: '12px',
+                  fontWeight: '600',
+                  padding: '5px 12px',
+                  borderRadius: '8px',
+                  border: '1px solid var(--border-color, #cbd5e1)',
+                  background: 'var(--bg-card, rgba(255, 255, 255, 0.05))',
+                  color: 'var(--text-bright, #ffffff)',
+                  cursor: 'pointer',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '5px',
+                  transition: 'all 0.2s ease'
+                }}
+                onMouseEnter={e => { e.currentTarget.style.color = '#ea580c'; e.currentTarget.style.borderColor = '#ea580c'; }}
+                onMouseLeave={e => { e.currentTarget.style.color = 'var(--text-bright, #ffffff)'; e.currentTarget.style.borderColor = 'var(--border-color, #cbd5e1)'; }}
+              >
+                <i className="fa-regular fa-pen-to-square" style={{ fontSize: '11.5px', color: '#ea580c' }}></i>
+                <span>Thay đổi</span>
+              </button>
+            </div>
+
+            {/* Dòng Số Tài Khoản: Nổi bật, to rõ, cực kỳ dễ đọc */}
+            <div style={{
+              background: 'var(--bg-secondary, rgba(0, 0, 0, 0.2))',
+              border: '1px solid var(--border-color, rgba(255, 255, 255, 0.08))',
+              borderRadius: '12px',
+              padding: '10px 14px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              marginBottom: '10px'
+            }}>
               <div>
-                <div style={{ fontSize: '11px', fontWeight: '800', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-                  NGÂN HÀNG THỤ HƯỞNG
-                </div>
-                <div style={{ fontSize: '15px', fontWeight: '800', color: 'var(--text-bright)', marginTop: '2px', display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
-                  <span>{user.bankName || user.bankCode}</span>
-                  <span style={{ color: 'var(--border-color)' }}>•</span>
-                  <span style={{ fontFamily: 'monospace', color: '#0284c7', letterSpacing: '1px' }}>{user.accountNumber}</span>
-                  {(user.accountName || user.fullName) && (
-                    <>
-                      <span style={{ color: 'var(--border-color)' }}>•</span>
-                      <span style={{ textTransform: 'uppercase', fontSize: '13px', color: 'var(--text-bright)', fontWeight: '700' }}>
-                        {user.accountName || user.fullName}
-                      </span>
-                    </>
-                  )}
-                </div>
+                <span style={{ fontSize: '11px', color: 'var(--text-muted, #94a3b8)', display: 'block', marginBottom: '2px' }}>
+                  Số tài khoản:
+                </span>
+                <span style={{
+                  fontSize: '17px',
+                  fontWeight: '800',
+                  color: '#38bdf8',
+                  letterSpacing: '1.2px',
+                  fontFamily: 'monospace'
+                }}>
+                  {user.accountNumber}
+                </span>
+              </div>
+              <div style={{ display: 'inline-flex', alignItems: 'center' }}>
+                <CopyButton
+                  text={user.accountNumber}
+                  title="Copy STK"
+                  toastMessage={`Đã copy STK: ${user.accountNumber}`}
+                />
               </div>
             </div>
-            <button
-              type="button"
-              onClick={() => setView('account')}
-              className="lookup-admin-link"
-              style={{
-                fontSize: '12px',
-                padding: '6px 14px',
-                borderRadius: '8px',
-                gap: '6px',
-                color: 'var(--text-muted)',
-                borderColor: 'var(--border-color)'
-              }}
-              onMouseEnter={e => { e.currentTarget.style.color = '#ea580c'; e.currentTarget.style.borderColor = '#ea580c'; }}
-              onMouseLeave={e => { e.currentTarget.style.color = 'var(--text-muted)'; e.currentTarget.style.borderColor = 'var(--border-color)'; }}
-            >
-              <i className="fa-regular fa-pen-to-square"></i>
-              <span>Thay đổi</span>
-            </button>
+
+            {/* Dòng Chủ Tài Khoản: Rõ ràng, viết hoa */}
+            {(user.accountName || user.fullName) && (
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 4px' }}>
+                <span style={{ fontSize: '12px', color: 'var(--text-muted, #94a3b8)' }}>
+                  Chủ tài khoản:
+                </span>
+                <span style={{
+                  fontSize: '13.5px',
+                  fontWeight: '800',
+                  color: 'var(--text-bright, #ffffff)',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.4px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '5px'
+                }}>
+                  <span>{user.accountName || user.fullName}</span>
+                  <i className="fa-solid fa-circle-check" style={{ color: '#10b981', fontSize: '13px' }}></i>
+                </span>
+              </div>
+            )}
           </div>
         ) : (
           <div style={{

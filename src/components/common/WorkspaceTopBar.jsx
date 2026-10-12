@@ -190,8 +190,8 @@ export default function WorkspaceTopBar({ setSidebarOpen }) {
                 {(user?.fullName || user?.name || 'U').substring(0, 1).toUpperCase()}
               </div>
             )}
-            <span style={{ fontSize: '12.5px', fontWeight: '700', color: 'var(--text-bright)', maxWidth: '100px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-              {user?.fullName?.split(' ')[user.fullName.split(' ').length - 1] || 'Cá nhân'}
+            <span style={{ fontSize: '12.5px', fontWeight: '700', color: 'var(--text-bright)', maxWidth: '160px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+              {user?.fullName || user?.name || user?.email?.split('@')[0] || 'Cá nhân'}
             </span>
           </div>
         ) : (

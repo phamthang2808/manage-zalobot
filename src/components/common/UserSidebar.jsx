@@ -6,7 +6,6 @@ export default function UserSidebar({ sidebarOpen, setSidebarOpen }) {
   const { view, setView, user, isAdmin, handleLogout } = useApp();
 
   const mainNavTabs = [
-    { id: 'home', label: 'Trang chủ', icon: 'fa-solid fa-house' },
     { id: 'lookup', label: 'Tra cứu đơn hàng', icon: 'fa-solid fa-magnifying-glass' },
     { id: 'pricing', label: 'Bảng giá dịch vụ', icon: 'fa-solid fa-tags' },
     { id: 'blog', label: 'Blog kiến thức', icon: 'fa-regular fa-newspaper' }

@@ -172,8 +172,8 @@ export default function UserNavbar() {
                   {(user?.fullName || 'U').substring(0, 1).toUpperCase()}
                 </div>
               )}
-              <span style={{ fontSize: '13px', fontWeight: '700', color: 'var(--text-bright)', maxWidth: '120px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                {user?.fullName?.split(' ')[user.fullName.split(' ').length - 1] || 'Tài khoản'}
+              <span style={{ fontSize: '13px', fontWeight: '700', color: 'var(--text-bright)', maxWidth: '180px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                {user?.fullName || user?.name || user?.email?.split('@')[0] || 'Tài khoản'}
               </span>
             </div>
 

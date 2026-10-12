@@ -147,7 +147,7 @@ export default function LandingView({ inWorkspace = false }) {
                 {user?.avatarUrl
                   ? <img src={user.avatarUrl} alt="Avatar" referrerPolicy="no-referrer" style={{ width: '28px', height: '28px', borderRadius: '50%' }} />
                   : <div className="user-widget-avatar">{(user?.fullName || 'U').substring(0, 1).toUpperCase()}</div>}
-                <span className="user-widget-name">{user?.fullName?.split(' ')[user.fullName.split(' ').length - 1] || 'Cá nhân'}</span>
+                <span className="user-widget-name">{user?.fullName || user?.name || user?.email?.split('@')[0] || 'Cá nhân'}</span>
               </div>
               {isAdmin && (
                 <button

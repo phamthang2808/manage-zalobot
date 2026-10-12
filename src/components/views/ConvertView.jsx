@@ -219,27 +219,24 @@ export default function ConvertView() {
           </div>
         </div>
 
-        {/* CÁC NỀN TẢNG ĐƯỢC HỖ TRỢ CHUYỂN ĐỔI (HIỂN THỊ RÕ 4 LOẠI SÀN) */}
+        {/* CÁC NỀN TẢNG ĐƯỢC HỖ TRỢ CHUYỂN ĐỔI (LÀM THEO 2 HÀNG NGANG 2 CỘT) */}
         <div style={{
-          display: 'flex',
-          alignItems: 'center',
+          display: 'grid',
+          gridTemplateColumns: 'repeat(2, 1fr)',
           gap: '8px',
-          flexWrap: 'wrap',
           marginBottom: '16px'
         }}>
-          <span style={{ fontSize: '12px', color: 'var(--text-muted)', fontWeight: '600', marginRight: '2px' }}>
-            Hỗ trợ 4 sàn:
-          </span>
           <div style={{
-            display: 'inline-flex',
+            display: 'flex',
             alignItems: 'center',
-            gap: '6px',
-            padding: '5px 12px',
+            justifyContent: 'center',
+            gap: '8px',
+            padding: '8px 12px',
             borderRadius: '12px',
             background: 'rgba(234, 88, 12, 0.12)',
             color: '#ea580c',
             border: '1px solid rgba(234, 88, 12, 0.25)',
-            fontSize: '12px',
+            fontSize: '12.5px',
             fontWeight: '700'
           }}>
             <i className="fa-solid fa-bag-shopping"></i>
@@ -247,15 +244,16 @@ export default function ConvertView() {
           </div>
 
           <div style={{
-            display: 'inline-flex',
+            display: 'flex',
             alignItems: 'center',
-            gap: '6px',
-            padding: '5px 12px',
+            justifyContent: 'center',
+            gap: '8px',
+            padding: '8px 12px',
             borderRadius: '12px',
             background: 'var(--bg-main)',
             color: 'var(--text-bright)',
             border: '1px solid var(--border-color)',
-            fontSize: '12px',
+            fontSize: '12.5px',
             fontWeight: '700'
           }}>
             <i className="fa-brands fa-tiktok"></i>
@@ -263,15 +261,16 @@ export default function ConvertView() {
           </div>
 
           <div style={{
-            display: 'inline-flex',
+            display: 'flex',
             alignItems: 'center',
-            gap: '6px',
-            padding: '5px 12px',
+            justifyContent: 'center',
+            gap: '8px',
+            padding: '8px 12px',
             borderRadius: '12px',
             background: 'rgba(2, 132, 199, 0.12)',
             color: '#0284c7',
             border: '1px solid rgba(2, 132, 199, 0.25)',
-            fontSize: '12px',
+            fontSize: '12.5px',
             fontWeight: '700'
           }}>
             <i className="fa-solid fa-heart"></i>
@@ -279,15 +278,16 @@ export default function ConvertView() {
           </div>
 
           <div style={{
-            display: 'inline-flex',
+            display: 'flex',
             alignItems: 'center',
-            gap: '6px',
-            padding: '5px 12px',
+            justifyContent: 'center',
+            gap: '8px',
+            padding: '8px 12px',
             borderRadius: '12px',
             background: 'rgba(220, 38, 38, 0.12)',
             color: '#dc2626',
             border: '1px solid rgba(220, 38, 38, 0.25)',
-            fontSize: '12px',
+            fontSize: '12.5px',
             fontWeight: '700'
           }}>
             <i className="fa-solid fa-utensils"></i>
@@ -577,7 +577,7 @@ export default function ConvertView() {
             <div>
               {/* Bộ lọc lịch sử dạng ấn vào chọn (Gọn gàng, không cần vuốt kéo) */}
               <div style={{ marginBottom: '14px', borderBottom: '1px solid var(--border-color)', paddingBottom: '10px' }}>
-                <div style={{ position: 'relative', display: 'flex', alignItems: 'center', maxWidth: '240px' }}>
+                <div style={{ position: 'relative', display: 'flex', alignItems: 'center', maxWidth: '280px' }}>
                   <i
                     className="fa-solid fa-filter"
                     style={{
@@ -606,11 +606,11 @@ export default function ConvertView() {
                       WebkitAppearance: 'none'
                     }}
                   >
-                    <option value="ALL">Lọc sàn: Tất cả ({historyLinks.length})</option>
-                    <option value="SHOPEE">Sàn: Shopee</option>
-                    <option value="TIKTOK">Sàn: TikTok Shop</option>
-                    <option value="LAZADA">Sàn: Lazada</option>
-                    <option value="SHOPEE_FOOD">Sàn: ShopeeFood</option>
+                    <option value="ALL">Tất cả sàn ({historyLinks.length} link)</option>
+                    <option value="SHOPEE">Shopee ({historyLinks.filter(i => getPlatformMeta(i.platform).name === 'Shopee').length} link)</option>
+                    <option value="TIKTOK">TikTok Shop ({historyLinks.filter(i => getPlatformMeta(i.platform).name === 'TikTok Shop').length} link)</option>
+                    <option value="LAZADA">Lazada ({historyLinks.filter(i => getPlatformMeta(i.platform).name === 'Lazada').length} link)</option>
+                    <option value="SHOPEE_FOOD">ShopeeFood ({historyLinks.filter(i => getPlatformMeta(i.platform).name === 'ShopeeFood').length} link)</option>
                   </select>
                   <i
                     className="fa-solid fa-chevron-down"

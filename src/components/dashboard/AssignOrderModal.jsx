@@ -1,10 +1,11 @@
 import React, { useState, useMemo } from 'react';
+import { createPortal } from 'react-dom';
 import { useApp } from '../../context/AppContext';
 import { formatMoney } from '../../utils/formatters';
 import CopyButton from '../common/CopyButton';
 
 export default function AssignOrderModal({ order, onClose, onSuccess }) {
-  const { users, token, API_URL_ROOT, showToast } = useApp();
+  const { users = [], token, API_URL_ROOT, showToast } = useApp();
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedZaloId, setSelectedZaloId] = useState('');
   const [manualZaloId, setManualZaloId] = useState('');
@@ -14,17 +15,18 @@ export default function AssignOrderModal({ order, onClose, onSuccess }) {
 
   if (!order) return null;
 
-  const currentOwner = users.find(u => u.zaloId === (order.zaloId || order.subId));
+  const userList = Array.isArray(users) ? users : [];
+  const currentOwner = userList.find(u => u && u.zaloId === (order.zaloId || order.subId));
 
   // Filter users list based on search
   const filteredUsers = useMemo(() => {
-    if (!searchTerm.trim()) return users;
+    if (!searchTerm.trim()) return userList;
     const q = searchTerm.trim().toLowerCase();
-    return users.filter(u =>
-      (u.zaloName && u.zaloName.toLowerCase().includes(q)) ||
-      (u.zaloId && u.zaloId.toLowerCase().includes(q))
+    return userList.filter(u =>
+      (u && u.zaloName && u.zaloName.toLowerCase().includes(q)) ||
+      (u && u.zaloId && u.zaloId.toLowerCase().includes(q))
     );
-  }, [users, searchTerm]);
+  }, [userList, searchTerm]);
 
   const handleAssign = async () => {
     const targetId = useManualInput ? manualZaloId.trim() : selectedZaloId.trim();
@@ -56,7 +58,7 @@ export default function AssignOrderModal({ order, onClose, onSuccess }) {
         throw new Error(data.message || 'Không thể gắn đơn hàng lúc này!');
       }
 
-      const targetUser = users.find(u => u.zaloId === targetId);
+      const targetUser = userList.find(u => u && u.zaloId === targetId);
       const displayName = targetUser ? targetUser.zaloName : targetId;
 
       showToast(`Đã gắn đơn hàng ${order.orderId} cho thành viên ${displayName} thành công! Đơn này sẽ được bảo lưu cố định khi import file.`, 'success');
@@ -69,36 +71,51 @@ export default function AssignOrderModal({ order, onClose, onSuccess }) {
     }
   };
 
-  return (
-    <div style={{
-      position: 'fixed',
-      inset: 0,
-      background: 'rgba(15, 23, 42, 0.65)',
-      backdropFilter: 'blur(8px)',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      zIndex: 99999,
-      padding: '16px'
-    }}>
-      <div style={{
-        background: 'var(--bg-card, #ffffff)',
-        border: '1px solid var(--border-color, #e2e8f0)',
-        borderRadius: '20px',
-        width: '100%',
-        maxWidth: '540px',
-        boxShadow: '0 25px 50px -12px rgba(0,0,0,0.25)',
-        overflow: 'hidden',
-        animation: 'modalSlideUp 0.25s ease-out'
-      }}>
+  return createPortal(
+    <div
+      onClick={onClose}
+      style={{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        width: '100vw',
+        height: '100vh',
+        background: 'rgba(15, 23, 42, 0.75)',
+        backdropFilter: 'blur(8px)',
+        WebkitBackdropFilter: 'blur(8px)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        zIndex: 999999,
+        padding: '16px',
+        boxSizing: 'border-box'
+      }}
+    >
+      <div
+        onClick={e => e.stopPropagation()}
+        style={{
+          background: 'var(--bg-card, #1e293b)',
+          color: 'var(--text-main, #f8fafc)',
+          border: '1px solid var(--border-color, #334155)',
+          borderRadius: '20px',
+          width: '100%',
+          maxWidth: '540px',
+          maxHeight: '90vh',
+          boxShadow: '0 25px 60px rgba(0,0,0,0.5)',
+          overflow: 'hidden',
+          display: 'flex',
+          flexDirection: 'column',
+          position: 'relative'
+        }}
+      >
         {/* Modal Header */}
         <div style={{
           padding: '18px 24px',
-          borderBottom: '1px solid var(--border-color, #e2e8f0)',
+          borderBottom: '1px solid var(--border-color, #334155)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
-          background: 'var(--bg-secondary, rgba(0,0,0,0.02))'
+          background: 'var(--bg-secondary, rgba(0,0,0,0.2))'
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
             <div style={{
@@ -110,15 +127,16 @@ export default function AssignOrderModal({ order, onClose, onSuccess }) {
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              fontSize: '16px'
+              fontSize: '16px',
+              flexShrink: 0
             }}>
               <i className="fa-solid fa-link"></i>
             </div>
             <div>
-              <h3 style={{ margin: 0, fontSize: '17px', fontWeight: '800', color: 'var(--text-bright, #0f172a)' }}>
+              <h3 style={{ margin: 0, fontSize: '17px', fontWeight: '800', color: 'var(--text-bright, #ffffff)' }}>
                 Gắn Đơn Cho Người Khác
               </h3>
-              <p style={{ margin: 0, fontSize: '12px', color: 'var(--text-muted, #64748b)' }}>
+              <p style={{ margin: '2px 0 0 0', fontSize: '12px', color: 'var(--text-muted, #94a3b8)' }}>
                 Chỉ định chủ sở hữu đơn hàng (Tự động giữ nguyên khi import lại file)
               </p>
             </div>
@@ -126,13 +144,15 @@ export default function AssignOrderModal({ order, onClose, onSuccess }) {
           <button
             onClick={onClose}
             disabled={loading}
+            type="button"
             style={{
               background: 'none',
               border: 'none',
               color: 'var(--text-muted, #94a3b8)',
-              fontSize: '18px',
+              fontSize: '20px',
               cursor: 'pointer',
-              padding: '4px'
+              padding: '4px',
+              lineHeight: 1
             }}
           >
             ✕
@@ -140,47 +160,49 @@ export default function AssignOrderModal({ order, onClose, onSuccess }) {
         </div>
 
         {/* Modal Body */}
-        <div style={{ padding: '20px 24px', maxHeight: '72vh', overflowY: 'auto' }}>
+        <div style={{ padding: '20px 24px', overflowY: 'auto', flex: 1 }}>
           {/* Order Details Card */}
           <div style={{
-            background: 'var(--bg-main, #f8fafc)',
-            border: '1px solid var(--border-color, #e2e8f0)',
+            background: 'var(--bg-secondary, rgba(0,0,0,0.15))',
+            border: '1px solid var(--border-color, rgba(255,255,255,0.1))',
             borderRadius: '12px',
             padding: '14px 16px',
             marginBottom: '18px',
             fontSize: '13px'
           }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-              <span style={{ color: 'var(--text-muted)' }}>Mã đơn hàng:</span>
-              <div style={{ display: 'inline-flex', alignItems: 'center' }}>
-                <code style={{ fontSize: '12.5px', fontWeight: '800', color: '#ea580c' }}>{order.orderId}</code>
+              <span style={{ color: 'var(--text-muted, #94a3b8)' }}>Mã đơn hàng:</span>
+              <div style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                <code style={{ fontSize: '13px', fontWeight: '800', color: '#ea580c' }}>{order.orderId}</code>
                 <CopyButton text={order.orderId} title="Copy mã đơn hàng" toastMessage={`Đã copy mã đơn: ${order.orderId}`} />
               </div>
             </div>
 
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-              <span style={{ color: 'var(--text-muted)' }}>Nền tảng:</span>
-              <span style={{ fontWeight: '700', color: order.platform === 'TikTok Shop' ? '#000' : '#ee4d2d' }}>
+              <span style={{ color: 'var(--text-muted, #94a3b8)' }}>Nền tảng:</span>
+              <span style={{ fontWeight: '700', color: (order.platform || '').includes('TikTok') ? '#38bdf8' : '#ee4d2d' }}>
                 {order.platform || 'Shopee'}
               </span>
             </div>
 
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '8px', gap: '8px' }}>
-              <span style={{ color: 'var(--text-muted)', flexShrink: 0 }}>Sản phẩm:</span>
-              <span style={{ fontWeight: '600', textAlign: 'right', color: 'var(--text-bright)' }}>
+              <span style={{ color: 'var(--text-muted, #94a3b8)', flexShrink: 0 }}>Sản phẩm:</span>
+              <span style={{ fontWeight: '600', textAlign: 'right', color: 'var(--text-bright, #ffffff)' }}>
                 {order.productName || '---'}
               </span>
             </div>
 
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-              <span style={{ color: 'var(--text-muted)' }}>Hoa hồng gốc:</span>
-              <strong style={{ color: '#059669', fontSize: '14px' }}>{formatMoney(order.commission)}</strong>
+              <span style={{ color: 'var(--text-muted, #94a3b8)' }}>Hoa hồng gốc:</span>
+              <strong style={{ color: '#10b981', fontSize: '14px' }}>
+                {formatMoney(order.commission || order.commissionRaw || order.commissionTotal || 0)}
+              </strong>
             </div>
 
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px dashed var(--border-color, #cbd5e1)', paddingTop: '8px', marginTop: '4px' }}>
-              <span style={{ color: 'var(--text-muted)' }}>Chủ đơn hiện tại:</span>
-              <span style={{ fontWeight: '700', color: currentOwner ? 'var(--text-bright)' : 'var(--color-danger, #ef4444)' }}>
-                {currentOwner ? `${currentOwner.zaloName} (${currentOwner.zaloId})` : (order.zaloId || order.subId || 'Chưa gắn (UNKNOWN)')}
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px dashed var(--border-color, rgba(255,255,255,0.1))', paddingTop: '8px', marginTop: '4px' }}>
+              <span style={{ color: 'var(--text-muted, #94a3b8)' }}>Chủ đơn hiện tại:</span>
+              <span style={{ fontWeight: '700', color: currentOwner ? 'var(--text-bright, #ffffff)' : 'var(--color-danger, #ef4444)' }}>
+                {currentOwner ? `${currentOwner.zaloName || 'Vô danh'} (${currentOwner.zaloId})` : (order.zaloId || order.subId || 'Chưa gắn (UNKNOWN)')}
               </span>
             </div>
           </div>
@@ -188,7 +210,7 @@ export default function AssignOrderModal({ order, onClose, onSuccess }) {
           {/* Member Selection Section */}
           <div style={{ marginBottom: '16px' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
-              <label style={{ fontSize: '13px', fontWeight: '700', color: 'var(--text-bright)' }}>
+              <label style={{ fontSize: '13px', fontWeight: '700', color: 'var(--text-bright, #ffffff)' }}>
                 Chọn thành viên nhận đơn:
               </label>
               <button
@@ -224,7 +246,9 @@ export default function AssignOrderModal({ order, onClose, onSuccess }) {
                     borderRadius: '10px',
                     border: '1px solid var(--border-color, #cbd5e1)',
                     marginBottom: '10px',
-                    background: 'var(--bg-card)'
+                    background: 'var(--bg-secondary, rgba(0,0,0,0.1))',
+                    color: 'var(--text-main, inherit)',
+                    boxSizing: 'border-box'
                   }}
                 />
 
@@ -234,10 +258,10 @@ export default function AssignOrderModal({ order, onClose, onSuccess }) {
                   borderRadius: '12px',
                   maxHeight: '180px',
                   overflowY: 'auto',
-                  background: 'var(--bg-card)'
+                  background: 'var(--bg-secondary, rgba(0,0,0,0.1))'
                 }}>
                   {filteredUsers.length === 0 ? (
-                    <div style={{ padding: '16px', textAlign: 'center', color: 'var(--text-muted)', fontSize: '12.5px' }}>
+                    <div style={{ padding: '16px', textAlign: 'center', color: 'var(--text-muted, #94a3b8)', fontSize: '12.5px' }}>
                       Không tìm thấy thành viên nào khớp với từ khóa
                     </div>
                   ) : (
@@ -252,18 +276,18 @@ export default function AssignOrderModal({ order, onClose, onSuccess }) {
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'space-between',
-                            borderBottom: '1px solid var(--border-color, #f1f5f9)',
+                            borderBottom: '1px solid var(--border-color, rgba(255,255,255,0.06))',
                             cursor: 'pointer',
-                            background: isSelected ? 'rgba(249, 115, 22, 0.12)' : 'transparent',
+                            background: isSelected ? 'rgba(249, 115, 22, 0.16)' : 'transparent',
                             transition: 'all 0.15s ease'
                           }}
                         >
                           <div>
-                            <div style={{ fontWeight: '700', fontSize: '13px', color: isSelected ? '#ea580c' : 'var(--text-bright)' }}>
+                            <div style={{ fontWeight: '700', fontSize: '13px', color: isSelected ? '#ea580c' : 'var(--text-bright, #ffffff)' }}>
                               {u.zaloName || 'Vô danh'}
                             </div>
-                            <div style={{ fontSize: '11.5px', color: 'var(--text-muted)' }}>
-                              Zalo ID: <code>{u.zaloId}</code>
+                            <div style={{ fontSize: '11.5px', color: 'var(--text-muted, #94a3b8)' }}>
+                              Zalo ID: <code style={{ color: '#ea580c' }}>{u.zaloId}</code>
                             </div>
                           </div>
                           {isSelected && (
@@ -289,10 +313,12 @@ export default function AssignOrderModal({ order, onClose, onSuccess }) {
                     fontSize: '13.5px',
                     borderRadius: '10px',
                     border: '1.5px solid var(--border-color, #cbd5e1)',
-                    background: 'var(--bg-card)'
+                    background: 'var(--bg-secondary, rgba(0,0,0,0.1))',
+                    color: 'var(--text-main, inherit)',
+                    boxSizing: 'border-box'
                   }}
                 />
-                <span style={{ fontSize: '11.5px', color: 'var(--text-muted)', marginTop: '4px', display: 'block' }}>
+                <span style={{ fontSize: '11.5px', color: 'var(--text-muted, #94a3b8)', marginTop: '4px', display: 'block' }}>
                   Nếu Zalo ID này chưa có trong hệ thống, hệ thống sẽ tự động khởi tạo thành viên mới.
                 </span>
               </div>
@@ -306,7 +332,7 @@ export default function AssignOrderModal({ order, onClose, onSuccess }) {
             borderRadius: '10px',
             padding: '10px 14px',
             fontSize: '12px',
-            color: 'var(--text-bright)',
+            color: 'var(--text-main, inherit)',
             display: 'flex',
             alignItems: 'flex-start',
             gap: '8px'
@@ -327,11 +353,11 @@ export default function AssignOrderModal({ order, onClose, onSuccess }) {
         {/* Modal Footer Actions */}
         <div style={{
           padding: '16px 24px',
-          borderTop: '1px solid var(--border-color, #e2e8f0)',
+          borderTop: '1px solid var(--border-color, #334155)',
           display: 'flex',
           justifyContent: 'flex-end',
           gap: '10px',
-          background: 'var(--bg-secondary, rgba(0,0,0,0.02))'
+          background: 'var(--bg-secondary, rgba(0,0,0,0.2))'
         }}>
           <button
             type="button"
@@ -342,8 +368,8 @@ export default function AssignOrderModal({ order, onClose, onSuccess }) {
               padding: '9px 18px',
               borderRadius: '10px',
               border: '1px solid var(--border-color, #cbd5e1)',
-              background: 'var(--bg-card)',
-              color: 'var(--text-muted)',
+              background: 'var(--bg-secondary, rgba(255,255,255,0.05))',
+              color: 'var(--text-muted, #94a3b8)',
               cursor: 'pointer',
               fontWeight: '600'
             }}
@@ -362,11 +388,12 @@ export default function AssignOrderModal({ order, onClose, onSuccess }) {
               background: 'linear-gradient(135deg, #f97316, #ea580c)',
               color: '#ffffff',
               fontWeight: '700',
-              cursor: loading ? 'not-allowed' : 'pointer',
+              cursor: (loading || (!useManualInput && !selectedZaloId) || (useManualInput && !manualZaloId.trim())) ? 'not-allowed' : 'pointer',
               boxShadow: '0 4px 14px rgba(249, 115, 22, 0.3)',
               display: 'inline-flex',
               alignItems: 'center',
-              gap: '6px'
+              gap: '6px',
+              opacity: (loading || (!useManualInput && !selectedZaloId) || (useManualInput && !manualZaloId.trim())) ? 0.6 : 1
             }}
           >
             {loading ? (
@@ -380,6 +407,8 @@ export default function AssignOrderModal({ order, onClose, onSuccess }) {
           </button>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }
+

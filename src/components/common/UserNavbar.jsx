@@ -6,10 +6,10 @@ export default function UserNavbar() {
   const { view, setView, user, isAdmin, handleLogout, showToast } = useApp();
 
   const navItems = [
-    { id: 'convert', label: 'Chuyển đổi link', icon: 'fa-solid fa-bolt', color: '#f59e0b' },
-    { id: 'orders', label: 'Đơn hàng đã đặt', icon: 'fa-solid fa-boxes-stacked', color: '#0284c7' },
-    { id: 'withdraw', label: 'Ví tiền & Rút tiền', icon: 'fa-solid fa-wallet', color: '#10b981' },
-    { id: 'account', label: 'Tài khoản & Zalo', icon: 'fa-solid fa-user-circle', color: '#8b5cf6' },
+    { id: 'convert', label: 'Chuyển đổi', icon: 'fa-solid fa-link', color: '#f59e0b' },
+    { id: 'orders', label: 'Đơn hàng', icon: 'fa-solid fa-boxes-stacked', color: '#0284c7' },
+    { id: 'withdraw', label: 'Ví tiền', icon: 'fa-solid fa-wallet', color: '#10b981' },
+    { id: 'account', label: 'Tài khoản', icon: 'fa-solid fa-user-circle', color: '#8b5cf6' },
     { id: 'lookup', label: 'Tra cứu Zalo', icon: 'fa-solid fa-magnifying-glass', color: '#ea580c' },
   ];
 

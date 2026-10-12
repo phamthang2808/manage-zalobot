@@ -57,7 +57,7 @@ export default function CopyButton({
         padding: '3px 6px',
         fontSize: '11px',
         lineHeight: 1,
-        border: '1px solid var(--border-color, #cbd5e1)',
+        border: copied ? 'none' : '1px solid var(--border-color, #cbd5e1)',
         borderRadius: '6px',
         background: copied ? 'rgba(16, 185, 129, 0.15)' : 'var(--bg-main, #f8fafc)',
         color: copied ? '#059669' : 'var(--text-muted, #64748b)',

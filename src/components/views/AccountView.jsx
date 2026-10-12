@@ -468,6 +468,9 @@ export default function AccountView() {
               color: '#10b981',
               fontSize: '12px',
               fontWeight: '600',
+              border: 'none',
+              outline: 'none',
+              boxShadow: 'none',
               display: 'inline-flex',
               alignItems: 'center',
               gap: '6px'
@@ -709,7 +712,7 @@ export default function AccountView() {
               </div>
             </div>
 
-            {user?.accountNumber || accountNumber ? (
+            {!user?.accountNumber && accountNumber ? (
               <span style={{
                 fontSize: '10.5px',
                 fontWeight: '700',
@@ -722,14 +725,13 @@ export default function AccountView() {
                 alignItems: 'center',
                 gap: '5px'
               }}>
-                <i className="fa-solid fa-circle-check" style={{ fontSize: '10px' }}></i>
-                {user?.accountNumber ? 'ĐÃ THIẾT LẬP' : 'XEM TRƯỚC'}
+                XEM TRƯỚC
               </span>
-            ) : (
+            ) : (!user?.accountNumber && !accountNumber ? (
               <span style={{ fontSize: '10.5px', color: '#94a3b8', fontStyle: 'italic' }}>
                 Chưa nhập STK
               </span>
-            )}
+            ) : null)}
           </div>
         </div>
 

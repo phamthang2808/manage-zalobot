@@ -119,7 +119,7 @@ const SUGGESTED_IMAGES = [
 ];
 
 export default function BlogView() {
-  const { setView, user, showToast } = useApp();
+  const { setView, user, isAdmin, showToast } = useApp();
   const [selectedCategory, setSelectedCategory] = useState('ALL');
   const [searchQuery, setSearchQuery] = useState('');
   const categoryContainerRef = useRef(null);
@@ -301,28 +301,30 @@ export default function BlogView() {
           Tổng hợp kiến thức thực chiến, hướng dẫn cài đặt bot Zalo, mẹo săn mã giảm giá và chia sẻ kinh nghiệm gia tăng hoa hồng mua sắm mỗi ngày.
         </p>
 
-        {/* Nút Hành Động Thêm Bài Viết & Tạo Danh Mục */}
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', flexWrap: 'wrap', marginBottom: '22px' }}>
-          <button
-            type="button"
-            onClick={() => setIsCreatePostOpen(true)}
-            className="lookup-btn"
-            style={{ width: 'auto', padding: '10px 22px', fontSize: '13.5px', borderRadius: '12px', boxShadow: '0 4px 16px rgba(249, 115, 22, 0.35)' }}
-          >
-            <i className="fa-solid fa-pen-to-square"></i>
-            <span>+ Viết Bài Mới</span>
-          </button>
+        {/* Nút Hành Động Thêm Bài Viết & Tạo Danh Mục (CHỈ DÀNH CHO ADMIN) */}
+        {isAdmin && (
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', flexWrap: 'wrap', marginBottom: '22px' }}>
+            <button
+              type="button"
+              onClick={() => setIsCreatePostOpen(true)}
+              className="lookup-btn"
+              style={{ width: 'auto', padding: '10px 22px', fontSize: '13.5px', borderRadius: '12px', boxShadow: '0 4px 16px rgba(249, 115, 22, 0.35)' }}
+            >
+              <i className="fa-solid fa-pen-to-square"></i>
+              <span>+ Viết Bài Mới</span>
+            </button>
 
-          <button
-            type="button"
-            onClick={() => setIsCreateCatOpen(true)}
-            className="lookup-admin-link"
-            style={{ fontSize: '13px', padding: '10px 18px', borderRadius: '12px' }}
-          >
-            <i className="fa-solid fa-folder-plus"></i>
-            <span>+ Thêm Danh Mục</span>
-          </button>
-        </div>
+            <button
+              type="button"
+              onClick={() => setIsCreateCatOpen(true)}
+              className="lookup-admin-link"
+              style={{ fontSize: '13px', padding: '10px 18px', borderRadius: '12px' }}
+            >
+              <i className="fa-solid fa-folder-plus"></i>
+              <span>+ Thêm Danh Mục</span>
+            </button>
+          </div>
+        )}
 
         {/* Search Box */}
         <div style={{ maxWidth: '480px', margin: '0 auto', position: 'relative' }}>
@@ -452,7 +454,9 @@ export default function BlogView() {
         <div className="lookup-card" style={{ padding: '48px 20px', textAlign: 'center', color: 'var(--text-muted)' }}>
           <i className="fa-regular fa-folder-open" style={{ fontSize: '32px', marginBottom: '10px', color: 'var(--text-subtle)' }}></i>
           <div style={{ fontSize: '15px', fontWeight: '800', color: 'var(--text-bright)' }}>Chưa tìm thấy bài viết phù hợp</div>
-          <p style={{ margin: '6px 0 0 0', fontSize: '13px' }}>Hãy thử tìm kiếm với từ khóa khác hoặc bấm nút "+ Viết Bài Mới" để chia sẻ bài viết đầu tiên.</p>
+          <p style={{ margin: '6px 0 0 0', fontSize: '13px' }}>
+            {isAdmin ? 'Hãy thử tìm kiếm với từ khóa khác hoặc bấm nút "+ Viết Bài Mới" để chia sẻ bài viết đầu tiên.' : 'Hãy thử tìm kiếm với từ khóa khác hoặc chọn danh mục khác để xem bài viết.'}
+          </p>
         </div>
       ) : (
         <div style={{

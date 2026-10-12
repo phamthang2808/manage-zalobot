@@ -12,10 +12,10 @@ export default function UserSidebar({ sidebarOpen, setSidebarOpen }) {
   ];
 
   const memberItems = [
-    { id: 'convert', label: 'Chuyển đổi link', icon: 'fa-solid fa-link' },
-    { id: 'orders', label: 'Đơn hàng đã đặt', icon: 'fa-solid fa-boxes-stacked' },
-    { id: 'withdraw', label: 'Ví tiền & Rút tiền', icon: 'fa-solid fa-wallet' },
-    { id: 'account', label: 'Thông tin cá nhân', icon: 'fa-solid fa-id-card' },
+    { id: 'convert', label: 'Chuyển đổi', icon: 'fa-solid fa-link' },
+    { id: 'orders', label: 'Đơn hàng', icon: 'fa-solid fa-boxes-stacked' },
+    { id: 'withdraw', label: 'Ví tiền', icon: 'fa-solid fa-wallet' },
+    { id: 'account', label: 'Tài khoản', icon: 'fa-solid fa-id-card' },
     ...(isAdmin ? [{ id: 'admin', label: 'Trang Quản Trị', icon: 'fa-solid fa-shield-halved' }] : [])
   ];
 

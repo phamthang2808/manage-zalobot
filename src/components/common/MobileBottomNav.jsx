@@ -83,7 +83,7 @@ export default function MobileBottomNav() {
       <button type="button" className={`mobile-bottom-nav-item${view === 'convert' ? ' active' : ''}`}
         onClick={() => handleCustomerTabClick('convert')}>
         <div className="nav-icon-wrap"><i className="fa-solid fa-link"></i></div>
-        <span className="nav-label">Chuyển link</span>
+        <span className="nav-label">Chuyển đổi</span>
       </button>
 
       <button type="button" className={`mobile-bottom-nav-item${view === 'orders' ? ' active' : ''}`}

@@ -1185,7 +1185,7 @@ export default function OrderLookupView({ setView: propSetView } = {}) {
                         </span>
                       )}
                     </div>
-                    <div style={{ textAlign: 'right' }}>
+                    <div style={{ textAlign: 'right', marginLeft: 'auto', flexShrink: 0 }}>
                       <span className="order-commission-label">Hoa hồng: </span>
                       <span className="order-commission-val">{formatMoney(o.commission)}</span>
                     </div>

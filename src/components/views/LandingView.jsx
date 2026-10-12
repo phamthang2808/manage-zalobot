@@ -91,13 +91,13 @@ export default function LandingView({ inWorkspace = false }) {
         <nav className={`landing-nav${mobileMenuOpen ? ' open' : ''}`}>
           <a href="#home" onClick={() => setMobileMenuOpen(false)}>Trang chủ</a>
           <a href="#" onClick={e => { e.preventDefault(); setView('convert'); window.history.pushState({}, '', '/?view=convert'); setMobileMenuOpen(false); }} style={{ color: 'var(--color-primary, #ea580c)', fontWeight: '700' }}>
-            <i className="fa-solid fa-bolt" style={{ marginRight: '5px' }}></i>Chuyển đổi link
+            <i className="fa-solid fa-link" style={{ marginRight: '5px' }}></i>Chuyển đổi
           </a>
           <a href="#" onClick={e => { e.preventDefault(); setView('orders'); window.history.pushState({}, '', '/?view=orders'); setMobileMenuOpen(false); }}>
             <i className="fa-solid fa-boxes-stacked" style={{ marginRight: '5px' }}></i>Đơn hàng
           </a>
           <a href="#" onClick={e => { e.preventDefault(); setView('withdraw'); window.history.pushState({}, '', '/?view=withdraw'); setMobileMenuOpen(false); }}>
-            <i className="fa-solid fa-wallet" style={{ marginRight: '5px' }}></i>Ví &amp; Rút tiền
+            <i className="fa-solid fa-wallet" style={{ marginRight: '5px' }}></i>Ví tiền
           </a>
           <a href="#" onClick={e => { e.preventDefault(); setView('lookup'); window.history.pushState({}, '', '/?view=lookup'); setMobileMenuOpen(false); }}>
             <i className="fa-thin fa-magnifying-glass" style={{ marginRight: '5px' }}></i>Tra cứu Zalo
@@ -189,7 +189,7 @@ export default function LandingView({ inWorkspace = false }) {
               onClick={() => { setView('convert'); window.history.pushState({}, '', '/?view=convert'); }} 
               className="btn btn-hero-1"
             >
-              <i className="fa-solid fa-bolt" style={{ marginRight: '6px' }}></i>Chuyển đổi link ngay
+              <i className="fa-solid fa-link" style={{ marginRight: '6px' }}></i>Chuyển đổi ngay
             </button>
             <button 
               type="button"

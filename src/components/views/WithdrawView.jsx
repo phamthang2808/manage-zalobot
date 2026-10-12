@@ -451,13 +451,9 @@ export default function WithdrawView() {
                   fontWeight: '800',
                   color: 'var(--text-bright, #ffffff)',
                   textTransform: 'uppercase',
-                  letterSpacing: '0.4px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '5px'
+                  letterSpacing: '0.4px'
                 }}>
-                  <span>{user.accountName || user.fullName}</span>
-                  <i className="fa-solid fa-circle-check" style={{ color: '#10b981', fontSize: '13px' }}></i>
+                  {user.accountName || user.fullName}
                 </span>
               </div>
             )}
@@ -658,100 +654,7 @@ export default function WithdrawView() {
           </div>
         )}
       </div>
-
-      {/* 3. DANH SÁCH ĐƠN HÀNG TÍCH LŨY HOA HỒNG (ĐỒNG BỘ Y CHANG TRANG TRA CỨU) */}
-      <div className="orders-container" style={{ width: '100%', marginBottom: '28px' }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '14px' }}>
-          <h3 className="stats-section-title" style={{ fontSize: '16px', fontWeight: '650', margin: 0, color: 'var(--text-bright)', display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <i className="fa-solid fa-boxes-stacked" style={{ color: 'var(--text-muted)', fontSize: '15px' }}></i>
-            <span>Đơn Hàng Tích Lũy Hoa Hồng Của Bạn ({orders.length})</span>
-          </h3>
-          <button
-            type="button"
-            onClick={() => setView('orders')}
-            style={{
-              background: 'none',
-              border: 'none',
-              color: 'var(--color-primary, #ea580c)',
-              fontSize: '12.5px',
-              fontWeight: '700',
-              cursor: 'pointer',
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '4px'
-            }}
-          >
-            <span>Xem tất cả</span>
-            <i className="fa-solid fa-arrow-right" style={{ fontSize: '11px' }}></i>
-          </button>
-        </div>
-
-        {orders.length === 0 ? (
-          <div className="lookup-card" style={{ padding: '36px 20px', textAlign: 'center', color: 'var(--text-muted)' }}>
-            <i className="fa-solid fa-box-open" style={{ fontSize: '28px', color: 'var(--text-subtle)', marginBottom: '8px' }}></i>
-            <div style={{ fontSize: '13.5px', fontWeight: '700', color: 'var(--text-bright)' }}>Chưa có đơn hàng nào được ghi nhận</div>
-            <p style={{ margin: '4px 0 0 0', fontSize: '12px' }}>
-              Hãy tạo link tiếp thị ở mục <b>Chuyển Đổi</b> để bắt đầu mua sắm và tích lũy tiền hoàn hoa hồng!
-            </p>
-          </div>
-        ) : (
-          orders.slice(0, 10).map((o, idx) => {
-            const isCompleted = o.status === 'Hoàn thành' || o.status === 'Đã chốt';
-            const isPending = o.status === 'Chờ xử lý' || o.status === 'Đang xử lý' || o.status === 'Chờ duyệt';
-            const statusColor = isCompleted ? '#059669' : (isPending ? '#ea580c' : '#dc2626');
-
-            return (
-              <div key={o.orderId || o.id || idx} className="order-card-item">
-                <div className="order-card-header">
-                  <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
-                    <i className="fa-regular fa-calendar" style={{ color: 'var(--text-muted)', fontSize: '13px' }}></i>
-                    <span>{formatDateTime(o.purchaseTime || o.orderTime)}</span>
-                  </span>
-                  <span style={{ display: 'inline-flex', alignItems: 'center' }}>
-                    Mã đơn: <span className="order-id-badge" style={{ marginLeft: '4px' }}>{o.orderId}</span>
-                    <CopyButton text={o.orderId} title="Copy mã đơn hàng" toastMessage={`Đã copy mã đơn: ${o.orderId}`} />
-                  </span>
-                </div>
-
-                <div className="order-card-title" title={o.productName}>
-                  {o.productName || 'Sản phẩm mua sắm qua link tiếp thị'}
-                </div>
-
-                <div className="order-card-commission-row">
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
-                    <span style={{
-                      color: statusColor,
-                      fontSize: '13px',
-                      fontWeight: '700'
-                    }}>
-                      {o.status || 'Chờ xử lý'}
-                    </span>
-                    {isCompleted && o.completeTime && (
-                      <span style={{
-                        fontSize: '12px',
-                        color: '#059669',
-                        fontWeight: '600',
-                        display: 'inline-flex',
-                        alignItems: 'center',
-                        gap: '4px'
-                      }}>
-                        <i className="fa-regular fa-calendar-check" style={{ fontSize: '11px' }}></i>
-                        <span>Hoàn thành: {formatDateTime(o.completeTime)}</span>
-                      </span>
-                    )}
-                  </div>
-                  <div style={{ textAlign: 'right' }}>
-                    <span className="order-commission-label">Hoa hồng: </span>
-                    <span className="order-commission-val">{formatMoney(o.commission || 0)}</span>
-                  </div>
-                </div>
-              </div>
-            );
-          })
-        )}
-      </div>
-
-      {/* 3. LỊCH SỬ YÊU CẦU RÚT TIỀN */}
+      {/* 2. LỊCH SỬ YÊU CẦU RÚT TIỀN */}
       <div className="orders-container" style={{ width: '100%' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '14px' }}>
           <h3 className="stats-section-title" style={{ fontSize: '16px', fontWeight: '650', margin: 0, color: 'var(--text-bright)' }}>

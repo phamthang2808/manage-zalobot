@@ -170,7 +170,7 @@ export default function ConvertView() {
     }
     return {
       label: 'Sàn TMĐT',
-      icon: 'fa-solid fa-bolt',
+      icon: 'fa-solid fa-link',
       color: '#ea580c',
       bg: 'rgba(234, 88, 12, 0.12)'
     };
@@ -207,7 +207,7 @@ export default function ConvertView() {
               boxShadow: '0 4px 14px rgba(249, 115, 22, 0.35)',
               flexShrink: 0
             }}>
-              <i className="fa-solid fa-bolt"></i>
+              <i className="fa-solid fa-link"></i>
             </div>
             <div>
               <h2 style={{ fontSize: '18px', fontWeight: '650', margin: 0, color: 'var(--text-bright)' }}>
@@ -220,7 +220,7 @@ export default function ConvertView() {
           </div>
         </div>
 
-        {/* CÁC NỀN TẢNG ĐƯỢC HỖ TRỢ CHUYỂN ĐỔI (LOGO CHUẨN BẢN GỐC) */}
+        {/* CÁC NỀN TẢNG ĐƯỢC HỖ TRỢ CHUYỂN ĐỔI (LOGO CHÍNH HÃNG CHUẨN THƯƠNG HIỆU) */}
         <div style={{
           display: 'grid',
           gridTemplateColumns: 'repeat(2, 1fr)',
@@ -242,15 +242,11 @@ export default function ConvertView() {
             fontWeight: '700',
             boxShadow: '0 2px 8px rgba(234, 88, 12, 0.08)'
           }}>
-            <svg width="22" height="22" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ flexShrink: 0 }}>
-              <path d="M38 15H33V13C33 8.03 28.97 4 24 4C19.03 4 15 8.03 15 13V15H10C8.34 15 7 16.34 7 18V40C7 41.66 8.34 43 10 43H38C39.66 43 41 41.66 41 40V18C41 16.34 39.66 15 38 15Z" fill="#EE4D2D"/>
-              <path d="M19 13C19 10.24 21.24 8 24 8C26.76 8 29 10.24 29 13V15H19V13Z" stroke="#FFFFFF" strokeWidth="2.5" strokeLinecap="round"/>
-              <path d="M28.5 25.5C28.5 23.5 26.5 22.5 24 22.5C21 22.5 19.5 23.8 19.5 25.5C19.5 29.5 28.5 28.5 28.5 33C28.5 35 26.5 36.5 23.8 36.5C20.8 36.5 19.2 35 19 33.5" stroke="#FFFFFF" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
+            <img src="/shopee-icon.png" width="24" height="24" alt="Shopee" style={{ objectFit: 'contain', flexShrink: 0 }} />
             <span>Shopee</span>
           </div>
 
-          {/* 2. Lazada (Logo trái tim bản gốc) */}
+          {/* 2. Lazada */}
           <div style={{
             display: 'flex',
             alignItems: 'center',
@@ -265,20 +261,7 @@ export default function ConvertView() {
             fontWeight: '700',
             boxShadow: '0 2px 8px rgba(2, 132, 199, 0.08)'
           }}>
-            <svg width="24" height="24" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ flexShrink: 0 }}>
-              <rect width="48" height="48" rx="11" fill="#0C146D"/>
-              <path d="M24 13C21.8 10.2 17.6 9.8 14.4 12.3C10.8 15.1 10.3 20.3 13.2 23.8L24 37.5L34.8 23.8C37.7 20.3 37.2 15.1 33.6 12.3C30.4 9.8 26.2 10.2 24 13Z" fill="url(#lz_badge_grad)"/>
-              <path d="M24 37.5L16.5 28C14.6 25.5 15 22 17.2 20.2C19.5 18.4 23 18.8 24.6 21.2L24 37.5Z" fill="#0018CD" opacity="0.45"/>
-              <text x="24" y="27" fontFamily="system-ui, -apple-system, sans-serif" fontWeight="900" fontSize="12" fill="#FFFFFF" textAnchor="middle" letterSpacing="-0.5">Laz</text>
-              <defs>
-                <linearGradient id="lz_badge_grad" x1="12" y1="10" x2="36" y2="37" gradientUnits="userSpaceOnUse">
-                  <stop stopColor="#F8236C"/>
-                  <stop offset="0.45" stopColor="#FF5C00"/>
-                  <stop offset="0.85" stopColor="#1E3CFF"/>
-                  <stop offset="1" stopColor="#0B1EF5"/>
-                </linearGradient>
-              </defs>
-            </svg>
+            <img src="/lazada-icon.png" width="24" height="24" alt="Lazada" style={{ objectFit: 'contain', borderRadius: '5px', flexShrink: 0 }} />
             <span>Lazada</span>
           </div>
 
@@ -297,13 +280,7 @@ export default function ConvertView() {
             fontWeight: '700',
             boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)'
           }}>
-            <svg width="22" height="22" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ flexShrink: 0 }}>
-              <rect width="48" height="48" rx="10" fill="#000000"/>
-              <path d="M35 16H30.5V13.5C30.5 9.9 27.6 7 24 7C20.4 7 17.5 9.9 17.5 13.5V16H13C11.3 16 10 17.3 10 19V38C10 39.7 11.3 41 13 41H35C36.7 41 38 39.7 38 38V19C38 17.3 36.7 16 35 16Z" fill="#18181B"/>
-              <path d="M20.5 13.5C20.5 11.6 22.1 10 24 10C25.9 10 27.5 11.6 27.5 13.5V16H20.5V13.5Z" stroke="#FFFFFF" strokeWidth="1.8"/>
-              <path d="M27 23C28 24.2 29.5 25 31 25.2V27.5C29.8 27.4 28.5 26.8 27.5 26V30C27.5 32.8 25.2 35 22.5 35C19.7 35 17.5 32.8 17.5 30C17.5 27.2 19.7 25 22.5 25C23 25 23.5 25.1 24 25.3V27.6C23.5 27.3 23 27.2 22.5 27.2C21 27.2 19.8 28.4 19.8 30C19.8 31.5 21 32.7 22.5 32.7C24 32.7 25.2 31.5 25.2 30V21H27V23Z" fill="#25F4EE"/>
-              <path d="M27.4 23.4C28.4 24.6 29.9 25.4 31.4 25.6V27C30.2 26.9 29.1 26.3 28.1 25.5V30.2C28.1 33 25.8 35.2 23 35.2C21.2 35.2 19.6 34.3 18.7 32.8C19.5 33.6 20.6 34.2 21.8 34.2C24.6 34.2 26.8 32 26.8 29.2V21.5H27.4V23.4Z" fill="#FE2C55"/>
-            </svg>
+            <img src="/tiktok-shop-icon.png" width="24" height="24" alt="TikTok Shop" style={{ objectFit: 'contain', borderRadius: '5px', flexShrink: 0 }} />
             <span>TikTok Shop</span>
           </div>
 
@@ -322,12 +299,7 @@ export default function ConvertView() {
             fontWeight: '700',
             boxShadow: '0 2px 8px rgba(239, 68, 68, 0.08)'
           }}>
-            <svg width="22" height="22" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ flexShrink: 0 }}>
-              <rect x="6" y="10" width="36" height="32" rx="8" fill="#EE4D2D"/>
-              <path d="M16 10V7C16 5.34 17.34 4 19 4H29C30.66 4 32 5.34 32 7V10" stroke="#EE4D2D" strokeWidth="3" strokeLinecap="round"/>
-              <path d="M19 18V26M17 18V22M21 18V22M19 26V32" stroke="#FFFFFF" strokeWidth="2.2" strokeLinecap="round"/>
-              <path d="M29 18C27.5 18 26.5 19.2 26.5 20.8C26.5 22.4 27.5 23.6 29 23.6V32M29 23.6V32" stroke="#FFFFFF" strokeWidth="2.2" strokeLinecap="round"/>
-            </svg>
+            <img src="/shopeefood-icon.png" width="24" height="24" alt="ShopeeFood" style={{ objectFit: 'contain', borderRadius: '5px', flexShrink: 0 }} />
             <span>ShopeeFood</span>
           </div>
         </div>

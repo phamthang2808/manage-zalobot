@@ -101,7 +101,7 @@ export default function OrdersView() {
   const getPlatformBadge = (p) => {
     const plat = (p || '').toUpperCase();
     if (plat === 'SHOPEE') return { label: 'Shopee', color: '#ea580c', bg: 'rgba(234, 88, 12, 0.12)' };
-    if (plat === 'TIKTOK') return { label: 'TikTok Shop', color: '#000000', bg: 'rgba(0, 0, 0, 0.08)' };
+    if (plat === 'TIKTOK') return { label: 'TK', color: '#000000', bg: 'rgba(0, 0, 0, 0.08)' };
     if (plat === 'LAZADA') return { label: 'Lazada', color: '#0284c7', bg: 'rgba(2, 132, 199, 0.12)' };
     if (plat === 'SHOPEE_FOOD') return { label: 'ShopeeFood', color: '#dc2626', bg: 'rgba(220, 38, 38, 0.12)' };
     return { label: plat || 'Sàn TMĐT', color: '#64748b', bg: 'rgba(100, 116, 139, 0.12)' };
@@ -456,7 +456,7 @@ export default function OrdersView() {
                       </span>
                     )}
                   </div>
-                  <div style={{ textAlign: 'right' }}>
+                  <div style={{ textAlign: 'right', marginLeft: 'auto', flexShrink: 0 }}>
                     <span className="order-commission-label">Hoa hồng: </span>
                     <span className="order-commission-val">{formatMoney(o.commission || 0)}</span>
                   </div>

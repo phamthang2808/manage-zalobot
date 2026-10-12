@@ -760,7 +760,7 @@ export default function OrdersTab() {
                       {(() => {
                         const isCompleted = o.status === 2 || o.status === 'Hoàn thành' || o.status === 'Đã chốt HH' || o.status === 'Đã chốt';
                         const isCancelled = o.status === 3 || o.status === 'Đã hủy' || o.status === 'Hủy';
-                        const text = isCompleted ? 'Hoàn thành (Đã chốt)' : isCancelled ? 'Đã hủy' : (typeof o.status === 'number' ? (o.status === 2 ? 'Hoàn thành' : o.status === 3 ? 'Đã hủy' : 'Chờ kiểm duyệt') : (o.status || 'Chờ kiểm duyệt'));
+                        const text = isCompleted ? 'Hoàn thành' : isCancelled ? 'Đã hủy' : (typeof o.status === 'number' ? (o.status === 2 ? 'Hoàn thành' : o.status === 3 ? 'Đã hủy' : 'Chờ kiểm duyệt') : (o.status || 'Chờ kiểm duyệt'));
                         const color = isCompleted ? '#10b981' : isCancelled ? '#ef4444' : '#f59e0b';
                         return (
                           <span style={{ color, fontWeight: '700', fontSize: '12.5px' }}>

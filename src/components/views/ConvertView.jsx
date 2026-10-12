@@ -396,7 +396,12 @@ export default function ConvertView() {
 
             return (
               <div key={idx} className="order-card-item" style={{ padding: '16px 18px', marginBottom: '12px' }}>
-                <div className="order-card-header" style={{ marginBottom: '10px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '8px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '10px', flexWrap: 'wrap', gap: '8px' }}>
+                  <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', color: '#10b981', fontWeight: '800', fontSize: '12px', letterSpacing: '0.3px' }}>
+                    <i className="fa-solid fa-circle-check"></i>
+                    <span>CHUYỂN ĐỔI THÀNH CÔNG</span>
+                  </div>
+
                   <span style={{
                     padding: '3px 10px',
                     borderRadius: '10px',
@@ -412,24 +417,18 @@ export default function ConvertView() {
                     <i className={meta.icon} style={{ color: 'var(--text-muted)' }}></i>
                     <span>{meta.label}</span>
                   </span>
-                  {r.commissionRate && (
-                    <span style={{ fontSize: '12px', color: '#059669', fontWeight: '700', display: 'inline-flex', alignItems: 'center', gap: '5px' }}>
-                      <i className="fa-solid fa-coins" style={{ color: 'var(--text-muted)', fontSize: '11px' }}></i>
-                      <span>Hoa hồng: {r.commissionRate}% {estComm > 0 ? `(~${formatMoney(estComm)} ước tính)` : ''}</span>
-                    </span>
-                  )}
                 </div>
 
                 {/* HÀNG HIỂN THỊ ẢNH & TÊN SẢN PHẨM */}
-                <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '10px' }}>
+                <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px', marginBottom: '12px' }}>
                   {r.imageUrl ? (
                     <img
                       src={r.imageUrl}
                       alt={r.productName || 'Ảnh sản phẩm'}
                       referrerPolicy="no-referrer"
                       style={{
-                        width: '52px',
-                        height: '52px',
+                        width: '54px',
+                        height: '54px',
                         objectFit: 'cover',
                         borderRadius: '10px',
                         border: '1px solid var(--border-color)',
@@ -439,8 +438,8 @@ export default function ConvertView() {
                     />
                   ) : (
                     <div style={{
-                      width: '52px',
-                      height: '52px',
+                      width: '54px',
+                      height: '54px',
                       borderRadius: '10px',
                       background: 'var(--bg-main)',
                       border: '1px solid var(--border-color)',
@@ -457,7 +456,7 @@ export default function ConvertView() {
 
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <div style={{
-                      fontSize: '13.5px',
+                      fontSize: '14px',
                       fontWeight: '700',
                       color: 'var(--text-bright)',
                       lineHeight: '1.4',
@@ -469,41 +468,94 @@ export default function ConvertView() {
                     }}>
                       {r.productName || 'Sản phẩm mua sắm qua link tiếp thị'}
                     </div>
-                    {r.price && (
-                      <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginTop: '2px' }}>
-                        Giá: <b style={{ color: 'var(--text-bright)' }}>{formatMoney(r.price)}</b>
-                      </div>
-                    )}
                   </div>
                 </div>
 
-                {/* Nút Hành Động (Không hiển thị link dài) */}
+                {/* KHỐI HIỂN THỊ HOA HỒNG ƯỚC TÍNH & GIÁ (CHUẨN FORM MẪU) */}
+                <div style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  padding: '12px 16px',
+                  borderRadius: '14px',
+                  background: 'var(--bg-main, #0f172a)',
+                  border: '1px solid var(--border-color, rgba(255, 255, 255, 0.08))',
+                  marginBottom: '12px'
+                }}>
+                  <div>
+                    <div style={{ fontSize: '11.5px', color: 'var(--text-muted)', fontWeight: '600', marginBottom: '3px', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                      <span>Bạn nhận ước tính</span>
+                      <i className="fa-solid fa-circle-info" style={{ fontSize: '11px', color: 'var(--text-subtle)' }} title="Số tiền hoàn lại ước tính sau khi đơn hàng hoàn thành"></i>
+                    </div>
+                    <div style={{
+                      fontSize: '20px',
+                      fontWeight: '800',
+                      color: '#10b981',
+                      lineHeight: '1.2'
+                    }}>
+                      ≈ {formatMoney(estComm || 0)}
+                    </div>
+                    {r.price && (
+                      <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginTop: '3px' }}>
+                        Giá: <span style={{ color: 'var(--text-bright)', fontWeight: '600' }}>{formatMoney(r.price)}</span>
+                      </div>
+                    )}
+                  </div>
+
+                  {r.commissionRate && (
+                    <div style={{
+                      padding: '5px 14px',
+                      borderRadius: '9999px',
+                      background: 'rgba(249, 115, 22, 0.12)',
+                      border: '1px solid rgba(249, 115, 22, 0.35)',
+                      color: '#ea580c',
+                      fontSize: '13px',
+                      fontWeight: '800',
+                      flexShrink: 0
+                    }}>
+                      {r.commissionRate}%
+                    </div>
+                  )}
+                </div>
+
+                {/* Nút Hành Động (Nút Mở link mua hàng nổi bật màu cam) */}
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '8px', marginTop: '12px' }}>
+                  <button
+                    type="button"
+                    onClick={() => handleCopy(finalLink, idx)}
+                    className="lookup-admin-link"
+                    style={{
+                      padding: '8px 16px',
+                      fontSize: '12.5px',
+                      borderRadius: '10px',
+                      fontWeight: '600'
+                    }}
+                  >
+                    <i className={isCopied ? 'fa-solid fa-circle-check text-emerald-500' : 'fa-solid fa-copy'}></i>
+                    <span>{isCopied ? 'Đã sao chép!' : 'Sao chép'}</span>
+                  </button>
+
                   <a
                     href={finalLink}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="lookup-admin-link"
-                    style={{ fontSize: '12.5px', padding: '7px 16px', textDecoration: 'none' }}
-                  >
-                    <i className="fa-solid fa-arrow-up-right-from-square" style={{ color: 'var(--text-muted)' }}></i>
-                    <span>Mở link mua sắm</span>
-                  </a>
-                  <button
-                    type="button"
-                    onClick={() => handleCopy(finalLink, idx)}
-                    className="lookup-btn"
                     style={{
-                      width: 'auto',
-                      padding: '7px 18px',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '6px',
+                      padding: '8px 18px',
                       fontSize: '12.5px',
+                      fontWeight: '700',
                       borderRadius: '10px',
-                      background: isCopied ? '#059669' : undefined
+                      background: 'linear-gradient(135deg, #f97316, #ea580c)',
+                      color: '#ffffff',
+                      textDecoration: 'none',
+                      boxShadow: '0 3px 8px rgba(234, 88, 12, 0.25)'
                     }}
                   >
-                    <i className={isCopied ? 'fa-solid fa-circle-check' : 'fa-solid fa-copy'}></i>
-                    <span>{isCopied ? 'Đã sao chép!' : 'Sao chép link'}</span>
-                  </button>
+                    <i className="fa-solid fa-arrow-up-right-from-square"></i>
+                    <span>Mở link mua hàng</span>
+                  </a>
                 </div>
               </div>
             );
@@ -692,18 +744,18 @@ export default function ConvertView() {
                           </div>
                         </div>
 
-                        {/* Thân Item: Ảnh + Tên sản phẩm + Giá & Hoa hồng ước tính (Không hiện link dài) */}
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '8px' }}>
+                        {/* Thân Item: Ảnh + Tên sản phẩm */}
+                        <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px', marginBottom: '10px' }}>
                           {item.imageUrl ? (
                             <img
                               src={item.imageUrl}
                               alt={item.productName || 'Ảnh sản phẩm'}
                               referrerPolicy="no-referrer"
                               style={{
-                                width: '44px',
-                                height: '44px',
+                                width: '48px',
+                                height: '48px',
                                 objectFit: 'cover',
-                                borderRadius: '8px',
+                                borderRadius: '10px',
                                 border: '1px solid var(--border-color)',
                                 flexShrink: 0
                               }}
@@ -711,9 +763,9 @@ export default function ConvertView() {
                             />
                           ) : (
                             <div style={{
-                              width: '44px',
-                              height: '44px',
-                              borderRadius: '8px',
+                              width: '48px',
+                              height: '48px',
+                              borderRadius: '10px',
                               background: 'var(--bg-card)',
                               border: '1px solid var(--border-color)',
                               display: 'flex',
@@ -729,43 +781,65 @@ export default function ConvertView() {
 
                           <div style={{ flex: 1, minWidth: 0 }}>
                             <div style={{
-                              fontSize: '13px',
+                              fontSize: '13.5px',
                               fontWeight: '700',
                               color: 'var(--text-bright)',
+                              lineHeight: '1.4',
                               overflow: 'hidden',
                               textOverflow: 'ellipsis',
-                              whiteSpace: 'nowrap'
+                              display: '-webkit-box',
+                              WebkitLineClamp: 2,
+                              WebkitBoxOrient: 'vertical'
                             }}>
                               {item.productName || 'Sản phẩm mua sắm qua link tiếp thị'}
-                            </div>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '3px', flexWrap: 'wrap' }}>
-                              {item.price && (
-                                <span style={{ fontSize: '11.5px', color: 'var(--text-muted)' }}>
-                                  Giá: <b style={{ color: 'var(--text-bright)' }}>{formatMoney(item.price)}</b>
-                                </span>
-                              )}
-                              {item.commissionRate && (
-                                <span style={{ fontSize: '11.5px', color: '#059669', fontWeight: '700', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
-                                  <i className="fa-solid fa-coins" style={{ color: 'var(--text-muted)', fontSize: '10px' }}></i>
-                                  <span>Hoa hồng: {item.commissionRate}% {itemEstComm > 0 ? `(~${formatMoney(itemEstComm)} ước tính)` : ''}</span>
-                                </span>
-                              )}
                             </div>
                           </div>
                         </div>
 
+                        {/* KHỐI HIỂN THỊ HOA HỒNG ƯỚC TÍNH & GIÁ (CHUẨN FORM MẪU THAM KHẢO) */}
+                        <div style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'space-between',
+                          padding: '10px 14px',
+                          borderRadius: '12px',
+                          background: 'var(--bg-card)',
+                          border: '1px solid var(--border-color)',
+                          marginBottom: '10px'
+                        }}>
+                          <div>
+                            <div style={{ fontSize: '11px', color: 'var(--text-muted)', fontWeight: '600', marginBottom: '2px', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                              <span>Bạn nhận ước tính</span>
+                              <i className="fa-solid fa-circle-info" style={{ fontSize: '10px', color: 'var(--text-subtle)' }} title="Số tiền hoàn lại ước tính sau khi đơn hàng hoàn thành"></i>
+                            </div>
+                            <div style={{ fontSize: '17px', fontWeight: '800', color: '#10b981', lineHeight: '1.2' }}>
+                              ≈ {formatMoney(itemEstComm || 0)}
+                            </div>
+                            {item.price && (
+                              <div style={{ fontSize: '11.5px', color: 'var(--text-muted)', marginTop: '2px' }}>
+                                Giá: <span style={{ color: 'var(--text-bright)', fontWeight: '600' }}>{formatMoney(item.price)}</span>
+                              </div>
+                            )}
+                          </div>
+
+                          {item.commissionRate && (
+                            <div style={{
+                              padding: '4px 12px',
+                              borderRadius: '9999px',
+                              background: 'rgba(249, 115, 22, 0.12)',
+                              border: '1px solid rgba(249, 115, 22, 0.35)',
+                              color: '#ea580c',
+                              fontSize: '12.5px',
+                              fontWeight: '800',
+                              flexShrink: 0
+                            }}>
+                              {item.commissionRate}%
+                            </div>
+                          )}
+                        </div>
+
                         {/* Actions (Không hiển thị link dài) */}
-                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '6px' }}>
-                          <a
-                            href={finalLink}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="lookup-admin-link"
-                            style={{ fontSize: '11px', padding: '4px 10px', textDecoration: 'none' }}
-                          >
-                            <i className="fa-solid fa-arrow-up-right-from-square" style={{ color: 'var(--text-muted)' }}></i>
-                            <span>Mua ngay</span>
-                          </a>
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '8px' }}>
                           <button
                             type="button"
                             onClick={() => {
@@ -774,17 +848,37 @@ export default function ConvertView() {
                             }}
                             className="lookup-admin-link"
                             style={{
-                              fontSize: '11px',
-                              padding: '4px 10px',
-                              background: 'rgba(249, 115, 22, 0.12)',
-                              color: 'var(--color-primary, #ea580c)',
-                              borderColor: 'rgba(249, 115, 22, 0.3)',
-                              fontWeight: '700'
+                              fontSize: '11.5px',
+                              padding: '5px 12px',
+                              borderRadius: '8px',
+                              fontWeight: '600'
                             }}
                           >
                             <i className="fa-solid fa-copy"></i>
                             <span>Copy link</span>
                           </button>
+
+                          <a
+                            href={finalLink}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            style={{
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              gap: '5px',
+                              fontSize: '11.5px',
+                              padding: '5px 14px',
+                              borderRadius: '8px',
+                              fontWeight: '700',
+                              background: 'linear-gradient(135deg, #f97316, #ea580c)',
+                              color: '#fff',
+                              textDecoration: 'none',
+                              boxShadow: '0 2px 6px rgba(234, 88, 12, 0.25)'
+                            }}
+                          >
+                            <i className="fa-solid fa-arrow-up-right-from-square"></i>
+                            <span>Mua ngay</span>
+                          </a>
                         </div>
                       </div>
                     );

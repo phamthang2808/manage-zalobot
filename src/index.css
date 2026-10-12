@@ -8140,4 +8140,10 @@ body.dark .stat-card-item.referral .stat-card-value { color: #fb7185 !important;
   }
 }
 
+@media (max-width: 640px) {
+  .user-workspace-content main {
+    padding: 12px 8px 80px !important;
+  }
+}
+
 

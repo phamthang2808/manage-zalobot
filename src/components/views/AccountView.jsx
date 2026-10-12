@@ -265,7 +265,7 @@ export default function AccountView() {
       {/* HEADER TIÊU ĐỀ RÕ RÀNG */}
       <div style={{ marginBottom: '20px' }}>
         <h1 style={{ fontSize: '22px', fontWeight: '650', color: 'var(--text-bright)', margin: 0, display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <i className="fa-solid fa-address-card" style={{ color: 'var(--color-primary, #ea580c)' }}></i>
+          <i className="fa-solid fa-address-card" style={{ color: 'var(--text-muted)' }}></i>
           <span>Thông Tin Cá Nhân & Tài Khoản Của Bạn</span>
         </h1>
         <p style={{ margin: '4px 0 0 0', fontSize: '13px', color: 'var(--text-muted)' }}>
@@ -429,12 +429,13 @@ export default function AccountView() {
             width: '40px',
             height: '40px',
             borderRadius: '12px',
-            background: 'rgba(139, 92, 246, 0.14)',
-            color: '#8b5cf6',
+            background: 'var(--bg-main)',
+            color: 'var(--text-muted)',
+            border: '1px solid var(--border-color)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            fontSize: '18px'
+            fontSize: '17px'
           }}>
             <i className="fa-solid fa-user-pen"></i>
           </div>
@@ -535,11 +536,8 @@ export default function AccountView() {
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '14px', marginBottom: '16px' }}>
             <div className="lookup-input-group" style={{ marginBottom: 0 }}>
-              <label className="lookup-label" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                <span>Họ và Tên</span>
-                <span style={{ fontSize: '11px', color: '#ea580c', fontWeight: '500', textTransform: 'none' }}>
-                  🔒 Cố định theo SubID
-                </span>
+              <label className="lookup-label">
+                Họ và Tên
               </label>
               <input
                 type="text"
@@ -617,12 +615,13 @@ export default function AccountView() {
               width: '40px',
               height: '40px',
               borderRadius: '12px',
-              background: user?.zaloId ? 'rgba(16, 185, 129, 0.14)' : 'rgba(37, 99, 235, 0.14)',
-              color: user?.zaloId ? '#10b981' : '#2563eb',
+              background: 'var(--bg-main)',
+              color: 'var(--text-muted)',
+              border: '1px solid var(--border-color)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              fontSize: '18px'
+              fontSize: '17px'
             }}>
               <i className="fa-solid fa-link"></i>
             </div>
@@ -716,7 +715,7 @@ export default function AccountView() {
                 />
               </div>
               <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginTop: '6px', lineHeight: '1.4' }}>
-                💡 <b>Mẹo tìm Zalo ID:</b> Nhắn tin vào nhóm bot Zalo hoặc gõ lệnh <code>tra cuu</code> trong chat bot Zalo để xem mã Zalo ID của bạn.
+                💡 <b>Mẹo tìm Zalo ID:</b> Nhắn tin riêng cho tài khoản bot <b>(Meomeo)</b> và gõ lệnh <code>/id</code> để lấy mã Zalo ID của bạn.
               </div>
             </div>
 
@@ -740,12 +739,13 @@ export default function AccountView() {
             width: '40px',
             height: '40px',
             borderRadius: '12px',
-            background: 'rgba(16, 185, 129, 0.14)',
-            color: '#10b981',
+            background: 'var(--bg-main)',
+            color: 'var(--text-muted)',
+            border: '1px solid var(--border-color)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            fontSize: '18px'
+            fontSize: '17px'
           }}>
             <i className="fa-solid fa-building-columns"></i>
           </div>

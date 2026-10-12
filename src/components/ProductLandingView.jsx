@@ -191,43 +191,23 @@ export function ProductLandingView({ code, apiRoot = "" }) {
       </header>
 
       <main className="sym-main">
-        {/* User Card: Avatar là favicon (/favaicon28symues.png) vừa khít, Zalo ID rõ nét, Nút tra cứu 1 hàng không bể */}
+        {/* User Card: Avatar favicon (/favaicon28symues.png) tròn tròn, ẩn Zalo ID để bảo mật danh tính */}
         <div className="sym-card sym-user-card">
           <div className="sym-user-left">
             <div className="sym-user-avatar-wrap">
-              {info.avatarUrl ? (
-                <img 
-                  src={info.avatarUrl} 
-                  alt="Avatar" 
-                  className="sym-user-avatar-img" 
-                  onError={(e) => { e.target.style.display = 'none'; }} 
-                />
-              ) : (
-                <div style={{
-                  width: '100%',
-                  height: '100%',
-                  borderRadius: '50%',
-                  background: 'linear-gradient(135deg, #f97316 0%, #ea580c 100%)',
-                  color: '#ffffff',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center'
-                }}>
-                  <i className="fa-solid fa-user" style={{ fontSize: '18px', color: '#ffffff' }}></i>
-                </div>
-              )}
+              <img 
+                src="/favaicon28symues.png" 
+                alt="28Symues" 
+                className="sym-user-avatar-img" 
+              />
             </div>
             <div className="sym-user-meta">
               <div className="sym-user-greeting">
                 Xin chào, <span className="sym-user-name">{info.senderName || "Phạm Thắng"}</span>
               </div>
-              <div className="sym-user-subid">
-                <span className="sym-subid-label">Zalo ID:</span>
-                <span className="sym-subid-val">{info.subId || "Thành viên"}</span>
-              </div>
             </div>
           </div>
-          <button type="button" onClick={handleGoUserWallet} className="sym-btn-check-wallet" title="Tra cứu đơn hàng và số dư của Zalo này">
+          <button type="button" onClick={handleGoUserWallet} className="sym-btn-check-wallet" title="Tra cứu đơn hàng và số dư ví">
             Tra cứu ví ›
           </button>
         </div>

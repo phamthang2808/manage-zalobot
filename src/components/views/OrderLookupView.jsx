@@ -537,12 +537,12 @@ export default function OrderLookupView({ setView: propSetView } = {}) {
         @keyframes lookupFloatOrb2 { 0%, 100% { transform: translate(0,0) scale(1); } 50% { transform: translate(-30px,-40px) scale(1.05); } }
         .lookup-card, .lookup-card * { box-sizing: border-box !important; }
         .lookup-header, .lookup-card, .stats-container, .orders-container, .lookup-error { position: relative; z-index: 2; }
-        .lookup-header { width: 100%; max-width: 600px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; padding-bottom: 12px; border-bottom: 1px solid var(--border-color); }
+        .lookup-header { width: 100%; max-width: 820px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; padding-bottom: 12px; border-bottom: 1px solid var(--border-color); }
         .lookup-logo { font-size: 18px; font-weight: 650; color: var(--text-bright); display: flex; align-items: center; gap: 8px; font-family: var(--font-heading); }
         .lookup-logo img { border: none; }
         .lookup-admin-link { font-size: 13px; color: var(--text-bright); text-decoration: none; background: var(--bg-card); padding: 7px 16px; border-radius: 20px; border: 1px solid var(--border-color); font-weight: 600; transition: all 0.2s ease; cursor: pointer; }
         .lookup-admin-link:hover { background: rgba(249,115,22,0.08); color: #ea580c; border-color: rgba(249,115,22,0.4); }
-        .lookup-card { width: 100%; max-width: 600px; box-sizing: border-box !important; background: var(--bg-card); border: 1px solid var(--border-color); backdrop-filter: blur(16px); border-radius: 16px; padding: 24px; box-shadow: 0 4px 20px -2px rgba(0,0,0,0.06); margin-bottom: 20px; overflow: hidden; }
+        .lookup-card { width: 100%; max-width: 820px; box-sizing: border-box !important; background: var(--bg-card); border: 1px solid var(--border-color); backdrop-filter: blur(16px); border-radius: 16px; padding: 24px; box-shadow: 0 4px 20px -2px rgba(0,0,0,0.06); margin-bottom: 20px; overflow: hidden; }
         .lookup-title { font-family: var(--font-heading); font-size: 21px; font-weight: 650; text-align: center; color: var(--text-bright); margin-bottom: 8px; display: flex; align-items: center; justify-content: center; gap: 8px; letter-spacing: -0.3px; }
         .lookup-subtitle { font-size: 13.5px; color: var(--text-muted); font-weight: 500; text-align: center; margin-bottom: 24px; }
         .lookup-tabs { display: flex; background: var(--bg-main); border: 1px solid var(--border-color); padding: 3px; border-radius: 12px; margin-bottom: 16px; gap: 2px; width: 100%; box-sizing: border-box; }
@@ -564,8 +564,8 @@ export default function OrderLookupView({ setView: propSetView } = {}) {
         .recent-tag { background: var(--bg-main); border: 1px solid var(--border-color); border-radius: 10px; padding: 4px 10px; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: all 0.2s ease; color: var(--text-bright); font-weight: 600; }
         .recent-tag:hover { border-color: rgba(249,115,22,0.5); background: rgba(249,115,22,0.06); color: #ea580c; }
         .recent-close { font-size: 12px; color: #dc2626; font-weight: bold; }
-        .lookup-error { width: 100%; max-width: 600px; background: rgba(239,68,68,0.08); border: 1px solid rgba(239,68,68,0.3); color: #ef4444; padding: 12px 16px; border-radius: 12px; margin-bottom: 20px; font-size: 13.5px; font-weight: 600; }
-        .stats-container { width: 100%; max-width: 600px; margin-bottom: 24px; }
+        .lookup-error { width: 100%; max-width: 820px; background: rgba(239,68,68,0.08); border: 1px solid rgba(239,68,68,0.3); color: #ef4444; padding: 12px 16px; border-radius: 12px; margin-bottom: 20px; font-size: 13.5px; font-weight: 600; }
+        .stats-container { width: 100%; max-width: 820px; margin-bottom: 24px; }
         .stats-section-title { font-family: var(--font-heading); font-size: 16.5px; font-weight: 700; margin-bottom: 12px; color: var(--text-bright); display: flex; align-items: center; gap: 8px; letter-spacing: -0.2px; }
         .stats-cards-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; width: 100%; }
         .stats-cards-grid > :first-child { grid-column: 1 / -1; }
@@ -598,7 +598,7 @@ export default function OrderLookupView({ setView: propSetView } = {}) {
         .stat-card-sub { font-size: 11px; color: var(--text-muted); opacity: 0.85; margin-bottom: 6px; line-height: 1.3; }
         .stat-card-value { font-family: var(--font-heading); font-size: 23px; font-weight: 700; color: var(--text-bright); letter-spacing: -0.3px; }
         .stat-card-value.primary { color: #2563eb; }
-        .orders-container { width: 100%; max-width: 600px; }
+        .orders-container { width: 100%; max-width: 820px; }
         .order-card-item { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 14px; padding: 16px; margin-bottom: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.03); }
         .order-card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; font-size: 12.5px; color: var(--text-muted); font-weight: 500; }
         .order-id-badge { font-family: monospace; font-weight: 650; color: #ea580c; font-size: 12.5px; }
@@ -608,7 +608,7 @@ export default function OrderLookupView({ setView: propSetView } = {}) {
         .order-commission-val { font-family: var(--font-heading); font-size: 16px; font-weight: 700; color: #047857; }
         .lookup-spinner { width: 20px; height: 20px; border: 2.5px solid rgba(255,255,255,0.3); border-top-color: #fff; border-radius: 50%; animation: lookup-spin 1s linear infinite; }
         @keyframes lookup-spin { to { transform: rotate(360deg); } }
-        .lookup-banner-section { position: relative; width: 100%; max-width: 600px; margin: 28px 0 8px; display: flex; flex-direction: column; align-items: center; z-index: 2; }
+        .lookup-banner-section { position: relative; width: 100%; max-width: 820px; margin: 28px 0 8px; display: flex; flex-direction: column; align-items: center; z-index: 2; }
         .lookup-banner-img-wrap { position: relative; width: 260px; border-radius: 16px; overflow: hidden; box-shadow: 0 8px 30px rgba(0,0,0,0.1); border: 1px solid var(--border-color); animation: banner-float 4s ease-in-out infinite; }
         .lookup-banner-img-wrap img { width: 100%; display: block; }
         .lookup-banner-close { position: absolute; top: 6px; right: 6px; background: rgba(0,0,0,0.6); color: #fff; border: none; border-radius: 50%; width: 22px; height: 22px; font-size: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
@@ -620,9 +620,11 @@ export default function OrderLookupView({ setView: propSetView } = {}) {
         .pin-dot-bullet { width: 12px; height: 12px; border-radius: 50%; background: #ea580c; box-shadow: 0 0 6px rgba(234, 88, 12, 0.5); }
         .pin-hidden-input { position: absolute; opacity: 0; pointer-events: auto; width: calc(100% - 50px); height: 100%; top: 0; left: 0; z-index: 2; }
         @media (max-width: 640px) { 
-          .stats-cards-grid { grid-template-columns: 1fr !important; gap: 12px !important; } 
+          .lookup-page-container { padding: 8px 4px !important; }
+          .lookup-header, .lookup-card, .stats-container, .orders-container, .lookup-banner-section, .lookup-error { width: 100% !important; max-width: 100% !important; }
+          .stats-cards-grid { grid-template-columns: 1fr !important; gap: 10px !important; } 
           .stats-cards-grid > * { grid-column: 1 / -1 !important; width: 100% !important; min-height: auto !important; } 
-          .lookup-card { padding: 16px; } 
+          .lookup-card { padding: 16px 12px !important; } 
           .stat-card-value { font-size: 22px; } 
           .lookup-banner-img-wrap { width: 100%; max-width: 280px; } 
         }

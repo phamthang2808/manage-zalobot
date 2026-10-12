@@ -1,7 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useApp } from '../../context/AppContext';
 import { formatMoney, formatDateTime } from '../../utils/formatters';
-import CopyButton from '../common/CopyButton';
 
 export default function OrdersView() {
   const { API_URL_ROOT, user, showToast, setView } = useApp();
@@ -45,79 +44,94 @@ export default function OrdersView() {
   }, []);
 
   // Tính toán số liệu thống kê
-  const totalComm = orders.reduce((acc, o) => acc + (o.commission || 0), 0);
-  const pendingOrders = orders.filter(o => o.status === 'Chờ xử lý' || o.status === 'Đang xử lý' || o.status === 'Chờ duyệt');
-  const completedOrders = orders.filter(o => o.status === 'Hoàn thành' || o.status === 'Đã chốt');
-  const pendingComm = pendingOrders.reduce((acc, o) => acc + (o.commission || 0), 0);
-  const completedComm = completedOrders.reduce((acc, o) => acc + (o.commission || 0), 0);
+  const totalComm = useMemo(() => orders.reduce((acc, o) => acc + (o.commission || 0), 0), [orders]);
+  const pendingOrders = useMemo(() => orders.filter(o => o.status === 'Chờ xử lý' || o.status === 'Đang xử lý' || o.status === 'Chờ duyệt'), [orders]);
+  const completedOrders = useMemo(() => orders.filter(o => o.status === 'Hoàn thành' || o.status === 'Đã chốt'), [orders]);
+  const pendingComm = useMemo(() => pendingOrders.reduce((acc, o) => acc + (o.commission || 0), 0), [pendingOrders]);
+  const completedComm = useMemo(() => completedOrders.reduce((acc, o) => acc + (o.commission || 0), 0), [completedOrders]);
   const withdrawableComm = walletStats?.withdrawable || user?.balance || 0;
   const receivedComm = walletStats?.received || 0;
 
   // Lọc đơn hàng
-  const filteredOrders = orders.filter((o) => {
-    // Platform filter
-    if (platformFilter !== 'ALL') {
-      const p = (o.platform || '').toUpperCase();
-      if (platformFilter === 'Shopee' && p !== 'SHOPEE' && p !== 'SHOPEE_FOOD') return false;
-      if (platformFilter === 'ShopeeFood' && p !== 'SHOPEE_FOOD') return false;
-      if (platformFilter === 'TikTok' && p !== 'TIKTOK') return false;
-      if (platformFilter === 'Lazada' && p !== 'LAZADA') return false;
-    }
-
-    // Source filter (Web vs Zalo)
-    if (sourceFilter !== 'ALL' && o.source !== sourceFilter) return false;
-
-    // Status filter
-    if (statusFilter === 'COMPLETED' && o.status !== 'Hoàn thành' && o.status !== 'Đã chốt') return false;
-    if (statusFilter === 'PENDING' && o.status !== 'Chờ xử lý' && o.status !== 'Đang xử lý' && o.status !== 'Chờ duyệt') return false;
-    if (statusFilter === 'CANCELLED' && o.status !== 'Đã hủy' && o.status !== 'Hủy') return false;
-
-    // Date filter
-    if (dateFilter !== 'ALL' && o.purchaseTime) {
-      const pDate = new Date(o.purchaseTime);
-      const now = new Date();
-      if (dateFilter === 'TODAY' && pDate.toDateString() !== now.toDateString()) return false;
-      if (dateFilter === 'YESTERDAY') {
-        const yest = new Date();
-        yest.setDate(yest.getDate() - 1);
-        if (pDate.toDateString() !== yest.toDateString()) return false;
-      } else if (dateFilter === '7DAYS') {
-        const d7 = new Date();
-        d7.setDate(d7.getDate() - 7);
-        if (pDate < d7) return false;
-      } else if (dateFilter === 'THIS_MONTH') {
-        if (pDate.getMonth() !== now.getMonth() || pDate.getFullYear() !== now.getFullYear()) return false;
+  const filteredOrders = useMemo(() => {
+    return orders.filter((o) => {
+      // Platform filter
+      if (platformFilter !== 'ALL') {
+        const p = (o.platform || '').toUpperCase();
+        if (platformFilter === 'Shopee' && p !== 'SHOPEE' && p !== 'SHOPEE_FOOD') return false;
+        if (platformFilter === 'ShopeeFood' && p !== 'SHOPEE_FOOD') return false;
+        if (platformFilter === 'TikTok' && p !== 'TIKTOK') return false;
+        if (platformFilter === 'Lazada' && p !== 'LAZADA') return false;
       }
-    }
 
-    // Search query
-    if (searchQuery.trim()) {
-      const q = searchQuery.trim().toLowerCase();
-      const matchId = String(o.orderId || '').toLowerCase().includes(q);
-      const matchName = String(o.productName || '').toLowerCase().includes(q);
-      const matchSub = String(o.subId || '').toLowerCase().includes(q);
-      if (!matchId && !matchName && !matchSub) return false;
-    }
+      // Source filter (Web vs Zalo)
+      if (sourceFilter !== 'ALL' && o.source !== sourceFilter) return false;
 
-    return true;
-  });
+      // Status filter
+      if (statusFilter === 'COMPLETED' && o.status !== 'Hoàn thành' && o.status !== 'Đã chốt') return false;
+      if (statusFilter === 'PENDING' && o.status !== 'Chờ xử lý' && o.status !== 'Đang xử lý' && o.status !== 'Chờ duyệt') return false;
+      if (statusFilter === 'CANCELLED' && o.status !== 'Đã hủy' && o.status !== 'Hủy') return false;
+
+      // Date filter
+      if (dateFilter !== 'ALL' && o.purchaseTime) {
+        const pDate = new Date(o.purchaseTime);
+        const now = new Date();
+        if (dateFilter === 'TODAY' && pDate.toDateString() !== now.toDateString()) return false;
+        if (dateFilter === 'YESTERDAY') {
+          const yest = new Date();
+          yest.setDate(yest.getDate() - 1);
+          if (pDate.toDateString() !== yest.toDateString()) return false;
+        } else if (dateFilter === '7DAYS') {
+          const d7 = new Date();
+          d7.setDate(d7.getDate() - 7);
+          if (pDate < d7) return false;
+        } else if (dateFilter === 'THIS_MONTH') {
+          if (pDate.getMonth() !== now.getMonth() || pDate.getFullYear() !== now.getFullYear()) return false;
+        }
+      }
+
+      // Search query
+      if (searchQuery.trim()) {
+        const q = searchQuery.trim().toLowerCase();
+        const matchId = String(o.orderId || '').toLowerCase().includes(q);
+        const matchName = String(o.productName || '').toLowerCase().includes(q);
+        const matchSub = String(o.subId || '').toLowerCase().includes(q);
+        if (!matchId && !matchName && !matchSub) return false;
+      }
+
+      return true;
+    });
+  }, [orders, platformFilter, sourceFilter, statusFilter, dateFilter, searchQuery]);
 
   const totalPages = Math.max(1, Math.ceil(filteredOrders.length / itemsPerPage));
   const displayedOrders = filteredOrders.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
+  const getPlatformBadge = (p) => {
+    const plat = (p || '').toUpperCase();
+    if (plat === 'SHOPEE') return { label: 'Shopee', color: '#ea580c', bg: 'rgba(234, 88, 12, 0.12)' };
+    if (plat === 'TIKTOK') return { label: 'TikTok Shop', color: '#000000', bg: 'rgba(0, 0, 0, 0.08)' };
+    if (plat === 'LAZADA') return { label: 'Lazada', color: '#0284c7', bg: 'rgba(2, 132, 199, 0.12)' };
+    if (plat === 'SHOPEE_FOOD') return { label: 'ShopeeFood', color: '#dc2626', bg: 'rgba(220, 38, 38, 0.12)' };
+    return { label: plat || 'Sàn TMĐT', color: '#64748b', bg: 'rgba(100, 116, 139, 0.12)' };
+  };
+
   return (
-    <div className="orders-view-wrapper" style={{ width: '100%', maxWidth: '800px', margin: '0 auto' }}>
-      {/* 5 Thẻ Thống Kê Chuẩn Bê Từ OrderLookupView (Đẹp, Chuẩn Cả Light/Dark Mode) */}
+    <div className="orders-view-wrapper" style={{ width: '100%', maxWidth: '820px', margin: '0 auto' }}>
+      
+      {/* 1. GRID STAT CARDS (BÊ NGUYÊN XI TỪ ORDERLOOKUPVIEW) */}
       <div className="stats-container" style={{ width: '100%', marginBottom: '22px' }}>
         <h3 className="stats-section-title" style={{ fontSize: '17px', fontWeight: '800', marginBottom: '14px', color: 'var(--text-bright)' }}>
           💰 Thống Kê Đơn Hàng Của Bạn: <span style={{ color: 'var(--color-primary, #ea580c)' }}>{user?.fullName || user?.email}</span>
         </h3>
 
         <div className="stats-cards-grid">
-          {/* Thẻ 0: Tổng tích lũy chiếm full hàng */}
+          {/* Thẻ 0: Tổng tích lũy */}
           <div className="stat-card-item total" style={{ gridColumn: '1 / -1' }}>
-            <span className="stat-card-label">🌟 TỔNG TÍCH LŨY (HOÀN THÀNH + CHỜ)</span>
-            <span className="stat-card-sub">(Toàn bộ hoa hồng từ đơn Web & Bot Zalo)</span>
+            <span className="stat-card-label">
+              <i className="fa-solid fa-sparkles" style={{ color: '#2563eb' }}></i>
+              🌟 TỔNG TÍCH LŨY (HOÀN THÀNH + CHỜ)
+            </span>
+            <span className="stat-card-sub">(Toàn bộ hoa hồng từ đơn Web & Bot Zalo của bạn)</span>
             <span className="stat-card-value primary">
               {formatMoney(totalComm)}
             </span>
@@ -125,7 +139,10 @@ export default function OrdersView() {
 
           {/* Thẻ 1: Đang xử lý */}
           <div className="stat-card-item pending">
-            <span className="stat-card-label">⏳ ĐANG XỬ LÝ ({pendingOrders.length} ĐƠN)</span>
+            <span className="stat-card-label">
+              <i className="fa-solid fa-hourglass-half" style={{ color: '#d97706' }}></i>
+              ⏳ ĐANG XỬ LÝ ({pendingOrders.length} ĐƠN)
+            </span>
             <span className="stat-card-sub">(Đang vận chuyển hoặc đang đối soát)</span>
             <span className="stat-card-value">
               {formatMoney(pendingComm)}
@@ -134,8 +151,11 @@ export default function OrdersView() {
 
           {/* Thẻ 2: Đã hoàn thành */}
           <div className="stat-card-item completed">
-            <span className="stat-card-label">📦 ĐÃ HOÀN THÀNH ({completedOrders.length} ĐƠN)</span>
-            <span className="stat-card-sub">(Đơn giao thành công và ghi nhận HH)</span>
+            <span className="stat-card-label">
+              <i className="fa-solid fa-circle-check" style={{ color: '#059669' }}></i>
+              📦 ĐÃ HOÀN THÀNH ({completedOrders.length} ĐƠN)
+            </span>
+            <span className="stat-card-sub">(Đơn giao thành công và chốt hoa hồng)</span>
             <span className="stat-card-value">
               {formatMoney(completedComm)}
             </span>
@@ -143,16 +163,22 @@ export default function OrdersView() {
 
           {/* Thẻ 3: Số dư khả dụng */}
           <div className="stat-card-item withdrawable">
-            <span className="stat-card-label">💵 SỐ DƯ KHẢ DỤNG</span>
+            <span className="stat-card-label">
+              <i className="fa-solid fa-money-bill-wave" style={{ color: '#ea580c' }}></i>
+              💵 SỐ DƯ KHẢ DỤNG
+            </span>
             <span className="stat-card-sub">(Đủ điều kiện rút ngay về tài khoản)</span>
             <span className="stat-card-value">
               {formatMoney(withdrawableComm)}
             </span>
           </div>
 
-          {/* Thẻ 4: Đã nhận tiền */}
+          {/* Thẻ 4: Đã rút thành công */}
           <div className="stat-card-item received">
-            <span className="stat-card-label">🏦 ĐÃ RÚT THÀNH CÔNG</span>
+            <span className="stat-card-label">
+              <i className="fa-solid fa-building-columns" style={{ color: '#9333ea' }}></i>
+              🏦 ĐÃ RÚT THÀNH CÔNG
+            </span>
             <span className="stat-card-sub">(Tổng tiền đã giải ngân về ngân hàng)</span>
             <span className="stat-card-value">
               {formatMoney(receivedComm)}
@@ -161,11 +187,11 @@ export default function OrdersView() {
         </div>
       </div>
 
-      {/* Banner Liên Kết Zalo ID Hiện Đại (Tương Thích Cả Dark Mode và Light Mode) */}
+      {/* 2. BANNER LIÊN KẾT ZALO ID */}
       {!user?.zaloId ? (
         <div style={{
           background: 'linear-gradient(135deg, rgba(37, 99, 235, 0.08) 0%, rgba(2, 132, 199, 0.04) 100%)',
-          border: '1.5px solid rgba(59, 130, 246, 0.3)',
+          border: '1.5px solid rgba(59, 130, 246, 0.35)',
           borderRadius: '16px',
           padding: '16px 20px',
           marginBottom: '20px',
@@ -234,7 +260,7 @@ export default function OrdersView() {
         }}>
           <span style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
             <i className="fa-solid fa-circle-check" style={{ color: '#10b981', fontSize: '16px' }}></i>
-            <span>Đã liên kết Zalo ID: <strong style={{ color: '#0284c7', fontFamily: 'monospace' }}>{user.zaloId}</strong> — Hệ thống đang đồng bộ toàn bộ đơn từ cả Web và Zalo Bot!</span>
+            <span>Đang tự động đồng bộ đơn với Zalo ID: <strong style={{ color: '#0284c7', fontFamily: 'monospace' }}>{user.zaloId}</strong></span>
           </span>
           <button
             type="button"
@@ -246,7 +272,7 @@ export default function OrdersView() {
         </div>
       )}
 
-      {/* Filter Tabs & Search Bar Chuẩn Giao Diện OrderLookupView */}
+      {/* 3. BỘ LỌC SÀN, NGUỒN & TÌM KIẾM CHUẨN */}
       <div className="lookup-card" style={{ padding: '18px 20px', marginBottom: '20px' }}>
         {/* Row 1: Platform Filter Tabs */}
         <div style={{ marginBottom: '14px' }}>
@@ -351,14 +377,14 @@ export default function OrdersView() {
             type="text"
             className="lookup-input"
             style={{ width: '100%', padding: '10px 14px 10px 38px', fontSize: '13.5px', borderRadius: '12px', margin: 0 }}
-            placeholder="Lọc nhanh theo tên sản phẩm, mã đơn hàng..."
+            placeholder="Lọc nhanh theo tên sản phẩm, mã đơn hàng, SubID..."
             value={searchQuery}
             onChange={e => { setSearchQuery(e.target.value); setCurrentPage(1); }}
           />
         </div>
       </div>
 
-      {/* Orders List: Sử Dụng Card Đơn Hàng .order-card-item Y Hệt OrderLookupView */}
+      {/* 4. ORDERS LIST (CARD DẠNG ORDERLOOKUPVIEW) */}
       <div className="orders-container" style={{ width: '100%' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '14px' }}>
           <h3 className="stats-section-title" style={{ fontSize: '16px', fontWeight: '800', margin: 0, color: 'var(--text-bright)' }}>
@@ -376,7 +402,7 @@ export default function OrdersView() {
               cursor: 'pointer',
               display: 'inline-flex',
               alignItems: 'center',
-              gap: '5px'
+              gap: '6px'
             }}
           >
             <i className="fa-solid fa-rotate-right"></i>
@@ -398,126 +424,95 @@ export default function OrdersView() {
             </p>
           </div>
         ) : (
-          <>
-            {displayedOrders.map((o, idx) => {
-              const isCompleted = o.status === 'Hoàn thành' || o.status === 'Đã chốt';
-              const isCancelled = o.status === 'Hủy' || o.status === 'Đã hủy';
-              const statusColor = isCompleted ? '#059669' : isCancelled ? '#dc2626' : '#d97706';
+          displayedOrders.map((o, idx) => {
+            const isCompleted = o.status === 'Hoàn thành' || o.status === 'Đã chốt';
+            const isPending = o.status === 'Chờ xử lý' || o.status === 'Đang xử lý' || o.status === 'Chờ duyệt';
+            const statusColor = isCompleted ? '#059669' : (isPending ? '#d97706' : '#dc2626');
+            const statusBg = isCompleted ? 'rgba(5, 150, 105, 0.12)' : (isPending ? 'rgba(217, 119, 6, 0.12)' : 'rgba(220, 38, 38, 0.12)');
+            const platBadge = getPlatformBadge(o.platform);
 
-              return (
-                <div key={o.id || idx} className="order-card-item">
-                  {/* Header: Date + Source Tag + Order ID + Copy */}
-                  <div className="order-card-header">
-                    <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
-                      <i className="fa-regular fa-calendar" style={{ color: 'var(--text-muted)', fontSize: '13px' }}></i>
-                      <span>{formatDateTime(o.purchaseTime)}</span>
-
-                      {/* Tag Nguồn Đơn: Web vs Zalo */}
-                      {o.source === 'WEB' ? (
-                        <span style={{
-                          padding: '2px 8px',
-                          borderRadius: '12px',
-                          background: 'rgba(249, 115, 22, 0.12)',
-                          color: 'var(--color-primary, #ea580c)',
-                          fontSize: '10.5px',
-                          fontWeight: '800',
-                          border: 'none'
-                        }}>
-                          🌐 Đơn Web
-                        </span>
-                      ) : (
-                        <span style={{
-                          padding: '2px 8px',
-                          borderRadius: '12px',
-                          background: 'rgba(2, 132, 199, 0.12)',
-                          color: '#0284c7',
-                          fontSize: '10.5px',
-                          fontWeight: '800',
-                          border: 'none'
-                        }}>
-                          💬 Đơn Zalo
-                        </span>
-                      )}
-                    </span>
-
-                    <span style={{ display: 'inline-flex', alignItems: 'center' }}>
-                      Mã đơn: <span className="order-id-badge" style={{ marginLeft: '4px' }}>{o.orderId}</span>
-                      <CopyButton text={o.orderId} title="Copy mã đơn hàng" toastMessage={`Đã copy mã đơn: ${o.orderId}`} />
-                    </span>
-                  </div>
-
-                  {/* Title & Platform */}
-                  <div className="order-card-title" title={o.productName}>
+            return (
+              <div key={o.orderId || idx} className="order-card-item">
+                <div className="order-card-header">
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
                     <span style={{
-                      display: 'inline-block',
-                      marginRight: '6px',
+                      padding: '2px 8px',
+                      borderRadius: '8px',
                       fontSize: '11px',
                       fontWeight: '800',
-                      padding: '2px 6px',
-                      borderRadius: '6px',
-                      background: o.platform === 'SHOPEE_FOOD' ? 'rgba(220, 38, 38, 0.12)' : (o.platform === 'TIKTOK' ? 'rgba(0, 0, 0, 0.08)' : (o.platform === 'LAZADA' ? 'rgba(37, 99, 235, 0.12)' : 'rgba(234, 88, 12, 0.12)')),
-                      color: o.platform === 'SHOPEE_FOOD' ? '#dc2626' : (o.platform === 'TIKTOK' ? 'var(--text-bright)' : (o.platform === 'LAZADA' ? '#2563eb' : '#ea580c'))
+                      background: platBadge.bg,
+                      color: platBadge.color
                     }}>
-                      {o.platform === 'SHOPEE_FOOD' ? 'ShopeeFood' : (o.platform || 'Shopee')}
+                      {platBadge.label}
                     </span>
-                    {o.productName || 'Sản phẩm tiếp thị'}
-                  </div>
-
-                  {/* Commission Row */}
-                  <div className="order-card-commission-row" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px', flexWrap: 'wrap', marginTop: '10px' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
-                      <span style={{ color: statusColor, fontSize: '12.5px', fontWeight: '800' }}>
-                        {o.status || 'Chờ xử lý'}
+                    <span className="order-id-badge">#{o.orderId}</span>
+                    {o.source && (
+                      <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>
+                        • {o.source === 'ZALO' ? '💬 Bot Zalo' : '🌐 Web'}
                       </span>
-                      {o.subId && (
-                        <span style={{ fontSize: '11px', color: 'var(--text-subtle)', fontFamily: 'monospace' }}>
-                          SubID: {o.subId}
-                        </span>
-                      )}
-                    </div>
-                    <div style={{ textAlign: 'right' }}>
-                      <span className="order-commission-label" style={{ marginRight: '6px' }}>Hoa hồng nhận:</span>
-                      <span className="order-commission-val" style={{ color: isCompleted ? '#059669' : '#ea580c' }}>
-                        {formatMoney(o.commission)}
-                      </span>
-                    </div>
+                    )}
                   </div>
-                </div>
-              );
-            })}
-
-            {/* Pagination */}
-            {totalPages > 1 && (
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px 4px' }}>
-                <span style={{ fontSize: '12.5px', color: 'var(--text-muted)', fontWeight: '600' }}>
-                  Hiển thị {(currentPage - 1) * itemsPerPage + 1} - {Math.min(currentPage * itemsPerPage, filteredOrders.length)} / {filteredOrders.length} đơn
-                </span>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <button
-                    type="button"
-                    onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
-                    disabled={currentPage === 1}
-                    className="lookup-admin-link"
-                    style={{ padding: '5px 12px', fontSize: '12px' }}
-                  >
-                    Trước
-                  </button>
-                  <span style={{ fontSize: '12.5px', fontWeight: '800', color: 'var(--color-primary, #ea580c)', padding: '4px 8px' }}>
-                    {currentPage} / {totalPages}
+                  <span style={{
+                    display: 'inline-block',
+                    padding: '3px 10px',
+                    borderRadius: '12px',
+                    fontSize: '11px',
+                    fontWeight: '800',
+                    background: statusBg,
+                    color: statusColor
+                  }}>
+                    {o.status || 'Chờ xử lý'}
                   </span>
-                  <button
-                    type="button"
-                    onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
-                    disabled={currentPage === totalPages}
-                    className="lookup-admin-link"
-                    style={{ padding: '5px 12px', fontSize: '12px' }}
-                  >
-                    Sau
-                  </button>
+                </div>
+
+                <div className="order-card-title">
+                  {o.productName || 'Sản phẩm mua sắm qua link tiếp thị'}
+                </div>
+
+                <div className="order-card-commission-row">
+                  <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
+                    <span>Thời gian: </span>
+                    <span style={{ color: 'var(--text-bright)', fontWeight: '600' }}>
+                      {formatDateTime(o.purchaseTime || o.orderTime)}
+                    </span>
+                  </div>
+                  <div style={{ textAlign: 'right' }}>
+                    <span className="order-commission-label">Hoa hồng nhận: </span>
+                    <span className="order-commission-val">
+                      +{formatMoney(o.commission || 0)}
+                    </span>
+                  </div>
                 </div>
               </div>
-            )}
-          </>
+            );
+          })
+        )}
+
+        {/* Pagination */}
+        {totalPages > 1 && (
+          <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '8px', marginTop: '20px' }}>
+            <button
+              type="button"
+              disabled={currentPage <= 1}
+              onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+              className="lookup-admin-link"
+              style={{ padding: '6px 14px' }}
+            >
+              Trang trước
+            </button>
+            <span style={{ fontSize: '13px', fontWeight: '700', color: 'var(--text-bright)' }}>
+              {currentPage} / {totalPages}
+            </span>
+            <button
+              type="button"
+              disabled={currentPage >= totalPages}
+              onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+              className="lookup-admin-link"
+              style={{ padding: '6px 14px' }}
+            >
+              Trang sau
+            </button>
+          </div>
         )}
       </div>
     </div>

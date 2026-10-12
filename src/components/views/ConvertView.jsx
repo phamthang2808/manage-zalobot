@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { useApp } from '../../context/AppContext';
 import { formatMoney } from '../../utils/formatters';
-import CopyButton from '../common/CopyButton';
 
 export default function ConvertView() {
   const { API_URL_ROOT, user, showToast } = useApp();
@@ -20,6 +19,14 @@ export default function ConvertView() {
     .replace(/[^a-zA-Z0-9]/g, '');
 
   const displaySubId = `phamthang_${user?.id || 0}_${cleanName || 'user'}`;
+
+  const handleCopySubId = () => {
+    navigator.clipboard.writeText(displaySubId).then(() => {
+      showToast(`Đã sao chép SubID: ${displaySubId} 🎉`, 'success');
+    }).catch(() => {
+      showToast('Không thể sao chép SubID', 'error');
+    });
+  };
 
   const handleConvert = async (e) => {
     e.preventDefault();
@@ -73,51 +80,74 @@ export default function ConvertView() {
     });
   };
 
+  const handleCopyAll = () => {
+    if (results.length === 0) return;
+    const allLinks = results.map(r => r.affiliateUrl || r.shortUrl || r.url).join('\n');
+    navigator.clipboard.writeText(allLinks).then(() => {
+      showToast(`Đã sao chép toàn bộ ${results.length} liên kết tiếp thị! 🎉`, 'success');
+    }).catch(() => {
+      showToast('Không thể sao chép!', 'error');
+    });
+  };
+
   return (
-    <div className="convert-view-wrapper" style={{ width: '100%', maxWidth: '800px', margin: '0 auto' }}>
-      {/* Thẻ Giới Thiệu Chuyển Đổi Nhanh Chuẩn Giao Diện */}
+    <div className="convert-view-wrapper" style={{ width: '100%', maxWidth: '820px', margin: '0 auto' }}>
+      
+      {/* 1. THẺ CHUYỂN ĐỔI LINK CHÍNH */}
       <div className="lookup-card" style={{ padding: '24px', marginBottom: '22px' }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '10px', marginBottom: '14px' }}>
-          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '12px', marginBottom: '16px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
             <div style={{
-              width: '38px',
-              height: '38px',
-              borderRadius: '12px',
+              width: '44px',
+              height: '44px',
+              borderRadius: '14px',
               background: 'linear-gradient(135deg, #f97316 0%, #ea580c 100%)',
               color: '#ffffff',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              fontSize: '18px',
-              boxShadow: '0 4px 12px rgba(249, 115, 22, 0.3)'
+              fontSize: '20px',
+              boxShadow: '0 4px 14px rgba(249, 115, 22, 0.35)',
+              flexShrink: 0
             }}>
               <i className="fa-solid fa-bolt"></i>
             </div>
             <div>
-              <h2 style={{ fontSize: '18px', fontWeight: '800', margin: 0, color: 'var(--text-bright)' }}>
+              <h2 style={{ fontSize: '18px', fontWeight: '900', margin: 0, color: 'var(--text-bright)' }}>
                 Tạo Link Tiếp Thị & Hoàn Tiền Tự Động
               </h2>
-              <div style={{ fontSize: '12.5px', color: 'var(--text-muted)', marginTop: '2px' }}>
+              <div style={{ fontSize: '12.5px', color: 'var(--text-muted)', marginTop: '3px' }}>
                 Hỗ trợ đồng thời <b>Shopee</b>, <b>TikTok Shop</b>, <b>Lazada</b> và <b>ShopeeFood</b>
               </div>
             </div>
           </div>
 
-          <div style={{
-            padding: '5px 12px',
-            borderRadius: '20px',
-            background: 'rgba(249, 115, 22, 0.12)',
-            color: 'var(--color-primary, #ea580c)',
-            fontSize: '12px',
-            fontFamily: 'monospace',
-            fontWeight: '800'
-          }}>
-            SubID: {displaySubId}
+          {/* SubID Badge */}
+          <div
+            onClick={handleCopySubId}
+            style={{
+              padding: '6px 14px',
+              borderRadius: '20px',
+              background: 'linear-gradient(135deg, rgba(249,115,22,0.12), rgba(234,88,12,0.06))',
+              border: '1px solid rgba(249,115,22,0.3)',
+              color: 'var(--color-primary, #ea580c)',
+              fontSize: '12px',
+              fontFamily: 'monospace',
+              fontWeight: '800',
+              cursor: 'pointer',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '6px'
+            }}
+            title="Bấm để sao chép SubID"
+          >
+            <span>SubID: {displaySubId}</span>
+            <i className="fa-solid fa-copy" style={{ fontSize: '11px' }}></i>
           </div>
         </div>
 
         {/* Platform Selector Tabs */}
-        <div className="lookup-tabs" style={{ marginBottom: '18px' }}>
+        <div className="lookup-tabs" style={{ marginBottom: '16px' }}>
           <button className={`lookup-tab ${activePlatform === 'ALL' ? 'active' : ''}`} onClick={() => setActivePlatform('ALL')}>
             ⚡ Tất cả sàn
           </button>
@@ -140,8 +170,8 @@ export default function ConvertView() {
           <div className="lookup-input-group" style={{ marginBottom: '14px' }}>
             <label className="lookup-label" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
               <span>Dán link sản phẩm (hỗ trợ nhiều link, mỗi dòng 1 link):</span>
-              <span style={{ fontSize: '11px', textTransform: 'none', color: 'var(--text-subtle)' }}>
-                {inputText.split('\n').filter(l => l.trim()).length} link
+              <span style={{ fontSize: '11.5px', textTransform: 'none', color: 'var(--text-muted)', fontWeight: '600' }}>
+                Đã nhập: <b>{inputText.split('\n').filter(l => l.trim()).length}</b> link
               </span>
             </label>
             <textarea
@@ -153,10 +183,12 @@ export default function ConvertView() {
               style={{
                 width: '100%',
                 resize: 'vertical',
-                minHeight: '110px',
-                lineHeight: '1.5',
+                minHeight: '120px',
+                lineHeight: '1.6',
                 fontFamily: 'monospace',
-                fontSize: '13px'
+                fontSize: '13px',
+                padding: '14px',
+                borderRadius: '14px'
               }}
             />
           </div>
@@ -167,16 +199,17 @@ export default function ConvertView() {
                 type="button"
                 onClick={() => setInputText('')}
                 className="lookup-admin-link"
-                style={{ fontSize: '12px' }}
+                style={{ fontSize: '12.5px', padding: '10px 16px' }}
               >
-                Xóa nội dung
+                <i className="fa-solid fa-trash-can"></i>
+                <span>Xóa nội dung</span>
               </button>
             )}
             <button
               type="submit"
               disabled={converting || !inputText.trim()}
               className="lookup-btn"
-              style={{ flex: 1, padding: '12px' }}
+              style={{ flex: 1, padding: '13px' }}
             >
               {converting ? (
                 <>
@@ -194,100 +227,113 @@ export default function ConvertView() {
         </form>
       </div>
 
-      {/* Kết Quả Chuyển Đổi */}
+      {/* 2. KẾT QUẢ CHUYỂN ĐỔI LINK */}
       {results.length > 0 && (
-        <div className="orders-container" style={{ width: '100%' }}>
+        <div className="orders-container" style={{ width: '100%', marginBottom: '24px' }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '14px' }}>
             <h3 className="stats-section-title" style={{ fontSize: '16px', fontWeight: '800', margin: 0, color: 'var(--text-bright)' }}>
               🎉 Kết Quả Chuyển Đổi ({results.length} link)
             </h3>
-            <button
-              type="button"
-              onClick={() => {
-                const allLinks = results.filter(r => r.affiliateLink).map(r => r.affiliateLink).join('\n');
-                navigator.clipboard.writeText(allLinks);
-                showToast('Đã sao chép toàn bộ link tiếp thị! 🎉', 'success');
-              }}
-              className="lookup-admin-link"
-              style={{ fontSize: '12px' }}
-            >
-              <i className="fa-solid fa-copy" style={{ color: 'var(--color-primary, #ea580c)' }}></i>
-              <span>Sao chép tất cả</span>
-            </button>
+            {results.length > 1 && (
+              <button
+                type="button"
+                onClick={handleCopyAll}
+                className="lookup-admin-link"
+                style={{ fontSize: '12px', padding: '6px 12px', background: 'rgba(249, 115, 22, 0.12)', color: 'var(--color-primary, #ea580c)', borderColor: 'rgba(249, 115, 22, 0.3)' }}
+              >
+                <i className="fa-solid fa-copy"></i>
+                <span>Copy tất cả link</span>
+              </button>
+            )}
           </div>
 
-          {results.map((res, idx) => (
-            <div key={idx} className="order-card-item">
-              <div className="order-card-header">
-                <span style={{
-                  display: 'inline-block',
-                  fontSize: '11px',
-                  fontWeight: '800',
-                  padding: '3px 8px',
-                  borderRadius: '6px',
-                  background: res.platform === 'SHOPEE_FOOD' ? 'rgba(220, 38, 38, 0.12)' : (res.platform === 'TIKTOK' ? 'rgba(0, 0, 0, 0.08)' : (res.platform === 'LAZADA' ? 'rgba(37, 99, 235, 0.12)' : 'rgba(234, 88, 12, 0.12)')),
-                  color: res.platform === 'SHOPEE_FOOD' ? '#dc2626' : (res.platform === 'TIKTOK' ? 'var(--text-bright)' : (res.platform === 'LAZADA' ? '#2563eb' : '#ea580c'))
-                }}>
-                  {res.platform === 'SHOPEE_FOOD' ? 'ShopeeFood' : (res.platform || 'Sản phẩm')}
-                </span>
-                <span style={{ fontSize: '11px', color: 'var(--text-subtle)', fontFamily: 'monospace' }}>
-                  SubID: {res.subId || displaySubId}
-                </span>
-              </div>
+          {results.map((r, idx) => {
+            const finalLink = r.affiliateUrl || r.shortUrl || r.url || '';
+            const isCopied = copiedIndex === idx;
 
-              <div className="order-card-title" style={{ marginTop: '8px' }}>
-                {res.productName || res.originalUrl}
-              </div>
+            return (
+              <div key={idx} className="order-card-item" style={{ padding: '16px 18px' }}>
+                <div className="order-card-header" style={{ marginBottom: '10px' }}>
+                  <span style={{
+                    padding: '3px 10px',
+                    borderRadius: '10px',
+                    fontSize: '11px',
+                    fontWeight: '800',
+                    background: 'rgba(234, 88, 12, 0.12)',
+                    color: 'var(--color-primary, #ea580c)'
+                  }}>
+                    Link #{idx + 1} • {r.platform || 'AFFILIATE'}
+                  </span>
+                  <span style={{ fontSize: '11.5px', color: 'var(--text-muted)' }}>
+                    Gắn SubID: <b style={{ fontFamily: 'monospace' }}>{r.subId || displaySubId}</b>
+                  </span>
+                </div>
 
-              {res.success ? (
+                {/* Box hiển thị link */}
                 <div style={{
                   background: 'var(--bg-main)',
-                  borderRadius: '10px',
-                  padding: '10px 12px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  gap: '10px',
-                  marginTop: '10px'
+                  border: '1px solid var(--border-color)',
+                  borderRadius: '12px',
+                  padding: '10px 14px',
+                  marginBottom: '12px',
+                  wordBreak: 'break-all',
+                  fontFamily: 'monospace',
+                  fontSize: '13px',
+                  color: 'var(--text-bright)'
                 }}>
-                  <div style={{
-                    fontSize: '13px',
-                    fontFamily: 'monospace',
-                    color: 'var(--color-primary, #ea580c)',
-                    fontWeight: '700',
-                    overflow: 'hidden',
-                    textOverflow: 'ellipsis',
-                    whiteSpace: 'nowrap',
-                    flex: 1
-                  }}>
-                    {res.affiliateLink}
-                  </div>
+                  {finalLink}
+                </div>
+
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '8px' }}>
+                  <a
+                    href={finalLink}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="lookup-admin-link"
+                    style={{ fontSize: '12px', padding: '6px 14px', textDecoration: 'none' }}
+                  >
+                    <i className="fa-solid fa-arrow-up-right-from-square"></i>
+                    <span>Mở link mua sắm</span>
+                  </a>
                   <button
                     type="button"
-                    onClick={() => handleCopy(res.affiliateLink, idx)}
-                    className="lookup-admin-link"
+                    onClick={() => handleCopy(finalLink, idx)}
+                    className="lookup-btn"
                     style={{
-                      fontSize: '12px',
-                      padding: '6px 14px',
-                      background: copiedIndex === idx ? 'rgba(5, 150, 105, 0.15)' : 'var(--bg-card)',
-                      color: copiedIndex === idx ? '#059669' : 'var(--text-bright)',
-                      borderColor: copiedIndex === idx ? '#059669' : 'var(--border-color)',
-                      flexShrink: 0
+                      width: 'auto',
+                      padding: '7px 18px',
+                      fontSize: '12.5px',
+                      borderRadius: '10px',
+                      background: isCopied ? '#059669' : undefined
                     }}
                   >
-                    <i className={copiedIndex === idx ? "fa-solid fa-check" : "fa-solid fa-copy"}></i>
-                    <span>{copiedIndex === idx ? 'Đã chép' : 'Sao chép'}</span>
+                    <i className={isCopied ? 'fa-solid fa-circle-check' : 'fa-solid fa-copy'}></i>
+                    <span>{isCopied ? 'Đã sao chép!' : 'Sao chép link'}</span>
                   </button>
                 </div>
-              ) : (
-                <div style={{ color: '#dc2626', fontSize: '12.5px', marginTop: '6px', fontWeight: '600' }}>
-                  ⚠️ {res.error || 'Không thể tạo link cho sản phẩm này'}
-                </div>
-              )}
-            </div>
-          ))}
+              </div>
+            );
+          })}
         </div>
       )}
+
+      {/* 3. CARD HƯỚNG DẪN HOÀN TIỀN & HOA HỒNG */}
+      <div className="lookup-card" style={{
+        background: 'linear-gradient(135deg, rgba(59, 130, 246, 0.05) 0%, var(--bg-card) 100%)',
+        border: '1.5px solid rgba(59, 130, 246, 0.25)',
+        padding: '20px'
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px', color: '#2563eb', fontWeight: '800', fontSize: '14px' }}>
+          <i className="fa-solid fa-shield-halved"></i>
+          <span>Cơ Chế Ghi Nhận Hoa Hồng & Hoàn Tiền Minh Bạch</span>
+        </div>
+        <ul style={{ margin: 0, paddingLeft: '20px', fontSize: '12.5px', color: 'var(--text-muted)', lineHeight: '1.7' }}>
+          <li>Hệ thống tự động gắn mã <b>SubID</b> của bạn vào từng link sản phẩm để sàn ghi nhận hoa hồng chuẩn xác 100%.</li>
+          <li>Hoa hồng chia sẻ lại cho thành viên lên tới <b>80%</b> giá trị hoa hồng nhận được từ Shopee, TikTok Shop, Lazada.</li>
+          <li>Sau khi đơn hàng giao thành công, hoa hồng sẽ tự động cập nhật vào mục <b>Đơn hàng</b> và tích lũy vào <b>Ví tiền</b> của bạn.</li>
+        </ul>
+      </div>
+
     </div>
   );
 }

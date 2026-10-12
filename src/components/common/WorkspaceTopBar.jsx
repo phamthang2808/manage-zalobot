@@ -3,52 +3,73 @@ import { useApp } from '../../context/AppContext';
 import ThemeToggle from './ThemeToggle';
 
 export default function WorkspaceTopBar({ setSidebarOpen }) {
-  const { view, setView, user, isAdmin } = useApp();
+  const { view, setView, user, token, isAdmin, handleLogout } = useApp();
 
-  const getPageTitle = () => {
-    switch (view) {
-      case 'convert': return { title: 'Chuyển Đổi Link Tiếp Thị', icon: 'fa-solid fa-bolt', color: '#f59e0b' };
-      case 'orders': return { title: 'Đơn Hàng Đã Đặt', icon: 'fa-solid fa-boxes-stacked', color: '#0284c7' };
-      case 'withdraw': return { title: 'Ví Tiền & Yêu Cầu Rút', icon: 'fa-solid fa-wallet', color: '#10b981' };
-      case 'account': return { title: 'Tài Khoản & Liên Kết Zalo ID', icon: 'fa-solid fa-user-circle', color: '#8b5cf6' };
-      default: return { title: 'Không Gian Tiện Ích', icon: 'fa-solid fa-grid-2', color: '#ea580c' };
+  const navTabs = [
+    { id: 'home', label: 'Trang chủ', icon: 'fa-solid fa-house' },
+    { id: 'convert', label: 'Chuyển đổi link', icon: 'fa-solid fa-bolt' },
+    { id: 'orders', label: 'Đơn hàng', icon: 'fa-solid fa-boxes-stacked' },
+    { id: 'withdraw', label: 'Ví & Rút tiền', icon: 'fa-solid fa-wallet' },
+    { id: 'lookup', label: 'Tra cứu Zalo', icon: 'fa-solid fa-magnifying-glass' },
+    { id: 'pricing', label: 'Bảng giá', icon: 'fa-solid fa-tags' }
+  ];
+
+  const handleNavClick = (tabId) => {
+    if (tabId === 'pricing') {
+      if (view !== 'home' && view !== 'landing') {
+        setView('home');
+        window.history.pushState({}, '', '/');
+        setTimeout(() => {
+          document.getElementById('pricing')?.scrollIntoView({ behavior: 'smooth' });
+        }, 300);
+      } else {
+        document.getElementById('pricing')?.scrollIntoView({ behavior: 'smooth' });
+      }
+      return;
     }
+
+    setView(tabId);
+    window.history.pushState({}, '', tabId === 'home' ? '/' : `/?view=${tabId}`);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const current = getPageTitle();
+  const isTabActive = (tabId) => {
+    if (tabId === 'home') return view === 'home' || view === 'landing';
+    return view === tabId;
+  };
 
   return (
     <header className="workspace-topbar" style={{
-      height: '65px',
-      background: 'var(--bg-card)',
-      borderBottom: '1px solid var(--border-color)',
+      height: '66px',
+      background: 'var(--bg-card, #ffffff)',
+      borderBottom: '1px solid var(--border-color, rgba(226, 232, 240, 0.8))',
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'space-between',
-      padding: '0 24px',
+      padding: '0 18px',
       position: 'sticky',
       top: 0,
       zIndex: 90,
-      backdropFilter: 'blur(10px)',
-      boxSizing: 'border-box'
+      backdropFilter: 'blur(12px)',
+      boxSizing: 'border-box',
+      gap: '12px'
     }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
-        {/* Mobile Sidebar Hamburger Toggle */}
+      {/* Bên Trái: Nút Hamburger Mobile + Logo Thu Nhỏ */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexShrink: 0 }}>
         <button
           type="button"
           className="workspace-sidebar-toggle"
           onClick={() => setSidebarOpen(prev => !prev)}
           style={{
-            display: 'none',
-            background: 'var(--bg-main)',
-            border: '1px solid var(--border-color)',
+            background: 'var(--bg-main, #f1f5f9)',
+            border: '1px solid var(--border-color, #cbd5e1)',
             borderRadius: '10px',
             width: '38px',
             height: '38px',
             alignItems: 'center',
             justifyContent: 'center',
             cursor: 'pointer',
-            color: 'var(--text-main)',
+            color: 'var(--text-main, #334155)',
             fontSize: '16px'
           }}
           aria-label="Toggle menu"
@@ -56,54 +77,78 @@ export default function WorkspaceTopBar({ setSidebarOpen }) {
           <i className="fa-solid fa-bars"></i>
         </button>
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-          <div style={{
-            width: '32px',
-            height: '32px',
-            borderRadius: '10px',
-            background: 'linear-gradient(135deg, rgba(249,115,22,0.15), rgba(234,88,12,0.08))',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            color: current.color
-          }}>
-            <i className={current.icon} style={{ fontSize: '15px' }}></i>
-          </div>
-          <h1 style={{
-            margin: 0,
-            fontSize: '17px',
-            fontWeight: '800',
-            color: 'var(--text-bright)',
-            fontFamily: 'var(--font-heading)'
-          }}>
-            {current.title}
-          </h1>
+        <div
+          onClick={() => handleNavClick('home')}
+          style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}
+          title="Về Trang chủ"
+        >
+          <img
+            src="/28symueslogomanin.png?v=7"
+            alt="Logo"
+            style={{ height: '36px', width: 'auto', objectFit: 'contain' }}
+          />
         </div>
       </div>
 
-      <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-        <ThemeToggle />
+      {/* Ở Giữa: CÁC TAB CŨ Ở THANH NGANG TRÊN (Đầy đủ Trang chủ, Chuyển đổi link, Đơn hàng, Ví & Rút tiền, Tra cứu Zalo, Bảng giá) */}
+      <nav style={{
+        display: 'flex',
+        alignItems: 'center',
+        gap: '6px',
+        overflowX: 'auto',
+        maxWidth: '100%',
+        padding: '4px 0',
+        WebkitOverflowScrolling: 'touch',
+        scrollbarWidth: 'none'
+      }}>
+        {navTabs.map(tab => {
+          const active = isTabActive(tab.id);
+          return (
+            <button
+              key={tab.id}
+              type="button"
+              onClick={() => handleNavClick(tab.id)}
+              style={{
+                border: 'none',
+                background: active
+                  ? 'linear-gradient(135deg, #f97316 0%, #ea580c 100%)'
+                  : 'transparent',
+                color: active ? '#ffffff' : 'var(--text-muted, #64748b)',
+                padding: '7px 14px',
+                borderRadius: '20px',
+                fontSize: '13px',
+                fontWeight: active ? '800' : '600',
+                cursor: 'pointer',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '6px',
+                whiteSpace: 'nowrap',
+                transition: 'all 0.2s ease',
+                boxShadow: active ? '0 3px 10px rgba(249, 115, 22, 0.3)' : 'none'
+              }}
+              onMouseEnter={e => {
+                if (!active) {
+                  e.currentTarget.style.background = 'var(--bg-main, rgba(0,0,0,0.04))';
+                  e.currentTarget.style.color = 'var(--color-primary, #ea580c)';
+                }
+              }}
+              onMouseLeave={e => {
+                if (!active) {
+                  e.currentTarget.style.background = 'transparent';
+                  e.currentTarget.style.color = 'var(--text-muted, #64748b)';
+                }
+              }}
+            >
+              <i className={tab.icon} style={{ fontSize: '13px' }}></i>
+              <span>{tab.label}</span>
+            </button>
+          );
+        })}
+      </nav>
 
-        <button
-          onClick={() => { setView('home'); window.history.pushState({}, '', '/'); }}
-          style={{
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: '6px',
-            padding: '7px 12px',
-            background: 'var(--bg-main)',
-            border: '1px solid var(--border-color)',
-            borderRadius: '16px',
-            fontSize: '12.5px',
-            fontWeight: '600',
-            color: 'var(--text-main)',
-            cursor: 'pointer'
-          }}
-          title="Về trang chủ giới thiệu"
-        >
-          <i className="fa-solid fa-house" style={{ color: '#ea580c' }}></i>
-          <span className="hide-on-mobile">Trang chủ</span>
-        </button>
+      {/* Bên Phải: ThemeToggle + Quản Trị + User Profile / Đăng Nhập */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexShrink: 0 }}>
+        <ThemeToggle />
 
         {isAdmin && (
           <button
@@ -126,6 +171,69 @@ export default function WorkspaceTopBar({ setSidebarOpen }) {
           >
             <i className="fa-solid fa-shield-halved"></i>
             <span className="hide-on-mobile">Quản trị</span>
+          </button>
+        )}
+
+        {token ? (
+          <div
+            onClick={() => handleNavClick('account')}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+              cursor: 'pointer',
+              padding: '4px 10px 4px 6px',
+              borderRadius: '24px',
+              background: 'var(--bg-main, #f8fafc)',
+              border: '1px solid var(--border-color, #e2e8f0)',
+              transition: 'all 0.2s ease'
+            }}
+            title="Tài khoản & Zalo ID"
+          >
+            {user?.avatarUrl ? (
+              <img
+                src={user.avatarUrl}
+                alt="Avatar"
+                referrerPolicy="no-referrer"
+                style={{ width: '28px', height: '28px', borderRadius: '50%', objectFit: 'cover' }}
+              />
+            ) : (
+              <div style={{
+                width: '28px',
+                height: '28px',
+                borderRadius: '50%',
+                background: 'linear-gradient(135deg, #f97316, #ea580c)',
+                color: '#fff',
+                fontSize: '12px',
+                fontWeight: '800',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center'
+              }}>
+                {(user?.fullName || user?.name || 'U').substring(0, 1).toUpperCase()}
+              </div>
+            )}
+            <span style={{ fontSize: '12.5px', fontWeight: '700', color: 'var(--text-bright)', maxWidth: '100px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+              {user?.fullName?.split(' ')[user.fullName.split(' ').length - 1] || 'Cá nhân'}
+            </span>
+          </div>
+        ) : (
+          <button
+            onClick={() => { setView('login'); window.history.pushState({}, '', '/?view=login'); }}
+            style={{
+              padding: '7px 16px',
+              borderRadius: '20px',
+              border: '1.5px solid var(--color-primary, #ea580c)',
+              background: 'transparent',
+              color: 'var(--color-primary, #ea580c)',
+              fontSize: '12.5px',
+              fontWeight: '700',
+              cursor: 'pointer',
+              whiteSpace: 'nowrap',
+              transition: 'all 0.2s ease'
+            }}
+          >
+            Đăng nhập
           </button>
         )}
       </div>

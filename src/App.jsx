@@ -73,57 +73,43 @@ function App() {
     return <ProductLandingView code={productCode} apiRoot={API_URL_ROOT} />;
   }
 
-  if (view === 'lookup') {
-    return (
-      <>
-        <ToastNotification />
-        <OrderLookupView setView={setView} />
-        <FloatingZaloContact />
-      </>
-    );
-  }
-
   if (view === 'login') {
     return <LoginView />;
-  }
-
-  // Left Sidebar Workspace layout for all new member portal features:
-  if (view === 'convert' || view === 'orders' || view === 'withdraw' || view === 'account') {
-    return (
-      <div className="user-workspace-layout" style={{ minHeight: '100vh', minHeight: '100dvh', background: 'var(--bg-main)' }}>
-        <ToastNotification />
-        <UserSidebar sidebarOpen={userSidebarOpen} setSidebarOpen={setUserSidebarOpen} />
-        <div className="user-workspace-content" style={{
-          marginLeft: '260px',
-          minHeight: '100vh',
-          display: 'flex',
-          flexDirection: 'column',
-          transition: 'margin-left 0.3s ease'
-        }}>
-          <WorkspaceTopBar setSidebarOpen={setUserSidebarOpen} />
-          <main style={{ flex: 1, padding: '24px 20px 80px', maxWidth: '1200px', width: '100%', margin: '0 auto', boxSizing: 'border-box' }}>
-            {view === 'convert' && <ConvertView />}
-            {view === 'orders' && <OrdersView />}
-            {view === 'withdraw' && <WithdrawView />}
-            {view === 'account' && <AccountView />}
-          </main>
-        </div>
-        <FloatingZaloContact />
-        <MobileBottomNav />
-      </div>
-    );
   }
 
   if (view === 'admin') {
     return <AdminView />;
   }
 
-  // Default: Landing Page (với menu chính giữa giữ nguyên 100%, nút Tiện ích bên trái)
+  // Unified Workspace Layout for HOME, LOOKUP and ALL MEMBER TOOLS:
+  // Vừa có Sidebar bên trái, vừa có đầy đủ các tab thanh ngang trên!
+  const isHomePage = view === 'home' || view === 'landing';
+
   return (
-    <>
-      <LandingView />
+    <div className="user-workspace-layout" style={{ minHeight: '100vh', minHeight: '100dvh', background: 'var(--bg-main)' }}>
+      <ToastNotification />
+      <UserSidebar sidebarOpen={userSidebarOpen} setSidebarOpen={setUserSidebarOpen} />
+      <div className="user-workspace-content">
+        <WorkspaceTopBar setSidebarOpen={setUserSidebarOpen} />
+        <main style={{
+          flex: 1,
+          padding: isHomePage ? '0' : '24px 20px 80px',
+          maxWidth: isHomePage ? '100%' : '1200px',
+          width: '100%',
+          margin: '0 auto',
+          boxSizing: 'border-box'
+        }}>
+          {isHomePage && <LandingView inWorkspace={true} />}
+          {view === 'convert' && <ConvertView />}
+          {view === 'orders' && <OrdersView />}
+          {view === 'withdraw' && <WithdrawView />}
+          {view === 'account' && <AccountView />}
+          {view === 'lookup' && <OrderLookupView setView={setView} />}
+        </main>
+      </div>
       <FloatingZaloContact />
-    </>
+      <MobileBottomNav />
+    </div>
   );
 }
 

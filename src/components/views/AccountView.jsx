@@ -30,6 +30,14 @@ export default function AccountView() {
 
   const displaySubId = `phamthang_${user?.id || 0}_${cleanName || 'user'}`;
 
+  const handleCopySubId = () => {
+    navigator.clipboard.writeText(displaySubId).then(() => {
+      showToast(`Đã sao chép SubID: ${displaySubId} 🎉`, 'success');
+    }).catch(() => {
+      showToast('Không thể sao chép SubID', 'error');
+    });
+  };
+
   const handleSaveProfile = async (e) => {
     e.preventDefault();
     if (!fullName.trim()) {
@@ -178,14 +186,119 @@ export default function AccountView() {
   };
 
   return (
-    <div className="account-view-wrapper" style={{ width: '100%', maxWidth: '800px', margin: '0 auto' }}>
-      {/* CARD 1: LIÊN KẾT ZALO ID CHUẨN GIAO DIỆN ORDERLOOKUPVIEW */}
-      <div className="lookup-card" style={{ marginBottom: '22px' }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '10px', marginBottom: '14px' }}>
+    <div className="account-view-wrapper" style={{ width: '100%', maxWidth: '820px', margin: '0 auto' }}>
+      
+      {/* 1. THẺ ĐỊNH DANH VIP & SUBID TIẾP THỊ */}
+      <div className="lookup-card" style={{
+        background: 'linear-gradient(135deg, rgba(249, 115, 22, 0.08) 0%, var(--bg-card) 100%)',
+        border: '1.5px solid rgba(249, 115, 22, 0.35)',
+        position: 'relative',
+        overflow: 'hidden',
+        marginBottom: '20px'
+      }}>
+        <div style={{
+          position: 'absolute',
+          top: '-20px',
+          right: '-20px',
+          width: '120px',
+          height: '120px',
+          borderRadius: '50%',
+          background: 'radial-gradient(circle, rgba(249, 115, 22, 0.15) 0%, transparent 70%)',
+          pointerEvents: 'none'
+        }} />
+
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '14px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+            <div style={{
+              width: '54px',
+              height: '54px',
+              borderRadius: '16px',
+              background: 'linear-gradient(135deg, #f97316 0%, #ea580c 100%)',
+              color: '#ffffff',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontSize: '22px',
+              boxShadow: '0 6px 16px rgba(249, 115, 22, 0.35)',
+              flexShrink: 0
+            }}>
+              <i className="fa-solid fa-crown"></i>
+            </div>
+            <div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <h2 style={{ fontSize: '18px', fontWeight: '900', margin: 0, color: 'var(--text-bright)' }}>
+                  {user?.fullName || 'Thành Viên'}
+                </h2>
+                <span style={{
+                  fontSize: '11px',
+                  fontWeight: '800',
+                  padding: '2px 8px',
+                  borderRadius: '10px',
+                  background: 'rgba(249, 115, 22, 0.15)',
+                  color: 'var(--color-primary, #ea580c)',
+                  textTransform: 'uppercase'
+                }}>
+                  {user?.role || 'MEMBER'}
+                </span>
+              </div>
+              <div style={{ fontSize: '13px', color: 'var(--text-muted)', marginTop: '3px' }}>
+                {user?.email || 'Tài khoản thành viên 28Symues'}
+              </div>
+            </div>
+          </div>
+
+          {/* SubID Copy Box */}
+          <div style={{
+            background: 'var(--bg-main)',
+            border: '1px solid var(--border-color)',
+            borderRadius: '14px',
+            padding: '8px 14px',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '10px'
+          }}>
+            <div>
+              <div style={{ fontSize: '10.5px', fontWeight: '800', color: 'var(--text-muted)', textTransform: 'uppercase' }}>
+                SubID Tiếp Thị Của Bạn
+              </div>
+              <div style={{ fontSize: '14px', fontWeight: '900', color: 'var(--color-primary, #ea580c)', fontFamily: 'monospace' }}>
+                {displaySubId}
+              </div>
+            </div>
+            <button
+              type="button"
+              onClick={handleCopySubId}
+              title="Sao chép SubID"
+              style={{
+                background: 'linear-gradient(135deg, #f97316, #ea580c)',
+                border: 'none',
+                color: '#fff',
+                width: '32px',
+                height: '32px',
+                borderRadius: '8px',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                boxShadow: '0 2px 8px rgba(249, 115, 22, 0.25)',
+                transition: 'transform 0.2s ease'
+              }}
+              onMouseEnter={e => e.currentTarget.style.transform = 'scale(1.08)'}
+              onMouseLeave={e => e.currentTarget.style.transform = 'scale(1)'}
+            >
+              <i className="fa-solid fa-copy" style={{ fontSize: '13px' }}></i>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* 2. CARD: LIÊN KẾT ZALO ID */}
+      <div className="lookup-card" style={{ marginBottom: '20px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '10px', marginBottom: '16px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
             <div style={{
-              width: '38px',
-              height: '38px',
+              width: '40px',
+              height: '40px',
               borderRadius: '12px',
               background: user?.zaloId ? 'rgba(16, 185, 129, 0.14)' : 'rgba(37, 99, 235, 0.14)',
               color: user?.zaloId ? '#10b981' : '#2563eb',
@@ -197,10 +310,10 @@ export default function AccountView() {
               <i className="fa-solid fa-link"></i>
             </div>
             <div>
-              <h2 style={{ fontSize: '16px', fontWeight: '800', margin: 0, color: 'var(--text-bright)' }}>
+              <h3 style={{ fontSize: '16px', fontWeight: '800', margin: 0, color: 'var(--text-bright)' }}>
                 Liên Kết Tài Khoản Zalo ID
-              </h2>
-              <p style={{ margin: '2px 0 0 0', fontSize: '12px', color: 'var(--text-muted)' }}>
+              </h3>
+              <p style={{ margin: '2px 0 0 0', fontSize: '12.5px', color: 'var(--text-muted)' }}>
                 Đồng bộ tự động mọi đơn hàng bạn mua qua Zalo Bot về tài khoản Web
               </p>
             </div>
@@ -208,7 +321,7 @@ export default function AccountView() {
 
           {user?.zaloId ? (
             <span style={{
-              padding: '4px 12px',
+              padding: '5px 12px',
               borderRadius: '20px',
               background: 'rgba(16, 185, 129, 0.14)',
               color: '#10b981',
@@ -223,7 +336,7 @@ export default function AccountView() {
             </span>
           ) : (
             <span style={{
-              padding: '4px 12px',
+              padding: '5px 12px',
               borderRadius: '20px',
               background: 'rgba(234, 88, 12, 0.14)',
               color: 'var(--color-primary, #ea580c)',
@@ -239,24 +352,24 @@ export default function AccountView() {
           <div>
             <div style={{
               background: 'var(--bg-main)',
-              borderRadius: '12px',
-              padding: '14px 16px',
-              marginBottom: '16px',
+              border: '1px solid var(--border-color)',
+              borderRadius: '14px',
+              padding: '16px',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'space-between',
               flexWrap: 'wrap',
-              gap: '10px'
+              gap: '12px'
             }}>
               <div>
                 <div style={{ fontSize: '11px', color: 'var(--text-muted)', fontWeight: '800', textTransform: 'uppercase' }}>
-                  Zalo ID Đang Đồng Bộ:
+                  Zalo User ID Đang Đồng Bộ:
                 </div>
-                <div style={{ fontSize: '16px', fontWeight: '900', color: '#0284c7', fontFamily: 'monospace', marginTop: '2px' }}>
+                <div style={{ fontSize: '17px', fontWeight: '900', color: '#0284c7', fontFamily: 'monospace', marginTop: '3px' }}>
                   {user.zaloId}
                 </div>
-                <div style={{ fontSize: '12px', color: 'var(--text-subtle)', marginTop: '4px' }}>
-                  Đơn hàng đặt qua bot Zalo của ID này sẽ được gộp vào danh sách đơn và ví tiền của bạn.
+                <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginTop: '4px' }}>
+                  Toàn bộ đơn hàng mua qua Bot Zalo sẽ tự động cộng dồn hoa hồng vào tài khoản web của bạn.
                 </div>
               </div>
               <button
@@ -264,7 +377,7 @@ export default function AccountView() {
                 onClick={handleUnlinkZalo}
                 disabled={linkingZalo}
                 className="lookup-admin-link"
-                style={{ color: '#dc2626', borderColor: 'rgba(220, 38, 38, 0.3)', fontSize: '12px' }}
+                style={{ color: '#dc2626', borderColor: 'rgba(220, 38, 38, 0.3)', fontSize: '12.5px', padding: '8px 14px' }}
               >
                 <i className="fa-solid fa-unlink"></i>
                 <span>Hủy liên kết</span>
@@ -285,7 +398,7 @@ export default function AccountView() {
                   style={{ fontFamily: 'monospace', fontWeight: '700' }}
                 />
               </div>
-              <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginTop: '6px' }}>
+              <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginTop: '6px', lineHeight: '1.4' }}>
                 💡 <b>Mẹo tìm Zalo ID:</b> Nhắn tin vào nhóm bot Zalo hoặc gõ lệnh <code>tra cuu</code> trong chat bot Zalo để xem mã Zalo ID của bạn.
               </div>
             </div>
@@ -295,27 +408,83 @@ export default function AccountView() {
               disabled={linkingZalo || !zaloIdInput.trim()}
               className="lookup-btn"
             >
-              {linkingZalo ? 'Đang liên kết...' : 'Xác Nhận Liên Kết Zalo ID'}
+              <i className="fa-solid fa-link"></i>
+              <span>{linkingZalo ? 'Đang liên kết...' : 'Xác Nhận Liên Kết Zalo ID'}</span>
             </button>
           </form>
         )}
       </div>
 
-      {/* CARD 2: TÀI KHOẢN NGÂN HÀNG NHẬN TIỀN */}
-      <div className="lookup-card" style={{ marginBottom: '22px' }}>
-        <h3 className="stats-section-title" style={{ margin: 0, marginBottom: '6px' }}>
-          🏦 Tài Khoản Ngân Hàng Rút Tiền
-        </h3>
-        <p style={{ fontSize: '12.5px', color: 'var(--text-muted)', margin: '0 0 16px 0' }}>
-          Dùng để nhận tiền thanh toán hoa hồng khi bạn tạo lệnh rút tiền.
-        </p>
+      {/* 3. CARD: TÀI KHOẢN NGÂN HÀNG RÚT TIỀN */}
+      <div className="lookup-card" style={{ marginBottom: '20px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '14px' }}>
+          <div style={{
+            width: '40px',
+            height: '40px',
+            borderRadius: '12px',
+            background: 'rgba(16, 185, 129, 0.14)',
+            color: '#10b981',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontSize: '18px'
+          }}>
+            <i className="fa-solid fa-building-columns"></i>
+          </div>
+          <div>
+            <h3 style={{ fontSize: '16px', fontWeight: '800', margin: 0, color: 'var(--text-bright)' }}>
+              Tài Khoản Ngân Hàng Rút Tiền
+            </h3>
+            <p style={{ margin: '2px 0 0 0', fontSize: '12.5px', color: 'var(--text-muted)' }}>
+              Nhận thanh toán hoa hồng khi bạn gửi yêu cầu rút tiền
+            </p>
+          </div>
+        </div>
+
+        {/* Xem trước Thẻ ATM nếu đã có STK */}
+        {user?.accountNumber && (
+          <div style={{
+            background: 'linear-gradient(135deg, #1e293b 0%, #0f172a 100%)',
+            border: '1px solid rgba(255, 255, 255, 0.1)',
+            borderRadius: '16px',
+            padding: '18px 20px',
+            color: '#ffffff',
+            marginBottom: '18px',
+            boxShadow: '0 8px 24px rgba(0, 0, 0, 0.15)',
+            position: 'relative',
+            overflow: 'hidden'
+          }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px' }}>
+              <div style={{ fontSize: '13px', fontWeight: '800', letterSpacing: '1px', color: '#94a3b8', textTransform: 'uppercase' }}>
+                {user.bankName || user.bankCode || 'NGÂN HÀNG THỤ HƯỞNG'}
+              </div>
+              <i className="fa-solid fa-wifi" style={{ transform: 'rotate(90deg)', color: '#64748b', fontSize: '18px' }}></i>
+            </div>
+            <div style={{ fontSize: '19px', fontWeight: '900', letterSpacing: '2px', fontFamily: 'monospace', color: '#38bdf8', marginBottom: '10px' }}>
+              {user.accountNumber}
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
+              <div>
+                <div style={{ fontSize: '10px', color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                  CHỦ TÀI KHOẢN
+                </div>
+                <div style={{ fontSize: '14px', fontWeight: '800', letterSpacing: '0.5px', color: '#ffffff' }}>
+                  {user.accountName || user.fullName || 'CHỦ TÀI KHOẢN'}
+                </div>
+              </div>
+              <span style={{ fontSize: '11px', background: 'rgba(56, 189, 248, 0.2)', color: '#38bdf8', padding: '3px 8px', borderRadius: '6px', fontWeight: '700' }}>
+                ✓ ĐÃ THIẾT LẬP
+              </span>
+            </div>
+          </div>
+        )}
 
         <form onSubmit={handleSaveBank}>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '12px', marginBottom: '14px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '14px', marginBottom: '16px' }}>
             <div className="lookup-input-group" style={{ marginBottom: 0 }}>
-              <label className="lookup-label">Ngân Hàng</label>
+              <label className="lookup-label">Chọn Ngân Hàng</label>
               <select
-                className="lookup-input"
+                className="lookup-input lookup-select"
                 value={selectedBank}
                 onChange={e => setSelectedBank(e.target.value)}
                 style={{ fontWeight: '700' }}
@@ -372,22 +541,40 @@ export default function AccountView() {
             disabled={savingBank}
             className="lookup-btn"
           >
-            {savingBank ? 'Đang lưu...' : 'Lưu Tài Khoản Ngân Hàng'}
+            <i className="fa-solid fa-floppy-disk"></i>
+            <span>{savingBank ? 'Đang lưu thông tin...' : 'Lưu Tài Khoản Ngân Hàng'}</span>
           </button>
         </form>
       </div>
 
-      {/* CARD 3: THÔNG TIN CÁ NHÂN & ĐỊNH DANH */}
-      <div className="lookup-card" style={{ marginBottom: '22px' }}>
-        <h3 className="stats-section-title" style={{ margin: 0, marginBottom: '6px' }}>
-          👤 Thông Tin Cá Nhân
-        </h3>
-        <p style={{ fontSize: '12.5px', color: 'var(--text-muted)', margin: '0 0 16px 0' }}>
-          Mã định danh SubID tiếp thị của bạn: <strong style={{ color: 'var(--color-primary, #ea580c)', fontFamily: 'monospace' }}>{displaySubId}</strong>
-        </p>
+      {/* 4. CARD: THÔNG TIN HỒ SƠ CÁ NHÂN */}
+      <div className="lookup-card" style={{ marginBottom: '20px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '14px' }}>
+          <div style={{
+            width: '40px',
+            height: '40px',
+            borderRadius: '12px',
+            background: 'rgba(139, 92, 246, 0.14)',
+            color: '#8b5cf6',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontSize: '18px'
+          }}>
+            <i className="fa-solid fa-user-gear"></i>
+          </div>
+          <div>
+            <h3 style={{ fontSize: '16px', fontWeight: '800', margin: 0, color: 'var(--text-bright)' }}>
+              Thông Tin Cá Nhân
+            </h3>
+            <p style={{ margin: '2px 0 0 0', fontSize: '12.5px', color: 'var(--text-muted)' }}>
+              Cập nhật họ tên hiển thị và số điện thoại liên lạc
+            </p>
+          </div>
+        </div>
 
         <form onSubmit={handleSaveProfile}>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '12px', marginBottom: '14px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '14px', marginBottom: '16px' }}>
             <div className="lookup-input-group" style={{ marginBottom: 0 }}>
               <label className="lookup-label">Họ và Tên</label>
               <input
@@ -406,7 +593,7 @@ export default function AccountView() {
                 className="lookup-input"
                 value={user?.email || ''}
                 disabled
-                style={{ opacity: 0.7, cursor: 'not-allowed' }}
+                style={{ opacity: 0.7, cursor: 'not-allowed', background: 'var(--bg-main)' }}
               />
             </div>
 
@@ -422,20 +609,27 @@ export default function AccountView() {
             </div>
           </div>
 
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '10px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px', flexWrap: 'wrap' }}>
             <button
               type="submit"
               disabled={savingProfile}
               className="lookup-btn"
-              style={{ flex: 1 }}
+              style={{ flex: 1, minWidth: '220px' }}
             >
-              {savingProfile ? 'Đang lưu...' : 'Cập Nhật Thông Tin Cá Nhân'}
+              <i className="fa-solid fa-check"></i>
+              <span>{savingProfile ? 'Đang lưu...' : 'Cập Nhật Thông Tin Cá Nhân'}</span>
             </button>
             <button
               type="button"
               onClick={handleLogout}
               className="lookup-admin-link"
-              style={{ color: '#dc2626', borderColor: 'rgba(220, 38, 38, 0.3)', padding: '11px 18px' }}
+              style={{
+                color: '#dc2626',
+                borderColor: 'rgba(220, 38, 38, 0.3)',
+                padding: '12px 20px',
+                borderRadius: '12px',
+                fontSize: '13.5px'
+              }}
             >
               <i className="fa-solid fa-right-from-bracket"></i>
               <span>Đăng xuất</span>

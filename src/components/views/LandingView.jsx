@@ -6,7 +6,7 @@ import ThemeToggle from '../common/ThemeToggle';
 import RunningCatMascot from '../common/RunningCatMascot';
 import ConvertView from './ConvertView';
 
-export default function LandingView() {
+export default function LandingView({ inWorkspace = false }) {
   const { view, setView, token, user, isAdmin, theme, toggleTheme, mobileMenuOpen, setMobileMenuOpen, handleLogout, showToast, windowWidth } = useApp();
   const [showBanner, setShowBanner] = useState(true);
 
@@ -38,6 +38,7 @@ export default function LandingView() {
       {/* Global Fixed Running Cat Mascot Screen Animation */}
       <RunningCatMascot />
 
+      {!inWorkspace && (
       <header className="landing-header" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%', padding: '14px 18px', flexWrap: 'nowrap', gap: '8px', boxSizing: 'border-box' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '14px', flexShrink: 0 }}>
           <div className="landing-logo" style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }} onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
@@ -171,7 +172,8 @@ export default function LandingView() {
           </button>
         </div>
       </header>
-      {mobileMenuOpen && <div className="mobile-overlay" onClick={() => setMobileMenuOpen(false)}></div>}
+      )}
+      {!inWorkspace && mobileMenuOpen && <div className="mobile-overlay" onClick={() => setMobileMenuOpen(false)}></div>}
 
       {/* Container 1: Top Hero Banner Container */}
       <section id="home" className="landing-block-container hero-showcase-container reveal-on-scroll" style={{ marginTop: '12px', marginBottom: '0px', paddingBottom: '0px', paddingTop: '10px', textAlign: 'center' }}>

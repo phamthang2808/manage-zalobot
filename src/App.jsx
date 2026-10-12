@@ -8,6 +8,7 @@ import ConvertView from './components/views/ConvertView';
 import OrdersView from './components/views/OrdersView';
 import WithdrawView from './components/views/WithdrawView';
 import AccountView from './components/views/AccountView';
+import BlogView from './components/views/BlogView';
 import AdminView from './components/dashboard/AdminView';
 import UserSidebar from './components/common/UserSidebar';
 import WorkspaceTopBar from './components/common/WorkspaceTopBar';
@@ -104,6 +105,7 @@ function App() {
           {view === 'orders' && <OrdersView />}
           {view === 'withdraw' && <WithdrawView />}
           {view === 'account' && <AccountView />}
+          {view === 'blog' && <BlogView />}
           {view === 'lookup' && <OrderLookupView setView={setView} />}
         </main>
       </div>

@@ -5,17 +5,35 @@ import ThemeToggle from './ThemeToggle';
 export default function UserSidebar({ sidebarOpen, setSidebarOpen }) {
   const { view, setView, user, isAdmin, handleLogout } = useApp();
 
-  const mainMenuItems = [
-    { id: 'convert', label: 'Chuyển đổi link', icon: 'fa-solid fa-bolt', color: '#f59e0b' },
-    { id: 'orders', label: 'Đơn hàng đã đặt', icon: 'fa-solid fa-boxes-stacked', color: '#0284c7' },
-    { id: 'withdraw', label: 'Ví tiền & Rút tiền', icon: 'fa-solid fa-wallet', color: '#10b981' },
-    { id: 'account', label: 'Thông tin cá nhân', icon: 'fa-solid fa-id-card', color: '#8b5cf6' },
+  const menuItems = [
+    { id: 'home', label: 'Về Trang chủ', icon: 'fa-solid fa-house' },
+    { id: 'convert', label: 'Chuyển đổi link', icon: 'fa-solid fa-bolt' },
+    { id: 'orders', label: 'Đơn hàng đã đặt', icon: 'fa-solid fa-boxes-stacked' },
+    { id: 'withdraw', label: 'Ví tiền & Rút tiền', icon: 'fa-solid fa-wallet' },
+    { id: 'account', label: 'Thông tin cá nhân', icon: 'fa-solid fa-id-card' },
+    ...(isAdmin ? [{ id: 'admin', label: 'Trang Quản Trị', icon: 'fa-solid fa-shield-halved' }] : [])
   ];
 
-  const subMenuItems = [
-    { id: 'lookup', label: 'Tra cứu Zalo', icon: 'fa-solid fa-magnifying-glass', color: '#ea580c' },
-    { id: 'home', label: 'Về Trang chủ', icon: 'fa-solid fa-house', color: '#64748b' },
-  ];
+  const handleItemClick = (itemId) => {
+    if (itemId === 'home') {
+      setView('home');
+      sessionStorage.removeItem('adminView');
+      window.history.pushState({}, '', '/');
+    } else if (itemId === 'admin') {
+      setView('admin');
+      sessionStorage.setItem('adminView', 'admin');
+    } else {
+      setView(itemId);
+      window.history.pushState({}, '', `/?view=${itemId}`);
+    }
+    if (setSidebarOpen) setSidebarOpen(false);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const isItemActive = (itemId) => {
+    if (itemId === 'home') return view === 'home' || view === 'landing';
+    return view === itemId;
+  };
 
   return (
     <>
@@ -70,7 +88,7 @@ export default function UserSidebar({ sidebarOpen, setSidebarOpen }) {
             />
           </div>
 
-          {/* Section: MENU TIỆN ÍCH WEB */}
+          {/* Section: MENU TIỆN ÍCH */}
           <div style={{ marginBottom: '20px' }}>
             <div style={{
               fontSize: '11px',
@@ -84,18 +102,13 @@ export default function UserSidebar({ sidebarOpen, setSidebarOpen }) {
             </div>
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-              {mainMenuItems.map(item => {
-                const isActive = view === item.id;
+              {menuItems.map(item => {
+                const isActive = isItemActive(item.id);
                 return (
                   <button
                     key={item.id}
                     type="button"
-                    onClick={() => {
-                      setView(item.id);
-                      window.history.pushState({}, '', `/?view=${item.id}`);
-                      if (setSidebarOpen) setSidebarOpen(false);
-                      window.scrollTo({ top: 0, behavior: 'smooth' });
-                    }}
+                    onClick={() => handleItemClick(item.id)}
                     style={{
                       width: '100%',
                       display: 'flex',
@@ -117,12 +130,16 @@ export default function UserSidebar({ sidebarOpen, setSidebarOpen }) {
                       if (!isActive) {
                         e.currentTarget.style.background = 'var(--bg-main)';
                         e.currentTarget.style.color = '#ea580c';
+                        const icon = e.currentTarget.querySelector('i');
+                        if (icon) icon.style.color = '#ea580c';
                       }
                     }}
                     onMouseLeave={e => {
                       if (!isActive) {
                         e.currentTarget.style.background = 'transparent';
                         e.currentTarget.style.color = 'var(--text-main)';
+                        const icon = e.currentTarget.querySelector('i');
+                        if (icon) icon.style.color = 'var(--text-muted, #64748b)';
                       }
                     }}
                   >
@@ -134,9 +151,10 @@ export default function UserSidebar({ sidebarOpen, setSidebarOpen }) {
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
-                      flexShrink: 0
+                      flexShrink: 0,
+                      transition: 'all 0.2s ease'
                     }}>
-                      <i className={item.icon} style={{ color: isActive ? '#fff' : item.color, fontSize: '13px' }}></i>
+                      <i className={item.icon} style={{ color: isActive ? '#ffffff' : 'var(--text-muted, #64748b)', fontSize: '13px' }}></i>
                     </div>
                     <span style={{ flex: 1, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                       {item.label}
@@ -144,128 +162,6 @@ export default function UserSidebar({ sidebarOpen, setSidebarOpen }) {
                   </button>
                 );
               })}
-            </div>
-          </div>
-
-          {/* Section: KHÁC */}
-          <div>
-            <div style={{
-              fontSize: '11px',
-              fontWeight: '800',
-              textTransform: 'uppercase',
-              color: 'var(--text-muted)',
-              letterSpacing: '0.8px',
-              padding: '0 12px 10px 12px'
-            }}>
-              Mục Khác
-            </div>
-
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-              {subMenuItems.map(item => {
-                const isActive = view === item.id;
-                return (
-                  <button
-                    key={item.id}
-                    type="button"
-                    onClick={() => {
-                      setView(item.id);
-                      if (item.id === 'home') {
-                        sessionStorage.removeItem('adminView');
-                        window.history.pushState({}, '', '/');
-                      } else {
-                        window.history.pushState({}, '', `/?view=${item.id}`);
-                      }
-                      if (setSidebarOpen) setSidebarOpen(false);
-                      window.scrollTo({ top: 0, behavior: 'smooth' });
-                    }}
-                    style={{
-                      width: '100%',
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '12px',
-                      padding: '10px 14px',
-                      borderRadius: '14px',
-                      border: 'none',
-                      background: isActive ? 'var(--bg-main)' : 'transparent',
-                      color: isActive ? '#ea580c' : 'var(--text-main)',
-                      fontWeight: isActive ? '700' : '600',
-                      fontSize: '13.5px',
-                      cursor: 'pointer',
-                      textAlign: 'left',
-                      transition: 'all 0.2s ease'
-                    }}
-                    onMouseEnter={e => {
-                      if (!isActive) {
-                        e.currentTarget.style.background = 'var(--bg-main)';
-                        e.currentTarget.style.color = '#ea580c';
-                      }
-                    }}
-                    onMouseLeave={e => {
-                      if (!isActive) {
-                        e.currentTarget.style.background = 'transparent';
-                        e.currentTarget.style.color = 'var(--text-main)';
-                      }
-                    }}
-                  >
-                    <div style={{
-                      width: '28px',
-                      height: '28px',
-                      borderRadius: '8px',
-                      background: 'var(--bg-main)',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      flexShrink: 0
-                    }}>
-                      <i className={item.icon} style={{ color: item.color, fontSize: '13px' }}></i>
-                    </div>
-                    <span>{item.label}</span>
-                  </button>
-                );
-              })}
-
-              {isAdmin && (
-                <button
-                  type="button"
-                  onClick={() => {
-                    setView('admin');
-                    sessionStorage.setItem('adminView', 'admin');
-                    if (setSidebarOpen) setSidebarOpen(false);
-                  }}
-                  style={{
-                    width: '100%',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '12px',
-                    padding: '10px 14px',
-                    borderRadius: '14px',
-                    border: '1.5px solid rgba(249, 115, 22, 0.4)',
-                    background: 'linear-gradient(135deg, rgba(249, 115, 22, 0.12), rgba(234, 88, 12, 0.06))',
-                    color: '#ea580c',
-                    fontWeight: '700',
-                    fontSize: '13.5px',
-                    cursor: 'pointer',
-                    textAlign: 'left',
-                    marginTop: '6px',
-                    transition: 'all 0.2s ease'
-                  }}
-                >
-                  <div style={{
-                    width: '28px',
-                    height: '28px',
-                    borderRadius: '8px',
-                    background: '#ea580c',
-                    color: '#fff',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    flexShrink: 0
-                  }}>
-                    <i className="fa-solid fa-shield-halved" style={{ fontSize: '12px' }}></i>
-                  </div>
-                  <span>Trang Quản Trị</span>
-                </button>
-              )}
             </div>
           </div>
         </div>

@@ -64,28 +64,28 @@ export default function MobileBottomNav() {
       <nav className="mobile-bottom-nav">
         <button type="button" className={`mobile-bottom-nav-item${view === 'convert' ? ' active' : ''}`}
           onClick={() => { setView('convert'); window.history.pushState({}, '', '/?view=convert'); window.scrollTo(0, 0); }}>
-          <div className="nav-icon-wrap"><i className="fa-solid fa-bolt" style={{ color: view === 'convert' ? '#ea580c' : '#f59e0b' }}></i></div>
+          <div className="nav-icon-wrap"><i className="fa-solid fa-bolt"></i></div>
           <span className="nav-label">Đổi Link</span>
         </button>
         <button type="button" className={`mobile-bottom-nav-item${view === 'orders' ? ' active' : ''}`}
           onClick={() => { setView('orders'); window.history.pushState({}, '', '/?view=orders'); window.scrollTo(0, 0); }}>
-          <div className="nav-icon-wrap"><i className="fa-solid fa-boxes-stacked" style={{ color: view === 'orders' ? '#ea580c' : '#0284c7' }}></i></div>
+          <div className="nav-icon-wrap"><i className="fa-solid fa-boxes-stacked"></i></div>
           <span className="nav-label">Đơn Hàng</span>
         </button>
         <button type="button" className={`mobile-bottom-nav-item${view === 'withdraw' ? ' active' : ''}`}
           onClick={() => { setView('withdraw'); window.history.pushState({}, '', '/?view=withdraw'); window.scrollTo(0, 0); }}>
-          <div className="nav-icon-wrap"><i className="fa-solid fa-wallet" style={{ color: view === 'withdraw' ? '#ea580c' : '#10b981' }}></i></div>
+          <div className="nav-icon-wrap"><i className="fa-solid fa-wallet"></i></div>
           <span className="nav-label">Ví Tiền</span>
         </button>
         <button type="button" className={`mobile-bottom-nav-item${view === 'account' ? ' active' : ''}`}
           onClick={() => { setView('account'); window.history.pushState({}, '', '/?view=account'); window.scrollTo(0, 0); }}>
-          <div className="nav-icon-wrap"><i className="fa-solid fa-user-circle" style={{ color: view === 'account' ? '#ea580c' : '#8b5cf6' }}></i></div>
+          <div className="nav-icon-wrap"><i className="fa-solid fa-user-circle"></i></div>
           <span className="nav-label">Tài Khoản</span>
         </button>
         {isAdmin && (
           <button type="button" className="mobile-bottom-nav-item"
             onClick={() => { setView('admin'); sessionStorage.setItem('adminView', 'admin'); window.scrollTo(0, 0); }}>
-            <div className="nav-icon-wrap"><i className="fa-solid fa-shield-halved" style={{ color: '#ea580c' }}></i></div>
+            <div className="nav-icon-wrap"><i className="fa-solid fa-shield-halved"></i></div>
             <span className="nav-label">Quản Trị</span>
           </button>
         )}
@@ -116,7 +116,7 @@ export default function MobileBottomNav() {
           }
           window.scrollTo(0, 0);
         }}>
-        <div className="nav-icon-wrap"><i className="fa-solid fa-bolt" style={{ color: '#f59e0b' }}></i></div>
+        <div className="nav-icon-wrap"><i className="fa-solid fa-bolt"></i></div>
         <span className="nav-label">Đổi link</span>
       </button>
       <a href="https://zalo.me/g/0p083nqqoordpki9zgvy" target="_blank" rel="noreferrer"

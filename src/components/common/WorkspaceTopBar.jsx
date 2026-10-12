@@ -7,8 +7,9 @@ export default function WorkspaceTopBar({ setSidebarOpen }) {
 
   const navTabs = [
     { id: 'home', label: 'Trang chủ', icon: 'fa-solid fa-house' },
-    { id: 'lookup', label: 'Tra cứu Zalo', icon: 'fa-solid fa-magnifying-glass' },
-    { id: 'pricing', label: 'Bảng giá', icon: 'fa-solid fa-tags' }
+    { id: 'lookup', label: 'Tra cứu', icon: 'fa-solid fa-magnifying-glass' },
+    { id: 'pricing', label: 'Bảng giá', icon: 'fa-solid fa-tags' },
+    { id: 'blog', label: 'Blog', icon: 'fa-regular fa-newspaper' }
   ];
 
   const handleNavClick = (tabId) => {

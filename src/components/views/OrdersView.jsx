@@ -127,10 +127,7 @@ export default function OrdersView() {
         <div className="stats-cards-grid">
           {/* Thẻ 0: Tổng tích lũy */}
           <div className="stat-card-item total" style={{ gridColumn: '1 / -1' }}>
-            <span className="stat-card-label">
-              <i className="fa-solid fa-sparkles" style={{ color: '#2563eb' }}></i>
-              🌟 TỔNG TÍCH LŨY (HOÀN THÀNH + CHỜ)
-            </span>
+            <span className="stat-card-label">🌟 TỔNG TÍCH LŨY (HOÀN THÀNH + CHỜ)</span>
             <span className="stat-card-sub">(Toàn bộ hoa hồng từ đơn Web & Bot Zalo của bạn)</span>
             <span className="stat-card-value primary">
               {formatMoney(totalComm)}
@@ -139,10 +136,7 @@ export default function OrdersView() {
 
           {/* Thẻ 1: Đang xử lý */}
           <div className="stat-card-item pending">
-            <span className="stat-card-label">
-              <i className="fa-solid fa-hourglass-half" style={{ color: '#d97706' }}></i>
-              ⏳ ĐANG XỬ LÝ ({pendingOrders.length} ĐƠN)
-            </span>
+            <span className="stat-card-label">⏳ ĐANG XỬ LÝ ({pendingOrders.length} ĐƠN)</span>
             <span className="stat-card-sub">(Đang vận chuyển hoặc đang đối soát)</span>
             <span className="stat-card-value">
               {formatMoney(pendingComm)}
@@ -151,10 +145,7 @@ export default function OrdersView() {
 
           {/* Thẻ 2: Đã hoàn thành */}
           <div className="stat-card-item completed">
-            <span className="stat-card-label">
-              <i className="fa-solid fa-circle-check" style={{ color: '#059669' }}></i>
-              📦 ĐÃ HOÀN THÀNH ({completedOrders.length} ĐƠN)
-            </span>
+            <span className="stat-card-label">📦 ĐÃ HOÀN THÀNH ({completedOrders.length} ĐƠN)</span>
             <span className="stat-card-sub">(Đơn giao thành công và chốt hoa hồng)</span>
             <span className="stat-card-value">
               {formatMoney(completedComm)}
@@ -163,10 +154,7 @@ export default function OrdersView() {
 
           {/* Thẻ 3: Số dư khả dụng */}
           <div className="stat-card-item withdrawable">
-            <span className="stat-card-label">
-              <i className="fa-solid fa-money-bill-wave" style={{ color: '#ea580c' }}></i>
-              💵 SỐ DƯ KHẢ DỤNG
-            </span>
+            <span className="stat-card-label">💵 SỐ DƯ KHẢ DỤNG</span>
             <span className="stat-card-sub">(Đủ điều kiện rút ngay về tài khoản)</span>
             <span className="stat-card-value">
               {formatMoney(withdrawableComm)}
@@ -175,10 +163,7 @@ export default function OrdersView() {
 
           {/* Thẻ 4: Đã rút thành công */}
           <div className="stat-card-item received">
-            <span className="stat-card-label">
-              <i className="fa-solid fa-building-columns" style={{ color: '#9333ea' }}></i>
-              🏦 ĐÃ RÚT THÀNH CÔNG
-            </span>
+            <span className="stat-card-label">🏦 ĐÃ RÚT THÀNH CÔNG</span>
             <span className="stat-card-sub">(Tổng tiền đã giải ngân về ngân hàng)</span>
             <span className="stat-card-value">
               {formatMoney(receivedComm)}

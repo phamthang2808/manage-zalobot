@@ -64,7 +64,7 @@ export default function MobileBottomNav() {
       <nav className="mobile-bottom-nav">
         <button type="button" className={`mobile-bottom-nav-item${view === 'convert' ? ' active' : ''}`}
           onClick={() => { setView('convert'); window.history.pushState({}, '', '/?view=convert'); window.scrollTo(0, 0); }}>
-          <div className="nav-icon-wrap"><i className="fa-solid fa-bolt"></i></div>
+          <div className="nav-icon-wrap"><i className="fa-solid fa-link"></i></div>
           <span className="nav-label">Đổi Link</span>
         </button>
         <button type="button" className={`mobile-bottom-nav-item${view === 'orders' ? ' active' : ''}`}
@@ -116,7 +116,7 @@ export default function MobileBottomNav() {
           }
           window.scrollTo(0, 0);
         }}>
-        <div className="nav-icon-wrap"><i className="fa-solid fa-bolt"></i></div>
+        <div className="nav-icon-wrap"><i className="fa-solid fa-link"></i></div>
         <span className="nav-label">Đổi link</span>
       </button>
       <a href="https://zalo.me/g/0p083nqqoordpki9zgvy" target="_blank" rel="noreferrer"

@@ -7,7 +7,7 @@ export default function UserSidebar({ sidebarOpen, setSidebarOpen }) {
 
   const menuItems = [
     { id: 'home', label: 'Về Trang chủ', icon: 'fa-solid fa-house' },
-    { id: 'convert', label: 'Chuyển đổi link', icon: 'fa-solid fa-bolt' },
+    { id: 'convert', label: 'Chuyển đổi link', icon: 'fa-solid fa-link' },
     { id: 'orders', label: 'Đơn hàng đã đặt', icon: 'fa-solid fa-boxes-stacked' },
     { id: 'withdraw', label: 'Ví tiền & Rút tiền', icon: 'fa-solid fa-wallet' },
     { id: 'account', label: 'Thông tin cá nhân', icon: 'fa-solid fa-id-card' },
@@ -92,17 +92,17 @@ export default function UserSidebar({ sidebarOpen, setSidebarOpen }) {
           <div style={{ marginBottom: '20px' }}>
             <div style={{
               fontSize: '11px',
-              fontWeight: '600',
+              fontWeight: '500',
               textTransform: 'uppercase',
-              color: 'var(--text-muted, #64748b)',
-              letterSpacing: '0.8px',
+              color: 'var(--text-muted, #94a3b8)',
+              letterSpacing: '0.6px',
               padding: '0 12px 10px 12px',
               fontFamily: 'var(--font-sans)'
             }}>
               Tiện Ích Thành Viên
             </div>
 
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '3px' }}>
               {menuItems.map(item => {
                 const isActive = isItemActive(item.id);
                 return (
@@ -115,22 +115,22 @@ export default function UserSidebar({ sidebarOpen, setSidebarOpen }) {
                       display: 'flex',
                       alignItems: 'center',
                       gap: '12px',
-                      padding: '9.5px 14px',
-                      borderRadius: '14px',
+                      padding: '9px 12px',
+                      borderRadius: '12px',
                       border: 'none',
                       background: isActive ? 'linear-gradient(135deg, #f97316, #ea580c)' : 'transparent',
-                      color: isActive ? '#ffffff' : 'var(--text-muted, #64748b)',
-                      fontWeight: isActive ? '600' : '500',
+                      color: isActive ? '#ffffff' : 'var(--text-secondary, #64748b)',
+                      fontWeight: isActive ? '500' : '400',
                       fontSize: '13.5px',
                       fontFamily: 'var(--font-sans)',
                       cursor: 'pointer',
                       textAlign: 'left',
-                      boxShadow: isActive ? '0 3px 12px rgba(249, 115, 22, 0.3)' : 'none',
+                      boxShadow: isActive ? '0 3px 12px rgba(249, 115, 22, 0.25)' : 'none',
                       transition: 'all 0.2s ease'
                     }}
                     onMouseEnter={e => {
                       if (!isActive) {
-                        e.currentTarget.style.background = 'var(--bg-main, rgba(0,0,0,0.04))';
+                        e.currentTarget.style.background = 'var(--bg-main, rgba(148, 163, 184, 0.08))';
                         e.currentTarget.style.color = 'var(--color-primary, #ea580c)';
                         const icon = e.currentTarget.querySelector('i');
                         if (icon) icon.style.color = '#ea580c';
@@ -139,25 +139,23 @@ export default function UserSidebar({ sidebarOpen, setSidebarOpen }) {
                     onMouseLeave={e => {
                       if (!isActive) {
                         e.currentTarget.style.background = 'transparent';
-                        e.currentTarget.style.color = 'var(--text-muted, #64748b)';
+                        e.currentTarget.style.color = 'var(--text-secondary, #64748b)';
                         const icon = e.currentTarget.querySelector('i');
-                        if (icon) icon.style.color = 'var(--text-muted, #64748b)';
+                        if (icon) icon.style.color = 'var(--text-muted, #94a3b8)';
                       }
                     }}
                   >
-                    <div style={{
-                      width: '28px',
-                      height: '28px',
-                      borderRadius: '8px',
-                      background: isActive ? 'rgba(255, 255, 255, 0.2)' : 'var(--bg-main, #f1f5f9)',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      flexShrink: 0,
-                      transition: 'all 0.2s ease'
-                    }}>
-                      <i className={item.icon} style={{ color: isActive ? '#ffffff' : 'var(--text-muted, #64748b)', fontSize: '13px' }}></i>
-                    </div>
+                    <i 
+                      className={item.icon} 
+                      style={{ 
+                        color: isActive ? '#ffffff' : 'var(--text-muted, #94a3b8)', 
+                        fontSize: '14px',
+                        width: '20px',
+                        textAlign: 'center',
+                        flexShrink: 0,
+                        transition: 'color 0.2s ease'
+                      }}
+                    />
                     <span style={{ flex: 1, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                       {item.label}
                     </span>

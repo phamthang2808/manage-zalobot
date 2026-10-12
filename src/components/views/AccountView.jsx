@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useApp } from '../../context/AppContext';
 import { BANKS } from '../../utils/banks';
 
@@ -7,7 +7,9 @@ export default function AccountView() {
 
   const [fullName, setFullName] = useState(user?.fullName || user?.name || '');
   const [phone, setPhone] = useState(user?.phone || '');
+  const [avatarUrl, setAvatarUrl] = useState(user?.avatarUrl || '');
   const [savingProfile, setSavingProfile] = useState(false);
+  const fileInputRef = useRef(null);
 
   // Bank states
   const [selectedBank, setSelectedBank] = useState(user?.bankCode || 'MB');
@@ -19,6 +21,17 @@ export default function AccountView() {
   // Zalo ID states
   const [zaloIdInput, setZaloIdInput] = useState(user?.zaloId || '');
   const [linkingZalo, setLinkingZalo] = useState(false);
+
+  useEffect(() => {
+    if (user?.avatarUrl) setAvatarUrl(user.avatarUrl);
+    if (user?.fullName) setFullName(user.fullName);
+    if (user?.phone) setPhone(user.phone);
+    if (user?.bankCode) setSelectedBank(user.bankCode);
+    if (user?.bankName) setCustomBankName(user.bankName);
+    if (user?.accountNumber) setAccountNumber(user.accountNumber);
+    if (user?.accountName) setAccountName(user.accountName);
+    if (user?.zaloId) setZaloIdInput(user.zaloId);
+  }, [user]);
 
   // Clean subId
   const cleanName = (user?.fullName || user?.username || 'user')
@@ -38,6 +51,61 @@ export default function AccountView() {
     });
   };
 
+  const handleAvatarFile = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!file.type.startsWith('image/')) {
+      showToast('Vui lòng chọn tệp hình ảnh hợp lệ (PNG, JPG, WEBP)', 'warning');
+      return;
+    }
+
+    if (file.size > 8 * 1024 * 1024) {
+      showToast('Dung lượng ảnh tối đa 8MB!', 'warning');
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = (readerEvent) => {
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        const maxSize = 360;
+        let width = img.width;
+        let height = img.height;
+
+        if (width > height) {
+          if (width > maxSize) {
+            height = Math.round((height * maxSize) / width);
+            width = maxSize;
+          }
+        } else {
+          if (height > maxSize) {
+            width = Math.round((width * maxSize) / height);
+            height = maxSize;
+          }
+        }
+
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, width, height);
+
+        const dataUrl = canvas.toDataURL('image/jpeg', 0.85);
+        setAvatarUrl(dataUrl);
+        showToast('Đã chọn ảnh đại diện! Nhấn "Lưu Thông Tin Cá Nhân" để lưu lại 🎉', 'info');
+      };
+      img.src = readerEvent.target.result;
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const formatCardNumber = (num) => {
+    if (!num) return '••••  ••••  ••••  ••••';
+    const cleaned = String(num).replace(/\s+/g, '');
+    return cleaned.match(/.{1,4}/g)?.join('  ') || cleaned;
+  };
+
   const handleSaveProfile = async (e) => {
     e.preventDefault();
     const currentName = user?.fullName || fullName || '';
@@ -50,17 +118,27 @@ export default function AccountView() {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`
         },
-        body: JSON.stringify({ fullName: currentName, phone: phone.trim() }),
+        body: JSON.stringify({
+          fullName: currentName,
+          phone: phone.trim(),
+          avatarUrl: avatarUrl.trim()
+        }),
         credentials: 'include'
       });
 
       const resData = await res.json();
       if (!res.ok) throw new Error(resData.message || 'Lỗi cập nhật hồ sơ');
 
-      const updatedUser = { ...user, fullName: currentName, phone: phone.trim() };
+      const savedAvatar = resData?.data?.avatarUrl || avatarUrl;
+      const updatedUser = {
+        ...user,
+        fullName: currentName,
+        phone: phone.trim(),
+        avatarUrl: savedAvatar
+      };
       setUser(updatedUser);
       sessionStorage.setItem('adminUser', JSON.stringify(updatedUser));
-      showToast('Đã cập nhật thông tin cá nhân thành công! 🎉', 'success');
+      showToast('Đã cập nhật thông tin cá nhân và ảnh đại diện thành công! 🎉', 'success');
     } catch (err) {
       showToast(err.message || 'Lỗi cập nhật thông tin', 'error');
     } finally {
@@ -216,20 +294,65 @@ export default function AccountView() {
 
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '14px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
-            <div style={{
-              width: '54px',
-              height: '54px',
-              borderRadius: '16px',
-              background: 'linear-gradient(135deg, #f97316 0%, #ea580c 100%)',
-              color: '#ffffff',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              fontSize: '22px',
-              boxShadow: '0 6px 16px rgba(249, 115, 22, 0.35)',
-              flexShrink: 0
-            }}>
-              <i className="fa-solid fa-crown"></i>
+            <div 
+              style={{ position: 'relative', cursor: 'pointer' }}
+              onClick={() => fileInputRef.current?.click()}
+              title="Nhấn để đổi ảnh đại diện"
+            >
+              {avatarUrl || user?.avatarUrl ? (
+                <img
+                  src={avatarUrl || user.avatarUrl}
+                  alt="Avatar"
+                  referrerPolicy="no-referrer"
+                  style={{
+                    width: '56px',
+                    height: '56px',
+                    borderRadius: '50%',
+                    objectFit: 'cover',
+                    border: '2px solid rgba(249, 115, 22, 0.6)',
+                    boxShadow: '0 4px 14px rgba(249, 115, 22, 0.3)',
+                    display: 'block'
+                  }}
+                  onError={(e) => {
+                    e.currentTarget.style.display = 'none';
+                  }}
+                />
+              ) : (
+                <div style={{
+                  width: '56px',
+                  height: '56px',
+                  borderRadius: '50%',
+                  background: 'linear-gradient(135deg, #f97316 0%, #ea580c 100%)',
+                  color: '#ffffff',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontSize: '22px',
+                  boxShadow: '0 6px 16px rgba(249, 115, 22, 0.35)',
+                  flexShrink: 0
+                }}>
+                  <i className="fa-solid fa-crown"></i>
+                </div>
+              )}
+              {/* Badge camera to edit */}
+              <div style={{
+                position: 'absolute',
+                bottom: '-2px',
+                right: '-2px',
+                width: '22px',
+                height: '22px',
+                borderRadius: '50%',
+                background: '#ea580c',
+                color: '#fff',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: '10px',
+                border: '2px solid var(--bg-card)',
+                boxShadow: '0 2px 5px rgba(0,0,0,0.2)'
+              }}>
+                <i className="fa-solid fa-camera"></i>
+              </div>
             </div>
             <div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -320,12 +443,96 @@ export default function AccountView() {
               Thông Tin Hồ Sơ Cá Nhân
             </h3>
             <p style={{ margin: '2px 0 0 0', fontSize: '12.5px', color: 'var(--text-muted)' }}>
-              Cập nhật họ tên hiển thị và số điện thoại liên lạc của bạn
+              Cập nhật ảnh đại diện, họ tên hiển thị và số điện thoại liên lạc của bạn
             </p>
           </div>
         </div>
 
         <form onSubmit={handleSaveProfile}>
+          {/* Avatar Upload / Change Box */}
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '16px',
+            padding: '12px 16px',
+            borderRadius: '14px',
+            background: 'var(--bg-main)',
+            border: '1px solid var(--border-color)',
+            marginBottom: '16px',
+            flexWrap: 'wrap'
+          }}>
+            <div style={{ position: 'relative' }}>
+              {avatarUrl || user?.avatarUrl ? (
+                <img
+                  src={avatarUrl || user.avatarUrl}
+                  alt="Avatar"
+                  referrerPolicy="no-referrer"
+                  style={{
+                    width: '52px',
+                    height: '52px',
+                    borderRadius: '50%',
+                    objectFit: 'cover',
+                    border: '2px solid rgba(249, 115, 22, 0.5)',
+                    display: 'block'
+                  }}
+                />
+              ) : (
+                <div style={{
+                  width: '52px',
+                  height: '52px',
+                  borderRadius: '50%',
+                  background: 'linear-gradient(135deg, #f97316, #ea580c)',
+                  color: '#fff',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontSize: '18px',
+                  fontWeight: '700'
+                }}>
+                  {(user?.fullName || 'U').substring(0, 1).toUpperCase()}
+                </div>
+              )}
+            </div>
+
+            <div style={{ flex: 1, minWidth: '180px' }}>
+              <div style={{ fontSize: '13px', fontWeight: '600', color: 'var(--text-bright)' }}>
+                Ảnh đại diện (Avatar)
+              </div>
+              <div style={{ fontSize: '11.5px', color: 'var(--text-muted)', marginTop: '2px' }}>
+                {user?.isGoogleLinked ? 'Đã liên kết ảnh Gmail / Google. Bạn có thể chọn ảnh khác bất kỳ lúc nào.' : 'Tải ảnh đại diện từ máy tính hoặc điện thoại của bạn.'}
+              </div>
+            </div>
+
+            <div style={{ display: 'flex', gap: '8px' }}>
+              <input
+                type="file"
+                ref={fileInputRef}
+                accept="image/*"
+                style={{ display: 'none' }}
+                onChange={handleAvatarFile}
+              />
+              <button
+                type="button"
+                onClick={() => fileInputRef.current?.click()}
+                className="lookup-admin-link"
+                style={{ fontSize: '12.5px', padding: '7px 12px', gap: '6px' }}
+              >
+                <i className="fa-solid fa-camera"></i>
+                <span>Tải ảnh mới</span>
+              </button>
+              {avatarUrl && avatarUrl !== user?.avatarUrl && (
+                <button
+                  type="button"
+                  onClick={() => setAvatarUrl(user?.avatarUrl || '')}
+                  className="lookup-admin-link"
+                  style={{ fontSize: '12.5px', padding: '7px 12px', color: '#ef4444' }}
+                >
+                  <i className="fa-solid fa-rotate-left"></i>
+                  <span>Hoàn tác</span>
+                </button>
+              )}
+            </div>
+          </div>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '14px', marginBottom: '16px' }}>
             <div className="lookup-input-group" style={{ marginBottom: 0 }}>
               <label className="lookup-label" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -550,42 +757,148 @@ export default function AccountView() {
         </div>
 
         {/* Xem trước Thẻ ATM nếu đã có STK */}
-        {user?.accountNumber && (
+        {/* Luxury ATM Card Live Preview */}
+        <div style={{
+          maxWidth: '440px',
+          margin: '0 auto 20px auto',
+          background: 'linear-gradient(135deg, #091322 0%, #0f172a 45%, #1e293b 100%)',
+          borderRadius: '18px',
+          padding: '22px 24px',
+          color: '#ffffff',
+          position: 'relative',
+          overflow: 'hidden',
+          boxShadow: '0 16px 36px -10px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.1) inset',
+          border: '1px solid rgba(255, 255, 255, 0.12)'
+        }}>
+          {/* Holographic light spots */}
           <div style={{
-            background: 'linear-gradient(135deg, #1e293b 0%, #0f172a 100%)',
-            border: '1px solid rgba(255, 255, 255, 0.1)',
-            borderRadius: '16px',
-            padding: '18px 20px',
-            color: '#ffffff',
-            marginBottom: '18px',
-            boxShadow: '0 8px 24px rgba(0, 0, 0, 0.15)',
-            position: 'relative',
-            overflow: 'hidden'
-          }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px' }}>
-              <div style={{ fontSize: '13px', fontWeight: '800', letterSpacing: '1px', color: '#94a3b8', textTransform: 'uppercase' }}>
-                {user.bankName || user.bankCode || 'NGÂN HÀNG THỤ HƯỞNG'}
+            position: 'absolute',
+            top: '-35px',
+            right: '-35px',
+            width: '160px',
+            height: '160px',
+            borderRadius: '50%',
+            background: 'radial-gradient(circle, rgba(56, 189, 248, 0.22) 0%, transparent 70%)',
+            pointerEvents: 'none'
+          }} />
+          <div style={{
+            position: 'absolute',
+            bottom: '-40px',
+            left: '-30px',
+            width: '140px',
+            height: '140px',
+            borderRadius: '50%',
+            background: 'radial-gradient(circle, rgba(249, 115, 22, 0.18) 0%, transparent 70%)',
+            pointerEvents: 'none'
+          }} />
+
+          {/* Top card header */}
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '18px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <div style={{
+                width: '30px',
+                height: '30px',
+                borderRadius: '8px',
+                background: 'rgba(255, 255, 255, 0.08)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                border: '1px solid rgba(255, 255, 255, 0.12)'
+              }}>
+                <i className="fa-solid fa-building-columns" style={{ color: '#38bdf8', fontSize: '14px' }}></i>
               </div>
-              <i className="fa-solid fa-wifi" style={{ transform: 'rotate(90deg)', color: '#64748b', fontSize: '18px' }}></i>
-            </div>
-            <div style={{ fontSize: '19px', fontWeight: '900', letterSpacing: '2px', fontFamily: 'monospace', color: '#38bdf8', marginBottom: '10px' }}>
-              {user.accountNumber}
-            </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
-              <div>
-                <div style={{ fontSize: '10px', color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-                  CHỦ TÀI KHOẢN
-                </div>
-                <div style={{ fontSize: '14px', fontWeight: '800', letterSpacing: '0.5px', color: '#ffffff' }}>
-                  {user.accountName || user.fullName || 'CHỦ TÀI KHOẢN'}
-                </div>
+              <div style={{ fontSize: '13px', fontWeight: '800', letterSpacing: '0.6px', color: '#f8fafc', textTransform: 'uppercase' }}>
+                {selectedBank === 'OTHER'
+                  ? (customBankName.trim() || 'NGÂN HÀNG THỤ HƯỞNG')
+                  : (BANKS.find(b => b.code === selectedBank)?.name ? `${selectedBank} - ${BANKS.find(b => b.code === selectedBank)?.name}` : (selectedBank || 'NGÂN HÀNG'))}
               </div>
-              <span style={{ fontSize: '11px', background: 'rgba(56, 189, 248, 0.2)', color: '#38bdf8', padding: '3px 8px', borderRadius: '6px', fontWeight: '700' }}>
-                ✓ ĐÃ THIẾT LẬP
+            </div>
+
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <i className="fa-solid fa-wifi" style={{ transform: 'rotate(90deg)', color: 'rgba(255, 255, 255, 0.6)', fontSize: '16px' }}></i>
+              <span style={{
+                fontSize: '9.5px',
+                fontWeight: '800',
+                letterSpacing: '1px',
+                padding: '2px 7px',
+                borderRadius: '5px',
+                background: 'linear-gradient(135deg, rgba(251, 191, 36, 0.2), rgba(217, 119, 6, 0.25))',
+                border: '1px solid rgba(251, 191, 36, 0.4)',
+                color: '#fbbf24',
+                textTransform: 'uppercase'
+              }}>
+                PLATINUM
               </span>
             </div>
           </div>
-        )}
+
+          {/* EMV Gold Chip */}
+          <div style={{ marginBottom: '16px' }}>
+            <div style={{
+              width: '42px',
+              height: '32px',
+              borderRadius: '6px',
+              background: 'linear-gradient(135deg, #fef08a 0%, #eab308 50%, #ca8a04 100%)',
+              boxShadow: '0 2px 5px rgba(0,0,0,0.3)',
+              position: 'relative',
+              overflow: 'hidden',
+              border: '1px solid #a16207'
+            }}>
+              <div style={{ position: 'absolute', top: '15px', left: 0, right: 0, height: '1px', background: '#854d0e' }} />
+              <div style={{ position: 'absolute', top: 0, bottom: 0, left: '13px', width: '1px', background: '#854d0e' }} />
+              <div style={{ position: 'absolute', top: 0, bottom: 0, right: '13px', width: '1px', background: '#854d0e' }} />
+              <div style={{ position: 'absolute', top: '8px', left: '13px', right: '13px', height: '15px', borderRadius: '3px', border: '1px solid #854d0e' }} />
+            </div>
+          </div>
+
+          {/* Account Number */}
+          <div style={{
+            fontSize: '19px',
+            fontWeight: '700',
+            letterSpacing: '3px',
+            fontFamily: 'monospace',
+            color: '#38bdf8',
+            textShadow: '0 2px 6px rgba(0, 0, 0, 0.4)',
+            marginBottom: '16px',
+            wordBreak: 'break-all'
+          }}>
+            {formatCardNumber(accountNumber || user?.accountNumber)}
+          </div>
+
+          {/* Cardholder + Status */}
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
+            <div>
+              <div style={{ fontSize: '9px', color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.8px', fontWeight: '600' }}>
+                CHỦ TÀI KHOẢN
+              </div>
+              <div style={{ fontSize: '14px', fontWeight: '800', letterSpacing: '1px', color: '#ffffff', textTransform: 'uppercase', marginTop: '2px' }}>
+                {accountName || user?.accountName || user?.fullName || 'CHỦ TÀI KHOẢN'}
+              </div>
+            </div>
+
+            {user?.accountNumber || accountNumber ? (
+              <span style={{
+                fontSize: '10.5px',
+                fontWeight: '700',
+                color: '#38bdf8',
+                background: 'rgba(56, 189, 248, 0.15)',
+                border: '1px solid rgba(56, 189, 248, 0.3)',
+                padding: '3px 9px',
+                borderRadius: '6px',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '5px'
+              }}>
+                <i className="fa-solid fa-circle-check" style={{ fontSize: '10px' }}></i>
+                {user?.accountNumber ? 'ĐÃ THIẾT LẬP' : 'XEM TRƯỚC'}
+              </span>
+            ) : (
+              <span style={{ fontSize: '10.5px', color: '#94a3b8', fontStyle: 'italic' }}>
+                Chưa nhập STK
+              </span>
+            )}
+          </div>
+        </div>
 
         <form onSubmit={handleSaveBank}>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '14px', marginBottom: '16px' }}>

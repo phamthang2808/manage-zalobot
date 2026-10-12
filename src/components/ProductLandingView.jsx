@@ -195,12 +195,27 @@ export function ProductLandingView({ code, apiRoot = "" }) {
         <div className="sym-card sym-user-card">
           <div className="sym-user-left">
             <div className="sym-user-avatar-wrap">
-              <img 
-                src="/favaicon28symues.png" 
-                alt="Avatar" 
-                className="sym-user-avatar-img" 
-                onError={(e) => { e.target.src = "/fvc.png"; }} 
-              />
+              {info.avatarUrl ? (
+                <img 
+                  src={info.avatarUrl} 
+                  alt="Avatar" 
+                  className="sym-user-avatar-img" 
+                  onError={(e) => { e.target.style.display = 'none'; }} 
+                />
+              ) : (
+                <div style={{
+                  width: '100%',
+                  height: '100%',
+                  borderRadius: '50%',
+                  background: 'linear-gradient(135deg, #f97316 0%, #ea580c 100%)',
+                  color: '#ffffff',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center'
+                }}>
+                  <i className="fa-solid fa-user" style={{ fontSize: '18px', color: '#ffffff' }}></i>
+                </div>
+              )}
             </div>
             <div className="sym-user-meta">
               <div className="sym-user-greeting">

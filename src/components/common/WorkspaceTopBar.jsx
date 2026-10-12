@@ -149,7 +149,7 @@ export default function WorkspaceTopBar({ setSidebarOpen }) {
       <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexShrink: 0 }}>
         <ThemeToggle />
 
-        {isAdmin && (
+        {isAdmin && view !== 'lookup' && (
           <button
             onClick={() => { setView('admin'); sessionStorage.setItem('adminView', 'admin'); }}
             style={{

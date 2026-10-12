@@ -188,6 +188,17 @@ export default function AccountView() {
   return (
     <div className="account-view-wrapper" style={{ width: '100%', maxWidth: '820px', margin: '0 auto' }}>
       
+      {/* HEADER TIÊU ĐỀ RÕ RÀNG */}
+      <div style={{ marginBottom: '20px' }}>
+        <h1 style={{ fontSize: '22px', fontWeight: '900', color: 'var(--text-bright)', margin: 0, display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <i className="fa-solid fa-address-card" style={{ color: 'var(--color-primary, #ea580c)' }}></i>
+          <span>Thông Tin Cá Nhân & Tài Khoản Của Bạn</span>
+        </h1>
+        <p style={{ margin: '4px 0 0 0', fontSize: '13px', color: 'var(--text-muted)' }}>
+          Quản lý thông tin hồ sơ, số điện thoại, liên kết Zalo ID và tài khoản ngân hàng nhận tiền hoa hồng
+        </p>
+      </div>
+
       {/* 1. THẺ ĐỊNH DANH VIP & SUBID TIẾP THỊ */}
       <div className="lookup-card" style={{
         background: 'linear-gradient(135deg, rgba(249, 115, 22, 0.08) 0%, var(--bg-card) 100%)',
@@ -259,7 +270,7 @@ export default function AccountView() {
           }}>
             <div>
               <div style={{ fontSize: '10.5px', fontWeight: '800', color: 'var(--text-muted)', textTransform: 'uppercase' }}>
-                SubID Tiếp Thị Của Bạn
+                SubID Tiếp Thị
               </div>
               <div style={{ fontSize: '14px', fontWeight: '900', color: 'var(--color-primary, #ea580c)', fontFamily: 'monospace' }}>
                 {displaySubId}
@@ -292,7 +303,98 @@ export default function AccountView() {
         </div>
       </div>
 
-      {/* 2. CARD: LIÊN KẾT ZALO ID */}
+      {/* 2. CARD: THÔNG TIN CÁ NHÂN (ĐẶT LÊN ĐẦU ĐỂ DỄ THẤY NHẤT) */}
+      <div className="lookup-card" style={{ marginBottom: '20px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '14px' }}>
+          <div style={{
+            width: '40px',
+            height: '40px',
+            borderRadius: '12px',
+            background: 'rgba(139, 92, 246, 0.14)',
+            color: '#8b5cf6',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontSize: '18px'
+          }}>
+            <i className="fa-solid fa-user-pen"></i>
+          </div>
+          <div>
+            <h3 style={{ fontSize: '16px', fontWeight: '800', margin: 0, color: 'var(--text-bright)' }}>
+              Thông Tin Hồ Sơ Cá Nhân
+            </h3>
+            <p style={{ margin: '2px 0 0 0', fontSize: '12.5px', color: 'var(--text-muted)' }}>
+              Cập nhật họ tên hiển thị và số điện thoại liên lạc của bạn
+            </p>
+          </div>
+        </div>
+
+        <form onSubmit={handleSaveProfile}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '14px', marginBottom: '16px' }}>
+            <div className="lookup-input-group" style={{ marginBottom: 0 }}>
+              <label className="lookup-label">Họ và Tên</label>
+              <input
+                type="text"
+                className="lookup-input"
+                value={fullName}
+                onChange={e => setFullName(e.target.value)}
+                placeholder="Nhập họ và tên..."
+              />
+            </div>
+
+            <div className="lookup-input-group" style={{ marginBottom: 0 }}>
+              <label className="lookup-label">Email Đăng Ký (Không thể đổi)</label>
+              <input
+                type="text"
+                className="lookup-input"
+                value={user?.email || ''}
+                disabled
+                style={{ opacity: 0.7, cursor: 'not-allowed', background: 'var(--bg-main)' }}
+              />
+            </div>
+
+            <div className="lookup-input-group" style={{ marginBottom: 0 }}>
+              <label className="lookup-label">Số Điện Thoại</label>
+              <input
+                type="text"
+                className="lookup-input"
+                value={phone}
+                onChange={e => setPhone(e.target.value)}
+                placeholder="Nhập số điện thoại..."
+              />
+            </div>
+          </div>
+
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px', flexWrap: 'wrap' }}>
+            <button
+              type="submit"
+              disabled={savingProfile}
+              className="lookup-btn"
+              style={{ flex: 1, minWidth: '220px' }}
+            >
+              <i className="fa-solid fa-check"></i>
+              <span>{savingProfile ? 'Đang lưu...' : 'Lưu Thông Tin Cá Nhân'}</span>
+            </button>
+            <button
+              type="button"
+              onClick={handleLogout}
+              className="lookup-admin-link"
+              style={{
+                color: '#dc2626',
+                borderColor: 'rgba(220, 38, 38, 0.3)',
+                padding: '12px 20px',
+                borderRadius: '12px',
+                fontSize: '13.5px'
+              }}
+            >
+              <i className="fa-solid fa-right-from-bracket"></i>
+              <span>Đăng xuất</span>
+            </button>
+          </div>
+        </form>
+      </div>
+
+      {/* 3. CARD: LIÊN KẾT ZALO ID */}
       <div className="lookup-card" style={{ marginBottom: '20px' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '10px', marginBottom: '16px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
@@ -415,7 +517,7 @@ export default function AccountView() {
         )}
       </div>
 
-      {/* 3. CARD: TÀI KHOẢN NGÂN HÀNG RÚT TIỀN */}
+      {/* 4. CARD: TÀI KHOẢN NGÂN HÀNG RÚT TIỀN */}
       <div className="lookup-card" style={{ marginBottom: '20px' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '14px' }}>
           <div style={{
@@ -547,96 +649,6 @@ export default function AccountView() {
         </form>
       </div>
 
-      {/* 4. CARD: THÔNG TIN HỒ SƠ CÁ NHÂN */}
-      <div className="lookup-card" style={{ marginBottom: '20px' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '14px' }}>
-          <div style={{
-            width: '40px',
-            height: '40px',
-            borderRadius: '12px',
-            background: 'rgba(139, 92, 246, 0.14)',
-            color: '#8b5cf6',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            fontSize: '18px'
-          }}>
-            <i className="fa-solid fa-user-gear"></i>
-          </div>
-          <div>
-            <h3 style={{ fontSize: '16px', fontWeight: '800', margin: 0, color: 'var(--text-bright)' }}>
-              Thông Tin Cá Nhân
-            </h3>
-            <p style={{ margin: '2px 0 0 0', fontSize: '12.5px', color: 'var(--text-muted)' }}>
-              Cập nhật họ tên hiển thị và số điện thoại liên lạc
-            </p>
-          </div>
-        </div>
-
-        <form onSubmit={handleSaveProfile}>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '14px', marginBottom: '16px' }}>
-            <div className="lookup-input-group" style={{ marginBottom: 0 }}>
-              <label className="lookup-label">Họ và Tên</label>
-              <input
-                type="text"
-                className="lookup-input"
-                value={fullName}
-                onChange={e => setFullName(e.target.value)}
-                placeholder="Nhập họ và tên..."
-              />
-            </div>
-
-            <div className="lookup-input-group" style={{ marginBottom: 0 }}>
-              <label className="lookup-label">Email Đăng Ký</label>
-              <input
-                type="text"
-                className="lookup-input"
-                value={user?.email || ''}
-                disabled
-                style={{ opacity: 0.7, cursor: 'not-allowed', background: 'var(--bg-main)' }}
-              />
-            </div>
-
-            <div className="lookup-input-group" style={{ marginBottom: 0 }}>
-              <label className="lookup-label">Số Điện Thoại</label>
-              <input
-                type="text"
-                className="lookup-input"
-                value={phone}
-                onChange={e => setPhone(e.target.value)}
-                placeholder="Nhập số điện thoại..."
-              />
-            </div>
-          </div>
-
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px', flexWrap: 'wrap' }}>
-            <button
-              type="submit"
-              disabled={savingProfile}
-              className="lookup-btn"
-              style={{ flex: 1, minWidth: '220px' }}
-            >
-              <i className="fa-solid fa-check"></i>
-              <span>{savingProfile ? 'Đang lưu...' : 'Cập Nhật Thông Tin Cá Nhân'}</span>
-            </button>
-            <button
-              type="button"
-              onClick={handleLogout}
-              className="lookup-admin-link"
-              style={{
-                color: '#dc2626',
-                borderColor: 'rgba(220, 38, 38, 0.3)',
-                padding: '12px 20px',
-                borderRadius: '12px',
-                fontSize: '13.5px'
-              }}
-            >
-              <i className="fa-solid fa-right-from-bracket"></i>
-              <span>Đăng xuất</span>
-            </button>
-          </div>
-        </form>
-      </div>
     </div>
   );
 }

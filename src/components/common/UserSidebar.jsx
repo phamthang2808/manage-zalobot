@@ -9,7 +9,7 @@ export default function UserSidebar({ sidebarOpen, setSidebarOpen }) {
     { id: 'convert', label: 'Chuyển đổi link', icon: 'fa-solid fa-bolt', color: '#f59e0b' },
     { id: 'orders', label: 'Đơn hàng đã đặt', icon: 'fa-solid fa-boxes-stacked', color: '#0284c7' },
     { id: 'withdraw', label: 'Ví tiền & Rút tiền', icon: 'fa-solid fa-wallet', color: '#10b981' },
-    { id: 'account', label: 'Tài khoản & Zalo ID', icon: 'fa-solid fa-user-circle', color: '#8b5cf6' },
+    { id: 'account', label: 'Thông tin cá nhân', icon: 'fa-solid fa-id-card', color: '#8b5cf6' },
   ];
 
   const subMenuItems = [
@@ -279,7 +279,11 @@ export default function UserSidebar({ sidebarOpen, setSidebarOpen }) {
           gap: '10px'
         }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', minWidth: 0 }}>
+            <div 
+              onClick={() => { setView('account'); window.history.pushState({}, '', '/?view=account'); if (setSidebarOpen) setSidebarOpen(false); }}
+              style={{ display: 'flex', alignItems: 'center', gap: '10px', minWidth: 0, cursor: 'pointer' }}
+              title="Xem & sửa thông tin cá nhân"
+            >
               {user?.avatarUrl ? (
                 <img 
                   src={user.avatarUrl} 

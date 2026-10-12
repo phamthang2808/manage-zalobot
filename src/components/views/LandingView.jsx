@@ -43,16 +43,31 @@ export default function LandingView() {
         </div>
         <nav className={`landing-nav${mobileMenuOpen ? ' open' : ''}`}>
           <a href="#home" onClick={() => setMobileMenuOpen(false)}>Trang chủ</a>
-          <a href="#features" onClick={() => setMobileMenuOpen(false)}>Tính năng</a>
-          <a href="#steps" onClick={() => setMobileMenuOpen(false)}>Hướng dẫn</a>
-          <a href="#pricing" onClick={() => setMobileMenuOpen(false)}>Bảng giá</a>
+          <a href="#" onClick={e => { e.preventDefault(); setView('convert'); window.history.pushState({}, '', '/?view=convert'); setMobileMenuOpen(false); }} style={{ color: '#f59e0b', fontWeight: '700' }}>
+            <i className="fa-solid fa-bolt" style={{ marginRight: '6px' }}></i>Chuyển đổi link
+          </a>
+          {token && (
+            <>
+              <a href="#" onClick={e => { e.preventDefault(); setView('orders'); window.history.pushState({}, '', '/?view=orders'); setMobileMenuOpen(false); }} style={{ fontWeight: '600' }}>
+                <i className="fa-solid fa-boxes-stacked" style={{ marginRight: '6px', color: '#0284c7' }}></i>Đơn hàng
+              </a>
+              <a href="#" onClick={e => { e.preventDefault(); setView('withdraw'); window.history.pushState({}, '', '/?view=withdraw'); setMobileMenuOpen(false); }} style={{ fontWeight: '600' }}>
+                <i className="fa-solid fa-wallet" style={{ marginRight: '6px', color: '#10b981' }}></i>Ví tiền
+              </a>
+              <a href="#" onClick={e => { e.preventDefault(); setView('account'); window.history.pushState({}, '', '/?view=account'); setMobileMenuOpen(false); }} style={{ fontWeight: '600' }}>
+                <i className="fa-solid fa-user-circle" style={{ marginRight: '6px', color: '#8b5cf6' }}></i>Tài khoản
+              </a>
+            </>
+          )}
           <a href="#" onClick={e => { e.preventDefault(); setView('lookup'); window.history.pushState({}, '', '/?view=lookup'); setMobileMenuOpen(false); }} style={{ color: '#ea580c', fontWeight: '700' }}>
             <i className="fa-thin fa-magnifying-glass" style={{ marginRight: '6px' }}></i>Tra cứu đơn hàng
           </a>
+          <a href="#features" onClick={() => setMobileMenuOpen(false)}>Tính năng</a>
+          <a href="#pricing" onClick={() => setMobileMenuOpen(false)}>Bảng giá</a>
           <div className="mobile-nav-actions">
             {token ? (
               <>
-                <div className="user-widget">
+                <div className="user-widget" onClick={() => { setView('account'); setMobileMenuOpen(false); }} style={{ cursor: 'pointer' }}>
                   {user?.avatarUrl
                     ? <img src={user.avatarUrl} alt="Avatar" referrerPolicy="no-referrer" style={{ width: '28px', height: '28px', borderRadius: '50%' }} />
                     : <div className="user-widget-avatar">{(user?.fullName || 'U').substring(0, 1).toUpperCase()}</div>}
@@ -74,37 +89,57 @@ export default function LandingView() {
                 <button className="btn" onClick={() => { handleLogout(); setMobileMenuOpen(false); }} style={{ border: '1px solid var(--border-color)' }}>Đăng xuất</button>
               </>
             ) : (
-              <button className="btn btn-glow" onClick={() => { setView('login'); window.history.pushState({}, '', '/?view=login'); setMobileMenuOpen(false); }}>Đăng nhập</button>
+              <button className="btn btn-glow" onClick={() => { setView('login'); window.history.pushState({}, '', '/?view=login'); setMobileMenuOpen(false); }}>Đăng nhập / Đăng ký</button>
             )}
           </div>
         </nav>
         <div className="landing-actions">
           <ThemeToggle style={{ marginRight: '8px' }} />
           {token ? (
-            <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-              <div className="user-widget">
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+              <button
+                onClick={() => { setView('convert'); window.history.pushState({}, '', '/?view=convert'); }}
+                style={{
+                  background: 'linear-gradient(135deg, rgba(245,158,11,0.15), rgba(234,88,12,0.1))',
+                  border: '1px solid rgba(245,158,11,0.4)',
+                  color: '#ea580c',
+                  fontSize: '13.5px',
+                  fontWeight: '700',
+                  padding: '7px 14px',
+                  borderRadius: '16px',
+                  cursor: 'pointer',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '6px'
+                }}
+              >
+                <i className="fa-solid fa-bolt" style={{ color: '#f59e0b' }}></i>
+                <span>Chuyển đổi</span>
+              </button>
+              <div 
+                className="user-widget" 
+                onClick={() => { setView('account'); window.history.pushState({}, '', '/?view=account'); }}
+                style={{ cursor: 'pointer' }}
+                title="Quản lý tài khoản & liên kết Zalo ID"
+              >
                 {user?.avatarUrl
                   ? <img src={user.avatarUrl} alt="Avatar" referrerPolicy="no-referrer" style={{ width: '28px', height: '28px', borderRadius: '50%' }} />
                   : <div className="user-widget-avatar">{(user?.fullName || 'U').substring(0, 1).toUpperCase()}</div>}
-                <span className="user-widget-name">{user?.fullName}</span>
+                <span className="user-widget-name">{user?.fullName?.split(' ')[user.fullName.split(' ').length - 1] || 'Cá nhân'}</span>
               </div>
               {isAdmin && (
                 <button
                   onClick={() => { setView('admin'); sessionStorage.setItem('adminView', 'admin'); }}
-                  style={{ background: 'linear-gradient(135deg, #f97316, #ea580c)', border: '1px solid #ea580c', color: '#ffffff', fontSize: '14.5px', fontWeight: '700', padding: '8px 18px', borderRadius: '20px', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '6px', boxShadow: '0 4px 15px rgba(249,115,22,0.3)', transition: 'all 0.25s ease' }}
+                  style={{ background: 'linear-gradient(135deg, #f97316, #ea580c)', border: '1px solid #ea580c', color: '#ffffff', fontSize: '13.5px', fontWeight: '700', padding: '7px 14px', borderRadius: '20px', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '6px', boxShadow: '0 4px 12px rgba(249,115,22,0.3)', transition: 'all 0.25s ease' }}
                 >
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: '6px', flexShrink: 0 }}>
-                    <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" />
-                    <path d="M19 8a3 3 0 0 1 0 6" /><circle cx="18" cy="18" r="2.5" />
-                    <path d="M18 14.5v1M18 20.5v1M14.5 18h1M20.5 18h1" />
-                  </svg>
-                  Trang Quản Trị
+                  <i className="fa-solid fa-shield-halved"></i>
+                  <span>Quản trị</span>
                 </button>
               )}
-              <button className="btn" onClick={handleLogout} style={{ border: '1px solid var(--border-color)' }}>Đăng xuất</button>
+              <button className="btn" onClick={handleLogout} style={{ border: '1px solid var(--border-color)', padding: '7px 14px', fontSize: '13px' }}>Đăng xuất</button>
             </div>
           ) : (
-            <button className="btn btn-glow" onClick={() => { setView('login'); window.history.pushState({}, '', '/?view=login'); }}>Đăng nhập</button>
+            <button className="btn btn-glow" onClick={() => { setView('login'); window.history.pushState({}, '', '/?view=login'); }}>Đăng nhập / Đăng ký</button>
           )}
         </div>
         <div className="mobile-header-actions" style={{ display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 0 }}>

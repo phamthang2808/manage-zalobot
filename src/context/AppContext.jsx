@@ -16,19 +16,35 @@ export function AppProvider({ children }) {
   // Navigation
   const [view, setView] = useState(() => {
     const path = window.location.pathname;
-    if (path.includes('/lookup') || path.includes('/tra-cuu') || window.location.search.includes('view=lookup') || window.location.hash.includes('lookup')) return 'lookup';
-    if (path.includes('/login') || window.location.search.includes('view=login') || window.location.hash.includes('login')) return 'login';
+    const search = window.location.search;
+    const hash = window.location.hash;
+    if (path.includes('/lookup') || path.includes('/tra-cuu') || search.includes('view=lookup') || hash.includes('lookup')) return 'lookup';
+    if (path.includes('/login') || search.includes('view=login') || hash.includes('login')) return 'login';
+    if (path.includes('/convert') || search.includes('view=convert')) return 'convert';
+    if (path.includes('/orders') || search.includes('view=orders')) return 'orders';
+    if (path.includes('/withdraw') || search.includes('view=withdraw')) return 'withdraw';
+    if (path.includes('/account') || search.includes('view=account')) return 'account';
     return sessionStorage.getItem('adminView') || 'home';
   });
 
   useEffect(() => {
     const handlePopState = () => {
       const path = window.location.pathname;
-      if (path.includes('/lookup') || path.includes('/tra-cuu') || window.location.search.includes('view=lookup') || window.location.hash.includes('lookup')) {
+      const search = window.location.search;
+      const hash = window.location.hash;
+      if (path.includes('/lookup') || path.includes('/tra-cuu') || search.includes('view=lookup') || hash.includes('lookup')) {
         setView('lookup');
-      } else if (path.includes('/login') || window.location.search.includes('view=login') || window.location.hash.includes('login')) {
+      } else if (path.includes('/login') || search.includes('view=login') || hash.includes('login')) {
         setView('login');
-      } else if (path.includes('/admin') || window.location.search.includes('view=admin') || window.location.hash.includes('admin')) {
+      } else if (path.includes('/convert') || search.includes('view=convert')) {
+        setView('convert');
+      } else if (path.includes('/orders') || search.includes('view=orders')) {
+        setView('orders');
+      } else if (path.includes('/withdraw') || search.includes('view=withdraw')) {
+        setView('withdraw');
+      } else if (path.includes('/account') || search.includes('view=account')) {
+        setView('account');
+      } else if (path.includes('/admin') || search.includes('view=admin') || hash.includes('admin')) {
         setView('admin');
       } else {
         setView(sessionStorage.getItem('adminView') || 'home');
@@ -231,9 +247,13 @@ export function AppProvider({ children }) {
   useEffect(() => {
     const titles = {
       home: '28Symues Affiliate - Tự Động Hóa Hoàn Tiền Shopee Qua Zalo',
-      lookup: 'Tra Cứu Đơn Hàng Shopee | 28Symues Affiliate',
-      login: 'Đăng Nhập | 28Symues Affiliate',
-      admin: 'Dashboard Quản Trị | 28Symues Affiliate'
+      lookup: 'Tra Cứu Đơn Hàng Shopee & Zalo | 28Symues Affiliate',
+      login: 'Đăng Nhập & Đăng Ký | 28Symues Affiliate',
+      convert: 'Chuyển Đổi Link Shopee, TikTok, Lazada | 28Symues Affiliate',
+      orders: 'Lịch Sử Đơn Hàng Tiếp Thị (Web & Zalo) | 28Symues Affiliate',
+      withdraw: 'Ví Tiền Hoa Hồng & Yêu Cầu Rút Tiền | 28Symues Affiliate',
+      account: 'Tài Khoản & Liên Kết Zalo ID | 28Symues Affiliate',
+      admin: 'Dashboard Quản Trị Hệ Thống | 28Symues Affiliate'
     };
     document.title = titles[view] || titles.home;
   }, [view]);

@@ -28,10 +28,15 @@ export default function MobileBottomNav() {
         </button>
         <button type="button" className={`mobile-bottom-nav-item${activeTab === 'users' ? ' active' : ''}`}
           onClick={() => { setActiveTab('users'); sessionStorage.setItem('adminTab', 'users'); window.scrollTo(0, 0); }}>
-          <div className="nav-icon-wrap"><i className="fa-solid fa-users"></i></div>
-          <span className="nav-label">Thành viên</span>
+          <div className="nav-icon-wrap"><i className="fa-solid fa-robot"></i></div>
+          <span className="nav-label">Bot Zalo</span>
         </button>
-        <button type="button" className={`mobile-bottom-nav-item${activeTab === 'orders' ? ' active' : ''}`}
+        <button type="button" className={`mobile-bottom-nav-item${activeTab === 'web_users' ? ' active' : ''}`}
+          onClick={() => { setActiveTab('web_users'); sessionStorage.setItem('adminTab', 'web_users'); window.scrollTo(0, 0); }}>
+          <div className="nav-icon-wrap"><i className="fa-solid fa-users-gear"></i></div>
+          <span className="nav-label">User Web</span>
+        </button>
+        <button type="button" className={`mobile-bottom-nav-item${activeTab === 'orders' || activeTab === 'lazada_orders' ? ' active' : ''}`}
           onClick={() => { setActiveTab('orders'); sessionStorage.setItem('adminTab', 'orders'); window.scrollTo(0, 0); }}>
           <div className="nav-icon-wrap"><i className="fa-solid fa-boxes-stacked"></i></div>
           <span className="nav-label">Đơn hàng</span>
@@ -53,6 +58,41 @@ export default function MobileBottomNav() {
     );
   }
 
+  // If user is logged in and using portal views:
+  if (token && (view === 'convert' || view === 'orders' || view === 'withdraw' || view === 'account')) {
+    return (
+      <nav className="mobile-bottom-nav">
+        <button type="button" className={`mobile-bottom-nav-item${view === 'convert' ? ' active' : ''}`}
+          onClick={() => { setView('convert'); window.history.pushState({}, '', '/?view=convert'); window.scrollTo(0, 0); }}>
+          <div className="nav-icon-wrap"><i className="fa-solid fa-bolt" style={{ color: view === 'convert' ? '#ea580c' : '#f59e0b' }}></i></div>
+          <span className="nav-label">Đổi Link</span>
+        </button>
+        <button type="button" className={`mobile-bottom-nav-item${view === 'orders' ? ' active' : ''}`}
+          onClick={() => { setView('orders'); window.history.pushState({}, '', '/?view=orders'); window.scrollTo(0, 0); }}>
+          <div className="nav-icon-wrap"><i className="fa-solid fa-boxes-stacked" style={{ color: view === 'orders' ? '#ea580c' : '#0284c7' }}></i></div>
+          <span className="nav-label">Đơn Hàng</span>
+        </button>
+        <button type="button" className={`mobile-bottom-nav-item${view === 'withdraw' ? ' active' : ''}`}
+          onClick={() => { setView('withdraw'); window.history.pushState({}, '', '/?view=withdraw'); window.scrollTo(0, 0); }}>
+          <div className="nav-icon-wrap"><i className="fa-solid fa-wallet" style={{ color: view === 'withdraw' ? '#ea580c' : '#10b981' }}></i></div>
+          <span className="nav-label">Ví Tiền</span>
+        </button>
+        <button type="button" className={`mobile-bottom-nav-item${view === 'account' ? ' active' : ''}`}
+          onClick={() => { setView('account'); window.history.pushState({}, '', '/?view=account'); window.scrollTo(0, 0); }}>
+          <div className="nav-icon-wrap"><i className="fa-solid fa-user-circle" style={{ color: view === 'account' ? '#ea580c' : '#8b5cf6' }}></i></div>
+          <span className="nav-label">Tài Khoản</span>
+        </button>
+        {isAdmin && (
+          <button type="button" className="mobile-bottom-nav-item"
+            onClick={() => { setView('admin'); sessionStorage.setItem('adminView', 'admin'); window.scrollTo(0, 0); }}>
+            <div className="nav-icon-wrap"><i className="fa-solid fa-shield-halved" style={{ color: '#ea580c' }}></i></div>
+            <span className="nav-label">Quản Trị</span>
+          </button>
+        )}
+      </nav>
+    );
+  }
+
   return (
     <nav className="mobile-bottom-nav">
       <button type="button" className={`mobile-bottom-nav-item${view === 'home' ? ' active' : ''}`}
@@ -65,30 +105,40 @@ export default function MobileBottomNav() {
         <div className="nav-icon-wrap"><i className="fa-solid fa-magnifying-glass"></i></div>
         <span className="nav-label">Tra cứu</span>
       </button>
+      <button type="button" className={`mobile-bottom-nav-item${view === 'convert' ? ' active' : ''}`}
+        onClick={() => {
+          if (token) {
+            setView('convert');
+            window.history.pushState({}, '', '/?view=convert');
+          } else {
+            setView('login');
+            window.history.pushState({}, '', '/?view=login');
+          }
+          window.scrollTo(0, 0);
+        }}>
+        <div className="nav-icon-wrap"><i className="fa-solid fa-bolt" style={{ color: '#f59e0b' }}></i></div>
+        <span className="nav-label">Đổi link</span>
+      </button>
       <a href="https://zalo.me/g/0p083nqqoordpki9zgvy" target="_blank" rel="noreferrer"
         className="mobile-bottom-nav-item" title="Nhắn tin với Bot Zalo hoàn tiền">
         <div className="nav-icon-wrap"><i className="fa-solid fa-comment-dots"></i></div>
         <span className="nav-label">Bot Zalo</span>
       </a>
-      <button type="button" className="mobile-bottom-nav-item" onClick={() => scrollToSection('steps')}>
-        <div className="nav-icon-wrap"><i className="fa-solid fa-circle-question"></i></div>
-        <span className="nav-label">Hướng dẫn</span>
-      </button>
       {isAdmin ? (
         <button type="button" className={`mobile-bottom-nav-item${view === 'admin' ? ' active' : ''}`}
           onClick={() => { setView('admin'); sessionStorage.setItem('adminView', 'admin'); window.scrollTo(0, 0); }}>
-          <div className="nav-icon-wrap"><i className="fa-solid fa-user-gear"></i></div>
+          <div className="nav-icon-wrap"><i className="fa-solid fa-shield-halved"></i></div>
           <span className="nav-label">Quản trị</span>
         </button>
       ) : token ? (
-        <button type="button" className="mobile-bottom-nav-item"
-          onClick={() => { if (window.confirm('Bạn có muốn đăng xuất không?')) handleLogout(); }}>
+        <button type="button" className={`mobile-bottom-nav-item${view === 'account' ? ' active' : ''}`}
+          onClick={() => { setView('account'); window.history.pushState({}, '', '/?view=account'); window.scrollTo(0, 0); }}>
           <div className="nav-icon-wrap">
             {user?.avatarUrl
               ? <img src={user.avatarUrl} alt="User" referrerPolicy="no-referrer" style={{ width: '22px', height: '22px', borderRadius: '50%', objectFit: 'cover' }} />
               : <i className="fa-solid fa-user"></i>}
           </div>
-          <span className="nav-label">{user?.fullName?.split(' ')[0] || 'Tài khoản'}</span>
+          <span className="nav-label">{user?.fullName?.split(' ')[user.fullName.split(' ').length - 1] || 'Cá nhân'}</span>
         </button>
       ) : (
         <button type="button" className={`mobile-bottom-nav-item${view === 'login' ? ' active' : ''}`}

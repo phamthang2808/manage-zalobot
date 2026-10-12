@@ -41,7 +41,14 @@ export default function Sidebar() {
             <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
               <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
             </svg>
-            Thành viên
+            Thành viên Zalo
+          </li>
+          <li
+            className={`menu-item ${activeTab === 'web_users' ? 'active' : ''}`}
+            onClick={() => { setActiveTab('web_users'); sessionStorage.setItem('adminTab', 'web_users'); sessionStorage.setItem('adminView', 'admin'); setSidebarOpen(false); }}
+          >
+            <i className="fa-solid fa-users-gear" style={{ width: '17px', fontSize: '15px', color: '#6366f1', display: 'flex', alignItems: 'center', justifyContent: 'center' }}></i>
+            Tài khoản Web
           </li>
           <li
             className={`menu-item ${activeTab === 'orders' ? 'active' : ''}`}
@@ -52,7 +59,14 @@ export default function Sidebar() {
               <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
               <polyline points="14 10 12 14 10 10"/>
             </svg>
-            Đơn hàng
+            Đơn Shopee / TikTok
+          </li>
+          <li
+            className={`menu-item ${activeTab === 'lazada_orders' ? 'active' : ''}`}
+            onClick={() => { setActiveTab('lazada_orders'); sessionStorage.setItem('adminTab', 'lazada_orders'); sessionStorage.setItem('adminView', 'admin'); setSidebarOpen(false); }}
+          >
+            <i className="fa-solid fa-bag-shopping" style={{ width: '17px', fontSize: '15px', color: '#002f6c', display: 'flex', alignItems: 'center', justifyContent: 'center' }}></i>
+            Đơn Lazada
           </li>
           <li
             className={`menu-item ${activeTab === 'payouts' ? 'active' : ''}`}

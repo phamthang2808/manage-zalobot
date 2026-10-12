@@ -6,17 +6,27 @@ import ThemeToggle from '../common/ThemeToggle';
 
 export default function LoginView() {
   const { windowWidth, theme, toggleTheme, setView, showToast, API_URL_ROOT, setToken, setUser } = useApp();
+  const [authMode, setAuthMode] = useState('login'); // 'login' | 'register'
   const [loginEmail, setLoginEmail] = useState('');
   const [loginPassword, setLoginPassword] = useState('');
   const [loginError, setLoginError] = useState('');
   const [loginLoading, setLoginLoading] = useState(false);
   const [cfStatus, setCfStatus] = useState('verifying');
 
+  // Register state
+  const [regFullName, setRegFullName] = useState('');
+  const [regEmail, setRegEmail] = useState('');
+  const [regPassword, setRegPassword] = useState('');
+  const [regPhone, setRegPhone] = useState('');
+  const [regZaloId, setRegZaloId] = useState('');
+  const [regLoading, setRegLoading] = useState(false);
+  const [regError, setRegError] = useState('');
+
   useEffect(() => {
     setCfStatus('verifying');
     const timer = setTimeout(() => setCfStatus('success'), 1500);
     return () => clearTimeout(timer);
-  }, []);
+  }, [authMode]);
 
   // Initialize Google Sign-In button
   useEffect(() => {
@@ -47,7 +57,7 @@ export default function LoginView() {
     }
     return () => { if (intervalId) clearInterval(intervalId); };
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [authMode]);
 
   const handleGoogleLoginSuccess = async (response) => {
     setLoginLoading(true);
@@ -70,7 +80,8 @@ export default function LoginView() {
         setView('admin');
         sessionStorage.setItem('adminView', 'admin');
       } else {
-        setView('home');
+        setView('convert');
+        sessionStorage.setItem('adminView', 'convert');
       }
       showToast('Đăng nhập thành công!', 'success');
     } catch (err) {
@@ -112,7 +123,8 @@ export default function LoginView() {
         setView('admin');
         sessionStorage.setItem('adminView', 'admin');
       } else {
-        setView('home');
+        setView('convert');
+        sessionStorage.setItem('adminView', 'convert');
       }
       showToast('Đăng nhập thành công!', 'success');
     } catch (err) {
@@ -120,6 +132,64 @@ export default function LoginView() {
       showToast(err.message, 'error');
     } finally {
       setLoginLoading(false);
+    }
+  };
+
+  const handleRegister = async (e) => {
+    e.preventDefault();
+    setRegLoading(true);
+    setRegError('');
+    try {
+      if (!regFullName.trim() || !regEmail.trim() || !regPassword) {
+        throw new Error('Vui lòng điền họ tên, email và mật khẩu');
+      }
+      if (regPassword.length < 6) {
+        throw new Error('Mật khẩu cần tối thiểu 6 ký tự');
+      }
+
+      const res = await fetch(`${API_URL_ROOT}/api/users/register`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          fullName: regFullName.trim(),
+          email: regEmail.trim(),
+          password: regPassword,
+          phone: regPhone.trim(),
+          zaloId: regZaloId.trim()
+        })
+      });
+
+      const json = await res.json();
+      if (!res.ok) {
+        throw new Error(json.message || 'Đăng ký thất bại, email có thể đã tồn tại');
+      }
+
+      showToast('Đăng ký tài khoản thành công! Đang tự động đăng nhập...', 'success');
+
+      // Tự động đăng nhập
+      const loginRes = await fetch(`${API_URL_ROOT}/api/users/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: regEmail.trim(), password: regPassword }),
+        credentials: 'include'
+      });
+      const loginData = await loginRes.json();
+      if (loginRes.ok && loginData.data) {
+        setToken('session-cookie');
+        setUser(loginData.data.user);
+        sessionStorage.setItem('adminUser', JSON.stringify(loginData.data.user));
+        sessionStorage.setItem('adminToken', 'session-cookie');
+        setView('convert');
+        sessionStorage.setItem('adminView', 'convert');
+      } else {
+        setAuthMode('login');
+        setLoginEmail(regEmail.trim());
+      }
+    } catch (err) {
+      setRegError(err.message);
+      showToast(err.message, 'error');
+    } finally {
+      setRegLoading(false);
     }
   };
 
@@ -423,90 +493,195 @@ export default function LoginView() {
 
         <div className="login-split-right">
           <div className="login-split-card">
-            <h2>Đăng nhập</h2>
-            <p className="subtitle">Phiên đăng nhập được lưu trên trình duyệt hiện tại.</p>
-
-            {loginError && <div className="login-error-msg">{loginError}</div>}
-
-            <form onSubmit={handleLocalLogin}>
-              <div className="form-group" style={{ marginBottom: '20px' }}>
-                <label className="form-label">Username</label>
-                <div className="form-input-wrapper">
-                  <input type="email" className="form-input" placeholder="Email của bạn" required
-                    value={loginEmail} onChange={e => setLoginEmail(e.target.value)} />
-                </div>
-              </div>
-              <div className="form-group" style={{ marginBottom: '20px' }}>
-                <label className="form-label">Password</label>
-                <div className="form-input-wrapper">
-                  <input type="password" className="form-input" placeholder="••••••••••••" required
-                    value={loginPassword} onChange={e => setLoginPassword(e.target.value)} />
-                </div>
-              </div>
-
-              <div style={{ display: 'flex', alignItems: 'flex-start', gap: '8px', textAlign: 'left', margin: '16px 0 10px', fontSize: '13px', color: 'var(--text-muted)' }}>
-                <input type="checkbox" id="accept-terms" required style={{ marginTop: '3px', cursor: 'pointer' }} />
-                <label htmlFor="accept-terms" style={{ cursor: 'pointer', lineHeight: '1.4' }}>
-                  Tôi đồng ý với <a href="#" onClick={e => e.preventDefault()} style={{ color: '#ea580c', textDecoration: 'underline' }}>Điều khoản dịch vụ</a> và{' '}
-                  <a href="#" onClick={e => e.preventDefault()} style={{ color: '#ea580c', textDecoration: 'underline' }}>Chính sách bảo mật</a>.
-                </label>
-              </div>
-
-              {/* Simulated Cloudflare Turnstile */}
-              <div className="cf-turnstile-sim">
-                {cfStatus === 'verifying' ? (
-                  <div className="cf-verifying">
-                    <div className="cf-spinner"></div>
-                    <span>Đang kiểm tra an toàn kết nối...</span>
-                  </div>
-                ) : (
-                  <div className="cf-success">
-                    <div className="cf-success-left">
-                      <div className="cf-check-circle"><i className="fa-solid fa-check"></i></div>
-                      <span>Thành công!</span>
-                    </div>
-                    <div className="cf-success-right">
-                      <svg className="cf-cloud-svg" viewBox="0 0 24 24">
-                        <path fill="#f38020" d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96z"/>
-                      </svg>
-                      <span className="cf-brand-text">CLOUDFLARE</span>
-                      <div className="cf-links">
-                        <a href="#" onClick={e => e.preventDefault()}>Quyền riêng tư</a>
-                        <a href="#" onClick={e => e.preventDefault()}>Giúp đỡ</a>
-                      </div>
-                    </div>
-                  </div>
-                )}
-              </div>
-
-              <button type="submit" className="modal-login-btn" disabled={loginLoading || cfStatus === 'verifying'} style={{ marginTop: '0px' }}>
-                {loginLoading ? 'Đang xác thực...' : 'Đăng nhập'}
-              </button>
-            </form>
-
-            <div className="modal-divider">Hoặc</div>
-
-            <div style={{ position: 'relative', width: '100%', minHeight: '44px', margin: '0 auto 12px auto' }}>
+            {/* Auth Mode Tabs */}
+            <div style={{ display: 'flex', background: 'var(--bg-main)', padding: '4px', borderRadius: '14px', marginBottom: '22px', border: '1px solid var(--border-color)' }}>
               <button
-                className="btn-google-custom"
-                onClick={handleGoogleLoginMobile}
-                style={{ width: '100%', height: '44px', background: 'var(--bg-card)', color: 'var(--text-bright)', border: '1.5px solid var(--border-color)', borderRadius: '12px', fontSize: '15px', fontWeight: '700', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', boxShadow: '0 2px 8px rgba(0,0,0,0.06)', cursor: 'pointer', transition: 'all 0.25s ease' }}
-                onMouseEnter={e => { e.currentTarget.style.background = '#fff7ed'; e.currentTarget.style.borderColor = '#f97316'; e.currentTarget.style.color = '#ea580c'; }}
-                onMouseLeave={e => { e.currentTarget.style.background = ''; e.currentTarget.style.borderColor = ''; e.currentTarget.style.color = ''; }}
+                type="button"
+                onClick={() => setAuthMode('login')}
+                style={{
+                  flex: 1, padding: '10px 16px', borderRadius: '10px', border: 'none',
+                  background: authMode === 'login' ? 'var(--bg-card)' : 'transparent',
+                  color: authMode === 'login' ? '#ea580c' : 'var(--text-muted)',
+                  fontWeight: '700', fontSize: '14px', cursor: 'pointer',
+                  boxShadow: authMode === 'login' ? '0 2px 8px rgba(0,0,0,0.08)' : 'none',
+                  transition: 'all 0.2s'
+                }}
               >
-                <svg width="20" height="20" viewBox="0 0 48 48">
-                  <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
-                  <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
-                  <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.28-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24s.92 7.54 2.56 10.78l7.97-6.19z"/>
-                  <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
-                </svg>
-                Đăng nhập bằng Google
+                Đăng nhập
+              </button>
+              <button
+                type="button"
+                onClick={() => setAuthMode('register')}
+                style={{
+                  flex: 1, padding: '10px 16px', borderRadius: '10px', border: 'none',
+                  background: authMode === 'register' ? 'var(--bg-card)' : 'transparent',
+                  color: authMode === 'register' ? '#ea580c' : 'var(--text-muted)',
+                  fontWeight: '700', fontSize: '14px', cursor: 'pointer',
+                  boxShadow: authMode === 'register' ? '0 2px 8px rgba(0,0,0,0.08)' : 'none',
+                  transition: 'all 0.2s'
+                }}
+              >
+                Đăng ký tài khoản
               </button>
             </div>
 
-            <div className="login-split-footer">
-              Bạn chưa có tài khoản? <a href="https://zalo.me/g/0p083nqqoordpki9zgvy" target="_blank" rel="noreferrer">Tham gia ngay</a>
-            </div>
+            {authMode === 'login' ? (
+              <>
+                <h2>Đăng nhập</h2>
+                <p className="subtitle">Đăng nhập tài khoản để quản lý link, xem đơn và rút tiền hoa hồng.</p>
+
+                {loginError && <div className="login-error-msg">{loginError}</div>}
+
+                <form onSubmit={handleLocalLogin}>
+                  <div className="form-group" style={{ marginBottom: '18px' }}>
+                    <label className="form-label">Email tài khoản</label>
+                    <div className="form-input-wrapper">
+                      <input type="email" className="form-input" placeholder="name@example.com" required
+                        value={loginEmail} onChange={e => setLoginEmail(e.target.value)} />
+                    </div>
+                  </div>
+                  <div className="form-group" style={{ marginBottom: '18px' }}>
+                    <label className="form-label">Mật khẩu</label>
+                    <div className="form-input-wrapper">
+                      <input type="password" className="form-input" placeholder="••••••••••••" required
+                        value={loginPassword} onChange={e => setLoginPassword(e.target.value)} />
+                    </div>
+                  </div>
+
+                  <div style={{ display: 'flex', alignItems: 'flex-start', gap: '8px', textAlign: 'left', margin: '14px 0 10px', fontSize: '13px', color: 'var(--text-muted)' }}>
+                    <input type="checkbox" id="accept-terms" required style={{ marginTop: '3px', cursor: 'pointer' }} />
+                    <label htmlFor="accept-terms" style={{ cursor: 'pointer', lineHeight: '1.4' }}>
+                      Tôi đồng ý với <a href="#" onClick={e => e.preventDefault()} style={{ color: '#ea580c', textDecoration: 'underline' }}>Điều khoản dịch vụ</a> và{' '}
+                      <a href="#" onClick={e => e.preventDefault()} style={{ color: '#ea580c', textDecoration: 'underline' }}>Chính sách bảo mật</a>.
+                    </label>
+                  </div>
+
+                  {/* Simulated Cloudflare Turnstile */}
+                  <div className="cf-turnstile-sim">
+                    {cfStatus === 'verifying' ? (
+                      <div className="cf-verifying">
+                        <div className="cf-spinner"></div>
+                        <span>Đang kiểm tra an toàn kết nối...</span>
+                      </div>
+                    ) : (
+                      <div className="cf-success">
+                        <div className="cf-success-left">
+                          <div className="cf-check-circle"><i className="fa-solid fa-check"></i></div>
+                          <span>Thành công!</span>
+                        </div>
+                        <div className="cf-success-right">
+                          <svg className="cf-cloud-svg" viewBox="0 0 24 24">
+                            <path fill="#f38020" d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96z"/>
+                          </svg>
+                          <span className="cf-brand-text">CLOUDFLARE</span>
+                          <div className="cf-links">
+                            <a href="#" onClick={e => e.preventDefault()}>Quyền riêng tư</a>
+                            <a href="#" onClick={e => e.preventDefault()}>Giúp đỡ</a>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  <button type="submit" className="modal-login-btn" disabled={loginLoading || cfStatus === 'verifying'} style={{ marginTop: '0px' }}>
+                    {loginLoading ? 'Đang xác thực...' : 'Đăng nhập'}
+                  </button>
+                </form>
+
+                <div className="modal-divider">Hoặc</div>
+
+                <div style={{ position: 'relative', width: '100%', minHeight: '44px', margin: '0 auto 12px auto' }}>
+                  <button
+                    className="btn-google-custom"
+                    onClick={handleGoogleLoginMobile}
+                    style={{ width: '100%', height: '44px', background: 'var(--bg-card)', color: 'var(--text-bright)', border: '1.5px solid var(--border-color)', borderRadius: '12px', fontSize: '15px', fontWeight: '700', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', boxShadow: '0 2px 8px rgba(0,0,0,0.06)', cursor: 'pointer', transition: 'all 0.25s ease' }}
+                    onMouseEnter={e => { e.currentTarget.style.background = '#fff7ed'; e.currentTarget.style.borderColor = '#f97316'; e.currentTarget.style.color = '#ea580c'; }}
+                    onMouseLeave={e => { e.currentTarget.style.background = ''; e.currentTarget.style.borderColor = ''; e.currentTarget.style.color = ''; }}
+                  >
+                    <svg width="20" height="20" viewBox="0 0 48 48">
+                      <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
+                      <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
+                      <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.28-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24s.92 7.54 2.56 10.78l7.97-6.19z"/>
+                      <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
+                    </svg>
+                    Đăng nhập bằng Google
+                  </button>
+                </div>
+
+                <div className="login-split-footer">
+                  Bạn chưa có tài khoản?{' '}
+                  <span onClick={() => setAuthMode('register')} style={{ color: '#ea580c', cursor: 'pointer', fontWeight: '700', textDecoration: 'underline' }}>
+                    Đăng ký ngay
+                  </span>
+                </div>
+              </>
+            ) : (
+              <>
+                <h2>Tạo tài khoản</h2>
+                <p className="subtitle">Đăng ký thành viên để tự chuyển đổi link và xem báo cáo hoa hồng.</p>
+
+                {regError && <div className="login-error-msg">{regError}</div>}
+
+                <form onSubmit={handleRegister}>
+                  <div className="form-group" style={{ marginBottom: '14px' }}>
+                    <label className="form-label">Họ và tên *</label>
+                    <div className="form-input-wrapper">
+                      <input type="text" className="form-input" placeholder="Nguyễn Văn A" required
+                        value={regFullName} onChange={e => setRegFullName(e.target.value)} />
+                    </div>
+                  </div>
+
+                  <div className="form-group" style={{ marginBottom: '14px' }}>
+                    <label className="form-label">Email đăng nhập *</label>
+                    <div className="form-input-wrapper">
+                      <input type="email" className="form-input" placeholder="name@example.com" required
+                        value={regEmail} onChange={e => setRegEmail(e.target.value)} />
+                    </div>
+                  </div>
+
+                  <div className="form-group" style={{ marginBottom: '14px' }}>
+                    <label className="form-label">Mật khẩu * (ít nhất 6 ký tự)</label>
+                    <div className="form-input-wrapper">
+                      <input type="password" className="form-input" placeholder="••••••••••••" required minLength={6}
+                        value={regPassword} onChange={e => setRegPassword(e.target.value)} />
+                    </div>
+                  </div>
+
+                  <div className="form-group" style={{ marginBottom: '14px' }}>
+                    <label className="form-label">Số điện thoại</label>
+                    <div className="form-input-wrapper">
+                      <input type="tel" className="form-input" placeholder="0987654321"
+                        value={regPhone} onChange={e => setRegPhone(e.target.value)} />
+                    </div>
+                  </div>
+
+                  <div className="form-group" style={{ marginBottom: '16px' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                      <label className="form-label" style={{ margin: 0 }}>Zalo ID (Tùy chọn - Tự động đồng bộ)</label>
+                      <span style={{ fontSize: '11px', color: '#0284c7', background: 'rgba(2,132,199,0.1)', padding: '2px 8px', borderRadius: '10px', fontWeight: '600' }}>Khuyên dùng</span>
+                    </div>
+                    <div className="form-input-wrapper">
+                      <input type="text" className="form-input" placeholder="Nhập Zalo ID nếu bạn đã dùng bot Zalo"
+                        value={regZaloId} onChange={e => setRegZaloId(e.target.value)} />
+                    </div>
+                    <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginTop: '4px', textAlign: 'left', lineHeight: '1.4' }}>
+                      💡 Gõ <code>/id</code> trong nhóm Zalo của bot để lấy Zalo ID. Nhập vào đây để hợp nhất đơn hàng bot Zalo ngay lập tức!
+                    </div>
+                  </div>
+
+                  <button type="submit" className="modal-login-btn" disabled={regLoading} style={{ marginTop: '10px' }}>
+                    {regLoading ? 'Đang tạo tài khoản...' : 'Hoàn tất đăng ký'}
+                  </button>
+                </form>
+
+                <div className="login-split-footer" style={{ marginTop: '18px' }}>
+                  Đã có tài khoản?{' '}
+                  <span onClick={() => setAuthMode('login')} style={{ color: '#ea580c', cursor: 'pointer', fontWeight: '700', textDecoration: 'underline' }}>
+                    Đăng nhập tại đây
+                  </span>
+                </div>
+              </>
+            )}
           </div>
         </div>
       </div>

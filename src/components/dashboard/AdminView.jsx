@@ -3,7 +3,9 @@ import Sidebar from './Sidebar';
 import DashboardHeader from './DashboardHeader';
 import OverviewTab from './OverviewTab';
 import UsersTab from './UsersTab';
+import WebUsersTab from './WebUsersTab';
 import OrdersTab from './OrdersTab';
+import LazadaOrdersTab from './LazadaOrdersTab';
 import PayoutsTab from './PayoutsTab';
 import MobileBottomNav from '../common/MobileBottomNav';
 import ToastNotification from '../common/ToastNotification';
@@ -36,7 +38,9 @@ export default function AdminView() {
             <>
               {activeTab === 'dashboard' && <OverviewTab />}
               {activeTab === 'users' && <UsersTab />}
+              {activeTab === 'web_users' && <WebUsersTab />}
               {activeTab === 'orders' && <OrdersTab />}
+              {activeTab === 'lazada_orders' && <LazadaOrdersTab />}
               {activeTab === 'payouts' && <PayoutsTab />}
             </>
           )}

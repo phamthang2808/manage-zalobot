@@ -1,8 +1,7 @@
-import { useState, useEffect } from 'react';
+import { useState, useRef } from 'react';
 import { useApp } from '../../context/AppContext';
 import { formatDateTime, formatMoney } from '../../utils/formatters';
 import AssignOrderModal from './AssignOrderModal';
-import LazadaOrdersTab from './LazadaOrdersTab';
 
 // Helper to reliably parse any date into YYYY-MM-DD
 const parseDateToYMD = (val) => {
@@ -44,29 +43,19 @@ export default function OrdersTab() {
   const [syncLoading, setSyncLoading] = useState(false);
   const [activeDatePreset, setActiveDatePreset] = useState('ALL');
   const [selectedOrderForAssign, setSelectedOrderForAssign] = useState(null);
-  const [lazadaCount, setLazadaCount] = useState(null);
 
-  useEffect(() => {
-    // Tải số lượng đơn Lazada một lần duy nhất mà không ảnh hưởng luồng chung
-    const t = sessionStorage.getItem('adminToken') || token;
-    if (t) {
-      fetch(`${API_URL_ROOT}/api/admin/orders/lazada`, {
-        headers: { 'Authorization': `Bearer ${t}` },
-        credentials: 'include'
-      })
-      .then(res => res.json())
-      .then(data => {
-        if (Array.isArray(data)) setLazadaCount(data.length);
-      })
-      .catch(() => {});
-    }
-  }, [API_URL_ROOT, token]);
+  // Import file states
+  const [importingLazada, setImportingLazada] = useState(false);
+  const [importingFood, setImportingFood] = useState(false);
+  const lazadaFileInputRef = useRef(null);
+  const foodFileInputRef = useRef(null);
 
   const getPlatformName = (o) => {
     if (!o) return 'Shopee';
     const p = (o.platform || '').trim().toLowerCase();
     if (p.includes('tiktok')) return 'TikTok Shop';
-    if (p.includes('shopeefood') || (o.orderId && o.orderId.startsWith('SPF'))) return 'ShopeeFood';
+    if (p.includes('lazada')) return 'Lazada';
+    if (p.includes('shopeefood') || (o.orderId && o.orderId.toUpperCase().startsWith('SPF')) || (o.productName && o.productName.toLowerCase().includes('shopeefood'))) return 'ShopeeFood';
     return 'Shopee';
   };
 
@@ -156,6 +145,64 @@ export default function OrdersTab() {
     }
   };
 
+  const handleImportLazada = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const formData = new FormData();
+    formData.append('file', file);
+
+    setImportingLazada(true);
+    try {
+      const t = sessionStorage.getItem('adminToken') || token;
+      const res = await fetch(`${API_URL_ROOT}/api/admin/orders/import-lazada`, {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${t}` },
+        body: formData,
+        credentials: 'include'
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || 'Lỗi import file Lazada');
+
+      showToast(`Đã import thành công ${data.newOrders || 0} đơn mới, cập nhật ${data.updatedOrders || 0} đơn Lazada! 🎉`, 'success');
+      fetchData(token, user);
+    } catch (err) {
+      showToast(err.message || 'Lỗi khi import file Lazada', 'error');
+    } finally {
+      setImportingLazada(false);
+      if (lazadaFileInputRef.current) lazadaFileInputRef.current.value = '';
+    }
+  };
+
+  const handleImportFood = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const formData = new FormData();
+    formData.append('file', file);
+
+    setImportingFood(true);
+    try {
+      const t = sessionStorage.getItem('adminToken') || token;
+      const res = await fetch(`${API_URL_ROOT}/api/admin/orders/import-shopeefood`, {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${t}` },
+        body: formData,
+        credentials: 'include'
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || 'Lỗi import file ShopeeFood');
+
+      showToast(data.message || `Đã import thành công đơn hàng ShopeeFood! 🎉`, 'success');
+      fetchData(token, user);
+    } catch (err) {
+      showToast(err.message || 'Lỗi khi import file ShopeeFood', 'error');
+    } finally {
+      setImportingFood(false);
+      if (foodFileInputRef.current) foodFileInputRef.current.value = '';
+    }
+  };
+
   const handleSelectPlatform = (key) => {
     setPlatformFilter(key);
     setActiveDatePreset('ALL'); // Reset date filter to "Tất cả ngày" when switching platforms!
@@ -185,7 +232,7 @@ export default function OrdersTab() {
           {[
             { key: 'Shopee', iconClass: 'fa-solid fa-bag-shopping', label: 'Shopee', count: combinedOrders.filter(o => getPlatformName(o) === 'Shopee').length },
             { key: 'TikTok Shop', iconClass: 'fa-brands fa-tiktok', label: 'TikTok Shop', count: combinedOrders.filter(o => getPlatformName(o) === 'TikTok Shop').length },
-            { key: 'Lazada', iconClass: 'fa-solid fa-store', label: 'Lazada', count: lazadaCount },
+            { key: 'Lazada', iconClass: 'fa-solid fa-store', label: 'Lazada', count: combinedOrders.filter(o => getPlatformName(o) === 'Lazada').length },
             { key: 'ShopeeFood', iconClass: 'fa-solid fa-utensils', label: 'ShopeeFood', count: combinedOrders.filter(o => getPlatformName(o) === 'ShopeeFood').length }
           ].map(tab => {
             const isActive = platformFilter === tab.key;
@@ -260,12 +307,136 @@ export default function OrdersTab() {
         )}
       </div>
 
-      {platformFilter === 'Lazada' ? (
-        <LazadaOrdersTab onCountUpdate={(cnt) => setLazadaCount(cnt)} />
-      ) : (
-        <>
-          {/* Modern Clean Search & Quick Preset Chips Bar */}
-          <div style={{
+      {/* Import Báo Cáo Đối Soát Cho Lazada */}
+      {platformFilter === 'Lazada' && (
+        <div style={{
+          background: 'var(--bg-card, #ffffff)',
+          border: '1.5px solid var(--border-color, #e2e8f0)',
+          borderRadius: '16px',
+          padding: '16px 20px',
+          marginBottom: '16px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          flexWrap: 'wrap',
+          gap: '12px'
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+            <div style={{ width: '40px', height: '40px', borderRadius: '10px', background: '#0f146d', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '18px', flexShrink: 0 }}>
+              <i className="fa-solid fa-file-excel"></i>
+            </div>
+            <div>
+              <h4 style={{ margin: 0, fontSize: '14.5px', fontWeight: '800', color: 'var(--text-bright, #0f172a)' }}>
+                📥 Import Báo Cáo Đối Soát Lazada (Excel / CSV)
+              </h4>
+              <p style={{ margin: '2px 0 0 0', fontSize: '12px', color: 'var(--text-muted, #64748b)' }}>
+                Tải file báo cáo đối soát từ Lazada Portal để tự động cập nhật trạng thái đơn, hoa hồng và cộng số dư thành viên.
+              </p>
+            </div>
+          </div>
+          <div>
+            <input type="file" ref={lazadaFileInputRef} accept=".xlsx, .xls, .csv" onChange={handleImportLazada} style={{ display: 'none' }} />
+            <button
+              type="button"
+              disabled={importingLazada}
+              onClick={() => lazadaFileInputRef.current?.click()}
+              style={{
+                padding: '9px 20px',
+                borderRadius: '10px',
+                border: 'none',
+                background: importingLazada ? '#94a3b8' : '#0f146d',
+                color: '#fff',
+                fontSize: '13px',
+                fontWeight: '700',
+                cursor: importingLazada ? 'not-allowed' : 'pointer',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '8px',
+                boxShadow: '0 4px 12px rgba(15, 20, 109, 0.25)'
+              }}
+            >
+              {importingLazada ? (
+                <>
+                  <i className="fa-solid fa-spinner fa-spin"></i>
+                  <span>Đang xử lý...</span>
+                </>
+              ) : (
+                <>
+                  <i className="fa-solid fa-upload"></i>
+                  <span>Chọn File Excel Lazada</span>
+                </>
+              )}
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Import Báo Cáo Đối Soát Cho ShopeeFood */}
+      {platformFilter === 'ShopeeFood' && (
+        <div style={{
+          background: 'var(--bg-card, #ffffff)',
+          border: '1.5px solid var(--border-color, #e2e8f0)',
+          borderRadius: '16px',
+          padding: '16px 20px',
+          marginBottom: '16px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          flexWrap: 'wrap',
+          gap: '12px'
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+            <div style={{ width: '40px', height: '40px', borderRadius: '10px', background: '#d0011b', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '18px', flexShrink: 0 }}>
+              <i className="fa-solid fa-utensils"></i>
+            </div>
+            <div>
+              <h4 style={{ margin: 0, fontSize: '14.5px', fontWeight: '800', color: 'var(--text-bright, #0f172a)' }}>
+                📥 Import Báo Cáo Đối Soát ShopeeFood (Excel / CSV)
+              </h4>
+              <p style={{ margin: '2px 0 0 0', fontSize: '12px', color: 'var(--text-muted, #64748b)' }}>
+                Tải file báo cáo đối soát từ ShopeeFood Portal để tự động cập nhật trạng thái đơn, hoa hồng và cộng số dư thành viên.
+              </p>
+            </div>
+          </div>
+          <div>
+            <input type="file" ref={foodFileInputRef} accept=".xlsx, .xls, .csv" onChange={handleImportFood} style={{ display: 'none' }} />
+            <button
+              type="button"
+              disabled={importingFood}
+              onClick={() => foodFileInputRef.current?.click()}
+              style={{
+                padding: '9px 20px',
+                borderRadius: '10px',
+                border: 'none',
+                background: importingFood ? '#94a3b8' : '#d0011b',
+                color: '#fff',
+                fontSize: '13px',
+                fontWeight: '700',
+                cursor: importingFood ? 'not-allowed' : 'pointer',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '8px',
+                boxShadow: '0 4px 12px rgba(208, 1, 27, 0.25)'
+              }}
+            >
+              {importingFood ? (
+                <>
+                  <i className="fa-solid fa-spinner fa-spin"></i>
+                  <span>Đang xử lý...</span>
+                </>
+              ) : (
+                <>
+                  <i className="fa-solid fa-upload"></i>
+                  <span>Chọn File Excel ShopeeFood</span>
+                </>
+              )}
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Modern Clean Search & Quick Preset Chips Bar */}
+      <div style={{
         display: 'flex',
         flexDirection: 'column',
         gap: '10px',
@@ -377,7 +548,7 @@ export default function OrdersTab() {
         </div>
       </div>
 
-      {/* Responsive Orders Table */}
+      {/* Responsive Orders Table (Dùng chung 100% cho cả 4 sàn: Shopee, TikTok Shop, Lazada, ShopeeFood) */}
       <style dangerouslySetInnerHTML={{ __html: `
         .orders-table-container {
           overflow-x: auto !important;
@@ -471,6 +642,7 @@ export default function OrdersTab() {
           border-bottom: 1px solid rgba(255, 255, 255, 0.12) !important;
         }
       `}} />
+
       <div className="table-container orders-table-container" style={{ overflowX: 'auto', WebkitOverflowScrolling: 'touch' }}>
         <table className="orders-table" style={{ tableLayout: 'fixed', width: '100%', minWidth: '880px' }}>
           <thead>
@@ -493,7 +665,8 @@ export default function OrdersTab() {
             ) : (
               filteredOrders.map(o => {
                 const orderUser = users.find(u => u.zaloId === o.zaloId || u.zaloId === o.subId);
-                const afterTax = (o.commission || 0) * 0.9;
+                const commRaw = o.commission != null ? o.commission : (o.payout != null ? o.payout : 0);
+                const afterTax = commRaw * 0.9;
                 const afterDeduction = afterTax * 0.8;
                 return (
                   <tr key={o.id}>
@@ -502,38 +675,46 @@ export default function OrdersTab() {
                     </td>
                     <td data-label="Sản phẩm" title={o.productName}>
                       <span style={{ fontWeight: '600', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
-                        {o.productName}
+                        {o.productName || `Sản phẩm ${platformFilter}`}
                       </span>
                     </td>
                     <td data-label="Thành viên">
                       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '5px' }}>
-                        <div style={{ fontWeight: '600', fontSize: '13.5px', maxWidth: '100%', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={orderUser ? orderUser.zaloName : (o.zaloId || 'UNKNOWN')}>
-                          {orderUser ? orderUser.zaloName : <code style={{ color: 'var(--color-danger)', fontSize: '11px' }}>{o.zaloId || 'UNKNOWN'}</code>}
+                        <div style={{ fontWeight: '600', fontSize: '13.5px', maxWidth: '100%', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={orderUser ? orderUser.zaloName : (o.zaloId || o.subId || 'UNKNOWN')}>
+                          {orderUser ? orderUser.zaloName : <code style={{ color: 'var(--color-danger)', fontSize: '11px' }}>{o.zaloId || o.subId || 'UNKNOWN'}</code>}
                         </div>
 
-                        <button
-                          type="button"
-                          onClick={() => setSelectedOrderForAssign(o)}
-                          style={{
-                            background: o.manuallyAssigned ? 'rgba(249,115,22,0.12)' : 'var(--bg-main, #f1f5f9)',
-                            color: o.manuallyAssigned ? '#ea580c' : 'var(--text-main, #334155)',
-                            border: `1px solid ${o.manuallyAssigned ? '#fed7aa' : 'var(--border-color, #cbd5e1)'}`,
-                            borderRadius: '6px',
-                            padding: '2.5px 8px',
-                            fontSize: '11px',
-                            fontWeight: '600',
-                            cursor: 'pointer',
-                            display: 'inline-flex',
-                            alignItems: 'center',
-                            gap: '4px',
-                            transition: 'all 0.2s ease',
-                            whiteSpace: 'nowrap'
-                          }}
-                          title="Gắn đơn cho thành viên khác"
-                        >
-                          <i className="fa-solid fa-link" style={{ fontSize: '10px' }}></i>
-                          <span>{o.manuallyAssigned ? 'Đổi chủ' : 'Gắn đơn'}</span>
-                        </button>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap' }}>
+                          <button
+                            type="button"
+                            onClick={() => setSelectedOrderForAssign(o)}
+                            style={{
+                              background: o.manuallyAssigned ? 'rgba(249,115,22,0.12)' : 'var(--bg-main, #f1f5f9)',
+                              color: o.manuallyAssigned ? '#ea580c' : 'var(--text-main, #334155)',
+                              border: `1px solid ${o.manuallyAssigned ? '#fed7aa' : 'var(--border-color, #cbd5e1)'}`,
+                              borderRadius: '6px',
+                              padding: '2.5px 8px',
+                              fontSize: '11px',
+                              fontWeight: '600',
+                              cursor: 'pointer',
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              gap: '4px',
+                              transition: 'all 0.2s ease',
+                              whiteSpace: 'nowrap'
+                            }}
+                            title="Gắn đơn cho thành viên khác"
+                          >
+                            <i className="fa-solid fa-link" style={{ fontSize: '10px' }}></i>
+                            <span>{o.manuallyAssigned ? 'Đổi chủ' : 'Gắn đơn'}</span>
+                          </button>
+
+                          {o.source === 'WEB' && (
+                            <span style={{ fontSize: '10px', background: 'rgba(124, 58, 237, 0.12)', color: '#7c3aed', borderRadius: '4px', padding: '1px 5px', fontWeight: '800' }}>
+                              🌐 Web
+                            </span>
+                          )}
+                        </div>
                       </div>
 
                       {o.subId && o.subId !== o.zaloId && (
@@ -551,15 +732,19 @@ export default function OrdersTab() {
                     </td>
                     <td data-label="Hoa hồng" style={{ textAlign: 'right' }}>
                       <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap', justifyContent: 'flex-end', fontSize: '12px' }}>
-                        <span style={{ color: 'var(--text-muted)' }}>Gốc: {formatMoney(o.commission)}</span>
+                        <span style={{ color: 'var(--text-muted)' }}>Gốc: {formatMoney(commRaw)}</span>
                         <span style={{ color: 'var(--color-warning)' }}>Sau thuế: {formatMoney(afterTax)}</span>
                         <span style={{ color: 'var(--color-success)', fontWeight: '700' }}>Khách: {formatMoney(afterDeduction)}</span>
                       </div>
                     </td>
                     <td data-label="Thời gian">
-                      <div style={{ fontSize: '12px' }} title={`Đặt mua: ${formatDateTime(o.purchaseTime)}`}>Đặt: {formatDateTime(o.purchaseTime)}</div>
+                      <div style={{ fontSize: '12px' }} title={`Đặt mua: ${formatDateTime(o.purchaseTime || o.orderDate || o.createdTime)}`}>
+                        Đặt: {formatDateTime(o.purchaseTime || o.orderDate || o.createdTime)}
+                      </div>
                       {o.completeTime && (
-                        <div style={{ fontSize: '11px', color: 'var(--text-muted)', marginTop: '2px' }}>Xong: {formatDateTime(o.completeTime)}</div>
+                        <div style={{ fontSize: '11px', color: 'var(--text-muted)', marginTop: '2px' }}>
+                          Xong: {formatDateTime(o.completeTime)}
+                        </div>
                       )}
                     </td>
                     <td data-label="Trạng thái" style={{ textAlign: 'center' }}>
@@ -590,8 +775,6 @@ export default function OrdersTab() {
           onClose={() => setSelectedOrderForAssign(null)}
           onSuccess={() => fetchData(token, user)}
         />
-      )}
-        </>
       )}
     </div>
   );

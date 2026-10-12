@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useApp } from '../../context/AppContext';
 import { formatMoney } from '../../utils/formatters';
 import WebUserDetailModal from './WebUserDetailModal';
@@ -8,11 +8,11 @@ export default function WebUsersTab() {
   const { API_URL_ROOT, showToast } = useApp();
   const [webUsers, setWebUsers] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [searchQuery, setSearchQuery] = useState('');
+  const [userSearch, setUserSearch] = useState('');
   const [selectedUserForDetail, setSelectedUserForDetail] = useState(null);
   const [selectedUserForLinkZalo, setSelectedUserForLinkZalo] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 15;
+  const itemsPerPage = 20;
 
   const fetchWebUsers = async () => {
     setLoading(true);
@@ -39,31 +39,6 @@ export default function WebUsersTab() {
     fetchWebUsers();
   }, []);
 
-  const handleChangeRole = async (userId, currentRole) => {
-    const newRole = currentRole === 'ADMIN' ? 'USER' : 'ADMIN';
-    if (!window.confirm(`Bạn có chắc chắn muốn đổi quyền thành viên này sang ${newRole}?`)) return;
-
-    try {
-      const token = sessionStorage.getItem('adminToken') || '';
-      const res = await fetch(`${API_URL_ROOT}/api/admin/web-users/${userId}/role`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify({ role: newRole }),
-        credentials: 'include'
-      });
-      const data = await res.json();
-      if (res.ok) {
-        showToast(data.message || 'Đã cập nhật quyền thành công!', 'success');
-        fetchWebUsers();
-      }
-    } catch (err) {
-      showToast('Lỗi cập nhật quyền', 'error');
-    }
-  };
-
   const handleToggleStatus = async (userId) => {
     try {
       const token = sessionStorage.getItem('adminToken') || '';
@@ -83,8 +58,8 @@ export default function WebUsersTab() {
   };
 
   const filteredUsers = webUsers.filter((u) => {
-    if (!searchQuery.trim()) return true;
-    const q = searchQuery.trim().toLowerCase();
+    if (!userSearch.trim()) return true;
+    const q = userSearch.trim().toLowerCase();
     const matchId = String(u.id || '').includes(q);
     const matchName = String(u.fullName || u.name || '').toLowerCase().includes(q);
     const matchEmail = String(u.email || '').toLowerCase().includes(q);
@@ -95,631 +70,352 @@ export default function WebUsersTab() {
   });
 
   const totalPages = Math.max(1, Math.ceil(filteredUsers.length / itemsPerPage));
-  const displayedUsers = filteredUsers.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
-
-  const linkedZaloCount = webUsers.filter(u => u.zaloId).length;
-  const totalBalance = webUsers.reduce((acc, u) => acc + (u.balance || 0), 0);
-
-  // Helper lấy chữ cái đầu cho Avatar
-  const getInitials = (name, email) => {
-    const raw = (name || email || 'U').trim();
-    if (!raw) return 'U';
-    const parts = raw.split(' ');
-    if (parts.length >= 2) {
-      return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
-    }
-    return raw.substring(0, 2).toUpperCase();
-  };
+  const safePage = Math.min(currentPage, totalPages);
+  const displayedUsers = filteredUsers.slice((safePage - 1) * itemsPerPage, safePage * itemsPerPage);
 
   return (
-    <div className="web-users-tab-container" style={{ padding: '4px 0' }}>
-      {/* 3 Metric Cards Hiện Đại Tương Thích Dark/Light Mode */}
-      <div style={{
-        display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
-        gap: '16px',
-        marginBottom: '22px'
-      }}>
-        {/* Card 1: Tổng Tài Khoản Web */}
-        <div style={{
-          background: 'var(--bg-card, #ffffff)',
-          border: '1px solid var(--border-color, rgba(226, 232, 240, 0.8))',
-          borderRadius: '16px',
-          padding: '18px 22px',
-          boxShadow: '0 4px 16px -2px rgba(0,0,0,0.04)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          transition: 'transform 0.2s ease, box-shadow 0.2s ease'
-        }}>
-          <div>
-            <div style={{
-              fontSize: '11px',
-              fontWeight: '800',
-              color: 'var(--text-muted, #64748b)',
-              textTransform: 'uppercase',
-              letterSpacing: '0.6px'
-            }}>
-              Tổng Tài Khoản Web
-            </div>
-            <div style={{
-              fontSize: '26px',
-              fontWeight: '900',
-              color: 'var(--text-bright, #0f172a)',
-              marginTop: '4px',
-              lineHeight: 1.2
-            }}>
-              {webUsers.length}
-            </div>
-            <div style={{
-              fontSize: '12px',
-              color: 'var(--text-subtle, #94a3b8)',
-              marginTop: '3px'
-            }}>
-              Thành viên trên cổng Web
-            </div>
-          </div>
-          <div style={{
-            width: '46px',
-            height: '46px',
-            borderRadius: '14px',
-            background: 'rgba(249, 115, 22, 0.12)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            color: 'var(--color-primary, #ea580c)',
-            fontSize: '20px',
-            flexShrink: 0
-          }}>
-            <i className="fa-solid fa-users"></i>
-          </div>
-        </div>
+    <>
+      <style dangerouslySetInnerHTML={{ __html: `
+        .users-table-container {
+          overflow-x: auto !important;
+          -webkit-overflow-scrolling: touch !important;
+          width: 100% !important;
+          display: block !important;
+        }
+        .users-table-container table,
+        .users-table-container table.users-table,
+        table.users-table {
+          display: table !important;
+          min-width: 1050px !important;
+          width: 100% !important;
+          table-layout: fixed !important;
+          border-collapse: collapse !important;
+        }
+        .users-table-container table thead {
+          display: table-header-group !important;
+        }
+        .users-table-container table thead tr {
+          display: table-row !important;
+          background: var(--bg-main, #f1f5f9) !important;
+        }
+        .users-table-container table thead th {
+          display: table-cell !important;
+          padding: 14px 16px !important;
+          white-space: nowrap !important;
+          font-weight: 700 !important;
+          font-size: 13px !important;
+          border-bottom: 2px solid var(--border-color) !important;
+        }
+        .users-table-container table tbody {
+          display: table-row-group !important;
+          gap: 0 !important;
+        }
+        .users-table-container table tbody tr {
+          display: table-row !important;
+          background: transparent !important;
+          border: none !important;
+          border-bottom: 1px solid var(--border-color) !important;
+          border-radius: 0 !important;
+          padding: 0 !important;
+          box-shadow: none !important;
+          margin: 0 !important;
+        }
+        .users-table-container table tbody tr:hover {
+          background: rgba(249, 115, 22, 0.04) !important;
+          border-color: var(--border-color) !important;
+          box-shadow: none !important;
+        }
+        .users-table-container table tbody tr td {
+          display: table-cell !important;
+          padding: 14px 16px !important;
+          width: auto !important;
+          border-bottom: 1px solid var(--border-color) !important;
+          border-top: none !important;
+          box-shadow: none !important;
+          font-size: 13px !important;
+          vertical-align: middle !important;
+        }
+        .users-table-container table tbody tr td::before {
+          display: none !important;
+          content: none !important;
+        }
+        .users-table-container table tbody tr td[data-label="Tên thành viên"] {
+          font-size: 13px !important;
+          font-weight: normal !important;
+          border-bottom: 1px solid var(--border-color) !important;
+          padding: 14px 16px !important;
+        }
+        html[data-theme="dark"] .users-table-container table tbody tr,
+        html.dark .users-table-container table tbody tr,
+        body.dark .users-table-container table tbody tr {
+          background: transparent !important;
+          border: none !important;
+          border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+          border-radius: 0 !important;
+          box-shadow: none !important;
+        }
+        html[data-theme="dark"] .users-table-container table tbody tr:hover,
+        html.dark .users-table-container table tbody tr:hover,
+        body.dark .users-table-container table tbody tr:hover {
+          background: rgba(255, 255, 255, 0.04) !important;
+        }
+        html[data-theme="dark"] .users-table-container table thead th,
+        html.dark .users-table-container table thead th,
+        body.dark .users-table-container table thead th {
+          background: #1b1e28 !important;
+          color: #94a3b8 !important;
+          border-bottom: 1px solid rgba(255, 255, 255, 0.12) !important;
+        }
+      `}} />
 
-        {/* Card 2: Đã Liên Kết Zalo ID */}
-        <div style={{
-          background: 'var(--bg-card, #ffffff)',
-          border: '1px solid var(--border-color, rgba(226, 232, 240, 0.8))',
-          borderRadius: '16px',
-          padding: '18px 22px',
-          boxShadow: '0 4px 16px -2px rgba(0,0,0,0.04)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          transition: 'transform 0.2s ease, box-shadow 0.2s ease'
-        }}>
-          <div>
-            <div style={{
-              fontSize: '11px',
-              fontWeight: '800',
-              color: 'var(--text-muted, #64748b)',
-              textTransform: 'uppercase',
-              letterSpacing: '0.6px'
-            }}>
-              Đã Liên Kết Zalo ID
-            </div>
-            <div style={{
-              fontSize: '26px',
-              fontWeight: '900',
-              color: '#0284c7',
-              marginTop: '4px',
-              lineHeight: 1.2
-            }}>
-              {linkedZaloCount}
-            </div>
-            <div style={{
-              fontSize: '12px',
-              color: '#0284c7',
-              fontWeight: '700',
-              marginTop: '3px'
-            }}>
-              {(webUsers.length > 0 ? (linkedZaloCount / webUsers.length * 100).toFixed(0) : 0)}% thành viên đã liên kết
-            </div>
-          </div>
-          <div style={{
-            width: '46px',
-            height: '46px',
-            borderRadius: '14px',
-            background: 'rgba(2, 132, 199, 0.12)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            color: '#0284c7',
-            fontSize: '20px',
-            flexShrink: 0
-          }}>
-            <i className="fa-solid fa-link"></i>
-          </div>
-        </div>
-
-        {/* Card 3: Tổng Số Dư Chờ Rút */}
-        <div style={{
-          background: 'var(--bg-card, #ffffff)',
-          border: '1px solid var(--border-color, rgba(226, 232, 240, 0.8))',
-          borderRadius: '16px',
-          padding: '18px 22px',
-          boxShadow: '0 4px 16px -2px rgba(0,0,0,0.04)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          transition: 'transform 0.2s ease, box-shadow 0.2s ease'
-        }}>
-          <div>
-            <div style={{
-              fontSize: '11px',
-              fontWeight: '800',
-              color: 'var(--text-muted, #64748b)',
-              textTransform: 'uppercase',
-              letterSpacing: '0.6px'
-            }}>
-              Tổng Số Dư Chờ Rút
-            </div>
-            <div style={{
-              fontSize: '26px',
-              fontWeight: '900',
-              color: 'var(--color-primary, #ea580c)',
-              marginTop: '4px',
-              lineHeight: 1.2
-            }}>
-              {formatMoney(totalBalance)}
-            </div>
-            <div style={{
-              fontSize: '12px',
-              color: 'var(--text-subtle, #94a3b8)',
-              marginTop: '3px'
-            }}>
-              Khả dụng trong ví thành viên
-            </div>
-          </div>
-          <div style={{
-            width: '46px',
-            height: '46px',
-            borderRadius: '14px',
-            background: 'rgba(249, 115, 22, 0.12)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            color: 'var(--color-primary, #ea580c)',
-            fontSize: '20px',
-            flexShrink: 0
-          }}>
-            <i className="fa-solid fa-wallet"></i>
-          </div>
-        </div>
-      </div>
-
-      {/* Toolbar Tìm Kiếm Hiện Đại & Đồng Bộ Màu Hệ Thống */}
-      <div style={{
-        background: 'var(--bg-card, #ffffff)',
-        border: '1px solid var(--border-color, rgba(226, 232, 240, 0.8))',
-        borderRadius: '16px',
-        padding: '14px 18px',
-        marginBottom: '18px',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        flexWrap: 'wrap',
-        gap: '12px',
-        boxShadow: '0 2px 8px rgba(0,0,0,0.02)'
-      }}>
-        <div style={{ position: 'relative', flex: '1', minWidth: '280px' }}>
-          <i
-            className="fa-solid fa-magnifying-glass"
-            style={{
-              position: 'absolute',
-              left: '14px',
-              top: '50%',
-              transform: 'translateY(-50%)',
-              color: 'var(--color-primary, #ea580c)',
-              fontSize: '14px'
-            }}
-          ></i>
+      <div className="data-card">
+        <div className="search-container" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px' }}>
           <input
             type="text"
-            value={searchQuery}
-            onChange={(e) => { setSearchQuery(e.target.value); setCurrentPage(1); }}
-            placeholder="Tìm theo ID, Tên, Email, SĐT, Zalo ID, Ngân hàng..."
-            style={{
-              width: '100%',
-              padding: '10px 14px 10px 38px',
-              borderRadius: '12px',
-              border: '1px solid var(--border-color, #e2e8f0)',
-              background: 'var(--bg-main, #f8fafc)',
-              color: 'var(--text-bright, #0f172a)',
-              fontSize: '13.5px',
-              outline: 'none',
-              boxSizing: 'border-box',
-              transition: 'all 0.2s ease'
-            }}
-            onFocus={(e) => {
-              e.target.style.borderColor = 'var(--color-primary, #ea580c)';
-              e.target.style.boxShadow = '0 0 0 3px rgba(249, 115, 22, 0.15)';
-            }}
-            onBlur={(e) => {
-              e.target.style.borderColor = 'var(--border-color, #e2e8f0)';
-              e.target.style.boxShadow = 'none';
-            }}
+            className="form-control"
+            placeholder="Tìm kiếm tài khoản Web (Tên/Email/SĐT/Zalo ID)..."
+            value={userSearch}
+            onChange={e => { setUserSearch(e.target.value); setCurrentPage(1); }}
+            style={{ flex: 1 }}
           />
+
+          <button
+            type="button"
+            className="btn btn-refresh"
+            onClick={fetchWebUsers}
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '6px',
+              padding: '8px 14px',
+              borderRadius: '8px',
+              fontWeight: '600',
+              fontSize: '13px',
+              cursor: 'pointer',
+              whiteSpace: 'nowrap'
+            }}
+          >
+            <i className="fa-solid fa-rotate-right"></i> Làm mới
+          </button>
         </div>
 
-        <button
-          type="button"
-          onClick={fetchWebUsers}
-          style={{
-            padding: '10px 18px',
-            borderRadius: '12px',
-            border: 'none',
-            background: 'rgba(249, 115, 22, 0.1)',
-            color: 'var(--color-primary, #ea580c)',
-            fontSize: '13px',
-            fontWeight: '700',
-            cursor: 'pointer',
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: '8px',
-            transition: 'all 0.2s ease'
-          }}
-          onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(249, 115, 22, 0.18)'; }}
-          onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(249, 115, 22, 0.1)'; }}
-        >
-          <i className="fa-solid fa-rotate-right" style={{ color: 'var(--color-primary, #ea580c)' }}></i>
-          <span>Làm mới</span>
-        </button>
-      </div>
-
-      {/* Bảng Danh Sách Thành Viên Web */}
-      <div style={{
-        background: 'var(--bg-card, #ffffff)',
-        border: '1px solid var(--border-color, rgba(226, 232, 240, 0.8))',
-        borderRadius: '16px',
-        overflow: 'hidden',
-        boxShadow: '0 4px 20px -2px rgba(0,0,0,0.03)'
-      }}>
-        {loading ? (
-          <div style={{ padding: '48px', textAlign: 'center', color: 'var(--text-muted, #64748b)' }}>
-            <i className="fa-solid fa-spinner fa-spin" style={{ fontSize: '26px', color: 'var(--color-primary, #ea580c)', marginBottom: '10px' }}></i>
-            <div style={{ fontWeight: '600', fontSize: '14px' }}>Đang tải danh sách thành viên Web...</div>
-          </div>
-        ) : filteredUsers.length === 0 ? (
-          <div style={{ padding: '48px', textAlign: 'center', color: 'var(--text-muted, #64748b)' }}>
-            <i className="fa-solid fa-user-slash" style={{ fontSize: '30px', color: 'var(--text-subtle, #94a3b8)', marginBottom: '10px' }}></i>
-            <p style={{ margin: 0, fontSize: '14px', fontWeight: '600' }}>Không tìm thấy thành viên Web nào phù hợp.</p>
-          </div>
-        ) : (
-          <>
-            <div style={{ overflowX: 'auto' }}>
-              <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', minWidth: '920px' }}>
-                <thead>
-                  <tr style={{
-                    background: 'var(--bg-main, #f8fafc)',
-                    borderBottom: '1px solid var(--border-color, rgba(226, 232, 240, 0.8))'
-                  }}>
-                    <th style={{ padding: '14px 18px', fontSize: '11px', fontWeight: '800', color: 'var(--text-muted, #64748b)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>ID</th>
-                    <th style={{ padding: '14px 18px', fontSize: '11px', fontWeight: '800', color: 'var(--text-muted, #64748b)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Thành viên</th>
-                    <th style={{ padding: '14px 18px', fontSize: '11px', fontWeight: '800', color: 'var(--text-muted, #64748b)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Zalo ID Liên Kết</th>
-                    <th style={{ padding: '14px 18px', fontSize: '11px', fontWeight: '800', color: 'var(--text-muted, #64748b)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Ngân hàng</th>
-                    <th style={{ padding: '14px 18px', fontSize: '11px', fontWeight: '800', color: 'var(--text-muted, #64748b)', textTransform: 'uppercase', letterSpacing: '0.5px', textAlign: 'right' }}>Số dư</th>
-                    <th style={{ padding: '14px 18px', fontSize: '11px', fontWeight: '800', color: 'var(--text-muted, #64748b)', textTransform: 'uppercase', letterSpacing: '0.5px', textAlign: 'right' }}>Tổng kiếm</th>
-                    <th style={{ padding: '14px 18px', fontSize: '11px', fontWeight: '800', color: 'var(--text-muted, #64748b)', textTransform: 'uppercase', letterSpacing: '0.5px', textAlign: 'center' }}>Quyền</th>
-                    <th style={{ padding: '14px 18px', fontSize: '11px', fontWeight: '800', color: 'var(--text-muted, #64748b)', textTransform: 'uppercase', letterSpacing: '0.5px', textAlign: 'center' }}>Hành động</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {displayedUsers.map((u) => {
-                    const isAdmin = u.role === 'ADMIN' || u.role === 'SUPER_ADMIN';
-                    return (
-                      <tr
-                        key={u.id}
-                        style={{
-                          borderBottom: '1px solid var(--border-color, rgba(241, 245, 249, 0.8))',
-                          transition: 'background 0.15s ease'
-                        }}
-                        onMouseEnter={(e) => { e.currentTarget.style.background = 'var(--bg-hover, rgba(249, 115, 22, 0.04))'; }}
-                        onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; }}
-                      >
-                        {/* ID: Soft Pill Không Viền */}
-                        <td style={{ padding: '14px 18px' }}>
-                          <span style={{
-                            display: 'inline-block',
-                            padding: '4px 10px',
-                            borderRadius: '8px',
-                            background: 'rgba(249, 115, 22, 0.12)',
-                            color: 'var(--color-primary, #ea580c)',
-                            fontFamily: 'monospace',
-                            fontSize: '12px',
-                            fontWeight: '800',
-                            border: 'none'
-                          }}>
-                            #{u.id}
-                          </span>
-                        </td>
-
-                        {/* Thông tin Thành viên: Avatar Gradient + Tên + Email */}
-                        <td style={{ padding: '14px 18px' }}>
-                          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                            <div style={{
-                              width: '38px',
-                              height: '38px',
-                              borderRadius: '12px',
-                              background: 'linear-gradient(135deg, #f97316 0%, #ea580c 100%)',
-                              color: '#ffffff',
-                              display: 'flex',
-                              alignItems: 'center',
-                              justifyContent: 'center',
-                              fontSize: '13px',
-                              fontWeight: '800',
-                              flexShrink: 0,
-                              boxShadow: '0 2px 8px rgba(249, 115, 22, 0.25)'
-                            }}>
-                              {getInitials(u.fullName || u.name, u.email)}
-                            </div>
-                            <div>
-                              <div style={{
-                                fontWeight: '800',
-                                fontSize: '13.5px',
-                                color: 'var(--text-bright, #0f172a)'
-                              }}>
-                                {u.fullName || u.name || 'Thành viên Web'}
-                              </div>
-                              <div style={{
-                                fontSize: '12px',
-                                color: 'var(--text-muted, #64748b)',
-                                marginTop: '2px',
-                                display: 'flex',
-                                alignItems: 'center',
-                                gap: '6px',
-                                flexWrap: 'wrap'
-                              }}>
-                                <span>{u.email}</span>
-                                {u.phone && (
-                                  <>
-                                    <span style={{ color: 'var(--text-subtle)' }}>•</span>
-                                    <span>{u.phone}</span>
-                                  </>
-                                )}
-                              </div>
-                            </div>
+        <div className="table-container users-table-container" style={{ overflowX: 'auto', WebkitOverflowScrolling: 'touch' }}>
+          <table className="users-table" style={{ tableLayout: 'fixed', width: '100%', minWidth: '1050px' }}>
+            <thead>
+              <tr>
+                <th style={{ width: '180px' }}>Tên thành viên</th>
+                <th style={{ width: '160px' }}>Zalo ID</th>
+                <th style={{ width: '185px' }}>Tài khoản nhận tiền</th>
+                <th style={{ width: '110px', textAlign: 'right' }} title="Đơn đang chờ đối soát">Chờ xử lý</th>
+                <th style={{ width: '135px', textAlign: 'right' }}>Tổng đơn hàng</th>
+                <th style={{ width: '130px', textAlign: 'right' }} title="Số tiền có thể rút ngay">Khả dụng rút</th>
+                <th style={{ width: '105px', textAlign: 'right' }}>Đã rút</th>
+                <th style={{ width: '120px', textAlign: 'center' }}>Chi tiết</th>
+              </tr>
+            </thead>
+            <tbody>
+              {loading ? (
+                <tr className="empty-row">
+                  <td colSpan="8" style={{ textAlign: 'center', color: 'var(--text-muted)', padding: '36px 16px' }}>
+                    <i className="fa-solid fa-spinner fa-spin" style={{ marginRight: '8px' }}></i> Đang tải danh sách tài khoản Web...
+                  </td>
+                </tr>
+              ) : filteredUsers.length === 0 ? (
+                <tr className="empty-row">
+                  <td colSpan="8" style={{ textAlign: 'center', color: 'var(--text-muted)', padding: '36px 16px' }}>
+                    Không tìm thấy tài khoản Web nào phù hợp
+                  </td>
+                </tr>
+              ) : (
+                displayedUsers.map(u => {
+                  return (
+                    <tr key={u.id}>
+                      <td data-label="Tên thành viên" style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                        <strong title={u.fullName || u.name || 'Thành viên Web'} style={{ fontSize: '13.5px' }}>
+                          {u.fullName || u.name || 'Thành viên Web'}
+                        </strong>
+                        <div style={{ fontSize: '11.5px', color: 'var(--text-muted, #64748b)', marginTop: '2px', overflow: 'hidden', textOverflow: 'ellipsis' }} title={u.email}>
+                          {u.email}
+                        </div>
+                        {u.phone && (
+                          <div style={{ fontSize: '11px', color: 'var(--text-muted, #94a3b8)' }}>
+                            {u.phone}
                           </div>
-                        </td>
+                        )}
+                      </td>
 
-                        {/* Zalo ID badge: Hoàn toàn không viền */}
-                        <td style={{ padding: '14px 18px' }}>
-                          {u.zaloId ? (
-                            <span style={{
-                              display: 'inline-flex',
-                              alignItems: 'center',
-                              gap: '6px',
-                              padding: '5px 12px',
-                              borderRadius: '20px',
-                              background: 'rgba(2, 132, 199, 0.12)',
-                              color: '#0284c7',
-                              fontSize: '12px',
-                              fontFamily: 'monospace',
-                              fontWeight: '800',
-                              border: 'none'
-                            }} title="Đã liên kết Zalo ID">
-                              <i className="fa-solid fa-link" style={{ fontSize: '11px', color: '#0284c7' }}></i>
+                      <td data-label="Zalo ID">
+                        {u.zaloId ? (
+                          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '3px' }}>
+                            <code style={{ color: 'var(--text-muted)', fontSize: '12px' }} title={u.zaloId}>
                               {u.zaloId}
-                            </span>
-                          ) : (
-                            <span style={{
-                              display: 'inline-flex',
-                              alignItems: 'center',
-                              padding: '5px 12px',
-                              borderRadius: '20px',
-                              background: 'var(--bg-secondary, rgba(148, 163, 184, 0.12))',
-                              color: 'var(--text-subtle, #94a3b8)',
-                              fontSize: '11.5px',
-                              fontWeight: '600',
-                              border: 'none'
-                            }}>
-                              Chưa liên kết
-                            </span>
-                          )}
-                        </td>
-
-                        {/* Ngân hàng */}
-                        <td style={{ padding: '14px 18px', fontSize: '12.5px' }}>
-                          {u.bankName ? (
-                            <div>
-                              <div style={{ fontWeight: '700', color: 'var(--text-bright, #0f172a)', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                                <i className="fa-solid fa-credit-card" style={{ fontSize: '11px', color: 'var(--color-primary, #ea580c)' }}></i>
-                                <span>{u.bankName}</span>
-                              </div>
-                              <div style={{ fontFamily: 'monospace', color: 'var(--text-muted, #64748b)', fontSize: '12px', marginTop: '2px' }}>
-                                {u.accountNumber}
-                              </div>
-                            </div>
-                          ) : (
-                            <span style={{ color: 'var(--text-subtle, #94a3b8)' }}>-</span>
-                          )}
-                        </td>
-
-                        {/* Số dư khả dụng */}
-                        <td style={{
-                          padding: '14px 18px',
-                          textAlign: 'right',
-                          fontWeight: '800',
-                          color: 'var(--color-primary, #ea580c)',
-                          fontSize: '14px'
-                        }}>
-                          {formatMoney(u.balance)}
-                        </td>
-
-                        {/* Tổng kiếm được */}
-                        <td style={{
-                          padding: '14px 18px',
-                          textAlign: 'right',
-                          fontWeight: '800',
-                          color: '#10b981',
-                          fontSize: '14px'
-                        }}>
-                          {formatMoney(u.totalEarned)}
-                        </td>
-
-                        {/* Quyền: Soft Pill Không Viền */}
-                        <td style={{ padding: '14px 18px', textAlign: 'center' }}>
-                          <span style={{
-                            display: 'inline-block',
-                            padding: '4px 12px',
-                            borderRadius: '20px',
-                            fontSize: '11px',
-                            fontWeight: '800',
-                            border: 'none',
-                            background: isAdmin ? 'rgba(249, 115, 22, 0.14)' : 'var(--bg-secondary, rgba(148, 163, 184, 0.12))',
-                            color: isAdmin ? 'var(--color-primary, #ea580c)' : 'var(--text-muted, #64748b)'
-                          }}>
-                            {u.role || 'USER'}
-                          </span>
-                        </td>
-
-                        {/* Hành động: Nút thiết kế mềm mại, không viền cứng */}
-                        <td style={{ padding: '14px 18px', textAlign: 'center' }}>
-                          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
-                            {/* Nút Xem Chi Tiết */}
-                            <button
-                              type="button"
-                              onClick={() => setSelectedUserForDetail(u)}
-                              style={{
-                                padding: '7px 12px',
-                                borderRadius: '10px',
-                                border: 'none',
-                                background: 'linear-gradient(135deg, #f97316 0%, #ea580c 100%)',
-                                color: '#ffffff',
-                                fontSize: '12px',
-                                fontWeight: '700',
-                                cursor: 'pointer',
-                                display: 'inline-flex',
-                                alignItems: 'center',
-                                gap: '5px',
-                                boxShadow: '0 2px 6px rgba(249, 115, 22, 0.25)',
-                                transition: 'all 0.2s ease'
-                              }}
-                              title="Xem chi tiết đơn hàng & lịch sử rút"
-                            >
-                              <i className="fa-solid fa-chart-pie" style={{ fontSize: '11px' }}></i>
-                              <span>Chi tiết</span>
-                            </button>
-
-                            {/* Nút Gán Zalo */}
+                            </code>
                             <button
                               type="button"
                               onClick={() => setSelectedUserForLinkZalo(u)}
                               style={{
-                                padding: '7px 12px',
-                                borderRadius: '10px',
+                                background: 'none',
                                 border: 'none',
-                                background: 'rgba(2, 132, 199, 0.12)',
                                 color: '#0284c7',
-                                fontSize: '12px',
-                                fontWeight: '700',
+                                fontSize: '11px',
+                                fontWeight: '600',
                                 cursor: 'pointer',
+                                padding: 0,
                                 display: 'inline-flex',
                                 alignItems: 'center',
-                                gap: '5px',
-                                transition: 'all 0.2s ease'
+                                gap: '3px'
                               }}
-                              title="Gán hoặc đổi Zalo ID"
-                              onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(2, 132, 199, 0.2)'; }}
-                              onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(2, 132, 199, 0.12)'; }}
+                              title="Đổi Zalo ID"
                             >
-                              <i className="fa-solid fa-link" style={{ fontSize: '11px', color: '#0284c7' }}></i>
-                              <span>Gán Zalo</span>
-                            </button>
-
-                            {/* Nút Khóa / Mở Khóa */}
-                            <button
-                              type="button"
-                              onClick={() => handleToggleStatus(u.id)}
-                              style={{
-                                padding: '7px 9px',
-                                borderRadius: '10px',
-                                border: 'none',
-                                background: u.isActive !== false ? 'rgba(239, 68, 68, 0.12)' : 'rgba(16, 185, 129, 0.12)',
-                                color: u.isActive !== false ? '#ef4444' : '#10b981',
-                                fontSize: '12px',
-                                cursor: 'pointer',
-                                transition: 'all 0.2s ease'
-                              }}
-                              title={u.isActive !== false ? "Khóa tài khoản" : "Mở khóa tài khoản"}
-                            >
-                              <i className={u.isActive !== false ? "fa-solid fa-lock" : "fa-solid fa-lock-open"}></i>
+                              <i className="fa-solid fa-link" style={{ fontSize: '10px' }}></i> Đổi Zalo
                             </button>
                           </div>
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
+                        ) : (
+                          <button
+                            type="button"
+                            onClick={() => setSelectedUserForLinkZalo(u)}
+                            style={{
+                              background: 'rgba(2, 132, 199, 0.08)',
+                              border: '1px solid rgba(2, 132, 199, 0.25)',
+                              color: '#0284c7',
+                              borderRadius: '6px',
+                              padding: '2.5px 8px',
+                              fontSize: '11px',
+                              fontWeight: '700',
+                              cursor: 'pointer',
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              gap: '4px'
+                            }}
+                          >
+                            <i className="fa-solid fa-link" style={{ fontSize: '10px' }}></i> Gán Zalo
+                          </button>
+                        )}
+                      </td>
+
+                      <td data-label="Tài khoản nhận tiền" style={{ whiteSpace: 'nowrap' }}>
+                        <div style={{ fontSize: '13px', fontWeight: '600', color: u.bankName ? 'var(--text-bright)' : '#eab308' }}>
+                          {u.bankName || '⚠️ Chưa cập nhật'}
+                        </div>
+                        {u.accountNumber && (
+                          <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginTop: '2px', fontFamily: 'monospace' }}>
+                            <code>{u.accountNumber}</code>
+                          </div>
+                        )}
+                      </td>
+
+                      <td data-label="Chờ xử lý" style={{ color: 'var(--color-warning)', textAlign: 'right', fontWeight: '500' }}>
+                        {formatMoney(u.pendingCommission || 0)}
+                      </td>
+
+                      <td data-label="Tổng đơn hàng" style={{ textAlign: 'right', fontWeight: '700', color: 'var(--color-primary, #ea580c)' }}>
+                        {formatMoney(u.totalEarned || 0)}
+                      </td>
+
+                      <td data-label="Khả dụng rút" style={{ color: '#10b981', fontWeight: '700', textAlign: 'right', background: 'transparent' }}>
+                        {formatMoney(u.balance || 0)}
+                      </td>
+
+                      <td data-label="Đã rút" style={{ textAlign: 'right', color: 'var(--text-muted)' }}>
+                        {formatMoney(u.withdrawnAmount || 0)}
+                      </td>
+
+                      <td data-label="Chi tiết" style={{ textAlign: 'center' }}>
+                        <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
+                          <button
+                            type="button"
+                            className="user-view-btn"
+                            onClick={() => setSelectedUserForDetail(u)}
+                            style={{
+                              background: 'none',
+                              border: 'none',
+                              color: '#ea580c',
+                              fontWeight: '700',
+                              fontSize: '13px',
+                              cursor: 'pointer',
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              gap: '4px',
+                              padding: 0
+                            }}
+                          >
+                            <i className="fa-regular fa-eye"></i> Xem
+                          </button>
+
+                          <button
+                            type="button"
+                            onClick={() => handleToggleStatus(u.id)}
+                            style={{
+                              background: 'none',
+                              border: 'none',
+                              color: u.isActive !== false ? '#ef4444' : '#10b981',
+                              cursor: 'pointer',
+                              padding: '0 2px',
+                              fontSize: '12px'
+                            }}
+                            title={u.isActive !== false ? "Khóa tài khoản" : "Mở khóa tài khoản"}
+                          >
+                            <i className={u.isActive !== false ? "fa-solid fa-lock" : "fa-solid fa-lock-open"}></i>
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })
+              )}
+            </tbody>
+          </table>
+        </div>
+
+        {/* Thanh Phân Trang */}
+        {totalPages > 1 && (
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            padding: '14px 16px',
+            borderTop: '1px solid var(--border-color)',
+            flexWrap: 'wrap',
+            gap: '10px',
+            fontSize: '13px',
+            color: 'var(--text-muted)'
+          }}>
+            <div>
+              Hiển thị <strong>{(safePage - 1) * itemsPerPage + 1}</strong> - <strong>{Math.min(safePage * itemsPerPage, filteredUsers.length)}</strong> trên tổng số <strong>{filteredUsers.length}</strong> tài khoản
             </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <button
+                type="button"
+                className="btn"
+                disabled={safePage <= 1}
+                onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                style={{ padding: '5px 12px', fontSize: '12px', opacity: safePage <= 1 ? 0.5 : 1, cursor: safePage <= 1 ? 'not-allowed' : 'pointer' }}
+              >
+                <i className="fa-solid fa-chevron-left" style={{ marginRight: '4px' }}></i> Trước
+              </button>
 
-            {/* Phân Trang */}
-            {totalPages > 1 && (
-              <div style={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                padding: '14px 20px',
-                borderTop: '1px solid var(--border-color, rgba(226, 232, 240, 0.8))',
-                background: 'var(--bg-main, #f8fafc)'
+              <span style={{
+                fontSize: '12px',
+                fontWeight: '700',
+                color: 'var(--color-primary, #ea580c)',
+                padding: '4px 10px',
+                borderRadius: '8px',
+                background: 'rgba(249, 115, 22, 0.1)'
               }}>
-                <span style={{ fontSize: '12.5px', color: 'var(--text-muted, #64748b)', fontWeight: '600' }}>
-                  Hiển thị {(currentPage - 1) * itemsPerPage + 1} - {Math.min(currentPage * itemsPerPage, filteredUsers.length)} / {filteredUsers.length} thành viên
-                </span>
+                Trang {safePage} / {totalPages}
+              </span>
 
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <button
-                    type="button"
-                    onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
-                    disabled={currentPage === 1}
-                    style={{
-                      padding: '6px 14px',
-                      borderRadius: '8px',
-                      border: '1px solid var(--border-color, #cbd5e1)',
-                      background: 'var(--bg-card, #ffffff)',
-                      color: 'var(--text-bright, #0f172a)',
-                      fontSize: '12.5px',
-                      fontWeight: '700',
-                      cursor: currentPage === 1 ? 'not-allowed' : 'pointer',
-                      opacity: currentPage === 1 ? 0.5 : 1,
-                      transition: 'all 0.2s ease'
-                    }}
-                  >
-                    Trước
-                  </button>
-                  <span style={{
-                    fontSize: '12.5px',
-                    fontWeight: '800',
-                    color: 'var(--color-primary, #ea580c)',
-                    padding: '4px 10px',
-                    borderRadius: '8px',
-                    background: 'rgba(249, 115, 22, 0.1)'
-                  }}>
-                    {currentPage} / {totalPages}
-                  </span>
-                  <button
-                    type="button"
-                    onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
-                    disabled={currentPage === totalPages}
-                    style={{
-                      padding: '6px 14px',
-                      borderRadius: '8px',
-                      border: '1px solid var(--border-color, #cbd5e1)',
-                      background: 'var(--bg-card, #ffffff)',
-                      color: 'var(--text-bright, #0f172a)',
-                      fontSize: '12.5px',
-                      fontWeight: '700',
-                      cursor: currentPage === totalPages ? 'not-allowed' : 'pointer',
-                      opacity: currentPage === totalPages ? 0.5 : 1,
-                      transition: 'all 0.2s ease'
-                    }}
-                  >
-                    Sau
-                  </button>
-                </div>
-              </div>
-            )}
-          </>
+              <button
+                type="button"
+                className="btn"
+                disabled={safePage >= totalPages}
+                onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                style={{ padding: '5px 12px', fontSize: '12px', opacity: safePage >= totalPages ? 0.5 : 1, cursor: safePage >= totalPages ? 'not-allowed' : 'pointer' }}
+              >
+                Sau <i className="fa-solid fa-chevron-right" style={{ marginLeft: '4px' }}></i>
+              </button>
+            </div>
+          </div>
         )}
       </div>
 
@@ -741,6 +437,6 @@ export default function WebUsersTab() {
           showToast={showToast}
         />
       )}
-    </div>
+    </>
   );
 }

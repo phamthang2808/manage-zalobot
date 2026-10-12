@@ -9,7 +9,8 @@ import OrdersView from './components/views/OrdersView';
 import WithdrawView from './components/views/WithdrawView';
 import AccountView from './components/views/AccountView';
 import AdminView from './components/dashboard/AdminView';
-import UserNavbar from './components/common/UserNavbar';
+import UserSidebar from './components/common/UserSidebar';
+import WorkspaceTopBar from './components/common/WorkspaceTopBar';
 import FloatingZaloContact from './components/common/FloatingZaloContact';
 import MobileBottomNav from './components/common/MobileBottomNav';
 import ToastNotification from './components/common/ToastNotification';
@@ -18,6 +19,7 @@ const API_URL_ROOT = import.meta.env.PROD ? "" : (import.meta.env.VITE_API_URL |
 
 function App() {
   const { view, setView } = useApp();
+  const [userSidebarOpen, setUserSidebarOpen] = useState(false);
 
   // 1. Short-link redirect handler (/s/code)
   useEffect(() => {
@@ -85,56 +87,27 @@ function App() {
     return <LoginView />;
   }
 
-  if (view === 'convert') {
+  // Left Sidebar Workspace layout for all new member portal features:
+  if (view === 'convert' || view === 'orders' || view === 'withdraw' || view === 'account') {
     return (
-      <div style={{ minHeight: '100vh', minHeight: '100dvh', background: 'var(--bg-main)', paddingBottom: '90px' }}>
+      <div className="user-workspace-layout" style={{ minHeight: '100vh', minHeight: '100dvh', background: 'var(--bg-main)' }}>
         <ToastNotification />
-        <UserNavbar />
-        <main>
-          <ConvertView />
-        </main>
-        <FloatingZaloContact />
-        <MobileBottomNav />
-      </div>
-    );
-  }
-
-  if (view === 'orders') {
-    return (
-      <div style={{ minHeight: '100vh', minHeight: '100dvh', background: 'var(--bg-main)', paddingBottom: '90px' }}>
-        <ToastNotification />
-        <UserNavbar />
-        <main>
-          <OrdersView />
-        </main>
-        <FloatingZaloContact />
-        <MobileBottomNav />
-      </div>
-    );
-  }
-
-  if (view === 'withdraw') {
-    return (
-      <div style={{ minHeight: '100vh', minHeight: '100dvh', background: 'var(--bg-main)', paddingBottom: '90px' }}>
-        <ToastNotification />
-        <UserNavbar />
-        <main>
-          <WithdrawView />
-        </main>
-        <FloatingZaloContact />
-        <MobileBottomNav />
-      </div>
-    );
-  }
-
-  if (view === 'account') {
-    return (
-      <div style={{ minHeight: '100vh', minHeight: '100dvh', background: 'var(--bg-main)', paddingBottom: '90px' }}>
-        <ToastNotification />
-        <UserNavbar />
-        <main>
-          <AccountView />
-        </main>
+        <UserSidebar sidebarOpen={userSidebarOpen} setSidebarOpen={setUserSidebarOpen} />
+        <div className="user-workspace-content" style={{
+          marginLeft: '260px',
+          minHeight: '100vh',
+          display: 'flex',
+          flexDirection: 'column',
+          transition: 'margin-left 0.3s ease'
+        }}>
+          <WorkspaceTopBar setSidebarOpen={setUserSidebarOpen} />
+          <main style={{ flex: 1, padding: '24px 20px 80px', maxWidth: '1200px', width: '100%', margin: '0 auto', boxSizing: 'border-box' }}>
+            {view === 'convert' && <ConvertView />}
+            {view === 'orders' && <OrdersView />}
+            {view === 'withdraw' && <WithdrawView />}
+            {view === 'account' && <AccountView />}
+          </main>
+        </div>
         <FloatingZaloContact />
         <MobileBottomNav />
       </div>
@@ -145,7 +118,7 @@ function App() {
     return <AdminView />;
   }
 
-  // Default: Landing Page
+  // Default: Landing Page (với menu chính giữa giữ nguyên 100%, nút Tiện ích bên trái)
   return (
     <>
       <LandingView />

@@ -7660,3 +7660,20 @@ body.dark .stat-card-item.received {
     margin-left: -26px;
   }
 }
+
+/* User Workspace Left Sidebar Styles */
+@media (max-width: 992px) {
+  .user-sidebar {
+    transform: translateX(-100%);
+  }
+  .user-sidebar.open {
+    transform: translateX(0);
+  }
+  .user-workspace-content {
+    margin-left: 0 !important;
+  }
+  .workspace-sidebar-toggle {
+    display: flex !important;
+  }
+}
+

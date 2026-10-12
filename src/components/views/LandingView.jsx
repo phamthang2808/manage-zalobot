@@ -38,32 +38,63 @@ export default function LandingView() {
       <RunningCatMascot />
 
       <header className="landing-header" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%', padding: '14px 18px', flexWrap: 'nowrap', gap: '8px', boxSizing: 'border-box' }}>
-        <div className="landing-logo" style={{ display: 'flex', alignItems: 'center', flexShrink: 1, minWidth: 0, cursor: 'pointer' }} onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
-          <img src="/28symueslogomanin.png?v=7" alt="28Symues Affiliate Logo" style={{ height: 'clamp(84px, 18vw, 110px)', width: 'auto', maxWidth: '440px', flexShrink: 0, objectFit: 'contain' }} />
+        <div style={{ display: 'flex', alignItems: 'center', gap: '14px', flexShrink: 0 }}>
+          <div className="landing-logo" style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }} onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
+            <img src="/28symueslogomanin.png?v=7" alt="28Symues Affiliate Logo" style={{ height: 'clamp(84px, 18vw, 110px)', width: 'auto', maxWidth: '440px', flexShrink: 0, objectFit: 'contain' }} />
+          </div>
+
+          {/* Phần làm mới: Đặt ở BÊN TRÁI cạnh Logo */}
+          <button
+            type="button"
+            onClick={() => {
+              if (token) {
+                setView('convert');
+                window.history.pushState({}, '', '/?view=convert');
+              } else {
+                setView('login');
+                window.history.pushState({}, '', '/?view=login');
+              }
+            }}
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '6px',
+              padding: '8px 14px',
+              background: 'linear-gradient(135deg, rgba(249,115,22,0.15), rgba(234,88,12,0.08))',
+              border: '1.5px solid rgba(249,115,22,0.4)',
+              color: '#ea580c',
+              borderRadius: '20px',
+              fontSize: '13px',
+              fontWeight: '700',
+              cursor: 'pointer',
+              whiteSpace: 'nowrap',
+              transition: 'all 0.2s ease',
+              boxShadow: '0 2px 10px rgba(249,115,22,0.1)'
+            }}
+            onMouseEnter={e => {
+              e.currentTarget.style.background = 'linear-gradient(135deg, #f97316, #ea580c)';
+              e.currentTarget.style.color = '#fff';
+            }}
+            onMouseLeave={e => {
+              e.currentTarget.style.background = 'linear-gradient(135deg, rgba(249,115,22,0.15), rgba(234,88,12,0.08))';
+              e.currentTarget.style.color = '#ea580c';
+            }}
+            title="Khu vực thành viên: Chuyển đổi link, Đơn hàng, Ví tiền"
+          >
+            <i className="fa-solid fa-bolt" style={{ color: 'inherit' }}></i>
+            <span className="hide-on-mobile">Tiện Ích Web</span>
+          </button>
         </div>
+
+        {/* MENU TRƯỚC ĐÂY: GIỮ NGUYÊN 100% Ở CHÍNH GIỮA */}
         <nav className={`landing-nav${mobileMenuOpen ? ' open' : ''}`}>
           <a href="#home" onClick={() => setMobileMenuOpen(false)}>Trang chủ</a>
-          <a href="#" onClick={e => { e.preventDefault(); setView('convert'); window.history.pushState({}, '', '/?view=convert'); setMobileMenuOpen(false); }} style={{ color: '#f59e0b', fontWeight: '700' }}>
-            <i className="fa-solid fa-bolt" style={{ marginRight: '6px' }}></i>Chuyển đổi link
-          </a>
-          {token && (
-            <>
-              <a href="#" onClick={e => { e.preventDefault(); setView('orders'); window.history.pushState({}, '', '/?view=orders'); setMobileMenuOpen(false); }} style={{ fontWeight: '600' }}>
-                <i className="fa-solid fa-boxes-stacked" style={{ marginRight: '6px', color: '#0284c7' }}></i>Đơn hàng
-              </a>
-              <a href="#" onClick={e => { e.preventDefault(); setView('withdraw'); window.history.pushState({}, '', '/?view=withdraw'); setMobileMenuOpen(false); }} style={{ fontWeight: '600' }}>
-                <i className="fa-solid fa-wallet" style={{ marginRight: '6px', color: '#10b981' }}></i>Ví tiền
-              </a>
-              <a href="#" onClick={e => { e.preventDefault(); setView('account'); window.history.pushState({}, '', '/?view=account'); setMobileMenuOpen(false); }} style={{ fontWeight: '600' }}>
-                <i className="fa-solid fa-user-circle" style={{ marginRight: '6px', color: '#8b5cf6' }}></i>Tài khoản
-              </a>
-            </>
-          )}
+          <a href="#features" onClick={() => setMobileMenuOpen(false)}>Tính năng</a>
+          <a href="#steps" onClick={() => setMobileMenuOpen(false)}>Hướng dẫn</a>
+          <a href="#pricing" onClick={() => setMobileMenuOpen(false)}>Bảng giá</a>
           <a href="#" onClick={e => { e.preventDefault(); setView('lookup'); window.history.pushState({}, '', '/?view=lookup'); setMobileMenuOpen(false); }} style={{ color: '#ea580c', fontWeight: '700' }}>
             <i className="fa-thin fa-magnifying-glass" style={{ marginRight: '6px' }}></i>Tra cứu đơn hàng
           </a>
-          <a href="#features" onClick={() => setMobileMenuOpen(false)}>Tính năng</a>
-          <a href="#pricing" onClick={() => setMobileMenuOpen(false)}>Bảng giá</a>
           <div className="mobile-nav-actions">
             {token ? (
               <>
@@ -93,29 +124,12 @@ export default function LandingView() {
             )}
           </div>
         </nav>
+
+        {/* CỘT PHẢI: GIỮ NGUYÊN GỌN GÀNG */}
         <div className="landing-actions">
           <ThemeToggle style={{ marginRight: '8px' }} />
           {token ? (
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-              <button
-                onClick={() => { setView('convert'); window.history.pushState({}, '', '/?view=convert'); }}
-                style={{
-                  background: 'linear-gradient(135deg, rgba(245,158,11,0.15), rgba(234,88,12,0.1))',
-                  border: '1px solid rgba(245,158,11,0.4)',
-                  color: '#ea580c',
-                  fontSize: '13.5px',
-                  fontWeight: '700',
-                  padding: '7px 14px',
-                  borderRadius: '16px',
-                  cursor: 'pointer',
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '6px'
-                }}
-              >
-                <i className="fa-solid fa-bolt" style={{ color: '#f59e0b' }}></i>
-                <span>Chuyển đổi</span>
-              </button>
               <div 
                 className="user-widget" 
                 onClick={() => { setView('account'); window.history.pushState({}, '', '/?view=account'); }}

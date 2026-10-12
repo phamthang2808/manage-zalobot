@@ -100,11 +100,11 @@ export default function OrdersView() {
 
   const getPlatformBadge = (p) => {
     const plat = (p || '').toUpperCase();
-    if (plat === 'SHOPEE') return { label: 'Shopee', color: '#ea580c', bg: 'rgba(234, 88, 12, 0.12)' };
-    if (plat === 'TIKTOK') return { label: 'TikTok', color: '#000000', bg: 'rgba(0, 0, 0, 0.08)' };
-    if (plat === 'LAZADA') return { label: 'Lazada', color: '#0284c7', bg: 'rgba(2, 132, 199, 0.12)' };
-    if (plat === 'SHOPEE_FOOD') return { label: 'ShopeeFood', color: '#dc2626', bg: 'rgba(220, 38, 38, 0.12)' };
-    return { label: plat || 'Sàn TMĐT', color: '#64748b', bg: 'rgba(100, 116, 139, 0.12)' };
+    if (plat === 'SHOPEE') return { label: 'Shopee', color: '#ea580c', bg: 'rgba(234, 88, 12, 0.12)', border: '1px solid rgba(234, 88, 12, 0.25)' };
+    if (plat === 'TIKTOK' || plat.includes('TIKTOK')) return { label: 'TikTok', color: '#0f172a', bg: 'rgba(15, 23, 42, 0.08)', className: 'platform-badge-tiktok' };
+    if (plat === 'LAZADA') return { label: 'Lazada', color: '#0284c7', bg: 'rgba(2, 132, 199, 0.12)', border: '1px solid rgba(2, 132, 199, 0.25)' };
+    if (plat === 'SHOPEE_FOOD') return { label: 'ShopeeFood', color: '#dc2626', bg: 'rgba(220, 38, 38, 0.12)', border: '1px solid rgba(220, 38, 38, 0.25)' };
+    return { label: plat || 'Sàn TMĐT', color: '#64748b', bg: 'rgba(100, 116, 139, 0.12)', border: '1px solid rgba(100, 116, 139, 0.2)' };
   };
 
   return (
@@ -172,6 +172,19 @@ export default function OrdersView() {
         html[data-theme="dark"] .order-commission-val,
         body.dark .order-commission-val {
           color: #34d399 !important;
+        }
+        .platform-badge-tiktok {
+          color: #0f172a !important;
+          background: rgba(15, 23, 42, 0.08) !important;
+          border: 1px solid rgba(15, 23, 42, 0.15) !important;
+        }
+        html[data-theme="dark"] .platform-badge-tiktok,
+        html.dark .platform-badge-tiktok,
+        body.dark .platform-badge-tiktok {
+          color: #ffffff !important;
+          background: rgba(255, 255, 255, 0.16) !important;
+          border: 1px solid rgba(255, 255, 255, 0.28) !important;
+          box-shadow: 0 1px 4px rgba(0, 0, 0, 0.25) !important;
         }
         @media (max-width: 640px) {
           .order-card-item { padding: 14px 16px !important; border-radius: 14px !important; }
@@ -411,15 +424,21 @@ export default function OrdersView() {
                   <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
                     <i className="fa-regular fa-calendar" style={{ color: 'var(--text-muted)', fontSize: '13px' }}></i>
                     <span>{formatDateTime(o.purchaseTime || o.orderTime)}</span>
-                    <span style={{
-                      padding: '1px 7px',
-                      borderRadius: '6px',
-                      fontSize: '10.5px',
-                      fontWeight: '600',
-                      background: platBadge.bg,
-                      color: platBadge.color,
-                      marginLeft: '4px'
-                    }}>
+                    <span
+                      className={platBadge.className || ''}
+                      style={{
+                        padding: '1px 7px',
+                        borderRadius: '6px',
+                        fontSize: '10.5px',
+                        fontWeight: '700',
+                        background: platBadge.bg,
+                        color: platBadge.color,
+                        border: platBadge.border,
+                        marginLeft: '4px',
+                        display: 'inline-flex',
+                        alignItems: 'center'
+                      }}
+                    >
                       {platBadge.label}
                     </span>
                   </span>

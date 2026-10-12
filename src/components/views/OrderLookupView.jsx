@@ -1,9 +1,6 @@
 import { useEffect, useState, useRef } from 'react';
 import { useApp } from '../../context/AppContext';
 import { formatMoney, formatDateTime } from '../../utils/formatters';
-import MobileBottomNav from '../common/MobileBottomNav';
-import ToastNotification from '../common/ToastNotification';
-import ThemeToggle from '../common/ThemeToggle';
 import RunningCatMascot from '../common/RunningCatMascot';
 import CopyButton from '../common/CopyButton';
 
@@ -631,25 +628,7 @@ export default function OrderLookupView({ setView: propSetView } = {}) {
         }
       `}} />
 
-      <ToastNotification />
 
-      {/* Header */}
-      <div className="lookup-header" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%', padding: '10px 12px', flexWrap: 'nowrap', gap: '6px', boxSizing: 'border-box' }}>
-        <div className="lookup-logo" onClick={handleGoHome} style={{ display: 'flex', alignItems: 'center', flexShrink: 1, minWidth: 0, cursor: 'pointer' }}>
-          <img src="/28symueslogomanin.png?v=7" alt="28Symues Affiliate Logo" style={{ height: 'clamp(80px, 18vw, 110px)', width: 'auto', maxWidth: '380px', flexShrink: 0, objectFit: 'contain' }} />
-        </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexShrink: 0, whiteSpace: 'nowrap' }}>
-          <ThemeToggle />
-          <button 
-            className="lookup-admin-link" 
-            onClick={handleGoHome} 
-            style={{ whiteSpace: 'nowrap', display: 'inline-flex', alignItems: 'center', gap: '4px', flexShrink: 0, cursor: 'pointer' }}
-          >
-            <i className="fa-solid fa-house" style={{ color: '#ea580c', flexShrink: 0 }}></i>
-            <span style={{ whiteSpace: 'nowrap', display: 'inline' }}>Trang chủ</span>
-          </button>
-        </div>
-      </div>
 
       {/* Search Panel */}
       <div className="lookup-card">
@@ -1739,7 +1718,6 @@ export default function OrderLookupView({ setView: propSetView } = {}) {
         </div>
       )}
 
-      <MobileBottomNav />
     </div>
   );
 }

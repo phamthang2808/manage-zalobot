@@ -95,9 +95,9 @@ export function ProductLandingView({ code, apiRoot = "" }) {
   const handleGoUserWallet = () => {
     const zaloId = info?.subId ? encodeURIComponent(info.subId.trim()) : "";
     if (zaloId) {
-      window.location.href = `/lookup?zaloId=${zaloId}`;
+      window.location.href = `/?view=lookup&zaloId=${zaloId}`;
     } else {
-      window.location.href = "/lookup";
+      window.location.href = "/?view=lookup";
     }
   };
 
@@ -127,7 +127,7 @@ export function ProductLandingView({ code, apiRoot = "" }) {
           <div className="sym-error-icon">⚠️</div>
           <h2 className="sym-error-title">Không tìm thấy sản phẩm</h2>
           <p className="sym-error-desc">{error || "Liên kết này không tồn tại hoặc đã quá hạn."}</p>
-          <button type="button" onClick={() => (window.location.href = "/lookup")} className="sym-btn-primary">
+          <button type="button" onClick={() => (window.location.href = "/?view=lookup")} className="sym-btn-primary">
             🔍 Tra cứu đơn hàng của bạn
           </button>
         </div>
@@ -163,7 +163,18 @@ export function ProductLandingView({ code, apiRoot = "" }) {
       {/* Header App Bar: Logo bên trái, Tên miền bên phải (tách sang 2 bên) */}
       <header className="sym-header">
         <div className="sym-header-left">
-          <button type="button" className="sym-header-back" onClick={() => (window.location.href = "/lookup")} title="Quay lại">
+          <button 
+            type="button" 
+            className="sym-header-back" 
+            onClick={() => {
+              if (window.history.length > 1) {
+                window.history.back();
+              } else {
+                window.location.href = "/";
+              }
+            }} 
+            title="Quay lại"
+          >
             ‹
           </button>
           <img 

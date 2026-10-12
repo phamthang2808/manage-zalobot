@@ -34,11 +34,11 @@ function App() {
             if (resData && resData.data) {
               window.location.replace(resData.data);
             } else {
-              window.location.replace('https://28symues.store/lookup');
+              window.location.replace('https://28symues.store/?view=lookup');
             }
           })
           .catch(() => {
-            window.location.replace('https://28symues.store/lookup');
+            window.location.replace('https://28symues.store/?view=lookup');
           });
       }
     }
@@ -68,6 +68,43 @@ function App() {
       setProductCode(pCode);
     }
   }, []);
+
+  // Nếu đang ở luồng link rút gọn /s/code, render màn hình loading tối giản chờ redirect, tránh chớp nháy giao diện Workspace
+  const isShortLink = typeof window !== 'undefined' && window.location.pathname.includes('/s/');
+  if (isShortLink) {
+    return (
+      <div style={{
+        minHeight: '100vh',
+        minHeight: '100dvh',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        background: '#fffaf5',
+        color: '#ea580c',
+        fontFamily: 'system-ui, -apple-system, sans-serif',
+        padding: '24px',
+        textAlign: 'center'
+      }}>
+        <div style={{
+          width: '42px',
+          height: '42px',
+          border: '4px solid #ffedd5',
+          borderTopColor: '#ea580c',
+          borderRadius: '50%',
+          animation: 'symShortSpin 0.75s linear infinite',
+          marginBottom: '16px'
+        }}></div>
+        <p style={{ fontWeight: '800', fontSize: '15px', color: '#ea580c', margin: '0 0 6px 0', letterSpacing: '0.5px' }}>
+          28SYMUES AFFILIATE
+        </p>
+        <p style={{ fontSize: '13px', color: '#64748b', margin: 0 }}>
+          Đang chuyển hướng đến liên kết tiếp thị...
+        </p>
+        <style>{`@keyframes symShortSpin { to { transform: rotate(360deg); } }`}</style>
+      </div>
+    );
+  }
 
   // View Routing:
   if (productCode || view === 'product_landing') {

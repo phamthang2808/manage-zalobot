@@ -6,6 +6,7 @@ import UsersTab from './UsersTab';
 import WebUsersTab from './WebUsersTab';
 import OrdersTab from './OrdersTab';
 import PayoutsTab from './PayoutsTab';
+import AdminAnnouncementTab from './AdminAnnouncementTab';
 import MobileBottomNav from '../common/MobileBottomNav';
 import ToastNotification from '../common/ToastNotification';
 
@@ -40,6 +41,7 @@ export default function AdminView() {
               {activeTab === 'web_users' && <WebUsersTab />}
               {activeTab === 'orders' && <OrdersTab />}
               {activeTab === 'payouts' && <PayoutsTab />}
+              {activeTab === 'announcement' && <AdminAnnouncementTab />}
             </>
           )}
         </section>

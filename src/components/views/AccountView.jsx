@@ -40,11 +40,7 @@ export default function AccountView() {
 
   const handleSaveProfile = async (e) => {
     e.preventDefault();
-    if (!fullName.trim()) {
-      showToast('Vui lòng nhập họ và tên!', 'warning');
-      return;
-    }
-
+    const currentName = user?.fullName || fullName || '';
     setSavingProfile(true);
     try {
       const token = sessionStorage.getItem('adminToken') || '';
@@ -54,14 +50,14 @@ export default function AccountView() {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`
         },
-        body: JSON.stringify({ fullName: fullName.trim(), phone: phone.trim() }),
+        body: JSON.stringify({ fullName: currentName, phone: phone.trim() }),
         credentials: 'include'
       });
 
       const resData = await res.json();
       if (!res.ok) throw new Error(resData.message || 'Lỗi cập nhật hồ sơ');
 
-      const updatedUser = { ...user, fullName: fullName.trim(), phone: phone.trim() };
+      const updatedUser = { ...user, fullName: currentName, phone: phone.trim() };
       setUser(updatedUser);
       sessionStorage.setItem('adminUser', JSON.stringify(updatedUser));
       showToast('Đã cập nhật thông tin cá nhân thành công! 🎉', 'success');
@@ -332,14 +328,24 @@ export default function AccountView() {
         <form onSubmit={handleSaveProfile}>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '14px', marginBottom: '16px' }}>
             <div className="lookup-input-group" style={{ marginBottom: 0 }}>
-              <label className="lookup-label">Họ và Tên</label>
+              <label className="lookup-label" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <span>Họ và Tên</span>
+                <span style={{ fontSize: '11px', color: '#ea580c', fontWeight: '700', textTransform: 'none' }}>
+                  🔒 Cố định theo SubID
+                </span>
+              </label>
               <input
                 type="text"
                 className="lookup-input"
-                value={fullName}
-                onChange={e => setFullName(e.target.value)}
-                placeholder="Nhập họ và tên..."
+                value={user?.fullName || fullName || ''}
+                disabled
+                readOnly
+                style={{ opacity: 0.85, cursor: 'not-allowed', background: 'var(--bg-main)', fontWeight: '700' }}
+                title="Họ và tên gắn liền với SubID tiếp thị của bạn, không thể tự ý thay đổi."
               />
+              <span style={{ fontSize: '11.5px', color: 'var(--text-muted)', marginTop: '4px', display: 'block', lineHeight: '1.4' }}>
+                💡 Họ tên gắn liền với mã SubID tiếp thị để đối soát đơn chuẩn xác, không thể tự ý đổi.
+              </span>
             </div>
 
             <div className="lookup-input-group" style={{ marginBottom: 0 }}>
@@ -354,7 +360,7 @@ export default function AccountView() {
             </div>
 
             <div className="lookup-input-group" style={{ marginBottom: 0 }}>
-              <label className="lookup-label">Số Điện Thoại</label>
+              <label className="lookup-label">Số Điện Thoại Nhận Thông Báo</label>
               <input
                 type="text"
                 className="lookup-input"

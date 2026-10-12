@@ -15,6 +15,7 @@ export default function DashboardHeader({ activeTab, fetchData }) {
         {activeTab === 'web_users' && 'Quản Lý Tài Khoản Web & Liên Kết Zalo'}
         {activeTab === 'orders' && 'Danh Sách Đơn Hàng Tiếp Thị (Shopee, TikTok, Lazada)'}
         {activeTab === 'payouts' && 'Danh Sách Yêu Cầu Rút Tiền'}
+        {activeTab === 'announcement' && 'Cấu Hình Thông Báo Popup Website'}
       </h1>
       <div className="admin-profile">
         <span className="admin-name">{user?.fullName || 'Admin'}</span>

@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useApp } from '../../context/AppContext';
 import { formatMoney, formatDateTime } from '../../utils/formatters';
+import CopyButton from '../common/CopyButton';
 
 export default function OrdersView() {
   const { API_URL_ROOT, user, showToast, setView } = useApp();
@@ -172,90 +173,7 @@ export default function OrdersView() {
         </div>
       </div>
 
-      {/* 2. BANNER LIÊN KẾT ZALO ID */}
-      {!user?.zaloId ? (
-        <div style={{
-          background: 'linear-gradient(135deg, rgba(37, 99, 235, 0.08) 0%, rgba(2, 132, 199, 0.04) 100%)',
-          border: '1.5px solid rgba(59, 130, 246, 0.35)',
-          borderRadius: '16px',
-          padding: '16px 20px',
-          marginBottom: '20px',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          flexWrap: 'wrap',
-          gap: '12px',
-          boxShadow: '0 4px 15px rgba(0,0,0,0.02)'
-        }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
-            <div style={{
-              width: '42px',
-              height: '42px',
-              borderRadius: '12px',
-              background: '#2563eb',
-              color: '#ffffff',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              fontSize: '18px',
-              flexShrink: 0
-            }}>
-              <i className="fa-solid fa-link"></i>
-            </div>
-            <div>
-              <h4 style={{ margin: 0, fontSize: '14px', fontWeight: '800', color: 'var(--text-bright)' }}>
-                💡 Bạn đã từng mua hàng qua Bot Zalo?
-              </h4>
-              <p style={{ margin: '3px 0 0 0', fontSize: '12.5px', color: 'var(--text-muted)' }}>
-                Liên kết Zalo ID vào tài khoản Web để xem trọn vẹn toàn bộ đơn hàng đặt từ trước đến nay!
-              </p>
-            </div>
-          </div>
-          <button
-            type="button"
-            onClick={() => setView('account')}
-            className="lookup-btn"
-            style={{
-              padding: '9px 18px',
-              fontSize: '13px',
-              borderRadius: '10px',
-              width: 'auto',
-              cursor: 'pointer'
-            }}
-          >
-            <i className="fa-solid fa-link"></i>
-            <span>Liên Kết Zalo ID Ngay</span>
-          </button>
-        </div>
-      ) : (
-        <div style={{
-          background: 'rgba(16, 185, 129, 0.08)',
-          border: '1px solid rgba(16, 185, 129, 0.3)',
-          borderRadius: '14px',
-          padding: '12px 18px',
-          marginBottom: '20px',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          fontSize: '13px',
-          color: 'var(--text-bright)',
-          fontWeight: '700',
-          flexWrap: 'wrap',
-          gap: '10px'
-        }}>
-          <span style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <i className="fa-solid fa-circle-check" style={{ color: '#10b981', fontSize: '16px' }}></i>
-            <span>Đang tự động đồng bộ đơn với Zalo ID: <strong style={{ color: '#0284c7', fontFamily: 'monospace' }}>{user.zaloId}</strong></span>
-          </span>
-          <button
-            type="button"
-            onClick={() => setView('account')}
-            style={{ background: 'none', border: 'none', color: 'var(--color-primary, #ea580c)', textDecoration: 'underline', cursor: 'pointer', fontSize: '12.5px', fontWeight: '700' }}
-          >
-            Quản lý Zalo ID
-          </button>
-        </div>
-      )}
+
 
       {/* 3. BỘ LỌC SÀN, NGUỒN & TÌM KIẾM CHUẨN */}
       <div className="lookup-card" style={{ padding: '18px 20px', marginBottom: '20px' }}>
@@ -412,60 +330,63 @@ export default function OrdersView() {
           displayedOrders.map((o, idx) => {
             const isCompleted = o.status === 'Hoàn thành' || o.status === 'Đã chốt';
             const isPending = o.status === 'Chờ xử lý' || o.status === 'Đang xử lý' || o.status === 'Chờ duyệt';
-            const statusColor = isCompleted ? '#059669' : (isPending ? '#d97706' : '#dc2626');
-            const statusBg = isCompleted ? 'rgba(5, 150, 105, 0.12)' : (isPending ? 'rgba(217, 119, 6, 0.12)' : 'rgba(220, 38, 38, 0.12)');
+            const statusColor = isCompleted ? '#059669' : (isPending ? '#ea580c' : '#dc2626');
             const platBadge = getPlatformBadge(o.platform);
 
             return (
-              <div key={o.orderId || idx} className="order-card-item">
+              <div key={o.orderId || o.id || idx} className="order-card-item">
                 <div className="order-card-header">
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+                  <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+                    <i className="fa-regular fa-calendar" style={{ color: 'var(--text-muted)', fontSize: '13px' }}></i>
+                    <span>{formatDateTime(o.purchaseTime || o.orderTime)}</span>
                     <span style={{
-                      padding: '2px 8px',
-                      borderRadius: '8px',
-                      fontSize: '11px',
+                      padding: '1px 7px',
+                      borderRadius: '6px',
+                      fontSize: '10.5px',
                       fontWeight: '800',
                       background: platBadge.bg,
-                      color: platBadge.color
+                      color: platBadge.color,
+                      marginLeft: '4px'
                     }}>
                       {platBadge.label}
                     </span>
-                    <span className="order-id-badge">#{o.orderId}</span>
-                    {o.source && (
-                      <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>
-                        • {o.source === 'ZALO' ? '💬 Bot Zalo' : '🌐 Web'}
-                      </span>
-                    )}
-                  </div>
-                  <span style={{
-                    display: 'inline-block',
-                    padding: '3px 10px',
-                    borderRadius: '12px',
-                    fontSize: '11px',
-                    fontWeight: '800',
-                    background: statusBg,
-                    color: statusColor
-                  }}>
-                    {o.status || 'Chờ xử lý'}
+                  </span>
+                  <span style={{ display: 'inline-flex', alignItems: 'center' }}>
+                    Mã đơn: <span className="order-id-badge" style={{ marginLeft: '4px' }}>{o.orderId}</span>
+                    <CopyButton text={o.orderId} title="Copy mã đơn hàng" toastMessage={`Đã copy mã đơn: ${o.orderId}`} />
                   </span>
                 </div>
 
-                <div className="order-card-title">
+                <div className="order-card-title" title={o.productName}>
                   {o.productName || 'Sản phẩm mua sắm qua link tiếp thị'}
                 </div>
 
-                <div className="order-card-commission-row">
-                  <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
-                    <span>Thời gian: </span>
-                    <span style={{ color: 'var(--text-bright)', fontWeight: '600' }}>
-                      {formatDateTime(o.purchaseTime || o.orderTime)}
+                <div className="order-card-commission-row" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px', flexWrap: 'wrap', marginTop: '10px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
+                    <span style={{
+                      color: statusColor,
+                      fontSize: '12.5px',
+                      fontWeight: '700'
+                    }}>
+                      {o.status || 'Chờ xử lý'}
                     </span>
+                    {isCompleted && o.completeTime && (
+                      <span className="order-complete-time-text" style={{
+                        fontSize: '12px',
+                        color: '#059669',
+                        fontWeight: '600',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '4px'
+                      }} title="Thời điểm đơn hàng hoàn thành">
+                        <i className="fa-regular fa-calendar-check" style={{ fontSize: '11px' }}></i>
+                        <span>Hoàn thành: {formatDateTime(o.completeTime)}</span>
+                      </span>
+                    )}
                   </div>
                   <div style={{ textAlign: 'right' }}>
-                    <span className="order-commission-label">Hoa hồng nhận: </span>
-                    <span className="order-commission-val">
-                      +{formatMoney(o.commission || 0)}
-                    </span>
+                    <span className="order-commission-label">Hoa hồng: </span>
+                    <span className="order-commission-val">{formatMoney(o.commission || 0)}</span>
                   </div>
                 </div>
               </div>

@@ -15,6 +15,7 @@ import WorkspaceTopBar from './components/common/WorkspaceTopBar';
 import FloatingZaloContact from './components/common/FloatingZaloContact';
 import MobileBottomNav from './components/common/MobileBottomNav';
 import ToastNotification from './components/common/ToastNotification';
+import AnnouncementModal from './components/common/AnnouncementModal';
 
 const API_URL_ROOT = import.meta.env.PROD ? "" : (import.meta.env.VITE_API_URL || 'http://localhost:8080');
 
@@ -126,6 +127,7 @@ function App() {
   return (
     <div className="user-workspace-layout" style={{ minHeight: '100vh', minHeight: '100dvh', background: 'var(--bg-main)' }}>
       <ToastNotification />
+      <AnnouncementModal apiRoot={API_URL_ROOT} />
       <UserSidebar sidebarOpen={userSidebarOpen} setSidebarOpen={setUserSidebarOpen} />
       <div className="user-workspace-content">
         <WorkspaceTopBar setSidebarOpen={setUserSidebarOpen} />

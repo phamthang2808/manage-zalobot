@@ -76,6 +76,13 @@ export default function Sidebar() {
               </span>
             )}
           </li>
+          <li
+            className={`menu-item ${activeTab === 'announcement' ? 'active' : ''}`}
+            onClick={() => { setActiveTab('announcement'); sessionStorage.setItem('adminTab', 'announcement'); sessionStorage.setItem('adminView', 'admin'); setSidebarOpen(false); }}
+          >
+            <i className="fa-solid fa-bullhorn" style={{ width: '17px', fontSize: '15px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}></i>
+            Thông Báo Popup
+          </li>
         </ul>
 
         <div className="sidebar-footer">

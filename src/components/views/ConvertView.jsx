@@ -324,6 +324,188 @@ export default function ConvertView() {
         </form>
       </div>
 
+      {/* MẸO VÀNG & LƯU Ý MUA SẮM ĐỂ KHÔNG BỊ RỚT ĐƠN 100% */}
+      <div className="lookup-card" style={{
+        marginBottom: '24px',
+        border: '1.5px solid rgba(249, 115, 22, 0.35)',
+        background: 'linear-gradient(135deg, rgba(249, 115, 22, 0.05) 0%, var(--bg-card) 100%)',
+        position: 'relative',
+        overflow: 'hidden'
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '14px' }}>
+          <div style={{
+            width: '38px',
+            height: '38px',
+            borderRadius: '12px',
+            background: 'linear-gradient(135deg, #f97316 0%, #ea580c 100%)',
+            color: '#fff',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontSize: '17px',
+            boxShadow: '0 4px 12px rgba(249, 115, 22, 0.35)',
+            flexShrink: 0
+          }}>
+            <i className="fa-solid fa-lightbulb"></i>
+          </div>
+          <div>
+            <h3 style={{ fontSize: '15.5px', fontWeight: '800', margin: 0, color: 'var(--text-bright)' }}>
+              Mẹo Nhỏ Mua Sắm Để Không Bị Rớt Đơn 100%
+            </h3>
+            <p style={{ margin: '2px 0 0 0', fontSize: '12px', color: 'var(--text-muted)' }}>
+              Áp dụng đúng 4 bước dưới đây để được hệ thống sàn ghi nhận hoa hồng chuẩn xác tuyệt đối
+            </p>
+          </div>
+        </div>
+
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))',
+          gap: '12px',
+          marginTop: '10px'
+        }}>
+          {/* Bước 1: Dọn giỏ hàng */}
+          <div style={{
+            background: 'var(--bg-main)',
+            border: '1px solid var(--border-color)',
+            borderRadius: '14px',
+            padding: '14px',
+            display: 'flex',
+            gap: '12px',
+            alignItems: 'flex-start'
+          }}>
+            <div style={{
+              width: '32px',
+              height: '32px',
+              borderRadius: '10px',
+              background: 'rgba(239, 68, 68, 0.12)',
+              color: '#ef4444',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontSize: '14px',
+              fontWeight: '800',
+              flexShrink: 0
+            }}>
+              1
+            </div>
+            <div style={{ flex: 1 }}>
+              <div style={{ fontSize: '13.5px', fontWeight: '800', color: 'var(--text-bright)', marginBottom: '3px' }}>
+                Xóa sản phẩm cũ trong giỏ hàng
+              </div>
+              <div style={{ fontSize: '12px', color: 'var(--text-muted)', lineHeight: '1.45' }}>
+                Nếu sản phẩm đã từng cho vào giỏ từ trước, hãy <b>xóa khỏi giỏ</b> rồi mới bấm link tiếp thị để kích hoạt lại cookie hoa hồng của bạn.
+              </div>
+            </div>
+          </div>
+
+          {/* Bước 2: Bấm link vào App */}
+          <div style={{
+            background: 'var(--bg-main)',
+            border: '1px solid var(--border-color)',
+            borderRadius: '14px',
+            padding: '14px',
+            display: 'flex',
+            gap: '12px',
+            alignItems: 'flex-start'
+          }}>
+            <div style={{
+              width: '32px',
+              height: '32px',
+              borderRadius: '10px',
+              background: 'rgba(249, 115, 22, 0.14)',
+              color: '#ea580c',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontSize: '14px',
+              fontWeight: '800',
+              flexShrink: 0
+            }}>
+              2
+            </div>
+            <div style={{ flex: 1 }}>
+              <div style={{ fontSize: '13.5px', fontWeight: '800', color: 'var(--text-bright)', marginBottom: '3px' }}>
+                Bấm link mở thẳng ứng dụng (App)
+              </div>
+              <div style={{ fontSize: '12px', color: 'var(--text-muted)', lineHeight: '1.45' }}>
+                Bấm vào link tiếp thị vừa tạo để mở App Shopee, TikTok Shop hoặc Lazada. <i>(Mẹo: Nên bấm vào link 2 lần để đảm bảo ứng dụng bắt link chuẩn)</i>.
+              </div>
+            </div>
+          </div>
+
+          {/* Bước 3: Mua ngay không xem live */}
+          <div style={{
+            background: 'var(--bg-main)',
+            border: '1px solid var(--border-color)',
+            borderRadius: '14px',
+            padding: '14px',
+            display: 'flex',
+            gap: '12px',
+            alignItems: 'flex-start'
+          }}>
+            <div style={{
+              width: '32px',
+              height: '32px',
+              borderRadius: '10px',
+              background: 'rgba(16, 185, 129, 0.12)',
+              color: '#10b981',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontSize: '14px',
+              fontWeight: '800',
+              flexShrink: 0
+            }}>
+              3
+            </div>
+            <div style={{ flex: 1 }}>
+              <div style={{ fontSize: '13.5px', fontWeight: '800', color: 'var(--text-bright)', marginBottom: '3px' }}>
+                Đặt mua ngay — Không xem Live/Video
+              </div>
+              <div style={{ fontSize: '12px', color: 'var(--text-muted)', lineHeight: '1.45' }}>
+                Sau khi vào App, tiến hành đặt hàng ngay. <b>Tuyệt đối không thoát ra xem Livestream hoặc Video khác giữa chừng</b> vì sẽ bị mất mã ghi nhận đơn.
+              </div>
+            </div>
+          </div>
+
+          {/* Bước 4: Thời gian đồng bộ đơn */}
+          <div style={{
+            background: 'var(--bg-main)',
+            border: '1px solid var(--border-color)',
+            borderRadius: '14px',
+            padding: '14px',
+            display: 'flex',
+            gap: '12px',
+            alignItems: 'flex-start'
+          }}>
+            <div style={{
+              width: '32px',
+              height: '32px',
+              borderRadius: '10px',
+              background: 'rgba(2, 132, 199, 0.12)',
+              color: '#0284c7',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontSize: '14px',
+              fontWeight: '800',
+              flexShrink: 0
+            }}>
+              4
+            </div>
+            <div style={{ flex: 1 }}>
+              <div style={{ fontSize: '13.5px', fontWeight: '800', color: 'var(--text-bright)', marginBottom: '3px' }}>
+                Thời gian đồng bộ đơn hàng
+              </div>
+              <div style={{ fontSize: '12px', color: 'var(--text-muted)', lineHeight: '1.45' }}>
+                Đơn hàng thường hiển thị trong mục <b>Đơn Hàng Đã Đặt</b> sau 15-30 phút (Shopee/TikTok) hoặc chậm nhất vào 9H sáng hôm sau khi các sàn cập nhật đối soát.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
       {/* 2. KẾT QUẢ VỪA CHUYỂN ĐỔI (HIỂN THỊ KÈM ẢNH SẢN PHẨM NHƯ MAI LAN) */}
       {results.length > 0 && (
         <div className="orders-container" style={{ width: '100%', marginBottom: '24px' }}>

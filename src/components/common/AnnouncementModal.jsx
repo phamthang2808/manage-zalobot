@@ -222,11 +222,11 @@ export default function AnnouncementModal({ apiRoot, previewData = null, onClose
         position: 'relative',
         zIndex: 10,
         width: '100%',
-        maxWidth: '460px',
-        maxHeight: '90vh',
+        maxWidth: 'clamp(460px, 50vw, 680px)',
+        maxHeight: '92vh',
         background: 'var(--bg-card, #ffffff)',
         borderRadius: '24px',
-        boxShadow: '0 25px 60px rgba(0,0,0,0.25)',
+        boxShadow: '0 25px 60px rgba(0,0,0,0.3)',
         overflow: 'hidden',
         display: 'flex',
         flexDirection: 'column',
@@ -263,15 +263,39 @@ export default function AnnouncementModal({ apiRoot, previewData = null, onClose
           <i className="fa-solid fa-xmark"></i>
         </button>
 
-        {/* Banner Image */}
+        {/* Banner Image - Căn giữa chuẩn xác & Không bị cắt ảnh */}
         {bannerImg && (
-          <div style={{ width: '100%', position: 'relative', background: 'var(--bg-main)', overflow: 'hidden', borderBottom: '1px solid var(--border-color)' }}>
+          <div style={{
+            width: '100%',
+            position: 'relative',
+            background: 'var(--bg-main, #0f172a)',
+            overflow: 'hidden',
+            borderBottom: '1px solid var(--border-color)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            maxHeight: '440px',
+            minHeight: '140px'
+          }}>
             {announcement.targetUrl ? (
-              <a href={announcement.targetUrl} target="_blank" rel="noopener noreferrer" style={{ display: 'block', cursor: 'pointer' }}>
+              <a
+                href={announcement.targetUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', height: '100%', cursor: 'pointer' }}
+              >
                 <img
                   src={bannerImg}
                   alt={announcement.title || 'Banner thông báo'}
-                  style={{ width: '100%', maxHeight: '220px', objectFit: 'cover', display: 'block' }}
+                  style={{
+                    maxWidth: '100%',
+                    maxHeight: '440px',
+                    width: 'auto',
+                    height: 'auto',
+                    objectFit: 'contain',
+                    display: 'block',
+                    margin: '0 auto'
+                  }}
                   onError={e => { e.currentTarget.style.display = 'none'; }}
                 />
               </a>
@@ -279,7 +303,15 @@ export default function AnnouncementModal({ apiRoot, previewData = null, onClose
               <img
                 src={bannerImg}
                 alt={announcement.title || 'Banner thông báo'}
-                style={{ width: '100%', maxHeight: '220px', objectFit: 'cover', display: 'block' }}
+                style={{
+                  maxWidth: '100%',
+                  maxHeight: '440px',
+                  width: 'auto',
+                  height: 'auto',
+                  objectFit: 'contain',
+                  display: 'block',
+                  margin: '0 auto'
+                }}
                 onError={e => { e.currentTarget.style.display = 'none'; }}
               />
             )}

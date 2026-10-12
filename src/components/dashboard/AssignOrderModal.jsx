@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { createPortal } from 'react-dom';
 import { useApp } from '../../context/AppContext';
 import { formatMoney } from '../../utils/formatters';
@@ -6,32 +6,108 @@ import CopyButton from '../common/CopyButton';
 
 export default function AssignOrderModal({ order, onClose, onSuccess }) {
   const { users = [], token, API_URL_ROOT, showToast } = useApp();
+  const [webUsers, setWebUsers] = useState([]);
+  const [tabType, setTabType] = useState('ALL'); // 'ALL' | 'GOOGLE' | 'ZALO'
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedZaloId, setSelectedZaloId] = useState('');
-  const [manualZaloId, setManualZaloId] = useState('');
+  const [selectedTarget, setSelectedTarget] = useState(null); // { id, name, type, detail }
+  const [manualInput, setManualInput] = useState('');
   const [useManualInput, setUseManualInput] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
+  // Fetch web/google users
+  useEffect(() => {
+    const fetchWebUsers = async () => {
+      try {
+        const res = await fetch(`${API_URL_ROOT}/api/admin/web-users`, {
+          headers: token ? { 'Authorization': `Bearer ${token}` } : {},
+          credentials: 'include'
+        });
+        if (res.ok) {
+          const data = await res.json();
+          if (Array.isArray(data)) setWebUsers(data);
+        }
+      } catch (e) {}
+    };
+    fetchWebUsers();
+  }, [API_URL_ROOT, token]);
+
   if (!order) return null;
 
-  const userList = Array.isArray(users) ? users : [];
-  const currentOwner = userList.find(u => u && u.zaloId === (order.zaloId || order.subId));
+  const zaloUserList = Array.isArray(users) ? users : [];
 
-  // Filter users list based on search
-  const filteredUsers = useMemo(() => {
-    if (!searchTerm.trim()) return userList;
+  // Gộp danh sách ứng viên
+  const combinedList = useMemo(() => {
+    const list = [];
+
+    // 1. Thêm Web / Google users
+    webUsers.forEach(u => {
+      list.push({
+        type: 'GOOGLE',
+        id: `u${u.id}`,
+        rawId: u.id,
+        name: u.fullName || u.email || `Tài khoản #${u.id}`,
+        email: u.email,
+        zaloId: u.zaloId,
+        avatar: u.avatarUrl
+      });
+    });
+
+    // 2. Thêm Zalo users (nếu chưa có trong webUsers)
+    zaloUserList.forEach(zu => {
+      list.push({
+        type: 'ZALO',
+        id: zu.zaloId,
+        rawId: zu.zaloId,
+        name: zu.zaloName || 'Thành viên Zalo',
+        zaloId: zu.zaloId
+      });
+    });
+
+    return list;
+  }, [webUsers, zaloUserList]);
+
+  // Lọc theo tab & ô tìm kiếm
+  const filteredList = useMemo(() => {
+    let filtered = combinedList;
+    if (tabType === 'GOOGLE') {
+      filtered = filtered.filter(item => item.type === 'GOOGLE');
+    } else if (tabType === 'ZALO') {
+      filtered = filtered.filter(item => item.type === 'ZALO');
+    }
+
+    if (!searchTerm.trim()) return filtered;
     const q = searchTerm.trim().toLowerCase();
-    return userList.filter(u =>
-      (u && u.zaloName && u.zaloName.toLowerCase().includes(q)) ||
-      (u && u.zaloId && u.zaloId.toLowerCase().includes(q))
-    );
-  }, [userList, searchTerm]);
+    return filtered.filter(item => {
+      const matchName = item.name && item.name.toLowerCase().includes(q);
+      const matchEmail = item.email && item.email.toLowerCase().includes(q);
+      const matchZalo = item.zaloId && item.zaloId.toLowerCase().includes(q);
+      const matchId = String(item.id).toLowerCase().includes(q);
+      return matchName || matchEmail || matchZalo || matchId;
+    });
+  }, [combinedList, tabType, searchTerm]);
+
+  // Tìm chủ đơn hiện tại
+  const currentOwner = useMemo(() => {
+    const currentId = order.zaloId || order.subId || '';
+    if (!currentId) return null;
+    return combinedList.find(u => u.id === currentId || u.zaloId === currentId || (currentId.startsWith('phamthang_' + u.rawId + '_')));
+  }, [order, combinedList]);
 
   const handleAssign = async () => {
-    const targetId = useManualInput ? manualZaloId.trim() : selectedZaloId.trim();
+    let targetId = '';
+    let displayName = '';
+
+    if (useManualInput) {
+      targetId = manualInput.trim();
+      displayName = targetId;
+    } else if (selectedTarget) {
+      targetId = selectedTarget.id;
+      displayName = `${selectedTarget.name} (${selectedTarget.type === 'GOOGLE' ? 'Google/Web' : 'Zalo'})`;
+    }
+
     if (!targetId) {
-      setError('Vui lòng chọn hoặc nhập Zalo ID người nhận đơn!');
+      setError('Vui lòng chọn hoặc nhập tài khoản người nhận đơn!');
       return;
     }
 
@@ -58,10 +134,7 @@ export default function AssignOrderModal({ order, onClose, onSuccess }) {
         throw new Error(data.message || 'Không thể gắn đơn hàng lúc này!');
       }
 
-      const targetUser = userList.find(u => u && u.zaloId === targetId);
-      const displayName = targetUser ? targetUser.zaloName : targetId;
-
-      showToast(`Đã gắn đơn hàng ${order.orderId} cho thành viên ${displayName} thành công! Đơn này sẽ được bảo lưu cố định khi import file.`, 'success');
+      showToast(`Đã gắn đơn hàng ${order.orderId} cho ${displayName} thành công! Đơn này được bảo lưu cố định khi import file. 🎉`, 'success');
       if (onSuccess) onSuccess();
       onClose();
     } catch (err) {
@@ -99,8 +172,8 @@ export default function AssignOrderModal({ order, onClose, onSuccess }) {
           border: '1px solid var(--border-color, #334155)',
           borderRadius: '20px',
           width: '100%',
-          maxWidth: '540px',
-          maxHeight: '90vh',
+          maxWidth: '560px',
+          maxHeight: '92vh',
           boxShadow: '0 25px 60px rgba(0,0,0,0.5)',
           overflow: 'hidden',
           display: 'flex',
@@ -110,7 +183,7 @@ export default function AssignOrderModal({ order, onClose, onSuccess }) {
       >
         {/* Modal Header */}
         <div style={{
-          padding: '18px 24px',
+          padding: '16px 20px',
           borderBottom: '1px solid var(--border-color, #334155)',
           display: 'flex',
           alignItems: 'center',
@@ -133,11 +206,11 @@ export default function AssignOrderModal({ order, onClose, onSuccess }) {
               <i className="fa-solid fa-link"></i>
             </div>
             <div>
-              <h3 style={{ margin: 0, fontSize: '17px', fontWeight: '800', color: 'var(--text-bright, #ffffff)' }}>
+              <h3 style={{ margin: 0, fontSize: '16.5px', fontWeight: '800', color: 'var(--text-bright, #ffffff)' }}>
                 Gắn Đơn Cho Người Khác
               </h3>
               <p style={{ margin: '2px 0 0 0', fontSize: '12px', color: 'var(--text-muted, #94a3b8)' }}>
-                Chỉ định chủ sở hữu đơn hàng (Tự động giữ nguyên khi import lại file)
+                Chỉ định chủ đơn (Hỗ trợ tài khoản Google/Web &amp; Zalo Bot)
               </p>
             </div>
           </div>
@@ -160,56 +233,56 @@ export default function AssignOrderModal({ order, onClose, onSuccess }) {
         </div>
 
         {/* Modal Body */}
-        <div style={{ padding: '20px 24px', overflowY: 'auto', flex: 1 }}>
+        <div style={{ padding: '16px 20px', overflowY: 'auto', flex: 1 }}>
           {/* Order Details Card */}
           <div style={{
             background: 'var(--bg-secondary, rgba(0,0,0,0.15))',
             border: '1px solid var(--border-color, rgba(255,255,255,0.1))',
             borderRadius: '12px',
-            padding: '14px 16px',
-            marginBottom: '18px',
-            fontSize: '13px'
+            padding: '12px 14px',
+            marginBottom: '16px',
+            fontSize: '12.5px'
           }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
               <span style={{ color: 'var(--text-muted, #94a3b8)' }}>Mã đơn hàng:</span>
               <div style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
-                <code style={{ fontSize: '13px', fontWeight: '800', color: '#ea580c' }}>{order.orderId}</code>
-                <CopyButton text={order.orderId} title="Copy mã đơn hàng" toastMessage={`Đã copy mã đơn: ${order.orderId}`} />
+                <code style={{ fontSize: '12.5px', fontWeight: '800', color: '#ea580c' }}>{order.orderId}</code>
+                <CopyButton text={order.orderId} title="Copy mã đơn" toastMessage={`Đã copy mã đơn: ${order.orderId}`} />
               </div>
             </div>
 
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
               <span style={{ color: 'var(--text-muted, #94a3b8)' }}>Nền tảng:</span>
               <span style={{ fontWeight: '700', color: (order.platform || '').includes('TikTok') ? '#38bdf8' : '#ee4d2d' }}>
                 {order.platform || 'Shopee'}
               </span>
             </div>
 
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '8px', gap: '8px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '6px', gap: '8px' }}>
               <span style={{ color: 'var(--text-muted, #94a3b8)', flexShrink: 0 }}>Sản phẩm:</span>
               <span style={{ fontWeight: '600', textAlign: 'right', color: 'var(--text-bright, #ffffff)' }}>
                 {order.productName || '---'}
               </span>
             </div>
 
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
               <span style={{ color: 'var(--text-muted, #94a3b8)' }}>Hoa hồng gốc:</span>
-              <strong style={{ color: '#10b981', fontSize: '14px' }}>
+              <strong style={{ color: '#10b981', fontSize: '13.5px' }}>
                 {formatMoney(order.commission || order.commissionRaw || order.commissionTotal || 0)}
               </strong>
             </div>
 
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px dashed var(--border-color, rgba(255,255,255,0.1))', paddingTop: '8px', marginTop: '4px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px dashed var(--border-color, rgba(255,255,255,0.1))', paddingTop: '6px', marginTop: '4px' }}>
               <span style={{ color: 'var(--text-muted, #94a3b8)' }}>Chủ đơn hiện tại:</span>
               <span style={{ fontWeight: '700', color: currentOwner ? 'var(--text-bright, #ffffff)' : 'var(--color-danger, #ef4444)' }}>
-                {currentOwner ? `${currentOwner.zaloName || 'Vô danh'} (${currentOwner.zaloId})` : (order.zaloId || order.subId || 'Chưa gắn (UNKNOWN)')}
+                {currentOwner ? `${currentOwner.name} (${currentOwner.type === 'GOOGLE' ? 'Google' : 'Zalo'})` : (order.zaloId || order.subId || 'Chưa gắn (UNKNOWN)')}
               </span>
             </div>
           </div>
 
           {/* Member Selection Section */}
-          <div style={{ marginBottom: '16px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
+          <div style={{ marginBottom: '14px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px', flexWrap: 'wrap', gap: '6px' }}>
               <label style={{ fontSize: '13px', fontWeight: '700', color: 'var(--text-bright, #ffffff)' }}>
                 Chọn thành viên nhận đơn:
               </label>
@@ -226,26 +299,84 @@ export default function AssignOrderModal({ order, onClose, onSuccess }) {
                   textDecoration: 'underline'
                 }}
               >
-                {useManualInput ? '← Chọn từ danh sách' : '✏️ Nhập Zalo ID trực tiếp'}
+                {useManualInput ? '← Chọn từ danh sách' : '✏️ Nhập thủ công (ID/Email)'}
               </button>
             </div>
 
             {!useManualInput ? (
               <div>
+                {/* Tabs Filter */}
+                <div style={{ display: 'flex', gap: '6px', marginBottom: '8px' }}>
+                  <button
+                    type="button"
+                    onClick={() => setTabType('ALL')}
+                    style={{
+                      padding: '5px 12px',
+                      borderRadius: '16px',
+                      fontSize: '11.5px',
+                      fontWeight: '700',
+                      border: '1px solid var(--border-color, #334155)',
+                      background: tabType === 'ALL' ? '#ea580c' : 'var(--bg-secondary, rgba(0,0,0,0.1))',
+                      color: tabType === 'ALL' ? '#fff' : 'var(--text-muted, #94a3b8)',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    Tất cả ({combinedList.length})
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setTabType('GOOGLE')}
+                    style={{
+                      padding: '5px 12px',
+                      borderRadius: '16px',
+                      fontSize: '11.5px',
+                      fontWeight: '700',
+                      border: '1px solid var(--border-color, #334155)',
+                      background: tabType === 'GOOGLE' ? '#ea580c' : 'var(--bg-secondary, rgba(0,0,0,0.1))',
+                      color: tabType === 'GOOGLE' ? '#fff' : 'var(--text-muted, #94a3b8)',
+                      cursor: 'pointer',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '4px'
+                    }}
+                  >
+                    <i className="fa-brands fa-google" style={{ fontSize: '11px' }}></i> Tài khoản Google / Web ({webUsers.length})
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setTabType('ZALO')}
+                    style={{
+                      padding: '5px 12px',
+                      borderRadius: '16px',
+                      fontSize: '11.5px',
+                      fontWeight: '700',
+                      border: '1px solid var(--border-color, #334155)',
+                      background: tabType === 'ZALO' ? '#ea580c' : 'var(--bg-secondary, rgba(0,0,0,0.1))',
+                      color: tabType === 'ZALO' ? '#fff' : 'var(--text-muted, #94a3b8)',
+                      cursor: 'pointer',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '4px'
+                    }}
+                  >
+                    <i className="fa-solid fa-comments" style={{ fontSize: '11px' }}></i> Zalo Bot ({zaloUserList.length})
+                  </button>
+                </div>
+
                 {/* Search Box */}
                 <input
                   type="text"
-                  placeholder="Gõ tên thành viên hoặc Zalo ID để tìm..."
+                  placeholder="Gõ tên thành viên, Gmail hoặc Zalo ID để tìm..."
                   className="form-control"
                   value={searchTerm}
                   onChange={e => setSearchTerm(e.target.value)}
                   style={{
                     width: '100%',
-                    padding: '9px 12px',
+                    padding: '8px 12px',
                     fontSize: '13px',
                     borderRadius: '10px',
                     border: '1px solid var(--border-color, #cbd5e1)',
-                    marginBottom: '10px',
+                    marginBottom: '8px',
                     background: 'var(--bg-secondary, rgba(0,0,0,0.1))',
                     color: 'var(--text-main, inherit)',
                     boxSizing: 'border-box'
@@ -256,23 +387,23 @@ export default function AssignOrderModal({ order, onClose, onSuccess }) {
                 <div style={{
                   border: '1px solid var(--border-color, #cbd5e1)',
                   borderRadius: '12px',
-                  maxHeight: '180px',
+                  maxHeight: '190px',
                   overflowY: 'auto',
                   background: 'var(--bg-secondary, rgba(0,0,0,0.1))'
                 }}>
-                  {filteredUsers.length === 0 ? (
+                  {filteredList.length === 0 ? (
                     <div style={{ padding: '16px', textAlign: 'center', color: 'var(--text-muted, #94a3b8)', fontSize: '12.5px' }}>
                       Không tìm thấy thành viên nào khớp với từ khóa
                     </div>
                   ) : (
-                    filteredUsers.map(u => {
-                      const isSelected = selectedZaloId === u.zaloId;
+                    filteredList.map(item => {
+                      const isSelected = selectedTarget?.id === item.id;
                       return (
                         <div
-                          key={u.zaloId}
-                          onClick={() => setSelectedZaloId(u.zaloId)}
+                          key={`${item.type}_${item.id}`}
+                          onClick={() => setSelectedTarget(item)}
                           style={{
-                            padding: '10px 14px',
+                            padding: '9px 12px',
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'space-between',
@@ -282,16 +413,55 @@ export default function AssignOrderModal({ order, onClose, onSuccess }) {
                             transition: 'all 0.15s ease'
                           }}
                         >
-                          <div>
-                            <div style={{ fontWeight: '700', fontSize: '13px', color: isSelected ? '#ea580c' : 'var(--text-bright, #ffffff)' }}>
-                              {u.zaloName || 'Vô danh'}
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '9px', minWidth: 0 }}>
+                            <div style={{
+                              width: '28px',
+                              height: '28px',
+                              borderRadius: '50%',
+                              background: item.type === 'GOOGLE' ? 'rgba(234, 67, 53, 0.15)' : 'rgba(2, 132, 199, 0.15)',
+                              color: item.type === 'GOOGLE' ? '#ea4335' : '#0284c7',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              fontSize: '12px',
+                              flexShrink: 0
+                            }}>
+                              <i className={item.type === 'GOOGLE' ? "fa-brands fa-google" : "fa-solid fa-comments"}></i>
                             </div>
-                            <div style={{ fontSize: '11.5px', color: 'var(--text-muted, #94a3b8)' }}>
-                              Zalo ID: <code style={{ color: '#ea580c' }}>{u.zaloId}</code>
+                            <div style={{ minWidth: 0 }}>
+                              <div style={{
+                                fontWeight: '700',
+                                fontSize: '13px',
+                                color: isSelected ? '#ea580c' : 'var(--text-bright, #ffffff)',
+                                whiteSpace: 'nowrap',
+                                overflow: 'hidden',
+                                textOverflow: 'ellipsis'
+                              }}>
+                                {item.name}
+                                <span style={{
+                                  fontSize: '10px',
+                                  padding: '1px 6px',
+                                  borderRadius: '8px',
+                                  marginLeft: '6px',
+                                  background: item.type === 'GOOGLE' ? 'rgba(234, 67, 53, 0.2)' : 'rgba(2, 132, 199, 0.2)',
+                                  color: item.type === 'GOOGLE' ? '#f87171' : '#38bdf8',
+                                  fontWeight: '600'
+                                }}>
+                                  {item.type === 'GOOGLE' ? 'Google/Web' : 'Zalo'}
+                                </span>
+                              </div>
+                              <div style={{ fontSize: '11px', color: 'var(--text-muted, #94a3b8)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                                {item.email && <span>{item.email} • </span>}
+                                {item.zaloId ? (
+                                  <span>Zalo ID: <code style={{ color: '#ea580c' }}>{item.zaloId}</code></span>
+                                ) : (
+                                  <span>Mã Web: <code style={{ color: '#ea580c' }}>{item.id}</code></span>
+                                )}
+                              </div>
                             </div>
                           </div>
                           {isSelected && (
-                            <span style={{ color: '#ea580c', fontWeight: '800', fontSize: '14px' }}>✓</span>
+                            <span style={{ color: '#ea580c', fontWeight: '800', fontSize: '14px', marginLeft: '6px', flexShrink: 0 }}>✓</span>
                           )}
                         </div>
                       );
@@ -303,14 +473,14 @@ export default function AssignOrderModal({ order, onClose, onSuccess }) {
               <div>
                 <input
                   type="text"
-                  placeholder="Nhập Zalo ID thành viên (ví dụ: 123456789)..."
+                  placeholder="Nhập Zalo ID hoặc Email Google hoặc mã Web (VD: u12 hoặc 7605918549...)..."
                   className="form-control"
-                  value={manualZaloId}
-                  onChange={e => setManualZaloId(e.target.value)}
+                  value={manualInput}
+                  onChange={e => setManualInput(e.target.value)}
                   style={{
                     width: '100%',
                     padding: '10px 12px',
-                    fontSize: '13.5px',
+                    fontSize: '13px',
                     borderRadius: '10px',
                     border: '1.5px solid var(--border-color, #cbd5e1)',
                     background: 'var(--bg-secondary, rgba(0,0,0,0.1))',
@@ -319,7 +489,7 @@ export default function AssignOrderModal({ order, onClose, onSuccess }) {
                   }}
                 />
                 <span style={{ fontSize: '11.5px', color: 'var(--text-muted, #94a3b8)', marginTop: '4px', display: 'block' }}>
-                  Nếu Zalo ID này chưa có trong hệ thống, hệ thống sẽ tự động khởi tạo thành viên mới.
+                  Có thể nhập Zalo ID số, Email tài khoản Web hoặc mã tài khoản web dạng <code>u{'{id}'}</code>.
                 </span>
               </div>
             )}
@@ -330,21 +500,21 @@ export default function AssignOrderModal({ order, onClose, onSuccess }) {
             background: 'rgba(249, 115, 22, 0.08)',
             border: '1px solid rgba(249, 115, 22, 0.25)',
             borderRadius: '10px',
-            padding: '10px 14px',
-            fontSize: '12px',
+            padding: '10px 12px',
+            fontSize: '11.5px',
             color: 'var(--text-main, inherit)',
             display: 'flex',
             alignItems: 'flex-start',
             gap: '8px'
           }}>
-            <span style={{ fontSize: '14px', flexShrink: 0 }}>🛡️</span>
+            <span style={{ fontSize: '13px', flexShrink: 0 }}>🛡️</span>
             <span>
               <strong>Bảo lưu an toàn:</strong> Sau khi gắn đơn, hệ thống sẽ gán cờ cố định. Khi Admin import lại báo cáo Excel Shopee hoặc hệ thống TikTok tự động đồng bộ, chủ sở hữu này sẽ <strong>được giữ nguyên 100%</strong>, không bị trả về cũ.
             </span>
           </div>
 
           {error && (
-            <div style={{ color: '#ef4444', fontSize: '13px', marginTop: '12px', fontWeight: '600' }}>
+            <div style={{ color: '#ef4444', fontSize: '12.5px', marginTop: '10px', fontWeight: '600' }}>
               ⚠️ {error}
             </div>
           )}
@@ -352,7 +522,7 @@ export default function AssignOrderModal({ order, onClose, onSuccess }) {
 
         {/* Modal Footer Actions */}
         <div style={{
-          padding: '16px 24px',
+          padding: '14px 20px',
           borderTop: '1px solid var(--border-color, #334155)',
           display: 'flex',
           justifyContent: 'flex-end',
@@ -365,13 +535,14 @@ export default function AssignOrderModal({ order, onClose, onSuccess }) {
             onClick={onClose}
             disabled={loading}
             style={{
-              padding: '9px 18px',
+              padding: '8px 16px',
               borderRadius: '10px',
               border: '1px solid var(--border-color, #cbd5e1)',
               background: 'var(--bg-secondary, rgba(255,255,255,0.05))',
               color: 'var(--text-muted, #94a3b8)',
               cursor: 'pointer',
-              fontWeight: '600'
+              fontWeight: '600',
+              fontSize: '13px'
             }}
           >
             Hủy
@@ -380,20 +551,21 @@ export default function AssignOrderModal({ order, onClose, onSuccess }) {
             type="button"
             className="btn"
             onClick={handleAssign}
-            disabled={loading || (!useManualInput && !selectedZaloId) || (useManualInput && !manualZaloId.trim())}
+            disabled={loading || (!useManualInput && !selectedTarget) || (useManualInput && !manualInput.trim())}
             style={{
-              padding: '9px 22px',
+              padding: '8px 20px',
               borderRadius: '10px',
               border: 'none',
               background: 'linear-gradient(135deg, #f97316, #ea580c)',
               color: '#ffffff',
               fontWeight: '700',
-              cursor: (loading || (!useManualInput && !selectedZaloId) || (useManualInput && !manualZaloId.trim())) ? 'not-allowed' : 'pointer',
+              fontSize: '13px',
+              cursor: (loading || (!useManualInput && !selectedTarget) || (useManualInput && !manualInput.trim())) ? 'not-allowed' : 'pointer',
               boxShadow: '0 4px 14px rgba(249, 115, 22, 0.3)',
               display: 'inline-flex',
               alignItems: 'center',
               gap: '6px',
-              opacity: (loading || (!useManualInput && !selectedZaloId) || (useManualInput && !manualZaloId.trim())) ? 0.6 : 1
+              opacity: (loading || (!useManualInput && !selectedTarget) || (useManualInput && !manualInput.trim())) ? 0.6 : 1
             }}
           >
             {loading ? (
@@ -411,4 +583,3 @@ export default function AssignOrderModal({ order, onClose, onSuccess }) {
     document.body
   );
 }
-

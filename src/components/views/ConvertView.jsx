@@ -10,7 +10,7 @@ export default function ConvertView() {
   const [results, setResults] = useState([]);
   const [copiedIndex, setCopiedIndex] = useState(null);
 
-  // Lịch sử chuyển đổi (tương tự Mai Lan)
+  // Lịch sử chuyển đổi (tối đa 10 mục gần nhất)
   const [isHistoryOpen, setIsHistoryOpen] = useState(true);
   const [isTipsOpen, setIsTipsOpen] = useState(true);
   const [historyFilterPlatform, setHistoryFilterPlatform] = useState('ALL');
@@ -18,31 +18,32 @@ export default function ConvertView() {
     try {
       const storageKey = `web_convert_history_${user?.id || 'default'}`;
       const saved = localStorage.getItem(storageKey);
-      return saved ? JSON.parse(saved) : [];
+      return saved ? JSON.parse(saved).slice(0, 10) : [];
     } catch (e) {
       return [];
     }
   });
 
-  // Tải lại lịch sử khi đổi user
+  // Tải lại lịch sử khi đổi user (chỉ lấy 10 mục gần nhất)
   useEffect(() => {
     try {
       const storageKey = `web_convert_history_${user?.id || 'default'}`;
       const saved = localStorage.getItem(storageKey);
       if (saved) {
-        setHistoryLinks(JSON.parse(saved));
+        setHistoryLinks(JSON.parse(saved).slice(0, 10));
       } else {
         setHistoryLinks([]);
       }
     } catch (e) {}
   }, [user?.id]);
 
-  // Lưu lịch sử vào localStorage
+  // Lưu lịch sử vào localStorage (tối đa 10 mục gần nhất)
   const saveHistory = (newLinks) => {
     try {
+      const trimmed = newLinks.slice(0, 10);
       const storageKey = `web_convert_history_${user?.id || 'default'}`;
-      localStorage.setItem(storageKey, JSON.stringify(newLinks));
-      setHistoryLinks(newLinks);
+      localStorage.setItem(storageKey, JSON.stringify(trimmed));
+      setHistoryLinks(trimmed);
     } catch (e) {}
   };
 
@@ -87,8 +88,8 @@ export default function ConvertView() {
       setResults(newConverted);
       showToast(`Chuyển đổi thành công ${newConverted.length} liên kết! 🎉`, 'success');
 
-      // Tự động thêm vào đầu Lịch sử chuyển đổi
-      const updatedHistory = [...newConverted, ...historyLinks].slice(0, 100);
+      // Tự động thêm vào đầu Lịch sử chuyển đổi (tối đa 10 mục)
+      const updatedHistory = [...newConverted, ...historyLinks].slice(0, 10);
       saveHistory(updatedHistory);
 
     } catch (err) {
@@ -219,78 +220,114 @@ export default function ConvertView() {
           </div>
         </div>
 
-        {/* CÁC NỀN TẢNG ĐƯỢC HỖ TRỢ CHUYỂN ĐỔI (LÀM THEO 2 HÀNG NGANG 2 CỘT) */}
+        {/* CÁC NỀN TẢNG ĐƯỢC HỖ TRỢ CHUYỂN ĐỔI (LOGO CHUẨN BẢN GỐC) */}
         <div style={{
           display: 'grid',
           gridTemplateColumns: 'repeat(2, 1fr)',
-          gap: '8px',
-          marginBottom: '16px'
+          gap: '10px',
+          marginBottom: '18px'
         }}>
+          {/* 1. Shopee */}
           <div style={{
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            gap: '8px',
-            padding: '8px 12px',
+            gap: '10px',
+            padding: '9px 14px',
             borderRadius: '12px',
-            background: 'rgba(234, 88, 12, 0.12)',
+            background: 'var(--bg-main, #0f172a)',
             color: '#ea580c',
-            border: '1px solid rgba(234, 88, 12, 0.25)',
-            fontSize: '12.5px',
-            fontWeight: '700'
+            border: '1.5px solid rgba(234, 88, 12, 0.35)',
+            fontSize: '13px',
+            fontWeight: '700',
+            boxShadow: '0 2px 8px rgba(234, 88, 12, 0.08)'
           }}>
-            <i className="fa-solid fa-bag-shopping"></i>
+            <svg width="22" height="22" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ flexShrink: 0 }}>
+              <path d="M38 15H33V13C33 8.03 28.97 4 24 4C19.03 4 15 8.03 15 13V15H10C8.34 15 7 16.34 7 18V40C7 41.66 8.34 43 10 43H38C39.66 43 41 41.66 41 40V18C41 16.34 39.66 15 38 15Z" fill="#EE4D2D"/>
+              <path d="M19 13C19 10.24 21.24 8 24 8C26.76 8 29 10.24 29 13V15H19V13Z" stroke="#FFFFFF" strokeWidth="2.5" strokeLinecap="round"/>
+              <path d="M28.5 25.5C28.5 23.5 26.5 22.5 24 22.5C21 22.5 19.5 23.8 19.5 25.5C19.5 29.5 28.5 28.5 28.5 33C28.5 35 26.5 36.5 23.8 36.5C20.8 36.5 19.2 35 19 33.5" stroke="#FFFFFF" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
             <span>Shopee</span>
           </div>
 
+          {/* 2. Lazada (Logo trái tim bản gốc) */}
           <div style={{
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            gap: '8px',
-            padding: '8px 12px',
+            gap: '10px',
+            padding: '9px 14px',
             borderRadius: '12px',
-            background: 'var(--bg-main)',
-            color: 'var(--text-bright)',
-            border: '1px solid var(--border-color)',
-            fontSize: '12.5px',
-            fontWeight: '700'
+            background: 'var(--bg-main, #0f172a)',
+            color: '#38bdf8',
+            border: '1.5px solid rgba(2, 132, 199, 0.35)',
+            fontSize: '13px',
+            fontWeight: '700',
+            boxShadow: '0 2px 8px rgba(2, 132, 199, 0.08)'
           }}>
-            <i className="fa-brands fa-tiktok"></i>
-            <span>TikTok Shop</span>
-          </div>
-
-          <div style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: '8px',
-            padding: '8px 12px',
-            borderRadius: '12px',
-            background: 'rgba(2, 132, 199, 0.12)',
-            color: '#0284c7',
-            border: '1px solid rgba(2, 132, 199, 0.25)',
-            fontSize: '12.5px',
-            fontWeight: '700'
-          }}>
-            <i className="fa-solid fa-heart"></i>
+            <svg width="24" height="24" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ flexShrink: 0 }}>
+              <rect width="48" height="48" rx="11" fill="#0C146D"/>
+              <path d="M24 13C21.8 10.2 17.6 9.8 14.4 12.3C10.8 15.1 10.3 20.3 13.2 23.8L24 37.5L34.8 23.8C37.7 20.3 37.2 15.1 33.6 12.3C30.4 9.8 26.2 10.2 24 13Z" fill="url(#lz_badge_grad)"/>
+              <path d="M24 37.5L16.5 28C14.6 25.5 15 22 17.2 20.2C19.5 18.4 23 18.8 24.6 21.2L24 37.5Z" fill="#0018CD" opacity="0.45"/>
+              <text x="24" y="27" fontFamily="system-ui, -apple-system, sans-serif" fontWeight="900" fontSize="12" fill="#FFFFFF" textAnchor="middle" letterSpacing="-0.5">Laz</text>
+              <defs>
+                <linearGradient id="lz_badge_grad" x1="12" y1="10" x2="36" y2="37" gradientUnits="userSpaceOnUse">
+                  <stop stopColor="#F8236C"/>
+                  <stop offset="0.45" stopColor="#FF5C00"/>
+                  <stop offset="0.85" stopColor="#1E3CFF"/>
+                  <stop offset="1" stopColor="#0B1EF5"/>
+                </linearGradient>
+              </defs>
+            </svg>
             <span>Lazada</span>
           </div>
 
+          {/* 3. TikTok Shop */}
           <div style={{
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            gap: '8px',
-            padding: '8px 12px',
+            gap: '10px',
+            padding: '9px 14px',
             borderRadius: '12px',
-            background: 'rgba(220, 38, 38, 0.12)',
-            color: '#dc2626',
-            border: '1px solid rgba(220, 38, 38, 0.25)',
-            fontSize: '12.5px',
-            fontWeight: '700'
+            background: 'var(--bg-main, #0f172a)',
+            color: 'var(--text-bright, #ffffff)',
+            border: '1.5px solid var(--border-color)',
+            fontSize: '13px',
+            fontWeight: '700',
+            boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)'
           }}>
-            <i className="fa-solid fa-utensils"></i>
+            <svg width="22" height="22" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ flexShrink: 0 }}>
+              <rect width="48" height="48" rx="10" fill="#000000"/>
+              <path d="M35 16H30.5V13.5C30.5 9.9 27.6 7 24 7C20.4 7 17.5 9.9 17.5 13.5V16H13C11.3 16 10 17.3 10 19V38C10 39.7 11.3 41 13 41H35C36.7 41 38 39.7 38 38V19C38 17.3 36.7 16 35 16Z" fill="#18181B"/>
+              <path d="M20.5 13.5C20.5 11.6 22.1 10 24 10C25.9 10 27.5 11.6 27.5 13.5V16H20.5V13.5Z" stroke="#FFFFFF" strokeWidth="1.8"/>
+              <path d="M27 23C28 24.2 29.5 25 31 25.2V27.5C29.8 27.4 28.5 26.8 27.5 26V30C27.5 32.8 25.2 35 22.5 35C19.7 35 17.5 32.8 17.5 30C17.5 27.2 19.7 25 22.5 25C23 25 23.5 25.1 24 25.3V27.6C23.5 27.3 23 27.2 22.5 27.2C21 27.2 19.8 28.4 19.8 30C19.8 31.5 21 32.7 22.5 32.7C24 32.7 25.2 31.5 25.2 30V21H27V23Z" fill="#25F4EE"/>
+              <path d="M27.4 23.4C28.4 24.6 29.9 25.4 31.4 25.6V27C30.2 26.9 29.1 26.3 28.1 25.5V30.2C28.1 33 25.8 35.2 23 35.2C21.2 35.2 19.6 34.3 18.7 32.8C19.5 33.6 20.6 34.2 21.8 34.2C24.6 34.2 26.8 32 26.8 29.2V21.5H27.4V23.4Z" fill="#FE2C55"/>
+            </svg>
+            <span>TikTok Shop</span>
+          </div>
+
+          {/* 4. ShopeeFood */}
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '10px',
+            padding: '9px 14px',
+            borderRadius: '12px',
+            background: 'var(--bg-main, #0f172a)',
+            color: '#ef4444',
+            border: '1.5px solid rgba(239, 68, 68, 0.35)',
+            fontSize: '13px',
+            fontWeight: '700',
+            boxShadow: '0 2px 8px rgba(239, 68, 68, 0.08)'
+          }}>
+            <svg width="22" height="22" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ flexShrink: 0 }}>
+              <rect x="6" y="10" width="36" height="32" rx="8" fill="#EE4D2D"/>
+              <path d="M16 10V7C16 5.34 17.34 4 19 4H29C30.66 4 32 5.34 32 7V10" stroke="#EE4D2D" strokeWidth="3" strokeLinecap="round"/>
+              <path d="M19 18V26M17 18V22M21 18V22M19 26V32" stroke="#FFFFFF" strokeWidth="2.2" strokeLinecap="round"/>
+              <path d="M29 18C27.5 18 26.5 19.2 26.5 20.8C26.5 22.4 27.5 23.6 29 23.6V32M29 23.6V32" stroke="#FFFFFF" strokeWidth="2.2" strokeLinecap="round"/>
+            </svg>
             <span>ShopeeFood</span>
           </div>
         </div>
@@ -540,7 +577,7 @@ export default function ConvertView() {
               </div>
               <div>
                 <h3 style={{ fontSize: '15.5px', fontWeight: '800', margin: 0, color: 'var(--text-bright)' }}>
-                  Lịch Sử Chuyển Đổi Web ({historyLinks.length})
+                  Lịch Sử Chuyển Đổi Web
                 </h3>
                 <div style={{ fontSize: '11.5px', color: 'var(--text-muted)' }}>
                   Lưu trữ tự động các link bạn đã chuyển đổi để dùng lại
@@ -606,11 +643,11 @@ export default function ConvertView() {
                       WebkitAppearance: 'none'
                     }}
                   >
-                    <option value="ALL">Tất cả sàn ({historyLinks.length} link)</option>
-                    <option value="SHOPEE">Shopee ({historyLinks.filter(i => getPlatformMeta(i.platform).name === 'Shopee').length} link)</option>
-                    <option value="TIKTOK">TikTok Shop ({historyLinks.filter(i => getPlatformMeta(i.platform).name === 'TikTok Shop').length} link)</option>
-                    <option value="LAZADA">Lazada ({historyLinks.filter(i => getPlatformMeta(i.platform).name === 'Lazada').length} link)</option>
-                    <option value="SHOPEE_FOOD">ShopeeFood ({historyLinks.filter(i => getPlatformMeta(i.platform).name === 'ShopeeFood').length} link)</option>
+                    <option value="ALL">Tất cả sàn</option>
+                    <option value="SHOPEE">Shopee</option>
+                    <option value="TIKTOK">TikTok Shop</option>
+                    <option value="LAZADA">Lazada</option>
+                    <option value="SHOPEE_FOOD">ShopeeFood</option>
                   </select>
                   <i
                     className="fa-solid fa-chevron-down"
@@ -634,7 +671,7 @@ export default function ConvertView() {
                 </div>
               ) : (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', maxHeight: '480px', overflowY: 'auto', paddingRight: '4px' }}>
-                  {filteredHistory.map((item) => {
+                  {filteredHistory.slice(0, 10).map((item) => {
                     const finalLink = item.affiliateUrl || item.affiliateLink || item.shortUrl || item.url || '';
                     const meta = getPlatformMeta(item.platform);
                     const itemEstComm = item.commission || (item.price && item.commissionRate ? Math.round((Number(item.price) * Number(item.commissionRate)) / 100) : 0);

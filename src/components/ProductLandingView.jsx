@@ -964,16 +964,16 @@ body {
 .sym-btn-cta-main {
   flex: 1.4;
   min-width: 0;
-  height: 46px;
+  height: 48px;
   border: none;
-  background: linear-gradient(135deg, #ff5722 0%, #ee4d2d 45%, #d0011b 100%);
-  border-radius: 8px;
-  padding: 0 8px;
+  background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+  border-radius: 12px;
+  padding: 0 10px;
   color: #ffffff;
   cursor: pointer;
   position: relative;
   overflow: hidden;
-  box-shadow: 0 6px 18px -2px rgba(238, 77, 45, 0.42), 0 2px 4px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 6px 18px -2px rgba(234, 88, 12, 0.42), 0 2px 4px rgba(0, 0, 0, 0.08);
   transition: all 0.2s ease;
   display: flex;
   align-items: center;
@@ -982,7 +982,8 @@ body {
 
 .sym-btn-cta-main:hover {
   transform: translateY(-1.5px);
-  box-shadow: 0 10px 24px -2px rgba(238, 77, 45, 0.52);
+  background: linear-gradient(135deg, #fb923c 0%, #f97316 100%);
+  box-shadow: 0 10px 24px -2px rgba(234, 88, 12, 0.55);
 }
 
 .sym-btn-cta-main:active {
@@ -1009,7 +1010,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 5px;
+  gap: 6px;
   position: relative;
   z-index: 2;
   width: 100%;
@@ -1017,8 +1018,8 @@ body {
 }
 
 .sym-cta-icon-box {
-  width: 22px;
-  height: 22px;
+  width: 24px;
+  height: 24px;
   background: rgba(255, 255, 255, 0.22);
   border-radius: 6px;
   display: flex;
@@ -1028,15 +1029,15 @@ body {
 }
 
 .sym-cta-shopee-svg {
-  width: 13px;
-  height: 13px;
+  width: 14px;
+  height: 14px;
   fill: #ffffff;
 }
 
 .sym-cta-title-text {
   font-size: 13.5px;
   font-weight: 800;
-  letter-spacing: -0.3px;
+  letter-spacing: -0.2px;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
   white-space: nowrap;
   overflow: hidden;
@@ -1057,14 +1058,14 @@ body {
 .sym-btn-copy-aff-row {
   flex: 1;
   min-width: 0;
-  height: 46px;
-  background: #fff7ed;
-  border: none;
-  color: #c2410c;
-  font-size: 12.5px;
+  height: 48px;
+  background: rgba(249, 115, 22, 0.09);
+  border: 1.5px solid rgba(249, 115, 22, 0.28);
+  color: #ea580c;
+  font-size: 13px;
   font-weight: 800;
-  padding: 0 8px;
-  border-radius: 8px;
+  padding: 0 10px;
+  border-radius: 12px;
   cursor: pointer;
   white-space: nowrap;
   box-shadow: none;
@@ -1072,13 +1073,13 @@ body {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 5px;
+  gap: 6px;
 }
 
 .sym-btn-copy-aff-row:hover {
-  background: #ffedd5;
-  border: none;
-  color: #9a3412;
+  background: rgba(249, 115, 22, 0.18);
+  border-color: #ea580c;
+  color: #c2410c;
   transform: translateY(-1.5px);
 }
 
@@ -1087,9 +1088,9 @@ body {
 }
 
 .sym-btn-copy-aff-row.is-copied {
-  background: #ecfdf5;
-  border: none;
-  color: #047857;
+  background: rgba(16, 185, 129, 0.12);
+  border-color: rgba(16, 185, 129, 0.35);
+  color: #059669;
 }
 
 .sym-copy-icon {
@@ -1099,25 +1100,27 @@ body {
 
 @media (max-width: 420px) {
   .sym-cta-title-text {
-    font-size: 12px;
-    letter-spacing: -0.4px;
+    font-size: 12.5px;
+    letter-spacing: -0.3px;
   }
   .sym-btn-cta-main {
-    height: 44px;
-    padding: 0 5px;
+    height: 46px;
+    padding: 0 6px;
+    border-radius: 10px;
   }
   .sym-btn-copy-aff-row {
-    height: 44px;
-    padding: 0 5px;
-    font-size: 11.5px;
+    height: 46px;
+    padding: 0 6px;
+    font-size: 12px;
+    border-radius: 10px;
   }
   .sym-cta-icon-box {
-    width: 20px;
-    height: 20px;
+    width: 22px;
+    height: 22px;
   }
   .sym-cta-shopee-svg {
-    width: 12px;
-    height: 12px;
+    width: 13px;
+    height: 13px;
   }
 }
 

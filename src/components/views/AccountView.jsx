@@ -17,6 +17,7 @@ export default function AccountView() {
   const [accountNumber, setAccountNumber] = useState(user?.accountNumber || '');
   const [accountName, setAccountName] = useState(user?.accountName || '');
   const [savingBank, setSavingBank] = useState(false);
+  const [isEditingBank, setIsEditingBank] = useState(!user?.accountNumber);
 
   // Zalo ID states
   const [zaloIdInput, setZaloIdInput] = useState(user?.zaloId || '');
@@ -170,6 +171,7 @@ export default function AccountView() {
       setUser(updatedUser);
       sessionStorage.setItem('adminUser', JSON.stringify(updatedUser));
       showToast('Đã lưu thông tin tài khoản ngân hàng thành công! 🎉', 'success');
+      setIsEditingBank(false); // Thu nhỏ form sau khi lưu thành công
     } catch (err) {
       showToast(err.message || 'Lỗi lưu tài khoản ngân hàng', 'error');
     } finally {
@@ -242,21 +244,27 @@ export default function AccountView() {
     <div className="account-view-wrapper" style={{ width: '100%', maxWidth: '820px', margin: '0 auto' }}>
       
       {/* HEADER TIÊU ĐỀ RÕ RÀNG */}
-      <div style={{ marginBottom: '20px' }}>
+      <div style={{ marginBottom: '22px' }}>
         <h1 style={{
           fontSize: 'clamp(18px, 4.5vw, 22px)',
-          fontWeight: '650',
+          fontWeight: '700',
           color: 'var(--text-bright)',
-          margin: 0,
+          margin: '0 0 8px 0',
           display: 'flex',
-          alignItems: 'flex-start',
+          alignItems: 'center',
           gap: '10px',
           lineHeight: '1.3'
         }}>
-          <i className="fa-solid fa-address-card" style={{ color: 'var(--text-muted)', fontSize: '20px', marginTop: '3px', flexShrink: 0 }}></i>
-          <span>Thông Tin Cá Nhân & Tài Khoản</span>
+          <i className="fa-solid fa-address-card" style={{ color: 'var(--text-muted)', fontSize: '20px', flexShrink: 0 }}></i>
+          <span>Thông Tin Cá Nhân &amp; Tài Khoản</span>
         </h1>
-        <p style={{ margin: '4px 0 0 0', fontSize: '13px', color: 'var(--text-muted)' }}>
+        <p style={{
+          margin: 0,
+          fontSize: '13px',
+          color: 'var(--text-muted, #94a3b8)',
+          lineHeight: '1.6',
+          letterSpacing: '0.15px'
+        }}>
           Quản lý thông tin hồ sơ, số điện thoại, liên kết Zalo ID và tài khoản ngân hàng nhận tiền hoa hồng
         </p>
       </div>
@@ -725,72 +733,108 @@ export default function AccountView() {
           </div>
         </div>
 
-        <form onSubmit={handleSaveBank}>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '14px', marginBottom: '16px' }}>
-            <div className="lookup-input-group" style={{ marginBottom: 0 }}>
-              <label className="lookup-label">Chọn Ngân Hàng</label>
-              <select
-                className="lookup-input lookup-select"
-                value={selectedBank}
-                onChange={e => setSelectedBank(e.target.value)}
-                style={{ fontWeight: '700' }}
-              >
-                {BANKS.map(b => (
-                  <option key={b.code} value={b.code}>
-                    {b.code} - {b.name}
-                  </option>
-                ))}
-                <option value="OTHER">Ngân hàng khác...</option>
-              </select>
-            </div>
-
-            {selectedBank === 'OTHER' && (
+        {!isEditingBank && user?.accountNumber ? (
+          <div style={{ textAlign: 'center', marginTop: '16px' }}>
+            <button
+              type="button"
+              onClick={() => setIsEditingBank(true)}
+              className="lookup-admin-link"
+              style={{
+                padding: '9px 24px',
+                fontSize: '13px',
+                color: '#ea580c',
+                borderColor: 'rgba(234, 88, 12, 0.4)',
+                fontWeight: '700',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '8px'
+              }}
+            >
+              <i className="fa-regular fa-pen-to-square"></i>
+              <span>Thay đổi thông tin ngân hàng</span>
+            </button>
+          </div>
+        ) : (
+          <form onSubmit={handleSaveBank} style={{ marginTop: '16px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '14px', marginBottom: '16px' }}>
               <div className="lookup-input-group" style={{ marginBottom: 0 }}>
-                <label className="lookup-label">Tên Ngân Hàng Khác</label>
+                <label className="lookup-label">Chọn Ngân Hàng</label>
+                <select
+                  className="lookup-input lookup-select"
+                  value={selectedBank}
+                  onChange={e => setSelectedBank(e.target.value)}
+                  style={{ fontWeight: '700' }}
+                >
+                  {BANKS.map(b => (
+                    <option key={b.code} value={b.code}>
+                      {b.code} - {b.name}
+                    </option>
+                  ))}
+                  <option value="OTHER">Ngân hàng khác...</option>
+                </select>
+              </div>
+
+              {selectedBank === 'OTHER' && (
+                <div className="lookup-input-group" style={{ marginBottom: 0 }}>
+                  <label className="lookup-label">Tên Ngân Hàng Khác</label>
+                  <input
+                    type="text"
+                    className="lookup-input"
+                    placeholder="Nhập tên ngân hàng..."
+                    value={customBankName}
+                    onChange={e => setCustomBankName(e.target.value)}
+                  />
+                </div>
+              )}
+
+              <div className="lookup-input-group" style={{ marginBottom: 0 }}>
+                <label className="lookup-label">Số Tài Khoản</label>
                 <input
                   type="text"
                   className="lookup-input"
-                  placeholder="Nhập tên ngân hàng..."
-                  value={customBankName}
-                  onChange={e => setCustomBankName(e.target.value)}
+                  placeholder="Nhập số tài khoản..."
+                  value={accountNumber}
+                  onChange={e => setAccountNumber(e.target.value)}
+                  style={{ fontFamily: 'monospace', fontWeight: '700' }}
                 />
               </div>
-            )}
 
-            <div className="lookup-input-group" style={{ marginBottom: 0 }}>
-              <label className="lookup-label">Số Tài Khoản</label>
-              <input
-                type="text"
-                className="lookup-input"
-                placeholder="Nhập số tài khoản..."
-                value={accountNumber}
-                onChange={e => setAccountNumber(e.target.value)}
-                style={{ fontFamily: 'monospace', fontWeight: '700' }}
-              />
+              <div className="lookup-input-group" style={{ marginBottom: 0 }}>
+                <label className="lookup-label">Tên Chủ Tài Khoản (Không dấu)</label>
+                <input
+                  type="text"
+                  className="lookup-input"
+                  placeholder="VD: PHAM VAN THANG"
+                  value={accountName}
+                  onChange={e => setAccountName(e.target.value.toUpperCase())}
+                  style={{ fontWeight: '700' }}
+                />
+              </div>
             </div>
 
-            <div className="lookup-input-group" style={{ marginBottom: 0 }}>
-              <label className="lookup-label">Tên Chủ Tài Khoản (Không dấu)</label>
-              <input
-                type="text"
-                className="lookup-input"
-                placeholder="VD: PHAM VAN THANG"
-                value={accountName}
-                onChange={e => setAccountName(e.target.value.toUpperCase())}
-                style={{ fontWeight: '700' }}
-              />
+            <div style={{ display: 'flex', gap: '10px' }}>
+              <button
+                type="submit"
+                disabled={savingBank}
+                className="lookup-btn"
+                style={{ flex: 1 }}
+              >
+                <i className="fa-solid fa-floppy-disk"></i>
+                <span>{savingBank ? 'Đang lưu thông tin...' : 'Lưu Tài Khoản Ngân Hàng'}</span>
+              </button>
+              {user?.accountNumber && (
+                <button
+                  type="button"
+                  onClick={() => setIsEditingBank(false)}
+                  className="lookup-admin-link"
+                  style={{ padding: '0 20px' }}
+                >
+                  Thu gọn
+                </button>
+              )}
             </div>
-          </div>
-
-          <button
-            type="submit"
-            disabled={savingBank}
-            className="lookup-btn"
-          >
-            <i className="fa-solid fa-floppy-disk"></i>
-            <span>{savingBank ? 'Đang lưu thông tin...' : 'Lưu Tài Khoản Ngân Hàng'}</span>
-          </button>
-        </form>
+          </form>
+        )}
       </div>
 
     </div>

@@ -109,6 +109,75 @@ export default function OrdersView() {
 
   return (
     <div className="orders-view-wrapper" style={{ width: '100%', maxWidth: '820px', margin: '0 auto' }}>
+      <style dangerouslySetInnerHTML={{ __html: `
+        .orders-container { width: 100%; max-width: 820px; }
+        .order-card-item {
+          background: var(--bg-card) !important;
+          border: 1px solid var(--border-color) !important;
+          border-radius: 16px !important;
+          padding: 18px 20px !important;
+          margin-bottom: 14px !important;
+          box-shadow: 0 4px 16px rgba(0,0,0,0.04) !important;
+          transition: all 0.2s ease !important;
+        }
+        .order-card-item:hover {
+          border-color: rgba(234, 88, 12, 0.4) !important;
+          box-shadow: 0 8px 24px rgba(0,0,0,0.08) !important;
+        }
+        .order-card-header {
+          display: flex !important;
+          justify-content: space-between !important;
+          align-items: center !important;
+          margin-bottom: 10px !important;
+          font-size: 13px !important;
+          color: var(--text-muted) !important;
+          font-weight: 500 !important;
+        }
+        .order-id-badge {
+          font-family: monospace !important;
+          font-weight: 700 !important;
+          color: #ea580c !important;
+          font-size: 13px !important;
+        }
+        .order-card-title {
+          font-size: 14.5px !important;
+          font-weight: 650 !important;
+          color: var(--text-bright) !important;
+          margin-bottom: 12px !important;
+          line-height: 1.5 !important;
+          overflow: hidden !important;
+          text-overflow: ellipsis !important;
+          display: -webkit-box !important;
+          -webkit-line-clamp: 2 !important;
+          -webkit-box-orient: vertical !important;
+        }
+        .order-card-commission-row {
+          display: flex !important;
+          justify-content: space-between !important;
+          align-items: center !important;
+          border-top: 1px dashed var(--border-color) !important;
+          padding-top: 12px !important;
+        }
+        .order-commission-label {
+          font-size: 13px !important;
+          color: var(--text-muted) !important;
+          font-weight: 500 !important;
+        }
+        .order-commission-val {
+          font-family: var(--font-heading) !important;
+          font-size: 17px !important;
+          font-weight: 800 !important;
+          color: #047857 !important;
+        }
+        html[data-theme="dark"] .order-commission-val,
+        body.dark .order-commission-val {
+          color: #34d399 !important;
+        }
+        @media (max-width: 640px) {
+          .order-card-item { padding: 14px 16px !important; border-radius: 14px !important; }
+          .order-card-title { font-size: 13.5px !important; }
+        }
+      `}} />
       
       {/* BỘ LỌC DẠNG ẤN VÀO CHỌN (GỌN GÀNG, TIỆN LỢI TRÊN ĐIỆN THOẠI) & TÌM KIẾM */}
       <div className="lookup-card" style={{ padding: '16px', marginBottom: '20px' }}>

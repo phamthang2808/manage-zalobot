@@ -462,32 +462,36 @@ export default function AccountView() {
 
           {user?.zaloId ? (
             <span style={{
-              padding: '5px 12px',
-              borderRadius: '20px',
-              background: 'rgba(16, 185, 129, 0.14)',
               color: '#10b981',
-              fontSize: '12px',
+              fontSize: '13px',
               fontWeight: '600',
               border: 'none',
               outline: 'none',
               boxShadow: 'none',
+              background: 'transparent',
+              padding: 0,
               display: 'inline-flex',
               alignItems: 'center',
               gap: '6px'
             }}>
               <i className="fa-solid fa-circle-check"></i>
-              Đã liên kết
+              <span>Đã liên kết</span>
             </span>
           ) : (
             <span style={{
-              padding: '5px 12px',
-              borderRadius: '20px',
-              background: 'rgba(234, 88, 12, 0.14)',
               color: 'var(--color-primary, #ea580c)',
-              fontSize: '12px',
-              fontWeight: '600'
+              fontSize: '13px',
+              fontWeight: '600',
+              border: 'none',
+              outline: 'none',
+              boxShadow: 'none',
+              background: 'transparent',
+              padding: 0,
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '6px'
             }}>
-              Chưa liên kết
+              <span>Chưa liên kết</span>
             </span>
           )}
         </div>

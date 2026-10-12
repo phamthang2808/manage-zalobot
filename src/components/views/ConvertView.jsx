@@ -575,47 +575,54 @@ export default function ConvertView() {
           {/* Nội dung Lịch Sử (Khi mở) */}
           {isHistoryOpen && (
             <div>
-              {/* Filter Tabs Lịch Sử */}
-              <div style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '6px',
-                overflowX: 'auto',
-                paddingBottom: '8px',
-                marginBottom: '14px',
-                borderBottom: '1px solid var(--border-color)'
-              }}>
-                {[
-                  { key: 'ALL', label: 'Tất cả', icon: 'fa-solid fa-list' },
-                  { key: 'SHOPEE', label: 'Shopee', icon: 'fa-solid fa-bag-shopping' },
-                  { key: 'TIKTOK', label: 'TikTok Shop', icon: 'fa-brands fa-tiktok' },
-                  { key: 'LAZADA', label: 'Lazada', icon: 'fa-solid fa-heart' },
-                  { key: 'SHOPEE_FOOD', label: 'ShopeeFood', icon: 'fa-solid fa-utensils' }
-                ].map(p => (
-                  <button
-                    key={p.key}
-                    type="button"
-                    onClick={() => setHistoryFilterPlatform(p.key)}
+              {/* Bộ lọc lịch sử dạng ấn vào chọn (Gọn gàng, không cần vuốt kéo) */}
+              <div style={{ marginBottom: '14px', borderBottom: '1px solid var(--border-color)', paddingBottom: '10px' }}>
+                <div style={{ position: 'relative', display: 'flex', alignItems: 'center', maxWidth: '240px' }}>
+                  <i
+                    className="fa-solid fa-filter"
                     style={{
-                      padding: '5px 12px',
-                      borderRadius: '16px',
-                      border: 'none',
-                      fontSize: '11.5px',
-                      fontWeight: historyFilterPlatform === p.key ? '800' : '600',
-                      background: historyFilterPlatform === p.key ? 'var(--color-primary, #ea580c)' : 'var(--bg-main)',
-                      color: historyFilterPlatform === p.key ? '#ffffff' : 'var(--text-muted)',
+                      position: 'absolute',
+                      left: '12px',
+                      color: 'var(--text-muted)',
+                      fontSize: '12px',
+                      pointerEvents: 'none'
+                    }}
+                  ></i>
+                  <select
+                    value={historyFilterPlatform}
+                    onChange={e => setHistoryFilterPlatform(e.target.value)}
+                    style={{
+                      width: '100%',
+                      padding: '8px 28px 8px 32px',
+                      borderRadius: '10px',
+                      border: '1px solid var(--border-color)',
+                      background: 'var(--bg-main)',
+                      color: 'var(--text-bright)',
+                      fontSize: '12.5px',
+                      fontWeight: '600',
+                      outline: 'none',
                       cursor: 'pointer',
-                      whiteSpace: 'nowrap',
-                      display: 'inline-flex',
-                      alignItems: 'center',
-                      gap: '5px',
-                      transition: 'all 0.15s ease'
+                      appearance: 'none',
+                      WebkitAppearance: 'none'
                     }}
                   >
-                    <i className={p.icon}></i>
-                    <span>{p.label}</span>
-                  </button>
-                ))}
+                    <option value="ALL">Lọc sàn: Tất cả ({historyLinks.length})</option>
+                    <option value="SHOPEE">Sàn: Shopee</option>
+                    <option value="TIKTOK">Sàn: TikTok Shop</option>
+                    <option value="LAZADA">Sàn: Lazada</option>
+                    <option value="SHOPEE_FOOD">Sàn: ShopeeFood</option>
+                  </select>
+                  <i
+                    className="fa-solid fa-chevron-down"
+                    style={{
+                      position: 'absolute',
+                      right: '12px',
+                      color: 'var(--text-muted)',
+                      fontSize: '11px',
+                      pointerEvents: 'none'
+                    }}
+                  ></i>
+                </div>
               </div>
 
               {/* Danh sách các link trong lịch sử */}

@@ -69,6 +69,17 @@ export default function MobileBottomNav() {
 
   return (
     <nav className="mobile-bottom-nav">
+      <button type="button" className={`mobile-bottom-nav-item${view === 'home' || view === 'landing' ? ' active' : ''}`}
+        onClick={() => {
+          setView('home');
+          sessionStorage.removeItem('adminView');
+          window.history.pushState({}, '', '/');
+          window.scrollTo(0, 0);
+        }}>
+        <div className="nav-icon-wrap"><i className="fa-solid fa-house"></i></div>
+        <span className="nav-label">Trang chủ</span>
+      </button>
+
       <button type="button" className={`mobile-bottom-nav-item${view === 'convert' ? ' active' : ''}`}
         onClick={() => handleCustomerTabClick('convert')}>
         <div className="nav-icon-wrap"><i className="fa-solid fa-link"></i></div>

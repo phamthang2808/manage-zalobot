@@ -210,20 +210,8 @@ export default function WithdrawView() {
                 <i className="fa-solid fa-building-columns"></i>
               </div>
               <div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                  <span style={{ fontSize: '11px', fontWeight: '800', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-                    NGÂN HÀNG THỤ HƯỞNG
-                  </span>
-                  <span style={{
-                    fontSize: '10px',
-                    fontWeight: '700',
-                    color: '#059669',
-                    background: 'rgba(5, 150, 105, 0.1)',
-                    padding: '1px 6px',
-                    borderRadius: '4px'
-                  }}>
-                    ✓ ĐÃ THIẾT LẬP
-                  </span>
+                <div style={{ fontSize: '11px', fontWeight: '800', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                  NGÂN HÀNG THỤ HƯỞNG
                 </div>
                 <div style={{ fontSize: '15px', fontWeight: '800', color: 'var(--text-bright)', marginTop: '2px', display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
                   <span>{user.bankName || user.bankCode}</span>

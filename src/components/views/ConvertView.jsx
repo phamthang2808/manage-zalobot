@@ -208,7 +208,7 @@ export default function ConvertView() {
               <i className="fa-solid fa-bolt"></i>
             </div>
             <div>
-              <h2 style={{ fontSize: '18px', fontWeight: '900', margin: 0, color: 'var(--text-bright)' }}>
+              <h2 style={{ fontSize: '18px', fontWeight: '650', margin: 0, color: 'var(--text-bright)' }}>
                 Tạo Link Tiếp Thị & Hoàn Tiền Tự Động
               </h2>
               <div style={{ fontSize: '12.5px', color: 'var(--text-muted)', marginTop: '3px' }}>

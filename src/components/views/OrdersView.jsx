@@ -121,7 +121,7 @@ export default function OrdersView() {
       
       {/* 1. GRID STAT CARDS (BÊ NGUYÊN XI TỪ ORDERLOOKUPVIEW) */}
       <div className="stats-container" style={{ width: '100%', marginBottom: '22px' }}>
-        <h3 className="stats-section-title" style={{ fontSize: '17px', fontWeight: '800', marginBottom: '14px', color: 'var(--text-bright)' }}>
+        <h3 className="stats-section-title" style={{ fontSize: '17px', fontWeight: '650', marginBottom: '14px', color: 'var(--text-bright)' }}>
           💰 Thống Kê Đơn Hàng Của Bạn: <span style={{ color: 'var(--color-primary, #ea580c)' }}>{user?.fullName || user?.email}</span>
         </h3>
 
@@ -220,7 +220,7 @@ export default function OrdersView() {
                   borderRadius: '16px',
                   border: 'none',
                   fontSize: '12px',
-                  fontWeight: sourceFilter === s.key ? '800' : '600',
+                  fontWeight: sourceFilter === s.key ? '600' : '500',
                   background: sourceFilter === s.key ? 'var(--color-primary, #ea580c)' : 'var(--bg-main)',
                   color: sourceFilter === s.key ? '#fff' : 'var(--text-muted)',
                   cursor: 'pointer',
@@ -250,7 +250,7 @@ export default function OrdersView() {
                   borderRadius: '14px',
                   border: 'none',
                   fontSize: '11.5px',
-                  fontWeight: dateFilter === d.key ? '800' : '600',
+                  fontWeight: dateFilter === d.key ? '600' : '500',
                   background: dateFilter === d.key ? 'rgba(249, 115, 22, 0.15)' : 'var(--bg-main)',
                   color: dateFilter === d.key ? 'var(--color-primary, #ea580c)' : 'var(--text-muted)',
                   cursor: 'pointer',
@@ -290,7 +290,7 @@ export default function OrdersView() {
       {/* 4. ORDERS LIST (CARD DẠNG ORDERLOOKUPVIEW) */}
       <div className="orders-container" style={{ width: '100%' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '14px' }}>
-          <h3 className="stats-section-title" style={{ fontSize: '16px', fontWeight: '800', margin: 0, color: 'var(--text-bright)' }}>
+          <h3 className="stats-section-title" style={{ fontSize: '16px', fontWeight: '650', margin: 0, color: 'var(--text-bright)' }}>
             🛒 Danh Sách Đơn Hàng ({filteredOrders.length})
           </h3>
           <button
@@ -343,7 +343,7 @@ export default function OrdersView() {
                       padding: '1px 7px',
                       borderRadius: '6px',
                       fontSize: '10.5px',
-                      fontWeight: '800',
+                      fontWeight: '600',
                       background: platBadge.bg,
                       color: platBadge.color,
                       marginLeft: '4px'

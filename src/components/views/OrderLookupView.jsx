@@ -538,26 +538,26 @@ export default function OrderLookupView({ setView: propSetView } = {}) {
         .lookup-card, .lookup-card * { box-sizing: border-box !important; }
         .lookup-header, .lookup-card, .stats-container, .orders-container, .lookup-error { position: relative; z-index: 2; }
         .lookup-header { width: 100%; max-width: 600px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; padding-bottom: 12px; border-bottom: 1px solid var(--border-color); }
-        .lookup-logo { font-size: 18px; font-weight: 800; color: var(--text-bright); display: flex; align-items: center; gap: 8px; font-family: var(--font-heading); }
+        .lookup-logo { font-size: 18px; font-weight: 650; color: var(--text-bright); display: flex; align-items: center; gap: 8px; font-family: var(--font-heading); }
         .lookup-logo img { border: none; }
         .lookup-admin-link { font-size: 13px; color: var(--text-bright); text-decoration: none; background: var(--bg-card); padding: 7px 16px; border-radius: 20px; border: 1px solid var(--border-color); font-weight: 600; transition: all 0.2s ease; cursor: pointer; }
         .lookup-admin-link:hover { background: rgba(249,115,22,0.08); color: #ea580c; border-color: rgba(249,115,22,0.4); }
         .lookup-card { width: 100%; max-width: 600px; box-sizing: border-box !important; background: var(--bg-card); border: 1px solid var(--border-color); backdrop-filter: blur(16px); border-radius: 16px; padding: 24px; box-shadow: 0 4px 20px -2px rgba(0,0,0,0.06); margin-bottom: 20px; overflow: hidden; }
-        .lookup-title { font-family: var(--font-heading); font-size: 21px; font-weight: 800; text-align: center; color: var(--text-bright); margin-bottom: 8px; display: flex; align-items: center; justify-content: center; gap: 8px; letter-spacing: -0.3px; }
+        .lookup-title { font-family: var(--font-heading); font-size: 21px; font-weight: 650; text-align: center; color: var(--text-bright); margin-bottom: 8px; display: flex; align-items: center; justify-content: center; gap: 8px; letter-spacing: -0.3px; }
         .lookup-subtitle { font-size: 13.5px; color: var(--text-muted); font-weight: 500; text-align: center; margin-bottom: 24px; }
         .lookup-tabs { display: flex; background: var(--bg-main); border: 1px solid var(--border-color); padding: 3px; border-radius: 12px; margin-bottom: 16px; gap: 2px; width: 100%; box-sizing: border-box; }
         .lookup-tab { flex: 1; min-width: 0; text-align: center; padding: 8px 4px; font-size: 12px; font-weight: 600; border-radius: 9px; cursor: pointer; background: transparent; border: none; color: var(--text-muted); transition: all 0.2s ease; white-space: nowrap; }
         @media (max-width: 480px) { .lookup-tab { font-size: 11.5px; padding: 7px 2px; } }
         .lookup-tab:hover { color: var(--text-bright); }
-        .lookup-tab.active { background: linear-gradient(135deg, #f97316, #ea580c); color: #ffffff !important; box-shadow: 0 2px 10px rgba(249,115,22,0.3); font-weight: 700; }
+        .lookup-tab.active { background: linear-gradient(135deg, #f97316, #ea580c); color: #ffffff !important; box-shadow: 0 2px 10px rgba(249,115,22,0.3); font-weight: 600; }
         .lookup-input-group { margin-bottom: 16px; width: 100% !important; max-width: 100% !important; box-sizing: border-box !important; }
-        .lookup-label { display: block; font-size: 11.5px; font-weight: 700; color: var(--text-muted); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; }
-        .lookup-input { width: 100% !important; min-width: 100% !important; max-width: 100% !important; box-sizing: border-box !important; background: var(--bg-main); border: 1px solid var(--border-color); border-radius: 12px; padding: 12px 14px; color: var(--text-bright); font-size: 14.5px; font-weight: 600; font-family: var(--font-sans); outline: none; transition: all 0.2s ease; display: block !important; -webkit-appearance: none; appearance: none; }
+        .lookup-label { display: block; font-size: 11.5px; font-weight: 600; color: var(--text-muted); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .lookup-input { width: 100% !important; min-width: 100% !important; max-width: 100% !important; box-sizing: border-box !important; background: var(--bg-main); border: 1px solid var(--border-color); border-radius: 12px; padding: 12px 14px; color: var(--text-bright); font-size: 14.5px; font-weight: 500; font-family: var(--font-sans); outline: none; transition: all 0.2s ease; display: block !important; -webkit-appearance: none; appearance: none; }
         input[type="date"].lookup-input { width: 100% !important; min-width: 100% !important; max-width: 100% !important; box-sizing: border-box !important; display: block !important; }
         .lookup-input:focus { border-color: #f97316; background: var(--bg-card); box-shadow: 0 0 0 3px rgba(249,115,22,0.18); }
         .lookup-date-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; width: 100% !important; max-width: 100% !important; box-sizing: border-box !important; }
         @media (max-width: 768px) { .lookup-date-grid { display: flex !important; flex-direction: column !important; gap: 16px !important; } }
-        .lookup-btn { width: 100%; max-width: 100% !important; box-sizing: border-box !important; background: linear-gradient(135deg, #f97316, #ea580c); color: #ffffff; font-size: 15px; font-weight: 700; font-family: var(--font-heading); border: none; border-radius: 12px; padding: 13px; cursor: pointer; transition: all 0.25s ease; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 14px rgba(249,115,22,0.28); }
+        .lookup-btn { width: 100%; max-width: 100% !important; box-sizing: border-box !important; background: linear-gradient(135deg, #f97316, #ea580c); color: #ffffff; font-size: 15px; font-weight: 600; font-family: var(--font-heading); border: none; border-radius: 12px; padding: 13px; cursor: pointer; transition: all 0.25s ease; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 14px rgba(249,115,22,0.28); }
         .lookup-btn:hover { box-shadow: 0 6px 20px rgba(249,115,22,0.4); transform: translateY(-1px); }
         .lookup-btn:disabled { background: #94a3b8; cursor: not-allowed; box-shadow: none; transform: none; }
         .recent-searches { margin-top: 16px; display: flex; flex-wrap: wrap; align-items: center; gap: 8px; font-size: 12px; color: var(--text-muted); font-weight: 500; }
@@ -594,18 +594,18 @@ export default function OrderLookupView({ setView: propSetView } = {}) {
         html[data-theme="dark"] .stat-card-item.withdrawable .stat-card-value, body.dark .stat-card-item.withdrawable .stat-card-value { color: #fb923c !important; text-shadow: 0 0 12px rgba(251, 146, 60, 0.4); }
         html[data-theme="dark"] .stat-card-item.received .stat-card-value, body.dark .stat-card-item.received .stat-card-value { color: #c084fc !important; text-shadow: 0 0 12px rgba(192, 132, 252, 0.4); }
         html[data-theme="dark"] .stat-card-item.referral .stat-card-value, body.dark .stat-card-item.referral .stat-card-value { color: #fb7185 !important; text-shadow: 0 0 12px rgba(251, 113, 133, 0.4); }
-        .stat-card-label { font-size: 11px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 4px; font-weight: 700; letter-spacing: 0.5px; }
+        .stat-card-label { font-size: 11px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 4px; font-weight: 600; letter-spacing: 0.5px; }
         .stat-card-sub { font-size: 11px; color: var(--text-muted); opacity: 0.85; margin-bottom: 6px; line-height: 1.3; }
-        .stat-card-value { font-family: var(--font-heading); font-size: 23px; font-weight: 800; color: var(--text-bright); letter-spacing: -0.3px; }
+        .stat-card-value { font-family: var(--font-heading); font-size: 23px; font-weight: 700; color: var(--text-bright); letter-spacing: -0.3px; }
         .stat-card-value.primary { color: #2563eb; }
         .orders-container { width: 100%; max-width: 600px; }
         .order-card-item { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 14px; padding: 16px; margin-bottom: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.03); }
         .order-card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; font-size: 12.5px; color: var(--text-muted); font-weight: 500; }
-        .order-id-badge { font-family: monospace; font-weight: 700; color: #ea580c; font-size: 12.5px; }
-        .order-card-title { font-size: 14px; font-weight: 600; color: var(--text-bright); margin-bottom: 10px; line-height: 1.45; overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+        .order-id-badge { font-family: monospace; font-weight: 650; color: #ea580c; font-size: 12.5px; }
+        .order-card-title { font-size: 14px; font-weight: 550; color: var(--text-bright); margin-bottom: 10px; line-height: 1.45; overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
         .order-card-commission-row { display: flex; justify-content: space-between; align-items: center; border-top: 1px dashed var(--border-color); padding-top: 10px; }
         .order-commission-label { font-size: 12.5px; color: var(--text-muted); font-weight: 500; }
-        .order-commission-val { font-family: var(--font-heading); font-size: 16px; font-weight: 800; color: #047857; }
+        .order-commission-val { font-family: var(--font-heading); font-size: 16px; font-weight: 700; color: #047857; }
         .lookup-spinner { width: 20px; height: 20px; border: 2.5px solid rgba(255,255,255,0.3); border-top-color: #fff; border-radius: 50%; animation: lookup-spin 1s linear infinite; }
         @keyframes lookup-spin { to { transform: rotate(360deg); } }
         .lookup-banner-section { position: relative; width: 100%; max-width: 600px; margin: 28px 0 8px; display: flex; flex-direction: column; align-items: center; z-index: 2; }

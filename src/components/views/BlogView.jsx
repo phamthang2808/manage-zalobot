@@ -93,7 +93,7 @@ export default function BlogView() {
           background: 'rgba(249, 115, 22, 0.15)',
           color: 'var(--color-primary, #ea580c)',
           fontSize: '12px',
-          fontWeight: '800',
+          fontWeight: '600',
           textTransform: 'uppercase',
           letterSpacing: '0.6px',
           marginBottom: '12px'
@@ -101,7 +101,7 @@ export default function BlogView() {
           <i className="fa-regular fa-newspaper"></i> 28Symues Blog &amp; Tin Tức
         </span>
 
-        <h1 style={{ fontSize: '28px', fontWeight: '900', color: 'var(--text-bright)', margin: '0 0 10px 0', lineHeight: '1.3' }}>
+        <h1 style={{ fontSize: '26px', fontWeight: '650', color: 'var(--text-bright)', margin: '0 0 10px 0', lineHeight: '1.3' }}>
           Cẩm Nang Mua Sắm &amp; Kiếm Tiền Affiliate Tự Động
         </h1>
 

@@ -92,11 +92,12 @@ export default function UserSidebar({ sidebarOpen, setSidebarOpen }) {
           <div style={{ marginBottom: '20px' }}>
             <div style={{
               fontSize: '11px',
-              fontWeight: '800',
+              fontWeight: '600',
               textTransform: 'uppercase',
-              color: 'var(--text-muted)',
+              color: 'var(--text-muted, #64748b)',
               letterSpacing: '0.8px',
-              padding: '0 12px 10px 12px'
+              padding: '0 12px 10px 12px',
+              fontFamily: 'var(--font-sans)'
             }}>
               Tiện Ích Thành Viên
             </div>
@@ -114,22 +115,23 @@ export default function UserSidebar({ sidebarOpen, setSidebarOpen }) {
                       display: 'flex',
                       alignItems: 'center',
                       gap: '12px',
-                      padding: '11px 14px',
+                      padding: '9.5px 14px',
                       borderRadius: '14px',
                       border: 'none',
                       background: isActive ? 'linear-gradient(135deg, #f97316, #ea580c)' : 'transparent',
-                      color: isActive ? '#ffffff' : 'var(--text-main)',
-                      fontWeight: isActive ? '700' : '600',
-                      fontSize: '14px',
+                      color: isActive ? '#ffffff' : 'var(--text-muted, #64748b)',
+                      fontWeight: isActive ? '600' : '500',
+                      fontSize: '13.5px',
+                      fontFamily: 'var(--font-sans)',
                       cursor: 'pointer',
                       textAlign: 'left',
-                      boxShadow: isActive ? '0 4px 14px rgba(249, 115, 22, 0.35)' : 'none',
+                      boxShadow: isActive ? '0 3px 12px rgba(249, 115, 22, 0.3)' : 'none',
                       transition: 'all 0.2s ease'
                     }}
                     onMouseEnter={e => {
                       if (!isActive) {
-                        e.currentTarget.style.background = 'var(--bg-main)';
-                        e.currentTarget.style.color = '#ea580c';
+                        e.currentTarget.style.background = 'var(--bg-main, rgba(0,0,0,0.04))';
+                        e.currentTarget.style.color = 'var(--color-primary, #ea580c)';
                         const icon = e.currentTarget.querySelector('i');
                         if (icon) icon.style.color = '#ea580c';
                       }
@@ -137,7 +139,7 @@ export default function UserSidebar({ sidebarOpen, setSidebarOpen }) {
                     onMouseLeave={e => {
                       if (!isActive) {
                         e.currentTarget.style.background = 'transparent';
-                        e.currentTarget.style.color = 'var(--text-main)';
+                        e.currentTarget.style.color = 'var(--text-muted, #64748b)';
                         const icon = e.currentTarget.querySelector('i');
                         if (icon) icon.style.color = 'var(--text-muted, #64748b)';
                       }
@@ -147,7 +149,7 @@ export default function UserSidebar({ sidebarOpen, setSidebarOpen }) {
                       width: '28px',
                       height: '28px',
                       borderRadius: '8px',
-                      background: isActive ? 'rgba(255, 255, 255, 0.2)' : 'var(--bg-main)',
+                      background: isActive ? 'rgba(255, 255, 255, 0.2)' : 'var(--bg-main, #f1f5f9)',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
@@ -204,10 +206,10 @@ export default function UserSidebar({ sidebarOpen, setSidebarOpen }) {
                 </div>
               )}
               <div style={{ minWidth: 0, textAlign: 'left' }}>
-                <div style={{ fontSize: '13.5px', fontWeight: '700', color: 'var(--text-bright)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                <div style={{ fontSize: '13.5px', fontWeight: '600', color: 'var(--text-bright)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', fontFamily: 'var(--font-sans)' }}>
                   {user?.fullName || 'Thành viên'}
                 </div>
-                <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>
+                <div style={{ fontSize: '11px', color: 'var(--text-muted, #64748b)', fontFamily: 'var(--font-sans)' }}>
                   {user?.role || 'MEMBER'}
                 </div>
               </div>
@@ -231,10 +233,11 @@ export default function UserSidebar({ sidebarOpen, setSidebarOpen }) {
               padding: '9px 12px',
               background: 'var(--bg-main)',
               border: '1px solid var(--border-color)',
-              color: 'var(--text-muted)',
+              color: 'var(--text-muted, #64748b)',
               borderRadius: '12px',
               fontSize: '13px',
-              fontWeight: '600',
+              fontWeight: '500',
+              fontFamily: 'var(--font-sans)',
               cursor: 'pointer',
               transition: 'all 0.2s'
             }}

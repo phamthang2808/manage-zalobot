@@ -186,7 +186,7 @@ export default function AccountView() {
       
       {/* HEADER TIÊU ĐỀ RÕ RÀNG */}
       <div style={{ marginBottom: '20px' }}>
-        <h1 style={{ fontSize: '22px', fontWeight: '900', color: 'var(--text-bright)', margin: 0, display: 'flex', alignItems: 'center', gap: '8px' }}>
+        <h1 style={{ fontSize: '22px', fontWeight: '650', color: 'var(--text-bright)', margin: 0, display: 'flex', alignItems: 'center', gap: '8px' }}>
           <i className="fa-solid fa-address-card" style={{ color: 'var(--color-primary, #ea580c)' }}></i>
           <span>Thông Tin Cá Nhân & Tài Khoản Của Bạn</span>
         </h1>
@@ -233,12 +233,12 @@ export default function AccountView() {
             </div>
             <div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <h2 style={{ fontSize: '18px', fontWeight: '900', margin: 0, color: 'var(--text-bright)' }}>
+                <h2 style={{ fontSize: '18px', fontWeight: '650', margin: 0, color: 'var(--text-bright)' }}>
                   {user?.fullName || 'Thành Viên'}
                 </h2>
                 <span style={{
                   fontSize: '11px',
-                  fontWeight: '800',
+                  fontWeight: '600',
                   padding: '2px 8px',
                   borderRadius: '10px',
                   background: 'rgba(249, 115, 22, 0.15)',

@@ -177,7 +177,7 @@ export default function LandingView({ inWorkspace = false }) {
       {/* Container 1: Top Hero Banner Container */}
       <section id="home" className="landing-block-container hero-showcase-container reveal-on-scroll" style={{ marginTop: '12px', marginBottom: '0px', paddingBottom: '0px', paddingTop: '10px', textAlign: 'center' }}>
 
-        <h1 className="hero-title" style={{ fontSize: '38px', fontWeight: '900', color: 'var(--text-bright)', marginBottom: '14px', lineHeight: '1.2' }}>
+        <h1 className="hero-title" style={{ fontSize: '38px', fontWeight: '700', color: 'var(--text-bright)', marginBottom: '14px', lineHeight: '1.25' }}>
           Cho Thuê Zalo Bot Affiliate - Tự Động Đổi Link Shopee, TikTok Shop & Lazada 24/7
         </h1>
         <p className="hero-subtitle" style={{ color: 'var(--text-muted)', fontSize: '16px', maxWidth: '780px', margin: '0 auto 16px', lineHeight: '1.6' }}>
@@ -205,7 +205,7 @@ export default function LandingView({ inWorkspace = false }) {
         {/* Section 2: Zig-Zag Alternating Showcase Section (Moved UP as requested) */}
         <section id="automation-features" className="landing-block-container reveal-on-scroll" style={{ padding: '0px 20px 24px', marginTop: '0px', marginBottom: '16px' }}>
           <div style={{ textAlign: 'center', marginBottom: '20px', marginTop: '0px' }}>
-            <h2 className="section-title" style={{ fontSize: '32px', fontWeight: '800', marginBottom: '12px' }}>Hệ Thống Tự Động Hóa Affiliate Toàn Diện</h2>
+            <h2 className="section-title" style={{ fontSize: '30px', fontWeight: '650', marginBottom: '12px' }}>Hệ Thống Tự Động Hóa Affiliate Toàn Diện</h2>
             <p className="section-subtitle" style={{ fontSize: '15px' }}>Giải pháp mượt mà, tối ưu nhất giúp sếp quản lý nhóm săn sale nhàn hạ 100%</p>
           </div>
 
@@ -417,7 +417,7 @@ export default function LandingView({ inWorkspace = false }) {
 
       {/* Pricing Section Container */}
       <section id="pricing" className="landing-block-container pricing-section reveal-on-scroll" style={{ textAlign: 'center' }}>
-        <h2 className="section-title" style={{ fontSize: '36px', fontWeight: '800', color: 'var(--text-bright)', marginBottom: '12px' }}>Bảng Giá Dịch Vụ</h2>
+        <h2 className="section-title" style={{ fontSize: '32px', fontWeight: '650', color: 'var(--text-bright)', marginBottom: '12px' }}>Bảng Giá Dịch Vụ</h2>
         <p className="section-subtitle" style={{ color: 'var(--text-muted)', fontSize: '16px', marginBottom: '48px' }}>Chi phí tối ưu, hiệu quả tối đa cho nhóm Zalo săn sale của bạn</p>
         <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '24px', width: '100%', margin: '0 auto' }}>
           {[

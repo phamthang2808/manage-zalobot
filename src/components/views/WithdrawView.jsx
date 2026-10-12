@@ -98,7 +98,7 @@ export default function WithdrawView() {
       
       {/* 1. THỐNG KÊ VÍ TIỀN (CHUẨN 100% Y CHANG TRANG TRA CỨU ZALO, 1 ICON DUY NHẤT) */}
       <div className="stats-container" style={{ width: '100%', marginBottom: '22px' }}>
-        <h3 className="stats-section-title" style={{ fontSize: '16.5px', fontWeight: '800', marginBottom: '14px', color: 'var(--text-bright)' }}>
+        <h3 className="stats-section-title" style={{ fontSize: '16.5px', fontWeight: '650', marginBottom: '14px', color: 'var(--text-bright)' }}>
           💰 Thống Kê Hoa Hồng của: <span style={{ color: '#ea580c' }}>{user?.fullName || user?.email}</span>
         </h3>
 
@@ -272,7 +272,7 @@ export default function WithdrawView() {
       {/* 3. LỊCH SỬ YÊU CẦU RÚT TIỀN */}
       <div className="orders-container" style={{ width: '100%' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '14px' }}>
-          <h3 className="stats-section-title" style={{ fontSize: '16px', fontWeight: '800', margin: 0, color: 'var(--text-bright)' }}>
+          <h3 className="stats-section-title" style={{ fontSize: '16px', fontWeight: '650', margin: 0, color: 'var(--text-bright)' }}>
             📜 Lịch Sử Yêu Cầu Rút Tiền ({payouts.length})
           </h3>
           <button
@@ -320,7 +320,7 @@ export default function WithdrawView() {
                     padding: '3px 10px',
                     borderRadius: '12px',
                     fontSize: '11px',
-                    fontWeight: '800',
+                    fontWeight: '600',
                     background: isDone ? 'rgba(5, 150, 105, 0.12)' : (isReject ? 'rgba(220, 38, 38, 0.12)' : 'rgba(217, 119, 6, 0.12)'),
                     color: statusColor
                   }}>
@@ -331,7 +331,7 @@ export default function WithdrawView() {
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '10px', flexWrap: 'wrap', gap: '8px' }}>
                   <div>
                     <div style={{ fontSize: '11.5px', color: 'var(--text-muted)' }}>Tài khoản nhận:</div>
-                    <div style={{ fontSize: '13.5px', fontWeight: '800', color: 'var(--text-bright)', marginTop: '2px' }}>
+                    <div style={{ fontSize: '13.5px', fontWeight: '650', color: 'var(--text-bright)', marginTop: '2px' }}>
                       {p.bankName} • <span style={{ fontFamily: 'monospace' }}>{p.accountNumber}</span>
                     </div>
                     {p.accountName && (
@@ -342,7 +342,7 @@ export default function WithdrawView() {
                   </div>
                   <div style={{ textAlign: 'right' }}>
                     <div style={{ fontSize: '11.5px', color: 'var(--text-muted)' }}>Số tiền rút:</div>
-                    <div style={{ fontSize: '18px', fontWeight: '900', color: 'var(--color-primary, #ea580c)', marginTop: '2px' }}>
+                    <div style={{ fontSize: '18px', fontWeight: '700', color: 'var(--color-primary, #ea580c)', marginTop: '2px' }}>
                       {formatMoney(p.amount)}
                     </div>
                   </div>

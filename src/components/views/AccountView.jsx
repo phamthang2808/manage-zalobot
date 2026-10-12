@@ -388,10 +388,10 @@ export default function AccountView() {
             gap: '10px'
           }}>
             <div>
-              <div style={{ fontSize: '10.5px', fontWeight: '800', color: 'var(--text-muted)', textTransform: 'uppercase' }}>
+              <div style={{ fontSize: '10.5px', fontWeight: '500', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
                 SubID Tiếp Thị
               </div>
-              <div style={{ fontSize: '14px', fontWeight: '900', color: 'var(--color-primary, #ea580c)', fontFamily: 'monospace' }}>
+              <div style={{ fontSize: '13.5px', fontWeight: '600', color: 'var(--color-primary, #ea580c)', fontFamily: 'monospace' }}>
                 {displaySubId}
               </div>
             </div>
@@ -439,7 +439,7 @@ export default function AccountView() {
             <i className="fa-solid fa-user-pen"></i>
           </div>
           <div>
-            <h3 style={{ fontSize: '16px', fontWeight: '800', margin: 0, color: 'var(--text-bright)' }}>
+            <h3 style={{ fontSize: '15.5px', fontWeight: '600', margin: 0, color: 'var(--text-bright)' }}>
               Thông Tin Hồ Sơ Cá Nhân
             </h3>
             <p style={{ margin: '2px 0 0 0', fontSize: '12.5px', color: 'var(--text-muted)' }}>
@@ -487,7 +487,7 @@ export default function AccountView() {
                   alignItems: 'center',
                   justifyContent: 'center',
                   fontSize: '18px',
-                  fontWeight: '700'
+                  fontWeight: '600'
                 }}>
                   {(user?.fullName || 'U').substring(0, 1).toUpperCase()}
                 </div>
@@ -495,7 +495,7 @@ export default function AccountView() {
             </div>
 
             <div style={{ flex: 1, minWidth: '180px' }}>
-              <div style={{ fontSize: '13px', fontWeight: '600', color: 'var(--text-bright)' }}>
+              <div style={{ fontSize: '13px', fontWeight: '500', color: 'var(--text-bright)' }}>
                 Ảnh đại diện (Avatar)
               </div>
               <div style={{ fontSize: '11.5px', color: 'var(--text-muted)', marginTop: '2px' }}>
@@ -537,7 +537,7 @@ export default function AccountView() {
             <div className="lookup-input-group" style={{ marginBottom: 0 }}>
               <label className="lookup-label" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                 <span>Họ và Tên</span>
-                <span style={{ fontSize: '11px', color: '#ea580c', fontWeight: '700', textTransform: 'none' }}>
+                <span style={{ fontSize: '11px', color: '#ea580c', fontWeight: '500', textTransform: 'none' }}>
                   🔒 Cố định theo SubID
                 </span>
               </label>
@@ -547,7 +547,7 @@ export default function AccountView() {
                 value={user?.fullName || fullName || ''}
                 disabled
                 readOnly
-                style={{ opacity: 0.85, cursor: 'not-allowed', background: 'var(--bg-main)', fontWeight: '700' }}
+                style={{ opacity: 0.85, cursor: 'not-allowed', background: 'var(--bg-main)', fontWeight: '400' }}
                 title="Họ và tên gắn liền với SubID tiếp thị của bạn, không thể tự ý thay đổi."
               />
               <span style={{ fontSize: '11.5px', color: 'var(--text-muted)', marginTop: '4px', display: 'block', lineHeight: '1.4' }}>
@@ -562,7 +562,7 @@ export default function AccountView() {
                 className="lookup-input"
                 value={user?.email || ''}
                 disabled
-                style={{ opacity: 0.7, cursor: 'not-allowed', background: 'var(--bg-main)' }}
+                style={{ opacity: 0.7, cursor: 'not-allowed', background: 'var(--bg-main)', fontWeight: '400' }}
               />
             </div>
 
@@ -574,6 +574,7 @@ export default function AccountView() {
                 value={phone}
                 onChange={e => setPhone(e.target.value)}
                 placeholder="Nhập số điện thoại..."
+                style={{ fontWeight: '400' }}
               />
             </div>
           </div>
@@ -583,7 +584,7 @@ export default function AccountView() {
               type="submit"
               disabled={savingProfile}
               className="lookup-btn"
-              style={{ flex: 1, minWidth: '220px' }}
+              style={{ flex: 1, minWidth: '220px', fontWeight: '500' }}
             >
               <i className="fa-solid fa-check"></i>
               <span>{savingProfile ? 'Đang lưu...' : 'Lưu Thông Tin Cá Nhân'}</span>
@@ -597,7 +598,8 @@ export default function AccountView() {
                 borderColor: 'rgba(220, 38, 38, 0.3)',
                 padding: '12px 20px',
                 borderRadius: '12px',
-                fontSize: '13.5px'
+                fontSize: '13.5px',
+                fontWeight: '500'
               }}
             >
               <i className="fa-solid fa-right-from-bracket"></i>
@@ -625,7 +627,7 @@ export default function AccountView() {
               <i className="fa-solid fa-link"></i>
             </div>
             <div>
-              <h3 style={{ fontSize: '16px', fontWeight: '800', margin: 0, color: 'var(--text-bright)' }}>
+              <h3 style={{ fontSize: '15.5px', fontWeight: '600', margin: 0, color: 'var(--text-bright)' }}>
                 Liên Kết Tài Khoản Zalo ID
               </h3>
               <p style={{ margin: '2px 0 0 0', fontSize: '12.5px', color: 'var(--text-muted)' }}>
@@ -641,7 +643,7 @@ export default function AccountView() {
               background: 'rgba(16, 185, 129, 0.14)',
               color: '#10b981',
               fontSize: '12px',
-              fontWeight: '800',
+              fontWeight: '600',
               display: 'inline-flex',
               alignItems: 'center',
               gap: '6px'
@@ -656,7 +658,7 @@ export default function AccountView() {
               background: 'rgba(234, 88, 12, 0.14)',
               color: 'var(--color-primary, #ea580c)',
               fontSize: '12px',
-              fontWeight: '800'
+              fontWeight: '600'
             }}>
               Chưa liên kết
             </span>
@@ -677,10 +679,10 @@ export default function AccountView() {
               gap: '12px'
             }}>
               <div>
-                <div style={{ fontSize: '11px', color: 'var(--text-muted)', fontWeight: '800', textTransform: 'uppercase' }}>
+                <div style={{ fontSize: '11px', color: 'var(--text-muted)', fontWeight: '500', textTransform: 'uppercase' }}>
                   Zalo User ID Đang Đồng Bộ:
                 </div>
-                <div style={{ fontSize: '17px', fontWeight: '900', color: '#0284c7', fontFamily: 'monospace', marginTop: '3px' }}>
+                <div style={{ fontSize: '16px', fontWeight: '600', color: '#0284c7', fontFamily: 'monospace', marginTop: '3px' }}>
                   {user.zaloId}
                 </div>
                 <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginTop: '4px' }}>
@@ -692,7 +694,7 @@ export default function AccountView() {
                 onClick={handleUnlinkZalo}
                 disabled={linkingZalo}
                 className="lookup-admin-link"
-                style={{ color: '#dc2626', borderColor: 'rgba(220, 38, 38, 0.3)', fontSize: '12.5px', padding: '8px 14px' }}
+                style={{ color: '#dc2626', borderColor: 'rgba(220, 38, 38, 0.3)', fontSize: '12.5px', padding: '8px 14px', fontWeight: '500' }}
               >
                 <i className="fa-solid fa-unlink"></i>
                 <span>Hủy liên kết</span>
@@ -710,7 +712,7 @@ export default function AccountView() {
                   placeholder="VD: 123456789012345678"
                   value={zaloIdInput}
                   onChange={e => setZaloIdInput(e.target.value)}
-                  style={{ fontFamily: 'monospace', fontWeight: '700' }}
+                  style={{ fontFamily: 'monospace', fontWeight: '400' }}
                 />
               </div>
               <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginTop: '6px', lineHeight: '1.4' }}>
@@ -722,6 +724,7 @@ export default function AccountView() {
               type="submit"
               disabled={linkingZalo || !zaloIdInput.trim()}
               className="lookup-btn"
+              style={{ fontWeight: '500' }}
             >
               <i className="fa-solid fa-link"></i>
               <span>{linkingZalo ? 'Đang liên kết...' : 'Xác Nhận Liên Kết Zalo ID'}</span>

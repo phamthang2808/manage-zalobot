@@ -4512,13 +4512,15 @@ wa-icon {
     margin: 0 !important;
   }
 
-  /* Dark mode support for mobile cards */
+  /* Dark mode support for mobile cards - seamless dark */
   html[data-theme="dark"] .table-container table tbody tr,
   html.dark .table-container table tbody tr,
   body.dark .table-container table tbody tr {
-    background: #1e293b !important;
-    border-color: #334155 !important;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+    background: transparent !important;
+    border: none !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
   }
 
   .table-container table tbody tr td {
@@ -4662,8 +4664,7 @@ body.dark {
   .data-card,
   .lookup-card,
   .stat-card-item,
-  .order-card-item,
-  .table-container table tbody tr {
+  .order-card-item {
     background: linear-gradient(145deg, #1e293b 0%, #0f172a 100%) !important;
     border: 1.5px solid rgba(255, 255, 255, 0.14) !important;
     box-shadow: 0 8px 24px -4px rgba(0, 0, 0, 0.4), 0 0 16px rgba(249, 115, 22, 0.08) !important;
@@ -4675,10 +4676,38 @@ body.dark {
   .data-card:hover,
   .lookup-card:hover,
   .stat-card-item:hover,
-  .order-card-item:hover,
-  .table-container table tbody tr:hover {
+  .order-card-item:hover {
     border-color: rgba(249, 115, 22, 0.5) !important;
     box-shadow: 0 10px 28px -4px rgba(0, 0, 0, 0.5), 0 0 22px rgba(249, 115, 22, 0.25) !important;
+  }
+
+  /* Clean Dark Mode table rows: Pure dark, seamless, no white borders or gaps */
+  html[data-theme="dark"] .table-container table tbody tr,
+  html.dark .table-container table tbody tr,
+  body.dark .table-container table tbody tr {
+    background: transparent !important;
+    border: none !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+  }
+
+  html[data-theme="dark"] .table-container table tbody tr td,
+  html.dark .table-container table tbody tr td,
+  body.dark .table-container table tbody tr td {
+    background: transparent !important;
+    border-top: none !important;
+    border-left: none !important;
+    border-right: none !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+    box-shadow: none !important;
+  }
+
+  html[data-theme="dark"] .table-container table tbody tr:hover,
+  html.dark .table-container table tbody tr:hover,
+  body.dark .table-container table tbody tr:hover {
+    background: rgba(255, 255, 255, 0.02) !important;
+    box-shadow: none !important;
   }
 
   /* Specific glowing variants for stat cards & lookup stat items */
@@ -7706,12 +7735,12 @@ body.dark .stat-card-item.received {
 
 .lookup-label {
   display: block;
-  font-size: 12px;
-  font-weight: 700;
+  font-size: 11.5px;
+  font-weight: 500;
   color: var(--text-muted, #64748b);
-  margin-bottom: 7px;
+  margin-bottom: 6px;
   text-transform: uppercase;
-  letter-spacing: 0.6px;
+  letter-spacing: 0.4px;
 }
 
 .lookup-input,

@@ -625,21 +625,30 @@ export default function OrdersTab() {
         body.dark .orders-table-container table tbody tr {
           background: transparent !important;
           border: none !important;
-          border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
           border-radius: 0 !important;
+          box-shadow: none !important;
+        }
+        html[data-theme="dark"] .orders-table-container table tbody tr td,
+        html.dark .orders-table-container table tbody tr td,
+        body.dark .orders-table-container table tbody tr td {
+          background: transparent !important;
+          border-top: none !important;
+          border-left: none !important;
+          border-right: none !important;
+          border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
           box-shadow: none !important;
         }
         html[data-theme="dark"] .orders-table-container table tbody tr:hover,
         html.dark .orders-table-container table tbody tr:hover,
         body.dark .orders-table-container table tbody tr:hover {
-          background: rgba(255, 255, 255, 0.04) !important;
+          background: rgba(255, 255, 255, 0.03) !important;
         }
         html[data-theme="dark"] .orders-table-container table thead th,
         html.dark .orders-table-container table thead th,
         body.dark .orders-table-container table thead th {
-          background: #1b1e28 !important;
+          background: #0f172a !important;
           color: #94a3b8 !important;
-          border-bottom: 1px solid rgba(255, 255, 255, 0.12) !important;
+          border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
         }
       `}} />
 

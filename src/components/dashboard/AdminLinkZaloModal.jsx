@@ -107,9 +107,9 @@ export default function AdminLinkZaloModal({ user, onClose, onSave, API_URL_ROOT
               style={{
                 padding: '9px 16px',
                 borderRadius: '10px',
-                border: '1px solid #cbd5e1',
+                border: '1px solid var(--border-color, #cbd5e1)',
                 background: 'transparent',
-                color: '#64748b',
+                color: 'var(--text-muted, #64748b)',
                 fontSize: '13px',
                 fontWeight: '700',
                 cursor: 'pointer'
@@ -124,10 +124,11 @@ export default function AdminLinkZaloModal({ user, onClose, onSave, API_URL_ROOT
                 padding: '9px 20px',
                 borderRadius: '10px',
                 border: 'none',
-                background: '#2563eb',
+                background: 'linear-gradient(135deg, #f97316 0%, #ea580c 100%)',
                 color: '#fff',
                 fontSize: '13px',
                 fontWeight: '800',
+                boxShadow: '0 2px 8px rgba(249, 115, 22, 0.25)',
                 cursor: loading ? 'not-allowed' : 'pointer'
               }}
             >

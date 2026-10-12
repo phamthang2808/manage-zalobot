@@ -13,8 +13,7 @@ export default function DashboardHeader({ activeTab, fetchData }) {
         {activeTab === 'dashboard' && 'Bảng Điều Khiển Tổng Quan'}
         {activeTab === 'users' && 'Quản Lý Thành Viên Bot Zalo'}
         {activeTab === 'web_users' && 'Quản Lý Tài Khoản Web & Liên Kết Zalo'}
-        {activeTab === 'orders' && 'Danh Sách Đơn Hàng Shopee / TikTok'}
-        {activeTab === 'lazada_orders' && 'Đối Soát & Đơn Hàng Lazada'}
+        {activeTab === 'orders' && 'Danh Sách Đơn Hàng Tiếp Thị (Shopee, TikTok, Lazada)'}
         {activeTab === 'payouts' && 'Danh Sách Yêu Cầu Rút Tiền'}
       </h1>
       <div className="admin-profile">

@@ -5,13 +5,12 @@ import OverviewTab from './OverviewTab';
 import UsersTab from './UsersTab';
 import WebUsersTab from './WebUsersTab';
 import OrdersTab from './OrdersTab';
-import LazadaOrdersTab from './LazadaOrdersTab';
 import PayoutsTab from './PayoutsTab';
 import MobileBottomNav from '../common/MobileBottomNav';
 import ToastNotification from '../common/ToastNotification';
 
 export default function AdminView() {
-  const { activeTab, loading, error, fetchData, token, user } = useApp();
+  const { activeTab, loading, error, fetchData, token, user, orders, users } = useApp();
 
   return (
     <div className="app-container">
@@ -30,7 +29,7 @@ export default function AdminView() {
               ⚠️ Lỗi: {error}. Vui lòng kiểm tra backend server đang chạy ở cổng 8080!
             </div>
           )}
-          {loading ? (
+          {loading && (!orders || orders.length === 0) && (!users || users.length === 0) ? (
             <div className="spinner-container">
               <div className="spinner"></div>
             </div>
@@ -40,7 +39,6 @@ export default function AdminView() {
               {activeTab === 'users' && <UsersTab />}
               {activeTab === 'web_users' && <WebUsersTab />}
               {activeTab === 'orders' && <OrdersTab />}
-              {activeTab === 'lazada_orders' && <LazadaOrdersTab />}
               {activeTab === 'payouts' && <PayoutsTab />}
             </>
           )}

@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useApp } from '../../context/AppContext';
 import { formatMoney, formatDateTime } from '../../utils/formatters';
 
-export default function LazadaOrdersTab() {
+export default function LazadaOrdersTab({ onCountUpdate }) {
   const { API_URL_ROOT, showToast } = useApp();
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -33,6 +33,7 @@ export default function LazadaOrdersTab() {
       const data = await res.json();
       if (res.ok) {
         setOrders(data || []);
+        if (onCountUpdate) onCountUpdate((data || []).length);
       } else {
         showToast(data.message || 'Lỗi tải đơn hàng Lazada', 'error');
       }

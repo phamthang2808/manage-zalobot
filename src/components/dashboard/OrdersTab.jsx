@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useApp } from '../../context/AppContext';
 import { formatDateTime, formatMoney } from '../../utils/formatters';
 import AssignOrderModal from './AssignOrderModal';
+import LazadaOrdersTab from './LazadaOrdersTab';
 
 // Helper to reliably parse any date into YYYY-MM-DD
 const parseDateToYMD = (val) => {
@@ -43,12 +44,23 @@ export default function OrdersTab() {
   const [syncLoading, setSyncLoading] = useState(false);
   const [activeDatePreset, setActiveDatePreset] = useState('ALL');
   const [selectedOrderForAssign, setSelectedOrderForAssign] = useState(null);
+  const [lazadaCount, setLazadaCount] = useState(null);
 
   useEffect(() => {
-    if (token && user) {
-      fetchData(token, user);
+    // Tải số lượng đơn Lazada một lần duy nhất mà không ảnh hưởng luồng chung
+    const t = sessionStorage.getItem('adminToken') || token;
+    if (t) {
+      fetch(`${API_URL_ROOT}/api/admin/orders/lazada`, {
+        headers: { 'Authorization': `Bearer ${t}` },
+        credentials: 'include'
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (Array.isArray(data)) setLazadaCount(data.length);
+      })
+      .catch(() => {});
     }
-  }, [token, user]);
+  }, [API_URL_ROOT, token]);
 
   const getPlatformName = (o) => {
     if (!o) return 'Shopee';
@@ -173,6 +185,7 @@ export default function OrdersTab() {
           {[
             { key: 'Shopee', iconClass: 'fa-solid fa-bag-shopping', label: 'Shopee', count: combinedOrders.filter(o => getPlatformName(o) === 'Shopee').length },
             { key: 'TikTok Shop', iconClass: 'fa-brands fa-tiktok', label: 'TikTok Shop', count: combinedOrders.filter(o => getPlatformName(o) === 'TikTok Shop').length },
+            { key: 'Lazada', iconClass: 'fa-solid fa-store', label: 'Lazada', count: lazadaCount },
             { key: 'ShopeeFood', iconClass: 'fa-solid fa-utensils', label: 'ShopeeFood', count: combinedOrders.filter(o => getPlatformName(o) === 'ShopeeFood').length }
           ].map(tab => {
             const isActive = platformFilter === tab.key;
@@ -187,7 +200,7 @@ export default function OrdersTab() {
                   fontSize: '13.5px',
                   fontWeight: isActive ? '700' : '600',
                   background: isActive
-                    ? (tab.key === 'TikTok Shop' ? '#000000' : tab.key === 'ShopeeFood' ? '#d0011b' : '#ee4d2d')
+                    ? (tab.key === 'TikTok Shop' ? '#000000' : tab.key === 'ShopeeFood' ? '#d0011b' : tab.key === 'Lazada' ? '#0f146d' : '#ee4d2d')
                     : 'var(--bg-secondary, rgba(0,0,0,0.04))',
                   color: isActive ? '#ffffff' : 'var(--text-muted, #64748b)',
                   boxShadow: isActive ? '0 4px 12px rgba(0,0,0,0.15)' : 'none',
@@ -201,15 +214,17 @@ export default function OrdersTab() {
               >
                 <i className={tab.iconClass} style={{ fontSize: '14px' }}></i>
                 <span>{tab.label}</span>
-                <span style={{
-                  fontSize: '11px',
-                  padding: '2px 7px',
-                  borderRadius: '12px',
-                  background: isActive ? 'rgba(255,255,255,0.25)' : 'rgba(0,0,0,0.08)',
-                  color: isActive ? '#ffffff' : 'var(--text-main, #334155)'
-                }}>
-                  {tab.count}
-                </span>
+                {tab.count !== null && tab.count !== undefined && (
+                  <span style={{
+                    fontSize: '11px',
+                    padding: '2px 7px',
+                    borderRadius: '12px',
+                    background: isActive ? 'rgba(255,255,255,0.25)' : 'rgba(0,0,0,0.08)',
+                    color: isActive ? '#ffffff' : 'var(--text-main, #334155)'
+                  }}>
+                    {tab.count}
+                  </span>
+                )}
               </button>
             );
           })}
@@ -245,8 +260,12 @@ export default function OrdersTab() {
         )}
       </div>
 
-      {/* Modern Clean Search & Quick Preset Chips Bar */}
-      <div style={{
+      {platformFilter === 'Lazada' ? (
+        <LazadaOrdersTab onCountUpdate={(cnt) => setLazadaCount(cnt)} />
+      ) : (
+        <>
+          {/* Modern Clean Search & Quick Preset Chips Bar */}
+          <div style={{
         display: 'flex',
         flexDirection: 'column',
         gap: '10px',
@@ -571,6 +590,8 @@ export default function OrdersTab() {
           onClose={() => setSelectedOrderForAssign(null)}
           onSuccess={() => fetchData(token, user)}
         />
+      )}
+        </>
       )}
     </div>
   );

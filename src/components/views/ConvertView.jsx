@@ -12,6 +12,7 @@ export default function ConvertView() {
 
   // Lịch sử chuyển đổi (tương tự Mai Lan)
   const [isHistoryOpen, setIsHistoryOpen] = useState(true);
+  const [isTipsOpen, setIsTipsOpen] = useState(true);
   const [historyFilterPlatform, setHistoryFilterPlatform] = useState('ALL');
   const [historyLinks, setHistoryLinks] = useState(() => {
     try {
@@ -324,195 +325,16 @@ export default function ConvertView() {
         </form>
       </div>
 
-      {/* MẸO VÀNG & LƯU Ý MUA SẮM ĐỂ KHÔNG BỊ RỚT ĐƠN 100% */}
-      <div className="lookup-card" style={{
-        marginBottom: '24px',
-        border: '1.5px solid rgba(249, 115, 22, 0.35)',
-        background: 'linear-gradient(135deg, rgba(249, 115, 22, 0.05) 0%, var(--bg-card) 100%)',
-        position: 'relative',
-        overflow: 'hidden'
-      }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '14px' }}>
-          <div style={{
-            width: '38px',
-            height: '38px',
-            borderRadius: '12px',
-            background: 'linear-gradient(135deg, #f97316 0%, #ea580c 100%)',
-            color: '#fff',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            fontSize: '17px',
-            boxShadow: '0 4px 12px rgba(249, 115, 22, 0.35)',
-            flexShrink: 0
-          }}>
-            <i className="fa-solid fa-lightbulb"></i>
-          </div>
-          <div>
-            <h3 style={{ fontSize: '15.5px', fontWeight: '800', margin: 0, color: 'var(--text-bright)' }}>
-              Mẹo Nhỏ Mua Sắm Để Không Bị Rớt Đơn 100%
-            </h3>
-            <p style={{ margin: '2px 0 0 0', fontSize: '12px', color: 'var(--text-muted)' }}>
-              Áp dụng đúng 4 bước dưới đây để được hệ thống sàn ghi nhận hoa hồng chuẩn xác tuyệt đối
-            </p>
-          </div>
-        </div>
-
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))',
-          gap: '12px',
-          marginTop: '10px'
-        }}>
-          {/* Bước 1: Dọn giỏ hàng */}
-          <div style={{
-            background: 'var(--bg-main)',
-            border: '1px solid var(--border-color)',
-            borderRadius: '14px',
-            padding: '14px',
-            display: 'flex',
-            gap: '12px',
-            alignItems: 'flex-start'
-          }}>
-            <div style={{
-              width: '32px',
-              height: '32px',
-              borderRadius: '10px',
-              background: 'rgba(239, 68, 68, 0.12)',
-              color: '#ef4444',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              fontSize: '14px',
-              fontWeight: '800',
-              flexShrink: 0
-            }}>
-              1
-            </div>
-            <div style={{ flex: 1 }}>
-              <div style={{ fontSize: '13.5px', fontWeight: '800', color: 'var(--text-bright)', marginBottom: '3px' }}>
-                Xóa sản phẩm cũ trong giỏ hàng
-              </div>
-              <div style={{ fontSize: '12px', color: 'var(--text-muted)', lineHeight: '1.45' }}>
-                Nếu sản phẩm đã từng cho vào giỏ từ trước, hãy <b>xóa khỏi giỏ</b> rồi mới bấm link tiếp thị để kích hoạt lại cookie hoa hồng của bạn.
-              </div>
-            </div>
-          </div>
-
-          {/* Bước 2: Bấm link vào App */}
-          <div style={{
-            background: 'var(--bg-main)',
-            border: '1px solid var(--border-color)',
-            borderRadius: '14px',
-            padding: '14px',
-            display: 'flex',
-            gap: '12px',
-            alignItems: 'flex-start'
-          }}>
-            <div style={{
-              width: '32px',
-              height: '32px',
-              borderRadius: '10px',
-              background: 'rgba(249, 115, 22, 0.14)',
-              color: '#ea580c',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              fontSize: '14px',
-              fontWeight: '800',
-              flexShrink: 0
-            }}>
-              2
-            </div>
-            <div style={{ flex: 1 }}>
-              <div style={{ fontSize: '13.5px', fontWeight: '800', color: 'var(--text-bright)', marginBottom: '3px' }}>
-                Bấm link mở thẳng ứng dụng (App)
-              </div>
-              <div style={{ fontSize: '12px', color: 'var(--text-muted)', lineHeight: '1.45' }}>
-                Bấm vào link tiếp thị vừa tạo để mở App Shopee, TikTok Shop hoặc Lazada. <i>(Mẹo: Nên bấm vào link 2 lần để đảm bảo ứng dụng bắt link chuẩn)</i>.
-              </div>
-            </div>
-          </div>
-
-          {/* Bước 3: Mua ngay không xem live */}
-          <div style={{
-            background: 'var(--bg-main)',
-            border: '1px solid var(--border-color)',
-            borderRadius: '14px',
-            padding: '14px',
-            display: 'flex',
-            gap: '12px',
-            alignItems: 'flex-start'
-          }}>
-            <div style={{
-              width: '32px',
-              height: '32px',
-              borderRadius: '10px',
-              background: 'rgba(16, 185, 129, 0.12)',
-              color: '#10b981',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              fontSize: '14px',
-              fontWeight: '800',
-              flexShrink: 0
-            }}>
-              3
-            </div>
-            <div style={{ flex: 1 }}>
-              <div style={{ fontSize: '13.5px', fontWeight: '800', color: 'var(--text-bright)', marginBottom: '3px' }}>
-                Đặt mua ngay — Không xem Live/Video
-              </div>
-              <div style={{ fontSize: '12px', color: 'var(--text-muted)', lineHeight: '1.45' }}>
-                Sau khi vào App, tiến hành đặt hàng ngay. <b>Tuyệt đối không thoát ra xem Livestream hoặc Video khác giữa chừng</b> vì sẽ bị mất mã ghi nhận đơn.
-              </div>
-            </div>
-          </div>
-
-          {/* Bước 4: Thời gian đồng bộ đơn */}
-          <div style={{
-            background: 'var(--bg-main)',
-            border: '1px solid var(--border-color)',
-            borderRadius: '14px',
-            padding: '14px',
-            display: 'flex',
-            gap: '12px',
-            alignItems: 'flex-start'
-          }}>
-            <div style={{
-              width: '32px',
-              height: '32px',
-              borderRadius: '10px',
-              background: 'rgba(2, 132, 199, 0.12)',
-              color: '#0284c7',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              fontSize: '14px',
-              fontWeight: '800',
-              flexShrink: 0
-            }}>
-              4
-            </div>
-            <div style={{ flex: 1 }}>
-              <div style={{ fontSize: '13.5px', fontWeight: '800', color: 'var(--text-bright)', marginBottom: '3px' }}>
-                Thời gian đồng bộ đơn hàng
-              </div>
-              <div style={{ fontSize: '12px', color: 'var(--text-muted)', lineHeight: '1.45' }}>
-                Đơn hàng thường hiển thị trong mục <b>Đơn Hàng Đã Đặt</b> sau 15-30 phút (Shopee/TikTok) hoặc chậm nhất vào 9H sáng hôm sau khi các sàn cập nhật đối soát.
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* 2. KẾT QUẢ VỪA CHUYỂN ĐỔI (HIỂN THỊ KÈM ẢNH SẢN PHẨM NHƯ MAI LAN) */}
+      {/* 2. KẾT QUẢ VỪA CHUYỂN ĐỔI (HIỂN THỊ KÈM ẢNH SẢN PHẨM) */}
       {results.length > 0 && (
         <div className="orders-container" style={{ width: '100%', marginBottom: '24px' }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '14px' }}>
-            <h3 className="stats-section-title" style={{ fontSize: '16px', fontWeight: '800', margin: 0, color: 'var(--text-bright)' }}>
-              🎉 Kết Quả Chuyển Đổi Mới Nhất ({results.length} link)
-            </h3>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <i className="fa-solid fa-square-check" style={{ color: 'var(--text-muted)', fontSize: '16px' }}></i>
+              <h3 className="stats-section-title" style={{ fontSize: '16px', fontWeight: '800', margin: 0, color: 'var(--text-bright)' }}>
+                Kết Quả Chuyển Đổi Mới Nhất ({results.length} link)
+              </h3>
+            </div>
             {results.length > 1 && (
               <button
                 type="button"
@@ -520,7 +342,7 @@ export default function ConvertView() {
                 className="lookup-admin-link"
                 style={{ fontSize: '12px', padding: '6px 12px', background: 'rgba(249, 115, 22, 0.12)', color: 'var(--color-primary, #ea580c)', borderColor: 'rgba(249, 115, 22, 0.3)' }}
               >
-                <i className="fa-solid fa-copy"></i>
+                <i className="fa-solid fa-copy" style={{ color: 'var(--text-muted)' }}></i>
                 <span>Copy tất cả link</span>
               </button>
             )}
@@ -530,33 +352,36 @@ export default function ConvertView() {
             const finalLink = r.affiliateUrl || r.affiliateLink || r.shortUrl || r.url || '';
             const isCopied = copiedIndex === idx;
             const meta = getPlatformMeta(r.platform);
+            const estComm = r.commission || (r.price && r.commissionRate ? Math.round((Number(r.price) * Number(r.commissionRate)) / 100) : 0);
 
             return (
               <div key={idx} className="order-card-item" style={{ padding: '16px 18px', marginBottom: '12px' }}>
-                <div className="order-card-header" style={{ marginBottom: '10px' }}>
+                <div className="order-card-header" style={{ marginBottom: '10px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '8px' }}>
                   <span style={{
                     padding: '3px 10px',
                     borderRadius: '10px',
                     fontSize: '11px',
-                    fontWeight: '800',
-                    background: meta.bg,
-                    color: meta.color,
+                    fontWeight: '700',
+                    background: 'var(--bg-main)',
+                    color: 'var(--text-muted)',
+                    border: '1px solid var(--border-color)',
                     display: 'inline-flex',
                     alignItems: 'center',
                     gap: '5px'
                   }}>
-                    <i className={meta.icon}></i>
+                    <i className={meta.icon} style={{ color: 'var(--text-muted)' }}></i>
                     <span>{meta.label}</span>
                   </span>
                   {r.commissionRate && (
-                    <span style={{ fontSize: '11.5px', color: '#059669', fontWeight: '800' }}>
-                      ✨ Hoa hồng: {r.commissionRate}%
+                    <span style={{ fontSize: '12px', color: '#059669', fontWeight: '700', display: 'inline-flex', alignItems: 'center', gap: '5px' }}>
+                      <i className="fa-solid fa-coins" style={{ color: 'var(--text-muted)', fontSize: '11px' }}></i>
+                      <span>Hoa hồng: {r.commissionRate}% {estComm > 0 ? `(~${formatMoney(estComm)} ước tính)` : ''}</span>
                     </span>
                   )}
                 </div>
 
-                {/* HÀNG HIỂN THỊ ẢNH & TÊN SẢN PHẨM (TƯƠNG TỰ MAI LAN) */}
-                <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '12px' }}>
+                {/* HÀNG HIỂN THỊ ẢNH & TÊN SẢN PHẨM */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '10px' }}>
                   {r.imageUrl ? (
                     <img
                       src={r.imageUrl}
@@ -582,7 +407,7 @@ export default function ConvertView() {
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
-                      color: meta.color,
+                      color: 'var(--text-muted)',
                       fontSize: '18px',
                       flexShrink: 0
                     }}>
@@ -612,30 +437,16 @@ export default function ConvertView() {
                   </div>
                 </div>
 
-                {/* Box Link Tiếp Thị */}
-                <div style={{
-                  background: 'var(--bg-main)',
-                  border: '1px solid var(--border-color)',
-                  borderRadius: '12px',
-                  padding: '9px 12px',
-                  marginBottom: '12px',
-                  wordBreak: 'break-all',
-                  fontFamily: 'monospace',
-                  fontSize: '12.5px',
-                  color: 'var(--text-bright)'
-                }}>
-                  {finalLink}
-                </div>
-
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '8px' }}>
+                {/* Nút Hành Động (Không hiển thị link dài) */}
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '8px', marginTop: '12px' }}>
                   <a
                     href={finalLink}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="lookup-admin-link"
-                    style={{ fontSize: '12px', padding: '6px 14px', textDecoration: 'none' }}
+                    style={{ fontSize: '12.5px', padding: '7px 16px', textDecoration: 'none' }}
                   >
-                    <i className="fa-solid fa-arrow-up-right-from-square"></i>
+                    <i className="fa-solid fa-arrow-up-right-from-square" style={{ color: 'var(--text-muted)' }}></i>
                     <span>Mở link mua sắm</span>
                   </a>
                   <button
@@ -686,8 +497,9 @@ export default function ConvertView() {
                 width: '36px',
                 height: '36px',
                 borderRadius: '10px',
-                background: 'rgba(249, 115, 22, 0.12)',
-                color: 'var(--color-primary, #ea580c)',
+                background: 'var(--bg-main)',
+                color: 'var(--text-muted)',
+                border: '1px solid var(--border-color)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
@@ -787,6 +599,7 @@ export default function ConvertView() {
                   {filteredHistory.map((item) => {
                     const finalLink = item.affiliateUrl || item.affiliateLink || item.shortUrl || item.url || '';
                     const meta = getPlatformMeta(item.platform);
+                    const itemEstComm = item.commission || (item.price && item.commissionRate ? Math.round((Number(item.price) * Number(item.commissionRate)) / 100) : 0);
 
                     return (
                       <div
@@ -805,14 +618,15 @@ export default function ConvertView() {
                             padding: '2px 8px',
                             borderRadius: '8px',
                             fontSize: '10.5px',
-                            fontWeight: '800',
-                            background: meta.bg,
-                            color: meta.color,
+                            fontWeight: '700',
+                            background: 'var(--bg-card)',
+                            color: 'var(--text-muted)',
+                            border: '1px solid var(--border-color)',
                             display: 'inline-flex',
                             alignItems: 'center',
                             gap: '4px'
                           }}>
-                            <i className={meta.icon}></i>
+                            <i className={meta.icon} style={{ color: 'var(--text-muted)' }}></i>
                             <span>{meta.label}</span>
                           </span>
 
@@ -831,8 +645,8 @@ export default function ConvertView() {
                           </div>
                         </div>
 
-                        {/* Thân Item: Ảnh + Tên sản phẩm */}
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '10px' }}>
+                        {/* Thân Item: Ảnh + Tên sản phẩm + Giá & Hoa hồng ước tính (Không hiện link dài) */}
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '8px' }}>
                           {item.imageUrl ? (
                             <img
                               src={item.imageUrl}
@@ -858,7 +672,7 @@ export default function ConvertView() {
                               display: 'flex',
                               alignItems: 'center',
                               justifyContent: 'center',
-                              color: meta.color,
+                              color: 'var(--text-muted)',
                               fontSize: '16px',
                               flexShrink: 0
                             }}>
@@ -877,13 +691,23 @@ export default function ConvertView() {
                             }}>
                               {item.productName || 'Sản phẩm mua sắm qua link tiếp thị'}
                             </div>
-                            <div style={{ fontSize: '11.5px', color: 'var(--text-muted)', fontFamily: 'monospace', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginTop: '2px' }}>
-                              {finalLink}
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '3px', flexWrap: 'wrap' }}>
+                              {item.price && (
+                                <span style={{ fontSize: '11.5px', color: 'var(--text-muted)' }}>
+                                  Giá: <b style={{ color: 'var(--text-bright)' }}>{formatMoney(item.price)}</b>
+                                </span>
+                              )}
+                              {item.commissionRate && (
+                                <span style={{ fontSize: '11.5px', color: '#059669', fontWeight: '700', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                                  <i className="fa-solid fa-coins" style={{ color: 'var(--text-muted)', fontSize: '10px' }}></i>
+                                  <span>Hoa hồng: {item.commissionRate}% {itemEstComm > 0 ? `(~${formatMoney(itemEstComm)} ước tính)` : ''}</span>
+                                </span>
+                              )}
                             </div>
                           </div>
                         </div>
 
-                        {/* Actions */}
+                        {/* Actions (Không hiển thị link dài) */}
                         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '6px' }}>
                           <a
                             href={finalLink}
@@ -892,7 +716,7 @@ export default function ConvertView() {
                             className="lookup-admin-link"
                             style={{ fontSize: '11px', padding: '4px 10px', textDecoration: 'none' }}
                           >
-                            <i className="fa-solid fa-arrow-up-right-from-square"></i>
+                            <i className="fa-solid fa-arrow-up-right-from-square" style={{ color: 'var(--text-muted)' }}></i>
                             <span>Mua ngay</span>
                           </a>
                           <button
@@ -923,6 +747,212 @@ export default function ConvertView() {
             </div>
           )}
         </div>
+      </div>
+
+      {/* 4. MẸO VÀNG & LƯU Ý MUA SẮM ĐỂ KHÔNG BỊ RỚT ĐƠN 100% (CÓ NÚT THU GỌN) */}
+      <div className="lookup-card" style={{
+        marginBottom: '24px',
+        border: '1.5px solid rgba(249, 115, 22, 0.35)',
+        background: 'linear-gradient(135deg, rgba(249, 115, 22, 0.05) 0%, var(--bg-card) 100%)',
+        position: 'relative',
+        overflow: 'hidden'
+      }}>
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          flexWrap: 'wrap',
+          gap: '10px',
+          marginBottom: isTipsOpen ? '14px' : '0'
+        }}>
+          <div 
+            onClick={() => setIsTipsOpen(!isTipsOpen)}
+            style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer', userSelect: 'none' }}
+          >
+            <div style={{
+              width: '36px',
+              height: '36px',
+              borderRadius: '10px',
+              background: 'var(--bg-main)',
+              color: 'var(--text-muted)',
+              border: '1px solid var(--border-color)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontSize: '16px',
+              flexShrink: 0
+            }}>
+              <i className="fa-solid fa-lightbulb"></i>
+            </div>
+            <div>
+              <h3 style={{ fontSize: '15.5px', fontWeight: '800', margin: 0, color: 'var(--text-bright)' }}>
+                Mẹo Nhỏ Mua Sắm Để Không Bị Rớt Đơn 100%
+              </h3>
+              <p style={{ margin: '2px 0 0 0', fontSize: '12px', color: 'var(--text-muted)' }}>
+                Áp dụng đúng 4 bước dưới đây để được hệ thống sàn ghi nhận hoa hồng chuẩn xác tuyệt đối
+              </p>
+            </div>
+          </div>
+
+          <button
+            type="button"
+            onClick={() => setIsTipsOpen(!isTipsOpen)}
+            className="lookup-admin-link"
+            style={{ fontSize: '12px', padding: '5px 12px' }}
+          >
+            <span>{isTipsOpen ? 'Thu gọn' : 'Mở ra'}</span>
+            <i className={`fa-solid fa-chevron-${isTipsOpen ? 'up' : 'down'}`} style={{ marginLeft: '4px' }}></i>
+          </button>
+        </div>
+
+        {isTipsOpen && (
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))',
+            gap: '12px',
+            marginTop: '10px'
+          }}>
+            {/* Bước 1: Dọn giỏ hàng */}
+            <div style={{
+              background: 'var(--bg-main)',
+              border: '1px solid var(--border-color)',
+              borderRadius: '14px',
+              padding: '14px',
+              display: 'flex',
+              gap: '12px',
+              alignItems: 'flex-start'
+            }}>
+              <div style={{
+                width: '32px',
+                height: '32px',
+                borderRadius: '10px',
+                background: 'rgba(239, 68, 68, 0.12)',
+                color: '#ef4444',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: '14px',
+                fontWeight: '800',
+                flexShrink: 0
+              }}>
+                1
+              </div>
+              <div style={{ flex: 1 }}>
+                <div style={{ fontSize: '13.5px', fontWeight: '800', color: 'var(--text-bright)', marginBottom: '3px' }}>
+                  Xóa sản phẩm cũ trong giỏ hàng
+                </div>
+                <div style={{ fontSize: '12px', color: 'var(--text-muted)', lineHeight: '1.45' }}>
+                  Nếu sản phẩm đã từng cho vào giỏ từ trước, hãy <b>xóa khỏi giỏ</b> rồi mới bấm link tiếp thị để kích hoạt lại cookie hoa hồng của bạn.
+                </div>
+              </div>
+            </div>
+
+            {/* Bước 2: Bấm link vào App */}
+            <div style={{
+              background: 'var(--bg-main)',
+              border: '1px solid var(--border-color)',
+              borderRadius: '14px',
+              padding: '14px',
+              display: 'flex',
+              gap: '12px',
+              alignItems: 'flex-start'
+            }}>
+              <div style={{
+                width: '32px',
+                height: '32px',
+                borderRadius: '10px',
+                background: 'rgba(249, 115, 22, 0.14)',
+                color: '#ea580c',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: '14px',
+                fontWeight: '800',
+                flexShrink: 0
+              }}>
+                2
+              </div>
+              <div style={{ flex: 1 }}>
+                <div style={{ fontSize: '13.5px', fontWeight: '800', color: 'var(--text-bright)', marginBottom: '3px' }}>
+                  Bấm link mở thẳng ứng dụng (App)
+                </div>
+                <div style={{ fontSize: '12px', color: 'var(--text-muted)', lineHeight: '1.45' }}>
+                  Bấm vào link tiếp thị vừa tạo để mở App Shopee, TikTok Shop hoặc Lazada. <i>(Mẹo: Nên bấm vào link 2 lần để đảm bảo ứng dụng bắt link chuẩn)</i>.
+                </div>
+              </div>
+            </div>
+
+            {/* Bước 3: Mua ngay không xem live */}
+            <div style={{
+              background: 'var(--bg-main)',
+              border: '1px solid var(--border-color)',
+              borderRadius: '14px',
+              padding: '14px',
+              display: 'flex',
+              gap: '12px',
+              alignItems: 'flex-start'
+            }}>
+              <div style={{
+                width: '32px',
+                height: '32px',
+                borderRadius: '10px',
+                background: 'rgba(16, 185, 129, 0.12)',
+                color: '#10b981',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: '14px',
+                fontWeight: '800',
+                flexShrink: 0
+              }}>
+                3
+              </div>
+              <div style={{ flex: 1 }}>
+                <div style={{ fontSize: '13.5px', fontWeight: '800', color: 'var(--text-bright)', marginBottom: '3px' }}>
+                  Đặt mua ngay — Không xem Live/Video
+                </div>
+                <div style={{ fontSize: '12px', color: 'var(--text-muted)', lineHeight: '1.45' }}>
+                  Sau khi vào App, tiến hành đặt hàng ngay. <b>Tuyệt đối không thoát ra xem Livestream hoặc Video khác giữa chừng</b> vì sẽ bị mất mã ghi nhận đơn.
+                </div>
+              </div>
+            </div>
+
+            {/* Bước 4: Thời gian đồng bộ đơn */}
+            <div style={{
+              background: 'var(--bg-main)',
+              border: '1px solid var(--border-color)',
+              borderRadius: '14px',
+              padding: '14px',
+              display: 'flex',
+              gap: '12px',
+              alignItems: 'flex-start'
+            }}>
+              <div style={{
+                width: '32px',
+                height: '32px',
+                borderRadius: '10px',
+                background: 'rgba(2, 132, 199, 0.12)',
+                color: '#0284c7',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: '14px',
+                fontWeight: '800',
+                flexShrink: 0
+              }}>
+                4
+              </div>
+              <div style={{ flex: 1 }}>
+                <div style={{ fontSize: '13.5px', fontWeight: '800', color: 'var(--text-bright)', marginBottom: '3px' }}>
+                  Thời gian đồng bộ đơn hàng
+                </div>
+                <div style={{ fontSize: '12px', color: 'var(--text-muted)', lineHeight: '1.45' }}>
+                  Đơn hàng thường hiển thị trong mục <b>Đơn Hàng Đã Đặt</b> sau 15-30 phút (Shopee/TikTok) hoặc chậm nhất vào 9H sáng hôm sau khi các sàn cập nhật đối soát.
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* 4. CARD HƯỚNG DẪN HOÀN TIỀN & HOA HỒNG */}

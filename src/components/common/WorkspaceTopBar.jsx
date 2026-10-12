@@ -88,8 +88,8 @@ export default function WorkspaceTopBar({ setSidebarOpen }) {
         </div>
       </div>
 
-      {/* Ở Giữa: CÁC TAB CŨ Ở THANH NGANG TRÊN (Đầy đủ Trang chủ, Chuyển đổi link, Đơn hàng, Ví & Rút tiền, Tra cứu Zalo, Bảng giá) */}
-      <nav style={{
+      {/* Ở Giữa: CÁC TAB ĐIỀU HƯỚNG TRÊN MÁY TÍNH (Trang chủ, Tra cứu, Bảng giá, Blog) - Trên Mobile đã tích hợp vào nút Menu ☰ */}
+      <nav className="hide-on-mobile" style={{
         display: 'flex',
         alignItems: 'center',
         gap: '6px',
@@ -152,8 +152,8 @@ export default function WorkspaceTopBar({ setSidebarOpen }) {
         {isAdmin && view !== 'lookup' && (
           <button
             onClick={() => { setView('admin'); sessionStorage.setItem('adminView', 'admin'); }}
+            className="hide-on-mobile"
             style={{
-              display: 'inline-flex',
               alignItems: 'center',
               gap: '6px',
               padding: '7px 14px',
@@ -170,7 +170,7 @@ export default function WorkspaceTopBar({ setSidebarOpen }) {
             }}
           >
             <i className="fa-solid fa-shield-halved"></i>
-            <span className="hide-on-mobile">Quản trị</span>
+            <span>Quản trị</span>
           </button>
         )}
 
@@ -220,6 +220,7 @@ export default function WorkspaceTopBar({ setSidebarOpen }) {
         ) : (
           <button
             onClick={() => { setView('login'); window.history.pushState({}, '', '/?view=login'); }}
+            className="hide-on-mobile"
             style={{
               padding: '7px 16px',
               borderRadius: '20px',

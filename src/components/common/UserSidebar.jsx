@@ -5,8 +5,14 @@ import ThemeToggle from './ThemeToggle';
 export default function UserSidebar({ sidebarOpen, setSidebarOpen }) {
   const { view, setView, user, isAdmin, handleLogout } = useApp();
 
-  const menuItems = [
-    { id: 'home', label: 'Về Trang chủ', icon: 'fa-solid fa-house' },
+  const mainNavTabs = [
+    { id: 'home', label: 'Trang chủ', icon: 'fa-solid fa-house' },
+    { id: 'lookup', label: 'Tra cứu đơn hàng', icon: 'fa-solid fa-magnifying-glass' },
+    { id: 'pricing', label: 'Bảng giá dịch vụ', icon: 'fa-solid fa-tags' },
+    { id: 'blog', label: 'Blog kiến thức', icon: 'fa-regular fa-newspaper' }
+  ];
+
+  const memberItems = [
     { id: 'convert', label: 'Chuyển đổi link', icon: 'fa-solid fa-link' },
     { id: 'orders', label: 'Đơn hàng đã đặt', icon: 'fa-solid fa-boxes-stacked' },
     { id: 'withdraw', label: 'Ví tiền & Rút tiền', icon: 'fa-solid fa-wallet' },
@@ -15,6 +21,20 @@ export default function UserSidebar({ sidebarOpen, setSidebarOpen }) {
   ];
 
   const handleItemClick = (itemId) => {
+    if (itemId === 'pricing') {
+      if (view !== 'home' && view !== 'landing') {
+        setView('home');
+        window.history.pushState({}, '', '/');
+        setTimeout(() => {
+          document.getElementById('pricing')?.scrollIntoView({ behavior: 'smooth' });
+        }, 300);
+      } else {
+        document.getElementById('pricing')?.scrollIntoView({ behavior: 'smooth' });
+      }
+      if (setSidebarOpen) setSidebarOpen(false);
+      return;
+    }
+
     if (itemId === 'home') {
       setView('home');
       sessionStorage.removeItem('adminView');
@@ -34,6 +54,70 @@ export default function UserSidebar({ sidebarOpen, setSidebarOpen }) {
     if (itemId === 'home') return view === 'home' || view === 'landing';
     return view === itemId;
   };
+
+  const renderNavList = (items) => (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '3px' }}>
+      {items.map(item => {
+        const isActive = isItemActive(item.id);
+        return (
+          <button
+            key={item.id}
+            type="button"
+            onClick={() => handleItemClick(item.id)}
+            style={{
+              width: '100%',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '12px',
+              padding: '9px 12px',
+              borderRadius: '12px',
+              border: 'none',
+              background: isActive ? 'linear-gradient(135deg, #f97316, #ea580c)' : 'transparent',
+              color: isActive ? '#ffffff' : 'var(--text-secondary, #64748b)',
+              fontWeight: isActive ? '500' : '400',
+              fontSize: '13.5px',
+              fontFamily: 'var(--font-sans)',
+              cursor: 'pointer',
+              textAlign: 'left',
+              boxShadow: isActive ? '0 3px 12px rgba(249, 115, 22, 0.25)' : 'none',
+              transition: 'all 0.2s ease'
+            }}
+            onMouseEnter={e => {
+              if (!isActive) {
+                e.currentTarget.style.background = 'var(--bg-main, rgba(148, 163, 184, 0.08))';
+                e.currentTarget.style.color = 'var(--color-primary, #ea580c)';
+                const icon = e.currentTarget.querySelector('i');
+                if (icon) icon.style.color = '#ea580c';
+              }
+            }}
+            onMouseLeave={e => {
+              if (!isActive) {
+                e.currentTarget.style.background = 'transparent';
+                e.currentTarget.style.color = 'var(--text-secondary, #64748b)';
+                const icon = e.currentTarget.querySelector('i');
+                if (icon) icon.style.color = 'var(--text-muted, #94a3b8)';
+              }
+            }}
+          >
+            <i 
+              className={item.icon} 
+              style={{ 
+                color: isActive ? '#ffffff' : 'var(--text-muted, #94a3b8)', 
+                fontSize: '14px',
+                width: '20px',
+                textAlign: 'center',
+                flexShrink: 0,
+                transition: 'color 0.2s ease'
+              }}
+            />
+            <span style={{ flex: 1, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+              {item.label}
+            </span>
+          </button>
+        );
+      })}
+    </div>
+  );
 
   return (
     <>
@@ -68,101 +152,64 @@ export default function UserSidebar({ sidebarOpen, setSidebarOpen }) {
         boxShadow: '4px 0 24px rgba(0, 0, 0, 0.04)',
         transition: 'transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
       }}>
-        <div>
+        <div style={{ overflowY: 'auto', paddingRight: '2px', flex: 1 }}>
           {/* Logo Brand Header */}
           <div 
-            onClick={() => { setView('home'); window.history.pushState({}, '', '/'); }}
+            onClick={() => { setView('home'); window.history.pushState({}, '', '/'); if (setSidebarOpen) setSidebarOpen(false); }}
             style={{
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
               cursor: 'pointer',
-              marginBottom: '24px',
+              marginBottom: '20px',
               padding: '6px 0'
             }}
           >
             <img 
               src="/28symueslogomanin.png?v=7" 
               alt="28Symues Logo" 
-              style={{ height: '62px', width: 'auto', maxWidth: '100%', objectFit: 'contain' }} 
+              style={{ height: '58px', width: 'auto', maxWidth: '100%', objectFit: 'contain' }} 
             />
           </div>
 
-          {/* Section: MENU TIỆN ÍCH */}
-          <div style={{ marginBottom: '20px' }}>
+          {/* Section 1: MENU ĐIỀU HƯỚNG CHÍNH (Trang chủ, Tra cứu, Bảng giá, Blog) */}
+          <div style={{ marginBottom: '18px' }}>
             <div style={{
               fontSize: '11px',
-              fontWeight: '500',
+              fontWeight: '600',
               textTransform: 'uppercase',
               color: 'var(--text-muted, #94a3b8)',
               letterSpacing: '0.6px',
-              padding: '0 12px 10px 12px',
-              fontFamily: 'var(--font-sans)'
+              padding: '0 12px 8px 12px',
+              fontFamily: 'var(--font-sans)',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px'
             }}>
-              Tiện Ích Thành Viên
+              <i className="fa-solid fa-compass" style={{ fontSize: '11px' }}></i>
+              <span>Khám Phá & Tra Cứu</span>
             </div>
+            {renderNavList(mainNavTabs)}
+          </div>
 
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '3px' }}>
-              {menuItems.map(item => {
-                const isActive = isItemActive(item.id);
-                return (
-                  <button
-                    key={item.id}
-                    type="button"
-                    onClick={() => handleItemClick(item.id)}
-                    style={{
-                      width: '100%',
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '12px',
-                      padding: '9px 12px',
-                      borderRadius: '12px',
-                      border: 'none',
-                      background: isActive ? 'linear-gradient(135deg, #f97316, #ea580c)' : 'transparent',
-                      color: isActive ? '#ffffff' : 'var(--text-secondary, #64748b)',
-                      fontWeight: isActive ? '500' : '400',
-                      fontSize: '13.5px',
-                      fontFamily: 'var(--font-sans)',
-                      cursor: 'pointer',
-                      textAlign: 'left',
-                      boxShadow: isActive ? '0 3px 12px rgba(249, 115, 22, 0.25)' : 'none',
-                      transition: 'all 0.2s ease'
-                    }}
-                    onMouseEnter={e => {
-                      if (!isActive) {
-                        e.currentTarget.style.background = 'var(--bg-main, rgba(148, 163, 184, 0.08))';
-                        e.currentTarget.style.color = 'var(--color-primary, #ea580c)';
-                        const icon = e.currentTarget.querySelector('i');
-                        if (icon) icon.style.color = '#ea580c';
-                      }
-                    }}
-                    onMouseLeave={e => {
-                      if (!isActive) {
-                        e.currentTarget.style.background = 'transparent';
-                        e.currentTarget.style.color = 'var(--text-secondary, #64748b)';
-                        const icon = e.currentTarget.querySelector('i');
-                        if (icon) icon.style.color = 'var(--text-muted, #94a3b8)';
-                      }
-                    }}
-                  >
-                    <i 
-                      className={item.icon} 
-                      style={{ 
-                        color: isActive ? '#ffffff' : 'var(--text-muted, #94a3b8)', 
-                        fontSize: '14px',
-                        width: '20px',
-                        textAlign: 'center',
-                        flexShrink: 0,
-                        transition: 'color 0.2s ease'
-                      }}
-                    />
-                    <span style={{ flex: 1, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                      {item.label}
-                    </span>
-                  </button>
-                );
-              })}
+          {/* Section 2: TIỆN ÍCH THÀNH VIÊN */}
+          <div style={{ marginBottom: '16px' }}>
+            <div style={{
+              fontSize: '11px',
+              fontWeight: '600',
+              textTransform: 'uppercase',
+              color: 'var(--text-muted, #94a3b8)',
+              letterSpacing: '0.6px',
+              padding: '0 12px 8px 12px',
+              fontFamily: 'var(--font-sans)',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px'
+            }}>
+              <i className="fa-solid fa-user-gear" style={{ fontSize: '11px' }}></i>
+              <span>Tiện Ích Thành Viên</span>
             </div>
+            {renderNavList(memberItems)}
           </div>
         </div>
 

@@ -243,9 +243,18 @@ export default function AccountView() {
       
       {/* HEADER TIÊU ĐỀ RÕ RÀNG */}
       <div style={{ marginBottom: '20px' }}>
-        <h1 style={{ fontSize: '22px', fontWeight: '650', color: 'var(--text-bright)', margin: 0, display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <i className="fa-solid fa-address-card" style={{ color: 'var(--text-muted)' }}></i>
-          <span>Thông Tin Cá Nhân & Tài Khoản Của Bạn</span>
+        <h1 style={{
+          fontSize: 'clamp(18px, 4.5vw, 22px)',
+          fontWeight: '650',
+          color: 'var(--text-bright)',
+          margin: 0,
+          display: 'flex',
+          alignItems: 'flex-start',
+          gap: '10px',
+          lineHeight: '1.3'
+        }}>
+          <i className="fa-solid fa-address-card" style={{ color: 'var(--text-muted)', fontSize: '20px', marginTop: '3px', flexShrink: 0 }}></i>
+          <span>Thông Tin Cá Nhân & Tài Khoản</span>
         </h1>
         <p style={{ margin: '4px 0 0 0', fontSize: '13px', color: 'var(--text-muted)' }}>
           Quản lý thông tin hồ sơ, số điện thoại, liên kết Zalo ID và tài khoản ngân hàng nhận tiền hoa hồng
@@ -573,11 +582,11 @@ export default function AccountView() {
           width: '100%',
           maxWidth: '560px',
           aspectRatio: '1.586 / 1',
-          minHeight: '260px',
+          minHeight: '210px',
           margin: '0 auto 22px auto',
           background: 'linear-gradient(135deg, #091322 0%, #0f172a 45%, #1e293b 100%)',
           borderRadius: '18px',
-          padding: '22px 28px',
+          padding: 'clamp(16px, 4.5vw, 22px) clamp(18px, 5vw, 28px)',
           color: '#ffffff',
           position: 'relative',
           overflow: 'hidden',

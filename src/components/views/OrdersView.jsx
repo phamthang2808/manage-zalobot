@@ -44,15 +44,6 @@ export default function OrdersView() {
     fetchOrders();
   }, []);
 
-  // Tính toán số liệu thống kê
-  const totalComm = useMemo(() => orders.reduce((acc, o) => acc + (o.commission || 0), 0), [orders]);
-  const pendingOrders = useMemo(() => orders.filter(o => o.status === 'Chờ xử lý' || o.status === 'Đang xử lý' || o.status === 'Chờ duyệt'), [orders]);
-  const completedOrders = useMemo(() => orders.filter(o => o.status === 'Hoàn thành' || o.status === 'Đã chốt'), [orders]);
-  const pendingComm = useMemo(() => pendingOrders.reduce((acc, o) => acc + (o.commission || 0), 0), [pendingOrders]);
-  const completedComm = useMemo(() => completedOrders.reduce((acc, o) => acc + (o.commission || 0), 0), [completedOrders]);
-  const withdrawableComm = walletStats?.withdrawable || user?.balance || 0;
-  const receivedComm = walletStats?.received || 0;
-
   // Lọc đơn hàng
   const filteredOrders = useMemo(() => {
     return orders.filter((o) => {
@@ -119,179 +110,188 @@ export default function OrdersView() {
   return (
     <div className="orders-view-wrapper" style={{ width: '100%', maxWidth: '820px', margin: '0 auto' }}>
       
-      {/* 1. GRID STAT CARDS (BÊ NGUYÊN XI TỪ ORDERLOOKUPVIEW) */}
-      <div className="stats-container" style={{ width: '100%', marginBottom: '22px' }}>
-        <h3 className="stats-section-title" style={{ fontSize: '17px', fontWeight: '650', marginBottom: '14px', color: 'var(--text-bright)' }}>
-          💰 Thống Kê Đơn Hàng Của Bạn: <span style={{ color: 'var(--color-primary, #ea580c)' }}>{user?.fullName || user?.email}</span>
-        </h3>
-
-        <div className="stats-cards-grid">
-          {/* Thẻ 0: Tổng tích lũy */}
-          <div className="stat-card-item total" style={{ gridColumn: '1 / -1' }}>
-            <span className="stat-card-label">🌟 TỔNG TÍCH LŨY (HOÀN THÀNH + CHỜ)</span>
-            <span className="stat-card-sub">(Toàn bộ hoa hồng từ đơn Web & Bot Zalo của bạn)</span>
-            <span className="stat-card-value primary">
-              {formatMoney(totalComm)}
-            </span>
+      {/* BỘ LỌC DẠNG ẤN VÀO CHỌN (GỌN GÀNG, TIỆN LỢI TRÊN ĐIỆN THOẠI) & TÌM KIẾM */}
+      <div className="lookup-card" style={{ padding: '16px', marginBottom: '20px' }}>
+        {/* Row 1: 3 Dropdown Bộ Lọc: Sàn, Nguồn, Thời Gian */}
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))',
+          gap: '10px',
+          marginBottom: '12px'
+        }}>
+          {/* 1. Sàn Mua Sắm */}
+          <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
+            <i
+              className="fa-solid fa-store"
+              style={{
+                position: 'absolute',
+                left: '12px',
+                color: 'var(--text-muted)',
+                fontSize: '13px',
+                pointerEvents: 'none'
+              }}
+            ></i>
+            <select
+              value={platformFilter}
+              onChange={e => { setPlatformFilter(e.target.value); setCurrentPage(1); }}
+              style={{
+                width: '100%',
+                padding: '9px 28px 9px 34px',
+                borderRadius: '10px',
+                border: '1px solid var(--border-color)',
+                background: 'var(--bg-main)',
+                color: 'var(--text-bright)',
+                fontSize: '13px',
+                fontWeight: '500',
+                outline: 'none',
+                cursor: 'pointer',
+                appearance: 'none',
+                WebkitAppearance: 'none'
+              }}
+            >
+              <option value="ALL">Sàn: Tất cả ({orders.length})</option>
+              <option value="Shopee">Sàn: Shopee</option>
+              <option value="TikTok">Sàn: TikTok Shop</option>
+              <option value="Lazada">Sàn: Lazada</option>
+              <option value="ShopeeFood">Sàn: ShopeeFood</option>
+            </select>
+            <i
+              className="fa-solid fa-chevron-down"
+              style={{
+                position: 'absolute',
+                right: '12px',
+                color: 'var(--text-muted)',
+                fontSize: '11px',
+                pointerEvents: 'none'
+              }}
+            ></i>
           </div>
 
-          {/* Thẻ 1: Đang xử lý */}
-          <div className="stat-card-item pending">
-            <span className="stat-card-label">⏳ ĐANG XỬ LÝ ({pendingOrders.length} ĐƠN)</span>
-            <span className="stat-card-sub">(Đang vận chuyển hoặc đang đối soát)</span>
-            <span className="stat-card-value">
-              {formatMoney(pendingComm)}
-            </span>
+          {/* 2. Nguồn Đơn */}
+          <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
+            <i
+              className="fa-solid fa-globe"
+              style={{
+                position: 'absolute',
+                left: '12px',
+                color: 'var(--text-muted)',
+                fontSize: '13px',
+                pointerEvents: 'none'
+              }}
+            ></i>
+            <select
+              value={sourceFilter}
+              onChange={e => { setSourceFilter(e.target.value); setCurrentPage(1); }}
+              style={{
+                width: '100%',
+                padding: '9px 28px 9px 34px',
+                borderRadius: '10px',
+                border: '1px solid var(--border-color)',
+                background: 'var(--bg-main)',
+                color: 'var(--text-bright)',
+                fontSize: '13px',
+                fontWeight: '500',
+                outline: 'none',
+                cursor: 'pointer',
+                appearance: 'none',
+                WebkitAppearance: 'none'
+              }}
+            >
+              <option value="ALL">Nguồn: Tất cả</option>
+              <option value="WEB">Nguồn: Đơn Web</option>
+              <option value="ZALO">Nguồn: Đơn Zalo</option>
+            </select>
+            <i
+              className="fa-solid fa-chevron-down"
+              style={{
+                position: 'absolute',
+                right: '12px',
+                color: 'var(--text-muted)',
+                fontSize: '11px',
+                pointerEvents: 'none'
+              }}
+            ></i>
           </div>
 
-          {/* Thẻ 2: Đã hoàn thành */}
-          <div className="stat-card-item completed">
-            <span className="stat-card-label">📦 ĐÃ HOÀN THÀNH ({completedOrders.length} ĐƠN)</span>
-            <span className="stat-card-sub">(Đơn giao thành công và chốt hoa hồng)</span>
-            <span className="stat-card-value">
-              {formatMoney(completedComm)}
-            </span>
-          </div>
-
-          {/* Thẻ 3: Số dư khả dụng */}
-          <div className="stat-card-item withdrawable">
-            <span className="stat-card-label">💵 SỐ DƯ KHẢ DỤNG</span>
-            <span className="stat-card-sub">(Đủ điều kiện rút ngay về tài khoản)</span>
-            <span className="stat-card-value">
-              {formatMoney(withdrawableComm)}
-            </span>
-          </div>
-
-          {/* Thẻ 4: Đã rút thành công */}
-          <div className="stat-card-item received">
-            <span className="stat-card-label">🏦 ĐÃ RÚT THÀNH CÔNG</span>
-            <span className="stat-card-sub">(Tổng tiền đã giải ngân về ngân hàng)</span>
-            <span className="stat-card-value">
-              {formatMoney(receivedComm)}
-            </span>
+          {/* 3. Khoảng Thời Gian */}
+          <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
+            <i
+              className="fa-solid fa-calendar-days"
+              style={{
+                position: 'absolute',
+                left: '12px',
+                color: 'var(--text-muted)',
+                fontSize: '13px',
+                pointerEvents: 'none'
+              }}
+            ></i>
+            <select
+              value={dateFilter}
+              onChange={e => { setDateFilter(e.target.value); setCurrentPage(1); }}
+              style={{
+                width: '100%',
+                padding: '9px 28px 9px 34px',
+                borderRadius: '10px',
+                border: '1px solid var(--border-color)',
+                background: 'var(--bg-main)',
+                color: 'var(--text-bright)',
+                fontSize: '13px',
+                fontWeight: '500',
+                outline: 'none',
+                cursor: 'pointer',
+                appearance: 'none',
+                WebkitAppearance: 'none'
+              }}
+            >
+              <option value="ALL">Thời gian: Tất cả</option>
+              <option value="TODAY">Thời gian: Hôm nay</option>
+              <option value="YESTERDAY">Thời gian: Hôm qua</option>
+              <option value="7DAYS">Thời gian: 7 ngày qua</option>
+              <option value="THIS_MONTH">Thời gian: Tháng này</option>
+            </select>
+            <i
+              className="fa-solid fa-chevron-down"
+              style={{
+                position: 'absolute',
+                right: '12px',
+                color: 'var(--text-muted)',
+                fontSize: '11px',
+                pointerEvents: 'none'
+              }}
+            ></i>
           </div>
         </div>
-      </div>
 
-
-
-      {/* 3. BỘ LỌC SÀN, NGUỒN & TÌM KIẾM CHUẨN */}
-      <div className="lookup-card" style={{ padding: '18px 20px', marginBottom: '20px' }}>
-        {/* Row 1: Platform Filter Tabs */}
-        <div style={{ marginBottom: '14px' }}>
-          <div style={{ fontSize: '11px', fontWeight: '800', color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: '8px', letterSpacing: '0.5px' }}>
-            Sàn Mua Sắm:
-          </div>
-          <div className="lookup-tabs" style={{ marginBottom: 0 }}>
-            <button className={`lookup-tab ${platformFilter === 'ALL' ? 'active' : ''}`} onClick={() => { setPlatformFilter('ALL'); setCurrentPage(1); }}>
-              Tất cả ({orders.length})
-            </button>
-            <button className={`lookup-tab ${platformFilter === 'Shopee' ? 'active' : ''}`} onClick={() => { setPlatformFilter('Shopee'); setCurrentPage(1); }}>
-              Shopee
-            </button>
-            <button className={`lookup-tab ${platformFilter === 'TikTok' ? 'active' : ''}`} onClick={() => { setPlatformFilter('TikTok'); setCurrentPage(1); }}>
-              TikTok Shop
-            </button>
-            <button className={`lookup-tab ${platformFilter === 'Lazada' ? 'active' : ''}`} onClick={() => { setPlatformFilter('Lazada'); setCurrentPage(1); }}>
-              Lazada
-            </button>
-            <button className={`lookup-tab ${platformFilter === 'ShopeeFood' ? 'active' : ''}`} onClick={() => { setPlatformFilter('ShopeeFood'); setCurrentPage(1); }}>
-              ShopeeFood
-            </button>
-          </div>
-        </div>
-
-        {/* Row 2: Source Filter & Quick Date Filter */}
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '10px', marginBottom: '14px' }}>
-          {/* Nguồn Đơn: Web vs Zalo */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-            <span style={{ fontSize: '12px', fontWeight: '700', color: 'var(--text-muted)' }}>Nguồn:</span>
-            {[
-              { key: 'ALL', label: 'Tất cả' },
-              { key: 'WEB', label: '🌐 Đơn Web' },
-              { key: 'ZALO', label: '💬 Đơn Zalo' },
-            ].map(s => (
-              <button
-                key={s.key}
-                type="button"
-                onClick={() => { setSourceFilter(s.key); setCurrentPage(1); }}
-                style={{
-                  padding: '5px 12px',
-                  borderRadius: '16px',
-                  border: 'none',
-                  fontSize: '12px',
-                  fontWeight: sourceFilter === s.key ? '600' : '500',
-                  background: sourceFilter === s.key ? 'var(--color-primary, #ea580c)' : 'var(--bg-main)',
-                  color: sourceFilter === s.key ? '#fff' : 'var(--text-muted)',
-                  cursor: 'pointer',
-                  transition: 'all 0.2s ease'
-                }}
-              >
-                {s.label}
-              </button>
-            ))}
-          </div>
-
-          {/* Quick Date Chips */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap' }}>
-            {[
-              { key: 'ALL', label: 'Tất cả ngày' },
-              { key: 'TODAY', label: 'Hôm nay' },
-              { key: 'YESTERDAY', label: 'Hôm qua' },
-              { key: '7DAYS', label: '7 ngày qua' },
-              { key: 'THIS_MONTH', label: 'Tháng này' }
-            ].map(d => (
-              <button
-                key={d.key}
-                type="button"
-                onClick={() => { setDateFilter(d.key); setCurrentPage(1); }}
-                style={{
-                  padding: '5px 10px',
-                  borderRadius: '14px',
-                  border: 'none',
-                  fontSize: '11.5px',
-                  fontWeight: dateFilter === d.key ? '600' : '500',
-                  background: dateFilter === d.key ? 'rgba(249, 115, 22, 0.15)' : 'var(--bg-main)',
-                  color: dateFilter === d.key ? 'var(--color-primary, #ea580c)' : 'var(--text-muted)',
-                  cursor: 'pointer',
-                  transition: 'all 0.2s ease'
-                }}
-              >
-                {d.label}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* Row 3: Keyword Search Input */}
+        {/* Row 2: Ô tìm kiếm từ khóa với icon màu xám */}
         <div style={{ position: 'relative', width: '100%' }}>
           <i
             className="fa-solid fa-magnifying-glass"
             style={{
               position: 'absolute',
-              left: '14px',
+              left: '12px',
               top: '50%',
               transform: 'translateY(-50%)',
-              color: 'var(--color-primary, #ea580c)',
+              color: 'var(--text-muted)',
               fontSize: '13px'
             }}
           ></i>
           <input
             type="text"
             className="lookup-input"
-            style={{ width: '100%', padding: '10px 14px 10px 38px', fontSize: '13.5px', borderRadius: '12px', margin: 0 }}
-            placeholder="Lọc nhanh theo tên sản phẩm, mã đơn hàng, SubID..."
+            style={{ width: '100%', padding: '9px 12px 9px 34px', fontSize: '13px', borderRadius: '10px', margin: 0, fontWeight: '400' }}
+            placeholder="Tìm theo tên sản phẩm, mã đơn, SubID..."
             value={searchQuery}
             onChange={e => { setSearchQuery(e.target.value); setCurrentPage(1); }}
           />
         </div>
       </div>
 
-      {/* 4. ORDERS LIST (CARD DẠNG ORDERLOOKUPVIEW) */}
+      {/* 2. ORDERS LIST (CARD DẠNG ORDERLOOKUPVIEW) */}
       <div className="orders-container" style={{ width: '100%' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '14px' }}>
-          <h3 className="stats-section-title" style={{ fontSize: '16px', fontWeight: '650', margin: 0, color: 'var(--text-bright)' }}>
-            🛒 Danh Sách Đơn Hàng ({filteredOrders.length})
+          <h3 className="stats-section-title" style={{ fontSize: '16px', fontWeight: '650', margin: 0, color: 'var(--text-bright)', display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <i className="fa-solid fa-boxes-stacked" style={{ color: 'var(--text-muted)', fontSize: '15px' }}></i>
+            <span>Danh Sách Đơn Hàng ({filteredOrders.length})</span>
           </h3>
           <button
             type="button"
@@ -299,16 +299,19 @@ export default function OrdersView() {
             style={{
               background: 'none',
               border: 'none',
-              color: 'var(--color-primary, #ea580c)',
+              color: 'var(--text-muted)',
               fontSize: '12.5px',
-              fontWeight: '700',
+              fontWeight: '600',
               cursor: 'pointer',
               display: 'inline-flex',
               alignItems: 'center',
-              gap: '6px'
+              gap: '6px',
+              transition: 'color 0.2s ease'
             }}
+            onMouseEnter={e => e.currentTarget.style.color = 'var(--color-primary, #ea580c)'}
+            onMouseLeave={e => e.currentTarget.style.color = 'var(--text-muted)'}
           >
-            <i className="fa-solid fa-rotate-right"></i>
+            <i className="fa-solid fa-rotate-right" style={{ color: 'var(--text-muted)' }}></i>
             <span>Làm mới</span>
           </button>
         </div>

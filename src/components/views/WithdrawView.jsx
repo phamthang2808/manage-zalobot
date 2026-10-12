@@ -132,7 +132,7 @@ export default function WithdrawView() {
 
           {/* Thẻ 3: Số dư khả dụng */}
           <div className="stat-card-item withdrawable">
-            <span className="stat-card-label">💵 SỐ DƯ KHẢ DỤNG</span>
+            <span className="stat-card-label">💵 RÚT TIỀN HOA HỒNG KHẢ DỤNG</span>
             <span className="stat-card-sub">(Sau 3 ngày • Đã trừ thuế & chia 8-2)</span>
             <span className="stat-card-value">
               {formatMoney(wallet.balance)}
@@ -150,44 +150,112 @@ export default function WithdrawView() {
         </div>
       </div>
 
-      {/* 2. KHUNG RÚT TIỀN (CHUẨN 100% Y CHANG TRANG TRA CỨU ZALO) */}
+      {/* 2. KHUNG RÚT TIỀN */}
       <div className="lookup-card" style={{ marginBottom: '24px' }}>
-        <h3 className="stats-section-title" style={{ margin: 0, marginBottom: '12px' }}>
-          💸 Rút Tiền Hoa Hồng Khả Dụng
-        </h3>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '8px', marginBottom: '12px' }}>
+          <h3 className="stats-section-title" style={{ margin: 0, fontSize: '16px', fontWeight: '700', color: 'var(--text-bright)', display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <i className="fa-solid fa-money-bill-transfer" style={{ color: 'var(--text-muted)' }}></i>
+            <span>Rút Tiền Hoa Hồng Khả Dụng</span>
+          </h3>
+          <span style={{
+            fontSize: '13.5px',
+            fontWeight: '700',
+            color: '#059669',
+            background: 'rgba(5, 150, 105, 0.1)',
+            border: '1px solid rgba(5, 150, 105, 0.25)',
+            padding: '4px 12px',
+            borderRadius: '16px',
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '6px'
+          }}>
+            <i className="fa-solid fa-circle-check" style={{ fontSize: '11px' }}></i>
+            <span>Khả dụng: {formatMoney(wallet.balance)}</span>
+          </span>
+        </div>
+
         <p style={{ fontSize: '12.5px', color: 'var(--text-muted)', margin: '0 0 16px 0', lineHeight: '1.4' }}>
           Tiền hoa hồng của đơn Shopee &quot;Hoàn thành&quot; sau 3 ngày (đơn TikTok rút ngay khi hoàn thành) sẽ tự động chuyển xuống ví khả dụng để rút (đã trừ thuế và chia 8-2). Lệnh rút tiền sau khi gửi sẽ được duyệt thủ công bởi Trưởng nhóm Phạm Thắng.
         </p>
 
-        {/* Thông tin tài khoản thụ hưởng nhận tiền */}
+        {/* Thông tin tài khoản thụ hưởng nhận tiền (Giao diện thẻ ngân hàng Fintech hiện đại) */}
         {user?.accountNumber ? (
           <div style={{
             background: 'var(--bg-main)',
-            border: '1px solid var(--border-color)',
-            borderRadius: '12px',
-            padding: '12px 16px',
+            border: '1.5px solid var(--border-color)',
+            borderRadius: '14px',
+            padding: '14px 18px',
             marginBottom: '16px',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
             flexWrap: 'wrap',
-            gap: '8px'
+            gap: '12px',
+            boxShadow: '0 2px 8px rgba(0, 0, 0, 0.02)'
           }}>
-            <div>
-              <div style={{ fontSize: '10.5px', fontWeight: '800', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-                NGÂN HÀNG THỤ HƯỞNG
+            <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+              <div style={{
+                width: '44px',
+                height: '44px',
+                borderRadius: '12px',
+                background: 'rgba(2, 132, 199, 0.12)',
+                color: '#0284c7',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: '18px',
+                border: '1px solid rgba(2, 132, 199, 0.25)',
+                flexShrink: 0
+              }}>
+                <i className="fa-solid fa-building-columns"></i>
               </div>
-              <div style={{ fontSize: '14px', fontWeight: '800', color: 'var(--text-bright)', marginTop: '2px' }}>
-                {user.bankName || user.bankCode} • <span style={{ fontFamily: 'monospace', color: '#0284c7' }}>{user.accountNumber}</span> • {user.accountName || user.fullName}
+              <div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                  <span style={{ fontSize: '11px', fontWeight: '800', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                    NGÂN HÀNG THỤ HƯỞNG
+                  </span>
+                  <span style={{
+                    fontSize: '10px',
+                    fontWeight: '700',
+                    color: '#059669',
+                    background: 'rgba(5, 150, 105, 0.1)',
+                    padding: '1px 6px',
+                    borderRadius: '4px'
+                  }}>
+                    ✓ ĐÃ THIẾT LẬP
+                  </span>
+                </div>
+                <div style={{ fontSize: '15px', fontWeight: '800', color: 'var(--text-bright)', marginTop: '2px', display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+                  <span>{user.bankName || user.bankCode}</span>
+                  <span style={{ color: 'var(--border-color)' }}>•</span>
+                  <span style={{ fontFamily: 'monospace', color: '#0284c7', letterSpacing: '1px' }}>{user.accountNumber}</span>
+                  {(user.accountName || user.fullName) && (
+                    <>
+                      <span style={{ color: 'var(--border-color)' }}>•</span>
+                      <span style={{ textTransform: 'uppercase', fontSize: '13px', color: 'var(--text-bright)', fontWeight: '700' }}>
+                        {user.accountName || user.fullName}
+                      </span>
+                    </>
+                  )}
+                </div>
               </div>
             </div>
             <button
               type="button"
               onClick={() => setView('account')}
               className="lookup-admin-link"
-              style={{ fontSize: '11.5px', padding: '5px 12px' }}
+              style={{
+                fontSize: '12px',
+                padding: '6px 14px',
+                borderRadius: '8px',
+                gap: '6px',
+                color: 'var(--text-muted)',
+                borderColor: 'var(--border-color)'
+              }}
+              onMouseEnter={e => { e.currentTarget.style.color = '#ea580c'; e.currentTarget.style.borderColor = '#ea580c'; }}
+              onMouseLeave={e => { e.currentTarget.style.color = 'var(--text-muted)'; e.currentTarget.style.borderColor = 'var(--border-color)'; }}
             >
-              <i className="fa-solid fa-pen-to-square"></i>
+              <i className="fa-regular fa-pen-to-square"></i>
               <span>Thay đổi</span>
             </button>
           </div>

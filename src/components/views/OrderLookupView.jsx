@@ -671,11 +671,14 @@ export default function OrderLookupView({ setView: propSetView } = {}) {
           {/* Bank Info */}
           <div className="lookup-card" style={{ marginBottom: '24px' }}>
             <h3 className="stats-section-title bank-card-header-title">
-              <span className="bank-card-title-text">🏦 Thông Tin Ngân Hàng Nhận Tiền</span>
+              <span className="bank-card-title-text" style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
+                <i className="fa-solid fa-building-columns" style={{ color: 'var(--text-muted)', fontSize: '15px' }}></i>
+                <span>Thông Tin Ngân Hàng Nhận Tiền</span>
+              </span>
               {!isEditingBank && (
                 <button className="bank-edit-btn"
                   onClick={handleStartEditBank}>
-                  <i className="fa-regular fa-pen-to-square" style={{ fontSize: '12px' }}></i>
+                  <i className="fa-regular fa-pen-to-square" style={{ fontSize: '12px', color: 'var(--text-muted)' }}></i>
                   <span>{lookupResult.bankName ? 'Sửa' : 'Cài đặt'}</span>
                 </button>
               )}
@@ -701,14 +704,65 @@ export default function OrderLookupView({ setView: propSetView } = {}) {
                 </div>
               </div>
             ) : (
-              <div className="bank-info-display-box">
-                <div>
-                  <span className="bank-info-label">NGÂN HÀNG</span>
-                  <strong className="bank-info-val">{lookupResult.bankName || 'Chưa thiết lập'}</strong>
-                </div>
-                <div>
-                  <span className="bank-info-label">SỐ TÀI KHOẢN</span>
-                  <strong className="bank-info-val">{maskAccountNumber(lookupResult.accountNumber)}</strong>
+              <div style={{
+                marginTop: '14px',
+                background: 'var(--bg-main)',
+                border: '1.5px solid var(--border-color)',
+                borderRadius: '14px',
+                padding: '14px 18px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                flexWrap: 'wrap',
+                gap: '12px',
+                boxShadow: '0 2px 8px rgba(0, 0, 0, 0.02)'
+              }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+                  <div style={{
+                    width: '44px',
+                    height: '44px',
+                    borderRadius: '12px',
+                    background: 'rgba(2, 132, 199, 0.12)',
+                    color: '#0284c7',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: '18px',
+                    border: '1px solid rgba(2, 132, 199, 0.25)',
+                    flexShrink: 0
+                  }}>
+                    <i className="fa-solid fa-building-columns"></i>
+                  </div>
+                  <div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                      <span style={{ fontSize: '11px', fontWeight: '800', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                        NGÂN HÀNG THỤ HƯỞNG
+                      </span>
+                      {lookupResult.bankName && (
+                        <span style={{
+                          fontSize: '10px',
+                          fontWeight: '700',
+                          color: '#059669',
+                          background: 'rgba(5, 150, 105, 0.1)',
+                          padding: '1px 6px',
+                          borderRadius: '4px'
+                        }}>
+                          ✓ ĐÃ THIẾT LẬP
+                        </span>
+                      )}
+                    </div>
+                    <div style={{ fontSize: '15px', fontWeight: '800', color: 'var(--text-bright)', marginTop: '2px', display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+                      <span>{lookupResult.bankName || 'Chưa thiết lập'}</span>
+                      {lookupResult.accountNumber && (
+                        <>
+                          <span style={{ color: 'var(--border-color)' }}>•</span>
+                          <span style={{ fontFamily: 'monospace', color: '#0284c7', letterSpacing: '1px' }}>
+                            {maskAccountNumber(lookupResult.accountNumber)}
+                          </span>
+                        </>
+                      )}
+                    </div>
+                  </div>
                 </div>
               </div>
             )}
@@ -1004,7 +1058,7 @@ export default function OrderLookupView({ setView: propSetView } = {}) {
               </div>
 
               <div className="stat-card-item withdrawable">
-                <span className="stat-card-label">💵 SỐ DƯ KHẢ DỤNG</span>
+                <span className="stat-card-label">💵 RÚT TIỀN HOA HỒNG KHẢ DỤNG</span>
                 {lookupResult.wallet.pendingWithdrawn > 0 ? (
                   <span className="stat-card-sub" style={{ color: '#d97706', fontWeight: 'bold' }}>
                     (Đang chờ duyệt rút: {formatMoney(lookupResult.wallet.pendingWithdrawn)})

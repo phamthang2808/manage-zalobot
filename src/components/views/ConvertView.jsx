@@ -902,15 +902,14 @@ export default function ConvertView() {
       }}>
         <div style={{
           display: 'flex',
-          alignItems: 'center',
+          alignItems: 'flex-start',
           justifyContent: 'space-between',
-          flexWrap: 'wrap',
-          gap: '10px',
+          gap: '12px',
           marginBottom: isTipsOpen ? '14px' : '0'
         }}>
           <div 
             onClick={() => setIsTipsOpen(!isTipsOpen)}
-            style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer', userSelect: 'none' }}
+            style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', cursor: 'pointer', userSelect: 'none', flex: '1 1 auto', minWidth: 0 }}
           >
             <div style={{
               width: '36px',
@@ -941,7 +940,7 @@ export default function ConvertView() {
             type="button"
             onClick={() => setIsTipsOpen(!isTipsOpen)}
             className="lookup-admin-link"
-            style={{ fontSize: '12px', padding: '5px 12px' }}
+            style={{ fontSize: '12px', padding: '5px 12px', flexShrink: 0, marginLeft: 'auto', alignSelf: 'flex-start', whiteSpace: 'nowrap' }}
           >
             <span>{isTipsOpen ? 'Thu gọn' : 'Mở ra'}</span>
             <i className={`fa-solid fa-chevron-${isTipsOpen ? 'up' : 'down'}`} style={{ marginLeft: '4px' }}></i>

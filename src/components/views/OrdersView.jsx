@@ -445,23 +445,19 @@ export default function OrdersView() {
                     </span>
                   </div>
 
-                  {/* Hàng 2: Mã đơn hàng (trái) + Nút Copy (phải) */}
+                  {/* Hàng 2: Mã đơn hàng sát nút Copy (Không có viền xám bao bọc) */}
                   <div style={{
-                    display: 'flex',
+                    display: 'inline-flex',
                     alignItems: 'center',
-                    justifyContent: 'space-between',
-                    width: '100%',
-                    background: 'var(--bg-main, rgba(0, 0, 0, 0.03))',
-                    padding: '5px 10px',
-                    borderRadius: '8px',
-                    border: '1px solid var(--border-color, rgba(0, 0, 0, 0.06))'
+                    gap: '6px',
+                    fontSize: '12.5px',
+                    color: 'var(--text-muted)'
                   }}>
-                    <span style={{ fontSize: '12px', color: 'var(--text-muted)', display: 'inline-flex', alignItems: 'center', minWidth: 0, overflow: 'hidden' }}>
-                      Mã đơn: <span className="order-id-badge" style={{ marginLeft: '6px', wordBreak: 'break-all', fontSize: '12.5px' }}>{o.orderId}</span>
+                    <span>Mã đơn:</span>
+                    <span className="order-id-badge" style={{ fontWeight: '700', color: '#ea580c', fontSize: '13px', wordBreak: 'break-all' }}>
+                      {o.orderId}
                     </span>
-                    <div style={{ flexShrink: 0, marginLeft: '8px' }}>
-                      <CopyButton text={o.orderId} title="Copy mã đơn hàng" toastMessage={`Đã copy mã đơn: ${o.orderId}`} />
-                    </div>
+                    <CopyButton text={o.orderId} title="Copy mã đơn hàng" toastMessage={`Đã copy mã đơn: ${o.orderId}`} />
                   </div>
                 </div>
 
@@ -469,30 +465,24 @@ export default function OrdersView() {
                   {o.productName || 'Sản phẩm mua sắm qua link tiếp thị'}
                 </div>
 
-                <div className="order-card-commission-row" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px', flexWrap: 'wrap', marginTop: '10px' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
+                {/* Hàng Trạng thái & Hoa hồng: Cùng 1 hàng, không rớt dòng */}
+                <div className="order-card-commission-row" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px', flexWrap: 'nowrap', marginTop: '10px' }}>
+                  <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', minWidth: 0, overflow: 'hidden', whiteSpace: 'nowrap' }}>
                     <span style={{
                       color: statusColor,
                       fontSize: '12.5px',
-                      fontWeight: '700'
+                      fontWeight: '700',
+                      textOverflow: 'ellipsis',
+                      overflow: 'hidden'
                     }}>
-                      {o.status || 'Chờ xử lý'}
+                      {isCompleted ? (
+                        <span>Hoàn thành{o.completeTime ? ` • ${formatDateTime(o.completeTime)}` : ''}</span>
+                      ) : (
+                        <span>{o.status || 'Chờ xử lý'}</span>
+                      )}
                     </span>
-                    {isCompleted && o.completeTime && (
-                      <span className="order-complete-time-text" style={{
-                        fontSize: '12px',
-                        color: '#059669',
-                        fontWeight: '600',
-                        display: 'inline-flex',
-                        alignItems: 'center',
-                        gap: '4px'
-                      }} title="Thời điểm đơn hàng hoàn thành">
-                        <i className="fa-regular fa-calendar-check" style={{ fontSize: '11px' }}></i>
-                        <span>Hoàn thành: {formatDateTime(o.completeTime)}</span>
-                      </span>
-                    )}
                   </div>
-                  <div style={{ textAlign: 'right', marginLeft: 'auto', flexShrink: 0 }}>
+                  <div style={{ textAlign: 'right', marginLeft: 'auto', flexShrink: 0, whiteSpace: 'nowrap' }}>
                     <span className="order-commission-label">Hoa hồng: </span>
                     <span className="order-commission-val">{formatMoney(o.commission || 0)}</span>
                   </div>

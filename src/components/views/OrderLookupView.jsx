@@ -1149,64 +1149,89 @@ export default function OrderLookupView({ setView: propSetView } = {}) {
             {searchedOrders.length === 0 ? (
               <div className="lookup-card" style={{ padding: '24px', textAlign: 'center', color: 'var(--text-muted)' }}>📭 Không tìm thấy đơn hàng nào khớp điều kiện lọc.</div>
             ) : (
-              searchedOrders.map(o => (
-                <div key={o.id} className="order-card-item">
-                  <div className="order-card-header" style={{ display: 'flex', flexDirection: 'column', gap: '8px', alignItems: 'stretch' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
-                      <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', fontSize: '12px', color: 'var(--text-muted)' }}>
-                        <i className="fa-regular fa-calendar" style={{ fontSize: '12px' }}></i>
-                        <span>{formatDateTime(o.purchaseTime)}</span>
-                      </span>
-                    </div>
-                    <div style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'space-between',
-                      width: '100%',
-                      background: 'var(--bg-main, rgba(0, 0, 0, 0.03))',
-                      padding: '5px 10px',
-                      borderRadius: '8px',
-                      border: '1px solid var(--border-color, rgba(0, 0, 0, 0.06))'
-                    }}>
-                      <span style={{ fontSize: '12px', color: 'var(--text-muted)', display: 'inline-flex', alignItems: 'center', minWidth: 0, overflow: 'hidden' }}>
-                        Mã đơn: <span className="order-id-badge" style={{ marginLeft: '6px', wordBreak: 'break-all', fontSize: '12.5px' }}>{o.orderId}</span>
-                      </span>
-                      <div style={{ flexShrink: 0, marginLeft: '8px' }}>
+              searchedOrders.map(o => {
+                const isCompleted = o.status === 'Hoàn thành' || o.status === 'Đã chốt';
+                const statusColor = isCompleted ? '#059669' : (o.status === 'Hủy' || o.status === 'Đã hủy') ? '#dc2626' : '#ea580c';
+                
+                const plat = (o.platform || '').toUpperCase();
+                const platBadge = (plat === 'TIKTOK' || plat.includes('TIKTOK'))
+                  ? { label: 'TikTok', color: '#0f172a', bg: 'rgba(15, 23, 42, 0.08)', className: 'platform-badge-tiktok' }
+                  : (plat === 'LAZADA' || plat.includes('LAZADA'))
+                  ? { label: 'Lazada', color: '#0284c7', bg: 'rgba(2, 132, 199, 0.12)', border: '1px solid rgba(2, 132, 199, 0.25)' }
+                  : (plat === 'SHOPEE_FOOD' || plat.includes('FOOD'))
+                  ? { label: 'ShopeeFood', color: '#dc2626', bg: 'rgba(220, 38, 38, 0.12)', border: '1px solid rgba(220, 38, 38, 0.25)' }
+                  : { label: 'Shopee', color: '#ea580c', bg: 'rgba(234, 88, 12, 0.12)', border: '1px solid rgba(234, 88, 12, 0.25)' };
+
+                return (
+                  <div key={o.id} className="order-card-item">
+                    <div className="order-card-header" style={{ display: 'flex', flexDirection: 'column', gap: '8px', alignItems: 'stretch' }}>
+                      {/* Hàng 1: Thời gian mua hàng (trái) + Badge Nền tảng (phải) */}
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
+                        <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', fontSize: '12px', color: 'var(--text-muted)' }}>
+                          <i className="fa-regular fa-calendar" style={{ fontSize: '12px' }}></i>
+                          <span>{formatDateTime(o.purchaseTime)}</span>
+                        </span>
+                        <span
+                          className={platBadge.className || ''}
+                          style={{
+                            padding: '2px 8px',
+                            borderRadius: '6px',
+                            fontSize: '11px',
+                            fontWeight: '700',
+                            background: platBadge.bg,
+                            color: platBadge.color,
+                            border: platBadge.border,
+                            display: 'inline-flex',
+                            alignItems: 'center'
+                          }}
+                        >
+                          {platBadge.label}
+                        </span>
+                      </div>
+
+                      {/* Hàng 2: Mã đơn hàng sát nút Copy (Không có viền xám bao bọc) */}
+                      <div style={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '6px',
+                        fontSize: '12.5px',
+                        color: 'var(--text-muted)'
+                      }}>
+                        <span>Mã đơn:</span>
+                        <span className="order-id-badge" style={{ fontWeight: '700', color: '#ea580c', fontSize: '13px', wordBreak: 'break-all' }}>
+                          {o.orderId}
+                        </span>
                         <CopyButton text={o.orderId} title="Copy mã đơn hàng" toastMessage={`Đã copy mã đơn: ${o.orderId}`} />
                       </div>
                     </div>
-                  </div>
-                  <div className="order-card-title" title={o.productName}>{o.productName}</div>
-                  <div className="order-card-commission-row" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px', flexWrap: 'wrap', marginTop: '10px' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
-                      <span style={{
-                        color: o.status === 'Hoàn thành' ? '#059669' : (o.status === 'Hủy' || o.status === 'Đã hủy') ? '#dc2626' : '#ea580c',
-                        fontSize: '12.5px',
-                        fontWeight: '700'
-                      }}>
-                        {o.status}
-                      </span>
-                      {o.status === 'Hoàn thành' && o.completeTime && (
-                        <span className="order-complete-time-text" style={{
-                          fontSize: '12px',
-                          color: '#059669',
-                          fontWeight: '600',
-                          display: 'inline-flex',
-                          alignItems: 'center',
-                          gap: '4px'
-                        }} title="Thời điểm đơn hàng hoàn thành">
-                          <i className="fa-regular fa-calendar-check" style={{ fontSize: '11px' }}></i>
-                          <span>Hoàn thành: {formatDateTime(o.completeTime)}</span>
+
+                    <div className="order-card-title" title={o.productName}>{o.productName}</div>
+
+                    {/* Hàng Trạng thái & Hoa hồng: Cùng 1 hàng, không rớt dòng */}
+                    <div className="order-card-commission-row" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px', flexWrap: 'nowrap', marginTop: '10px' }}>
+                      <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', minWidth: 0, overflow: 'hidden', whiteSpace: 'nowrap' }}>
+                        <span style={{
+                          color: statusColor,
+                          fontSize: '12.5px',
+                          fontWeight: '700',
+                          textOverflow: 'ellipsis',
+                          overflow: 'hidden'
+                        }}>
+                          {isCompleted ? (
+                            <span>Hoàn thành{o.completeTime ? ` • ${formatDateTime(o.completeTime)}` : ''}</span>
+                          ) : (
+                            <span>{o.status || 'Chờ xử lý'}</span>
+                          )}
                         </span>
-                      )}
-                    </div>
-                    <div style={{ textAlign: 'right', marginLeft: 'auto', flexShrink: 0 }}>
-                      <span className="order-commission-label">Hoa hồng: </span>
-                      <span className="order-commission-val">{formatMoney(o.commission)}</span>
+                      </div>
+                      <div style={{ textAlign: 'right', marginLeft: 'auto', flexShrink: 0, whiteSpace: 'nowrap' }}>
+                        <span className="order-commission-label">Hoa hồng: </span>
+                        <span className="order-commission-val">{formatMoney(o.commission)}</span>
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))
+                );
+              })
             )}
           </div>
         </>

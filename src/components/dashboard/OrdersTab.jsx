@@ -2,6 +2,7 @@ import { useState, useRef } from 'react';
 import { useApp } from '../../context/AppContext';
 import { formatDateTime, formatMoney } from '../../utils/formatters';
 import AssignOrderModal from './AssignOrderModal';
+import CopyButton from '../common/CopyButton';
 
 // Helper to reliably parse any date into YYYY-MM-DD
 const parseDateToYMD = (val) => {
@@ -657,8 +658,8 @@ export default function OrdersTab() {
         <table className="orders-table" style={{ tableLayout: 'fixed', width: '100%', minWidth: '880px' }}>
           <thead>
             <tr>
-              <th style={{ width: '185px' }}>Mã đơn & Thời gian</th>
-              <th style={{ width: '230px' }}>Tên sản phẩm</th>
+              <th style={{ width: '195px' }}>Mã đơn & Thời gian</th>
+              <th style={{ width: '225px' }}>Tên sản phẩm</th>
               <th style={{ width: '210px' }}>Thành viên / Zalo ID</th>
               <th style={{ width: '160px', textAlign: 'right' }}>Tích lũy hoa hồng</th>
               <th style={{ width: '120px', textAlign: 'center' }}>Trạng thái</th>
@@ -684,15 +685,35 @@ export default function OrdersTab() {
                   <tr key={o.id}>
                     <td data-label="Mã đơn & Thời gian">
                       <div style={{ display: 'flex', flexDirection: 'column', gap: '3px' }}>
-                        <code className="order-id-code" style={{ fontSize: '12px', fontWeight: '700' }}>{o.orderId}</code>
-                        <div style={{ fontSize: '11px', color: 'var(--text-muted)' }} title={`Đặt mua: ${formatDateTime(o.purchaseTime || o.orderDate || o.createdTime)}`}>
-                          Đặt: {formatDateTime(o.purchaseTime || o.orderDate || o.createdTime)}
+                        <div style={{ display: 'inline-flex', alignItems: 'center', gap: '5px' }}>
+                          <span style={{
+                            fontFamily: 'monospace',
+                            fontSize: '12.5px',
+                            fontWeight: '750',
+                            color: '#ea580c',
+                            letterSpacing: '0.2px'
+                          }}>
+                            {o.orderId}
+                          </span>
+                          <CopyButton text={o.orderId} title="Copy mã đơn hàng" toastMessage={`Đã copy mã đơn: ${o.orderId}`} />
                         </div>
-                        {(isCompleted || o.completeTime) && o.completeTime && (
-                          <div style={{ fontSize: '11px', color: '#10b981', fontWeight: '700' }} title={`Hoàn thành: ${formatDateTime(o.completeTime)}`}>
-                            Xong: {formatDateTime(o.completeTime)}
-                          </div>
-                        )}
+                        <div style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '6px',
+                          flexWrap: 'wrap',
+                          fontSize: '11px',
+                          marginTop: '1px'
+                        }}>
+                          <span style={{ color: 'var(--text-muted)', whiteSpace: 'nowrap' }} title={`Đặt mua: ${formatDateTime(o.purchaseTime || o.orderDate || o.createdTime)}`}>
+                            Đặt: {formatDateTime(o.purchaseTime || o.orderDate || o.createdTime)}
+                          </span>
+                          {(isCompleted || o.completeTime) && o.completeTime && (
+                            <span style={{ color: '#059669', fontWeight: '700', whiteSpace: 'nowrap' }} title={`Hoàn thành: ${formatDateTime(o.completeTime)}`}>
+                              • Xong: {formatDateTime(o.completeTime)}
+                            </span>
+                          )}
+                        </div>
                       </div>
                     </td>
                     <td data-label="Sản phẩm" title={o.productName}>

@@ -233,6 +233,26 @@ export default function BlogView() {
     } catch (e) {}
   };
 
+  // Tải bài viết từ Database Backend
+  const fetchPostsFromBackend = async () => {
+    try {
+      const res = await fetch(`${API_URL_ROOT}/api/public/posts`);
+      const json = await res.json();
+      if (res.ok && json.data && json.data.length > 0) {
+        setPosts(json.data);
+        try {
+          localStorage.setItem('web_blog_posts', JSON.stringify(json.data));
+        } catch (e) {}
+      }
+    } catch (err) {
+      console.warn('[Blog] Không thể lấy bài viết từ server, dùng cache offline:', err);
+    }
+  };
+
+  useEffect(() => {
+    fetchPostsFromBackend();
+  }, []);
+
   // Xử lý tạo danh mục mới
   const handleCreateCategory = (e) => {
     e.preventDefault();
@@ -250,8 +270,10 @@ export default function BlogView() {
     showToast(`Đã tạo danh mục "${createdCat.label}" thành công! 🎉`, 'success');
   };
 
-  // Xử lý tạo bài viết mới
-  const handleCreatePost = (e) => {
+  const [savingPost, setSavingPost] = useState(false);
+
+  // Xử lý tạo bài viết mới & Lưu vào Database
+  const handleCreatePost = async (e) => {
     e.preventDefault();
     if (!newTitle.trim()) {
       showToast('Vui lòng nhập tiêu đề bài viết!', 'warning');
@@ -266,35 +288,72 @@ export default function BlogView() {
       return;
     }
 
-    const createdPost = {
-      id: 'post_' + Date.now(),
-      title: newTitle.trim(),
-      slug: newTitle.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-'),
-      category: newCategory,
-      date: new Date().toLocaleDateString('vi-VN'),
-      readTime: newReadTime || '3 phút đọc',
-      author: newAuthor.trim() || user?.fullName || 'Phạm Thắng',
-      image: newImage.trim() || SUGGESTED_IMAGES[0].url,
-      summary: newSummary.trim(),
-      content: newContent.trim()
-    };
+    setSavingPost(true);
+    try {
+      const postPayload = {
+        title: newTitle.trim(),
+        slug: newTitle.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-'),
+        category: newCategory,
+        date: new Date().toLocaleDateString('vi-VN'),
+        readTime: newReadTime || '3 phút đọc',
+        author: newAuthor.trim() || user?.fullName || 'Phạm Thắng',
+        image: newImage.trim() || SUGGESTED_IMAGES[0].url,
+        summary: newSummary.trim(),
+        content: newContent.trim()
+      };
 
-    const updated = [createdPost, ...posts];
-    savePosts(updated);
-    setIsCreatePostOpen(false);
-    setNewTitle('');
-    setNewSummary('');
-    setNewContent('');
-    showToast('Đăng bài viết mới thành công! 🎉', 'success');
+      const res = await fetch(`${API_URL_ROOT}/api/public/posts`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(postPayload)
+      });
+      const json = await res.json();
+
+      if (res.ok && json.data) {
+        const savedPost = json.data;
+        const updated = [savedPost, ...posts.filter(p => p.id !== savedPost.id)];
+        savePosts(updated);
+        setIsCreatePostOpen(false);
+        setNewTitle('');
+        setNewSummary('');
+        setNewContent('');
+        showToast('Đăng bài viết mới và lưu vào cơ sở dữ liệu thành công! 🎉', 'success');
+      } else {
+        // Fallback lưu local nếu server lỗi
+        const fallbackPost = { ...postPayload, id: 'post_' + Date.now() };
+        savePosts([fallbackPost, ...posts]);
+        setIsCreatePostOpen(false);
+        setNewTitle('');
+        setNewSummary('');
+        setNewContent('');
+        showToast('Đã lưu bài viết vào bộ nhớ trình duyệt!', 'info');
+      }
+    } catch (err) {
+      showToast('Lỗi khi gửi bài viết: ' + err.message, 'error');
+    } finally {
+      setSavingPost(false);
+    }
   };
 
-  // Xử lý xóa bài viết
-  const handleDeletePost = (e, postId) => {
+  // Xử lý xóa bài viết khỏi Database
+  const handleDeletePost = async (e, postId) => {
     e.stopPropagation();
     if (window.confirm('Bạn có chắc chắn muốn xóa bài viết này không?')) {
-      const updated = posts.filter(p => p.id !== postId);
+      try {
+        const res = await fetch(`${API_URL_ROOT}/api/public/posts/${postId}`, {
+          method: 'DELETE'
+        });
+        if (res.ok) {
+          showToast('Đã xóa bài viết khỏi cơ sở dữ liệu thành công!', 'success');
+        }
+      } catch (err) {
+        console.warn('Lỗi gọi API xóa bài viết:', err);
+      }
+      const updated = posts.filter(p => p.id !== postId && String(p.id) !== String(postId));
       savePosts(updated);
-      if (readingPost?.id === postId) setReadingPost(null);
+      if (readingPost?.id === postId || String(readingPost?.id) === String(postId)) {
+        setReadingPost(null);
+      }
       showToast('Đã xóa bài viết!', 'info');
     }
   };
@@ -774,18 +833,42 @@ export default function BlogView() {
             </div>
 
             {/* Footer */}
-            <div style={{ padding: '16px 28px', borderTop: '1px solid var(--border-color)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'var(--bg-main)' }}>
-              <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
-                Chia sẻ cẩm nang này tới bạn bè cùng nhóm Zalo
-              </span>
-              <button
-                type="button"
-                onClick={() => setReadingPost(null)}
-                className="lookup-btn"
-                style={{ width: 'auto', padding: '8px 20px', fontSize: '13px' }}
-              >
-                Đóng
-              </button>
+            <div style={{ padding: '16px 28px', borderTop: '1px solid var(--border-color)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px', background: 'var(--bg-main)' }}>
+              {isAdmin && (
+                <button
+                  type="button"
+                  onClick={(e) => handleDeletePost(e, readingPost.id)}
+                  style={{
+                    background: 'rgba(239, 68, 68, 0.1)',
+                    border: '1px solid rgba(239, 68, 68, 0.3)',
+                    color: '#ef4444',
+                    borderRadius: '10px',
+                    padding: '8px 16px',
+                    fontSize: '12.5px',
+                    fontWeight: '700',
+                    cursor: 'pointer',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '6px',
+                    transition: 'all 0.2s ease'
+                  }}
+                  onMouseEnter={e => e.currentTarget.style.background = '#ef4444' && (e.currentTarget.style.color = '#ffffff')}
+                  onMouseLeave={e => (e.currentTarget.style.background = 'rgba(239, 68, 68, 0.1)') && (e.currentTarget.style.color = '#ef4444')}
+                >
+                  <i className="fa-solid fa-trash-can"></i>
+                  <span>Xóa bài viết này</span>
+                </button>
+              )}
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginLeft: 'auto' }}>
+                <button
+                  type="button"
+                  onClick={() => setReadingPost(null)}
+                  className="lookup-btn"
+                  style={{ width: 'auto', padding: '8px 20px', fontSize: '13px' }}
+                >
+                  Đóng
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -1046,11 +1129,21 @@ export default function BlogView() {
                 </button>
                 <button
                   type="submit"
+                  disabled={savingPost}
                   className="lookup-btn"
                   style={{ width: 'auto', padding: '10px 24px', fontSize: '13.5px' }}
                 >
-                  <i className="fa-solid fa-paper-plane"></i>
-                  <span>Đăng Bài Viết Ngay</span>
+                  {savingPost ? (
+                    <>
+                      <div className="lookup-spinner"></div>
+                      <span>Đang lưu vào Database...</span>
+                    </>
+                  ) : (
+                    <>
+                      <i className="fa-solid fa-paper-plane"></i>
+                      <span>Đăng Bài Viết Ngay</span>
+                    </>
+                  )}
                 </button>
               </div>
             </form>

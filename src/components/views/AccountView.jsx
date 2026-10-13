@@ -3,6 +3,21 @@ import { useApp } from '../../context/AppContext';
 import { BANKS } from '../../utils/banks';
 import { formatMoney } from '../../utils/formatters';
 
+// Helper format ngày tham gia chống Invalid Date
+const formatJoinDate = (raw) => {
+  if (!raw) return '';
+  if (Array.isArray(raw) && raw.length >= 3) {
+    return `${String(raw[2]).padStart(2, '0')}/${String(raw[1]).padStart(2, '0')}/${raw[0]}`;
+  }
+  if (typeof raw === 'string') {
+    if (raw === 'Invalid Date' || !raw.trim()) return '';
+    if (/^\d{1,2}\/\d{1,2}\/\d{4}$/.test(raw.trim())) return raw.trim();
+    const d = new Date(raw);
+    if (!isNaN(d.getTime())) return d.toLocaleDateString('vi-VN');
+  }
+  return '';
+};
+
 export default function AccountView() {
   const { API_URL_ROOT, user, setUser, showToast, handleLogout } = useApp();
 
@@ -618,8 +633,9 @@ export default function AccountView() {
                   style={{ fontFamily: 'monospace', fontWeight: '400' }}
                 />
               </div>
-              <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginTop: '6px', lineHeight: '1.4' }}>
-                💡 <b>Mẹo tìm Zalo ID:</b> Nhắn tin riêng cho tài khoản bot <b>(Meomeo)</b> và gõ lệnh <code>/id</code> để lấy mã Zalo ID của bạn.
+              <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginTop: '6px', lineHeight: '1.4', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <i className="fa-regular fa-lightbulb" style={{ color: 'var(--text-muted)', fontSize: '13px' }}></i>
+                <span><b>Mẹo tìm Zalo ID:</b> Nhắn tin riêng cho tài khoản bot <b>(Meomeo)</b> và gõ lệnh <code>/id</code> để lấy mã Zalo ID của bạn.</span>
               </div>
             </div>
 
@@ -637,12 +653,7 @@ export default function AccountView() {
       </div>
 
       {/* 3.5. CARD: GIỚI THIỆU BẠN BÈ (CÓ NÚT THU GỌN / MỞ RỘNG) */}
-      <div className="lookup-card" style={{
-        marginBottom: '20px',
-        background: 'linear-gradient(145deg, rgba(249, 115, 22, 0.04) 0%, var(--bg-card) 100%)',
-        border: '1.5px solid rgba(249, 115, 22, 0.35)',
-        boxShadow: '0 4px 16px -2px rgba(249, 115, 22, 0.08)'
-      }}>
+      <div className="lookup-card" style={{ marginBottom: '20px' }}>
         {/* Header: Click để Mở ra / Thu gọn */}
         <div
           onClick={() => setReferralExpanded(!referralExpanded)}
@@ -660,15 +671,16 @@ export default function AccountView() {
               width: '40px',
               height: '40px',
               borderRadius: '12px',
-              background: 'linear-gradient(135deg, #ffedd5 0%, #fed7aa 100%)',
-              color: '#ea580c',
+              background: 'var(--bg-main)',
+              color: 'var(--text-muted)',
+              border: '1px solid var(--border-color)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              fontSize: '20px',
+              fontSize: '17px',
               flexShrink: 0
             }}>
-              🎁
+              <i className="fa-solid fa-gift"></i>
             </div>
             <div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
@@ -697,21 +709,21 @@ export default function AccountView() {
             style={{
               display: 'flex',
               alignItems: 'center',
-              gap: '5px',
-              background: referralExpanded ? 'var(--bg-main)' : 'rgba(249, 115, 22, 0.1)',
-              border: '1px solid ' + (referralExpanded ? 'var(--border-color)' : 'rgba(249, 115, 22, 0.4)'),
+              gap: '6px',
+              background: 'var(--bg-main)',
+              border: '1px solid var(--border-color)',
               borderRadius: '20px',
               padding: '6px 14px',
-              color: '#ea580c',
+              color: 'var(--text-muted)',
               fontSize: '12px',
-              fontWeight: '700',
+              fontWeight: '600',
               cursor: 'pointer',
               whiteSpace: 'nowrap',
               flexShrink: 0
             }}
           >
             <span>{referralExpanded ? 'Thu gọn' : 'Chi tiết'}</span>
-            <i className={`fa-solid fa-chevron-${referralExpanded ? 'up' : 'down'}`} style={{ fontSize: '11px' }}></i>
+            <i className={`fa-solid fa-chevron-${referralExpanded ? 'up' : 'down'}`} style={{ color: 'var(--text-muted)', fontSize: '11px' }}></i>
           </button>
         </div>
 
@@ -849,7 +861,10 @@ export default function AccountView() {
                 marginBottom: '14px'
               }}>
                 <div style={{ fontSize: '12px', fontWeight: '700', color: 'var(--text-bright)', marginBottom: '8px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                  <span>👥 BẠN BÈ ĐÃ THAM GIA ({referralData.referredList.length})</span>
+                  <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+                    <i className="fa-solid fa-users" style={{ color: 'var(--text-muted)', fontSize: '13px' }}></i>
+                    <span>BẠN BÈ ĐÃ THAM GIA ({referralData.referredList.length})</span>
+                  </span>
                   <span style={{ fontSize: '11px', color: 'var(--text-muted)', fontWeight: 'normal' }}>Mốc nhận thưởng: 50.000đ</span>
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
@@ -863,8 +878,8 @@ export default function AccountView() {
                       <div key={item.id || idx} style={{
                         padding: '10px 12px',
                         borderRadius: '10px',
-                        background: isDone ? 'rgba(16, 185, 129, 0.06)' : 'rgba(249, 115, 22, 0.04)',
-                        border: '1px solid ' + (isDone ? 'rgba(16, 185, 129, 0.25)' : 'rgba(249, 115, 22, 0.2)'),
+                        background: 'var(--bg-card, rgba(255, 255, 255, 0.02))',
+                        border: 'none',
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'space-between',
@@ -877,34 +892,21 @@ export default function AccountView() {
                           </div>
                           <div style={{ fontSize: '11px', color: 'var(--text-muted)', marginTop: '2px' }}>
                             Hoa hồng tích lũy: <b style={{ color: isDone ? '#059669' : '#ea580c' }}>{formatMoney(comm)}</b> / {formatMoney(target)}
-                            {item.createdAt && ` • Tham gia: ${new Date(item.createdAt).toLocaleDateString('vi-VN')}`}
+                            {formatJoinDate(item.createdAt) ? ` • Tham gia: ${formatJoinDate(item.createdAt)}` : ''}
                           </div>
                         </div>
 
                         <div>
-                          {isDone ? (
-                            <span style={{
-                              background: 'rgba(16, 185, 129, 0.15)',
-                              color: '#059669',
-                              padding: '4px 10px',
-                              borderRadius: '20px',
-                              fontSize: '11px',
-                              fontWeight: '700'
-                            }}>
-                              ✓ Đã đạt mốc (+10.000đ)
-                            </span>
-                          ) : (
-                            <span style={{
-                              background: 'rgba(249, 115, 22, 0.12)',
-                              color: '#ea580c',
-                              padding: '4px 10px',
-                              borderRadius: '20px',
-                              fontSize: '11px',
-                              fontWeight: '700'
-                            }}>
-                              Đang tích lũy ({percent}%)
-                            </span>
-                          )}
+                          <span style={{
+                            color: isDone ? '#059669' : '#ea580c',
+                            fontSize: '11.5px',
+                            fontWeight: '700',
+                            border: 'none',
+                            background: 'transparent',
+                            padding: 0
+                          }}>
+                            {isDone ? '✓ Đã đạt mốc (+10.000đ)' : `Đang tích lũy (${percent}%)`}
+                          </span>
                         </div>
                       </div>
                     );
@@ -918,13 +920,16 @@ export default function AccountView() {
               fontSize: '12px',
               color: 'var(--text-muted)',
               lineHeight: '1.5',
-              background: 'rgba(234, 88, 12, 0.05)',
-              border: '1px dashed rgba(234, 88, 12, 0.3)',
+              background: 'var(--bg-main)',
+              border: '1px dashed var(--border-color)',
               padding: '12px 14px',
               borderRadius: '12px'
             }}>
-              <div>
-                💡 <b>Cơ chế nhận thưởng:</b> Khi người bạn giới thiệu đăng ký tài khoản (qua web hoặc bot Zalo) và đạt mốc <b>50.000đ</b> hoa hồng tích lũy hoàn thành, bạn sẽ tự động nhận ngay <b>10.000đ</b> vào ví khả dụng để rút tiền!
+              <div style={{ display: 'flex', alignItems: 'flex-start', gap: '8px' }}>
+                <i className="fa-regular fa-lightbulb" style={{ color: 'var(--text-muted)', fontSize: '13px', marginTop: '2px', flexShrink: 0 }}></i>
+                <div>
+                  <b>Cơ chế nhận thưởng:</b> Khi người bạn giới thiệu đăng ký tài khoản (qua web hoặc bot Zalo) và đạt mốc <b>50.000đ</b> hoa hồng tích lũy hoàn thành, bạn sẽ tự động nhận ngay <b>10.000đ</b> vào ví khả dụng để rút tiền!
+                </div>
               </div>
 
               {referralData.referrerName ? (
@@ -933,9 +938,10 @@ export default function AccountView() {
                   <span>Bạn đã được giới thiệu bởi: <b>{referralData.referrerName}</b></span>
                 </div>
               ) : (
-                <div style={{ marginTop: '10px', paddingTop: '10px', borderTop: '1px dashed rgba(234, 88, 12, 0.2)' }}>
-                  <div style={{ fontWeight: '600', color: 'var(--text-bright)', marginBottom: '6px' }}>
-                    🎁 Nhập mã người đã giới thiệu bạn:
+                <div style={{ marginTop: '10px', paddingTop: '10px', borderTop: '1px dashed var(--border-color)' }}>
+                  <div style={{ fontWeight: '600', color: 'var(--text-bright)', marginBottom: '6px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    <i className="fa-solid fa-gift" style={{ color: 'var(--text-muted)', fontSize: '13px' }}></i>
+                    <span>Nhập mã người đã giới thiệu bạn:</span>
                   </div>
                   <form onSubmit={handleClaimManualReferral} style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
                     <input

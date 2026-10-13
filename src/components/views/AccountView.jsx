@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useApp } from '../../context/AppContext';
 import { BANKS } from '../../utils/banks';
 import { formatMoney } from '../../utils/formatters';
@@ -24,16 +24,6 @@ export default function AccountView() {
   const [zaloIdInput, setZaloIdInput] = useState(user?.zaloId || '');
   const [linkingZalo, setLinkingZalo] = useState(false);
 
-  // Referral states
-  const [referralExpanded, setReferralExpanded] = useState(true);
-  const [referralData, setReferralData] = useState({
-    referralCode: '',
-    referralBonus: 0,
-    referralCount: 0,
-    completedReferralCount: 0,
-    referrerName: null
-  });
-
   useEffect(() => {
     if (user?.avatarUrl) setAvatarUrl(user.avatarUrl);
     if (user?.fullName) setFullName(user.fullName);
@@ -45,23 +35,76 @@ export default function AccountView() {
     if (user?.zaloId) setZaloIdInput(user.zaloId);
   }, [user]);
 
+  // Referral states
+  const [referralExpanded, setReferralExpanded] = useState(true);
+  const [referralData, setReferralData] = useState({
+    referralCode: '',
+    referralBonus: 0,
+    referralCount: 0,
+    completedReferralCount: 0,
+    pendingReferralCount: 0,
+    referrerName: null,
+    referredList: []
+  });
+  const [claimingReferral, setClaimingReferral] = useState(false);
+  const [manualReferralCode, setManualReferralCode] = useState('');
+
   // Tải dữ liệu giới thiệu bạn bè
-  useEffect(() => {
-    const fetchReferralInfo = async () => {
-      try {
-        const token = sessionStorage.getItem('adminToken') || '';
-        const res = await fetch(`${API_URL_ROOT}/api/user/referral`, {
-          headers: { 'Authorization': `Bearer ${token}` },
-          credentials: 'include'
-        });
-        const data = await res.json();
-        if (res.ok && data.data) {
-          setReferralData(data.data);
-        }
-      } catch (e) {}
-    };
-    fetchReferralInfo();
+  const fetchReferralInfo = useCallback(async () => {
+    try {
+      const token = sessionStorage.getItem('adminToken') || '';
+      const res = await fetch(`${API_URL_ROOT}/api/user/referral`, {
+        headers: { 'Authorization': `Bearer ${token}` },
+        credentials: 'include'
+      });
+      const data = await res.json();
+      if (res.ok && data.data) {
+        setReferralData(data.data);
+      }
+    } catch (e) {}
   }, [API_URL_ROOT]);
+
+  useEffect(() => {
+    fetchReferralInfo();
+  }, [fetchReferralInfo]);
+
+  const handleClaimManualReferral = async (e) => {
+    e.preventDefault();
+    if (!manualReferralCode.trim()) {
+      showToast('Vui lòng nhập mã giới thiệu của bạn bè!', 'warning');
+      return;
+    }
+    setClaimingReferral(true);
+    try {
+      const token = sessionStorage.getItem('adminToken') || '';
+      const res = await fetch(`${API_URL_ROOT}/api/user/referral/claim`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ referralCode: manualReferralCode.trim() }),
+        credentials: 'include'
+      });
+      const resData = await res.json();
+      if (!res.ok) {
+        throw new Error(resData.message || 'Mã giới thiệu không hợp lệ');
+      }
+      showToast(resData.message || 'Liên kết người giới thiệu thành công! 🎉', 'success');
+      setManualReferralCode('');
+      fetchReferralInfo();
+      // Cập nhật lại user context
+      if (user) {
+        const updated = { ...user, hasEnteredReferral: true };
+        setUser(updated);
+        try { sessionStorage.setItem('adminUser', JSON.stringify(updated)); } catch (e) {}
+      }
+    } catch (err) {
+      showToast(err.message || 'Lỗi liên kết mã giới thiệu', 'error');
+    } finally {
+      setClaimingReferral(false);
+    }
+  };
 
   const saveAvatarToServer = async (newUrl) => {
     setSavingProfile(true);
@@ -703,7 +746,7 @@ export default function AccountView() {
                   {referralData.referralCode || 'Đang tạo...'}
                 </div>
 
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
                   <button
                     type="button"
                     onClick={() => {
@@ -712,7 +755,7 @@ export default function AccountView() {
                       showToast(`Đã copy mã giới thiệu: ${referralData.referralCode}`, 'success');
                     }}
                     className="lookup-admin-link"
-                    style={{ fontSize: '12px', padding: '6px 12px', fontWeight: '700', color: '#ea580c', borderColor: 'rgba(234, 88, 12, 0.4)' }}
+                    style={{ fontSize: '12px', padding: '6px 12px', fontWeight: '700', color: '#ea580c', borderColor: 'rgba(234, 88, 12, 0.4)', whiteSpace: 'nowrap' }}
                   >
                     <i className="fa-regular fa-copy"></i>
                     <span>Copy Mã</span>
@@ -727,7 +770,7 @@ export default function AccountView() {
                       showToast('Đã copy link giới thiệu! Gửi link này cho bạn bè nhé 🎉', 'success');
                     }}
                     className="lookup-btn"
-                    style={{ fontSize: '12px', padding: '6px 14px', fontWeight: '700' }}
+                    style={{ fontSize: '12px', padding: '6px 14px', fontWeight: '700', whiteSpace: 'nowrap' }}
                   >
                     <i className="fa-solid fa-share-nodes"></i>
                     <span>Copy Link</span>
@@ -736,10 +779,10 @@ export default function AccountView() {
               </div>
             </div>
 
-            {/* Thống kê giới thiệu */}
+            {/* Thống kê giới thiệu 4 cột */}
             <div style={{
               display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(110px, 1fr))',
               gap: '10px',
               marginBottom: '14px'
             }}>
@@ -776,6 +819,19 @@ export default function AccountView() {
                 padding: '10px 12px',
                 textAlign: 'center'
               }}>
+                <div style={{ fontSize: '11px', color: 'var(--text-muted)', fontWeight: '600' }}>ĐANG CHỜ MỐC</div>
+                <div style={{ fontSize: '18px', fontWeight: '800', color: '#d97706', marginTop: '4px' }}>
+                  {referralData.pendingReferralCount ?? Math.max(0, (referralData.referralCount || 0) - (referralData.completedReferralCount || 0))} <span style={{ fontSize: '12px', fontWeight: '600' }}>người</span>
+                </div>
+              </div>
+
+              <div style={{
+                background: 'var(--bg-main)',
+                border: '1px solid var(--border-color)',
+                borderRadius: '12px',
+                padding: '10px 12px',
+                textAlign: 'center'
+              }}>
                 <div style={{ fontSize: '11px', color: 'var(--text-muted)', fontWeight: '600' }}>THƯỞNG TÍCH LŨY</div>
                 <div style={{ fontSize: '18px', fontWeight: '800', color: '#ea580c', marginTop: '4px' }}>
                   +{formatMoney(referralData.referralBonus || 0)}
@@ -783,20 +839,133 @@ export default function AccountView() {
               </div>
             </div>
 
-            {/* Hướng dẫn cơ chế */}
+            {/* Danh sách bạn bè đã tham gia */}
+            {referralData.referredList && referralData.referredList.length > 0 && (
+              <div style={{
+                background: 'var(--bg-main)',
+                border: '1px solid var(--border-color)',
+                borderRadius: '12px',
+                padding: '12px 14px',
+                marginBottom: '14px'
+              }}>
+                <div style={{ fontSize: '12px', fontWeight: '700', color: 'var(--text-bright)', marginBottom: '8px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <span>👥 BẠN BÈ ĐÃ THAM GIA ({referralData.referredList.length})</span>
+                  <span style={{ fontSize: '11px', color: 'var(--text-muted)', fontWeight: 'normal' }}>Mốc nhận thưởng: 50.000đ</span>
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                  {referralData.referredList.map((item, idx) => {
+                    const isDone = item.status === 'COMPLETED';
+                    const comm = item.currentCommission || 0;
+                    const target = item.targetCommission || 50000;
+                    const percent = Math.min(100, Math.round((comm / target) * 100));
+
+                    return (
+                      <div key={item.id || idx} style={{
+                        padding: '10px 12px',
+                        borderRadius: '10px',
+                        background: isDone ? 'rgba(16, 185, 129, 0.06)' : 'rgba(249, 115, 22, 0.04)',
+                        border: '1px solid ' + (isDone ? 'rgba(16, 185, 129, 0.25)' : 'rgba(249, 115, 22, 0.2)'),
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        flexWrap: 'wrap',
+                        gap: '8px'
+                      }}>
+                        <div>
+                          <div style={{ fontWeight: '700', fontSize: '13px', color: 'var(--text-bright)' }}>
+                            {item.referredName || 'Bạn mới'}
+                          </div>
+                          <div style={{ fontSize: '11px', color: 'var(--text-muted)', marginTop: '2px' }}>
+                            Hoa hồng tích lũy: <b style={{ color: isDone ? '#059669' : '#ea580c' }}>{formatMoney(comm)}</b> / {formatMoney(target)}
+                            {item.createdAt && ` • Tham gia: ${new Date(item.createdAt).toLocaleDateString('vi-VN')}`}
+                          </div>
+                        </div>
+
+                        <div>
+                          {isDone ? (
+                            <span style={{
+                              background: 'rgba(16, 185, 129, 0.15)',
+                              color: '#059669',
+                              padding: '4px 10px',
+                              borderRadius: '20px',
+                              fontSize: '11px',
+                              fontWeight: '700'
+                            }}>
+                              ✓ Đã đạt mốc (+10.000đ)
+                            </span>
+                          ) : (
+                            <span style={{
+                              background: 'rgba(249, 115, 22, 0.12)',
+                              color: '#ea580c',
+                              padding: '4px 10px',
+                              borderRadius: '20px',
+                              fontSize: '11px',
+                              fontWeight: '700'
+                            }}>
+                              Đang tích lũy ({percent}%)
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
+            {/* Hướng dẫn cơ chế & Người giới thiệu */}
             <div style={{
               fontSize: '12px',
               color: 'var(--text-muted)',
               lineHeight: '1.5',
               background: 'rgba(234, 88, 12, 0.05)',
               border: '1px dashed rgba(234, 88, 12, 0.3)',
-              padding: '10px 14px',
+              padding: '12px 14px',
               borderRadius: '12px'
             }}>
-              💡 <b>Cơ chế nhận thưởng:</b> Khi người bạn giới thiệu đăng ký tài khoản (qua web hoặc bot Zalo) và đạt mốc <b>50.000đ</b> hoa hồng tích lũy hoàn thành, bạn sẽ tự động nhận ngay <b>10.000đ</b> vào ví khả dụng để rút tiền!
-              {referralData.referrerName && (
-                <div style={{ marginTop: '6px', color: '#059669', fontWeight: '600' }}>
-                  ✓ Bạn đã được giới thiệu bởi: <b>{referralData.referrerName}</b>
+              <div>
+                💡 <b>Cơ chế nhận thưởng:</b> Khi người bạn giới thiệu đăng ký tài khoản (qua web hoặc bot Zalo) và đạt mốc <b>50.000đ</b> hoa hồng tích lũy hoàn thành, bạn sẽ tự động nhận ngay <b>10.000đ</b> vào ví khả dụng để rút tiền!
+              </div>
+
+              {referralData.referrerName ? (
+                <div style={{ marginTop: '8px', color: '#059669', fontWeight: '600', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                  <i className="fa-solid fa-circle-check"></i>
+                  <span>Bạn đã được giới thiệu bởi: <b>{referralData.referrerName}</b></span>
+                </div>
+              ) : (
+                <div style={{ marginTop: '10px', paddingTop: '10px', borderTop: '1px dashed rgba(234, 88, 12, 0.2)' }}>
+                  <div style={{ fontWeight: '600', color: 'var(--text-bright)', marginBottom: '6px' }}>
+                    🎁 Nhập mã người đã giới thiệu bạn:
+                  </div>
+                  <form onSubmit={handleClaimManualReferral} style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                    <input
+                      type="text"
+                      value={manualReferralCode}
+                      onChange={(e) => setManualReferralCode(e.target.value)}
+                      placeholder="Ví dụ: 77349"
+                      maxLength={10}
+                      style={{
+                        padding: '6px 12px',
+                        borderRadius: '8px',
+                        border: '1px solid var(--border-color)',
+                        background: 'var(--bg-main)',
+                        color: 'var(--text-bright)',
+                        fontSize: '13px',
+                        fontFamily: 'monospace',
+                        fontWeight: '700',
+                        letterSpacing: '1px',
+                        width: '140px'
+                      }}
+                    />
+                    <button
+                      type="submit"
+                      disabled={claimingReferral}
+                      className="lookup-btn"
+                      style={{ padding: '6px 14px', fontSize: '12px', fontWeight: '700' }}
+                    >
+                      {claimingReferral ? 'Đang liên kết...' : 'Xác nhận'}
+                    </button>
+                  </form>
                 </div>
               )}
             </div>

@@ -840,10 +840,10 @@ export default function OrderLookupView({ setView: propSetView } = {}) {
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'space-between',
-                      gap: '8px',
-                      flexWrap: 'nowrap',
+                      gap: '10px',
+                      flexWrap: 'wrap',
                       width: '100%',
-                      boxBoxSizing: 'border-box'
+                      boxSizing: 'border-box'
                     }}>
                       <div 
                         onClick={() => {
@@ -858,17 +858,16 @@ export default function OrderLookupView({ setView: propSetView } = {}) {
                           fontWeight: '900',
                           letterSpacing: '1px',
                           color: '#ea580c',
-                          lineHeight: '1',
+                          lineHeight: '1.2',
                           cursor: 'pointer',
                           userSelect: 'all',
-                          whiteSpace: 'nowrap',
-                          flexShrink: 0
+                          whiteSpace: 'nowrap'
                         }}
                       >
                         {lookupResult.referralCode ? lookupResult.referralCode.replace(/^GT/i, '') : ''}
                       </div>
 
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexShrink: 0, flexWrap: 'nowrap' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
                         <button
                           type="button"
                           onClick={() => {
@@ -880,16 +879,15 @@ export default function OrderLookupView({ setView: propSetView } = {}) {
                             background: 'var(--bg-card)',
                             border: '1px solid var(--border-color)',
                             color: 'var(--text-bright)',
-                            padding: '6px 10px',
+                            padding: '6px 12px',
                             fontSize: '12px',
                             fontWeight: '600',
                             borderRadius: '8px',
                             display: 'inline-flex',
                             alignItems: 'center',
-                            gap: '4px',
+                            gap: '5px',
                             cursor: 'pointer',
                             whiteSpace: 'nowrap',
-                            flexShrink: 0,
                             lineHeight: '1.4',
                             boxSizing: 'border-box'
                           }}
@@ -911,23 +909,22 @@ export default function OrderLookupView({ setView: propSetView } = {}) {
                             background: 'linear-gradient(135deg, #f97316, #ea580c)',
                             border: 'none',
                             color: '#ffffff',
-                            padding: '6px 11px',
+                            padding: '6px 12px',
                             fontSize: '12px',
                             fontWeight: '700',
                             borderRadius: '8px',
                             display: 'inline-flex',
                             alignItems: 'center',
-                            gap: '4px',
+                            gap: '5px',
                             cursor: 'pointer',
                             whiteSpace: 'nowrap',
                             boxShadow: '0 2px 8px rgba(249,115,22,0.25)',
-                            flexShrink: 0,
                             lineHeight: '1.4',
                             boxSizing: 'border-box'
                           }}
                         >
                           <i className="fa-solid fa-paper-plane" style={{ fontSize: '11px' }}></i>
-                          <span>Copy /gt_{lookupResult.referralCode ? lookupResult.referralCode.replace(/^GT/i, '') : ''}</span>
+                          <span>Copy Cú Pháp</span>
                         </button>
                       </div>
                     </div>
@@ -968,7 +965,7 @@ export default function OrderLookupView({ setView: propSetView } = {}) {
                   {/* Thống kê giới thiệu */}
                   <div style={{
                     display: 'grid',
-                    gridTemplateColumns: 'repeat(3, 1fr)',
+                    gridTemplateColumns: 'repeat(auto-fit, minmax(95px, 1fr))',
                     gap: '8px',
                     textAlign: 'center'
                   }}>
@@ -992,6 +989,15 @@ export default function OrderLookupView({ setView: propSetView } = {}) {
                     </div>
                     <div style={{ background: 'var(--bg-main)', border: '1px solid var(--border-color)', borderRadius: '10px', padding: '10px 4px' }}>
                       <div style={{ fontSize: '10.5px', color: 'var(--text-muted)', fontWeight: '600', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}>
+                        <i className="fa-solid fa-hourglass-half" style={{ fontSize: '10px', color: '#d97706' }}></i>
+                        <span>ĐANG CHỜ MỐC</span>
+                      </div>
+                      <div style={{ fontSize: '16px', fontWeight: '800', color: '#d97706', marginTop: '2px' }}>
+                        {Math.max(0, (lookupResult.wallet?.referralCount || 0) - (lookupResult.wallet?.completedReferralCount || 0))} bạn
+                      </div>
+                    </div>
+                    <div style={{ background: 'var(--bg-main)', border: '1px solid var(--border-color)', borderRadius: '10px', padding: '10px 4px' }}>
+                      <div style={{ fontSize: '10.5px', color: 'var(--text-muted)', fontWeight: '600', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}>
                         <i className="fa-solid fa-coins" style={{ fontSize: '10px', color: '#ea580c' }}></i>
                         <span>TIỀN THƯỞNG</span>
                       </div>
@@ -1002,10 +1008,10 @@ export default function OrderLookupView({ setView: propSetView } = {}) {
                   </div>
 
                   {/* Thông tin người đã giới thiệu bạn (nếu có) */}
-                  {lookupResult.hasReferrer && (
+                  {(lookupResult.hasReferrer || lookupResult.wallet?.hasReferrer) && (
                     <div style={{ marginTop: '12px', fontSize: '11.5px', color: 'var(--text-muted)', textAlign: 'center', fontStyle: 'italic', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '5px' }}>
                       <i className="fa-solid fa-handshake" style={{ color: '#ea580c', fontSize: '12px' }}></i>
-                      <span>Bạn đã được giới thiệu bởi thành viên: <strong style={{ color: 'var(--text-bright)' }}>{lookupResult.referrerName || 'Thành viên Zalo'}</strong></span>
+                      <span>Bạn đã được giới thiệu bởi thành viên: <strong style={{ color: 'var(--text-bright)' }}>{lookupResult.referrerName || lookupResult.wallet?.referrerName || 'Thành viên giới thiệu'}</strong></span>
                     </div>
                   )}
                 </div>
@@ -1195,7 +1201,8 @@ export default function OrderLookupView({ setView: propSetView } = {}) {
                         alignItems: 'center',
                         gap: '6px',
                         fontSize: '12.5px',
-                        color: 'var(--text-muted)'
+                        color: 'var(--text-muted)',
+                        flexWrap: 'wrap'
                       }}>
                         <span>Mã đơn:</span>
                         <span className="order-id-badge" style={{ fontWeight: '700', color: '#ea580c', fontSize: '13px', wordBreak: 'break-all' }}>

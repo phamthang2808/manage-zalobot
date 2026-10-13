@@ -66,6 +66,46 @@ const compressDataUrl = (dataUrl, maxWidth = 800, quality = 0.75) => {
   });
 };
 
+// Helper định dạng ngày hiển thị bài viết an toàn, chống Invalid Date triệt để
+export const formatBlogDate = (post) => {
+  if (!post) return new Date().toLocaleDateString('vi-VN');
+
+  // 1. Kiểm tra publishedDate hoặc date
+  const candidate = post.publishedDate || post.date;
+  if (candidate && typeof candidate === 'string' && candidate !== 'Invalid Date' && candidate.trim() !== '') {
+    const trimmed = candidate.trim();
+    // Đã đúng định dạng dd/MM/yyyy hoặc d/M/yyyy
+    if (/^\d{1,2}\/\d{1,2}\/\d{4}$/.test(trimmed)) {
+      return trimmed;
+    }
+    // Nếu là ISO chuỗi yyyy-MM-dd...
+    const parsed = new Date(trimmed);
+    if (!isNaN(parsed.getTime())) {
+      return parsed.toLocaleDateString('vi-VN');
+    }
+  }
+
+  // 2. Kiểm tra createdAt từ server
+  const rawCreated = post.createdAt;
+  if (rawCreated) {
+    if (Array.isArray(rawCreated) && rawCreated.length >= 3) {
+      const y = rawCreated[0];
+      const m = String(rawCreated[1]).padStart(2, '0');
+      const d = String(rawCreated[2]).padStart(2, '0');
+      return `${d}/${m}/${y}`;
+    }
+    if (typeof rawCreated === 'string' && rawCreated !== 'Invalid Date') {
+      const parsed = new Date(rawCreated);
+      if (!isNaN(parsed.getTime())) {
+        return parsed.toLocaleDateString('vi-VN');
+      }
+    }
+  }
+
+  // 3. Mặc định là ngày hôm nay
+  return new Date().toLocaleDateString('vi-VN');
+};
+
 export default function BlogView() {
   const { setView, user, isAdmin, showToast, API_URL_ROOT } = useApp();
   const [selectedCategory, setSelectedCategory] = useState('ALL');
@@ -88,13 +128,22 @@ export default function BlogView() {
     }
   });
 
-  // Bài viết động (Bỏ sạch 4 bài viết mẫu gán cứng cũ)
+  // Bài viết động (Bỏ sạch 4 bài viết mẫu gán cứng cũ và tự động sửa các bài bị Invalid Date)
   const [posts, setPosts] = useState(() => {
     try {
       const saved = localStorage.getItem('web_blog_posts');
       if (saved) {
         const parsed = JSON.parse(saved);
-        return parsed.filter(p => !['post_1', 'post_2', 'post_3', 'post_4'].includes(p.id));
+        return parsed
+          .filter(p => !['post_1', 'post_2', 'post_3', 'post_4'].includes(p.id))
+          .map(p => {
+            const formatted = formatBlogDate(p);
+            return {
+              ...p,
+              date: formatted,
+              publishedDate: formatted
+            };
+          });
       }
       return [];
     } catch (e) {
@@ -195,8 +244,17 @@ export default function BlogView() {
       const res = await fetch(`${API_URL_ROOT}/api/public/posts`);
       const json = await res.json();
       if (res.ok && Array.isArray(json.data)) {
-        // Lọc bỏ bài gán cứng cũ
-        const cleanList = json.data.filter(p => !['post_1', 'post_2', 'post_3', 'post_4'].includes(p.id));
+        // Lọc bỏ bài gán cứng cũ và chuẩn hóa ngày đăng
+        const cleanList = json.data
+          .filter(p => !['post_1', 'post_2', 'post_3', 'post_4'].includes(p.id))
+          .map(p => {
+            const formatted = formatBlogDate(p);
+            return {
+              ...p,
+              date: formatted,
+              publishedDate: formatted
+            };
+          });
         setPosts(cleanList);
         try {
           localStorage.setItem('web_blog_posts', JSON.stringify(cleanList));
@@ -294,11 +352,16 @@ export default function BlogView() {
       }
     }
 
+    const todayFormatted = new Date().toLocaleDateString('vi-VN');
+    const existingDate = editingPost ? formatBlogDate(editingPost) : todayFormatted;
+    const finalDate = (existingDate && existingDate !== 'Invalid Date') ? existingDate : todayFormatted;
+
     const postPayload = {
       title: newTitle.trim(),
       slug: newTitle.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-'),
       category: newCategory || (categories[0]?.id || 'Chung'),
-      date: new Date().toLocaleDateString('vi-VN'),
+      date: finalDate,
+      publishedDate: finalDate,
       readTime: newReadTime || '3 phút đọc',
       author: newAuthor.trim() || user?.fullName || 'Admin',
       image: postImage,
@@ -327,6 +390,8 @@ export default function BlogView() {
         if (!updatedPost) {
           updatedPost = { ...editingPost, ...postPayload };
         }
+        updatedPost.date = formatBlogDate(updatedPost);
+        updatedPost.publishedDate = updatedPost.date;
 
         const newPostsList = posts.map(p => (p.id === editingPost.id || String(p.id) === String(editingPost.id)) ? updatedPost : p);
         savePosts(newPostsList);
@@ -339,7 +404,7 @@ export default function BlogView() {
         setEditingPost(null);
         showToast('Đã lưu bài viết thành công! 🎉', 'success');
       } else {
-        // TẠO BÀI VIẾT MỚI
+        // TẠO BÀI VIẾT MỚI (Ngày đăng là ngày đăng bài luôn)
         let createdPost = null;
         try {
           const res = await fetch(`${API_URL_ROOT}/api/public/posts`, {
@@ -358,6 +423,8 @@ export default function BlogView() {
         if (!createdPost) {
           createdPost = { ...postPayload, id: 'post_' + Date.now() };
         }
+        createdPost.date = formatBlogDate(createdPost);
+        createdPost.publishedDate = createdPost.date;
 
         const newPostsList = [createdPost, ...posts.filter(p => p.id !== createdPost.id && String(p.id) !== String(createdPost.id))];
         savePosts(newPostsList);
@@ -720,7 +787,7 @@ export default function BlogView() {
                   <div>
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '11.5px', color: 'var(--text-muted)', marginBottom: '8px' }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                        <span>{post.date || (post.createdAt ? new Date(post.createdAt).toLocaleDateString('vi-VN') : new Date().toLocaleDateString('vi-VN'))}</span>
+                        <span>{formatBlogDate(post)}</span>
                         <span>•</span>
                         <span>{post.author}</span>
                       </div>
@@ -901,7 +968,7 @@ export default function BlogView() {
             <div style={{ padding: '24px 28px', overflowY: 'auto', flex: 1 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12.5px', color: 'var(--text-muted)', marginBottom: '12px' }}>
                 <i className="fa-regular fa-calendar"></i>
-                <span>{readingPost.date || (readingPost.createdAt ? new Date(readingPost.createdAt).toLocaleDateString('vi-VN') : new Date().toLocaleDateString('vi-VN'))}</span>
+                <span>{formatBlogDate(readingPost)}</span>
                 <span>•</span>
                 <i className="fa-regular fa-user"></i>
                 <span>Tác giả: <b>{readingPost.author}</b></span>

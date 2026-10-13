@@ -652,13 +652,23 @@ export default function OrdersTab() {
           color: #94a3b8 !important;
           border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
         }
+        @media (max-width: 768px) {
+          .order-dates-row {
+            flex-direction: column !important;
+            align-items: flex-start !important;
+            gap: 2px !important;
+          }
+          .desktop-separator {
+            display: none !important;
+          }
+        }
       `}} />
 
       <div className="table-container orders-table-container" style={{ overflowX: 'auto', WebkitOverflowScrolling: 'touch' }}>
-        <table className="orders-table" style={{ tableLayout: 'fixed', width: '100%', minWidth: '880px' }}>
+        <table className="orders-table" style={{ tableLayout: 'fixed', width: '100%', minWidth: '890px' }}>
           <thead>
             <tr>
-              <th style={{ width: '195px' }}>Mã đơn & Thời gian</th>
+              <th style={{ width: '210px' }}>Mã đơn & Thời gian</th>
               <th style={{ width: '225px' }}>Tên sản phẩm</th>
               <th style={{ width: '210px' }}>Thành viên / Zalo ID</th>
               <th style={{ width: '160px', textAlign: 'right' }}>Tích lũy hoa hồng</th>
@@ -697,20 +707,21 @@ export default function OrdersTab() {
                           </span>
                           <CopyButton text={o.orderId} title="Copy mã đơn hàng" toastMessage={`Đã copy mã đơn: ${o.orderId}`} />
                         </div>
-                        <div style={{
+                        <div className="order-dates-row" style={{
                           display: 'flex',
                           alignItems: 'center',
                           gap: '6px',
                           flexWrap: 'wrap',
                           fontSize: '11px',
-                          marginTop: '1px'
+                          marginTop: '2px',
+                          lineHeight: '1.4'
                         }}>
                           <span style={{ color: 'var(--text-muted)', whiteSpace: 'nowrap' }} title={`Đặt mua: ${formatDateTime(o.purchaseTime || o.orderDate || o.createdTime)}`}>
                             Đặt: {formatDateTime(o.purchaseTime || o.orderDate || o.createdTime)}
                           </span>
                           {(isCompleted || o.completeTime) && o.completeTime && (
                             <span style={{ color: '#059669', fontWeight: '700', whiteSpace: 'nowrap' }} title={`Hoàn thành: ${formatDateTime(o.completeTime)}`}>
-                              • Xong: {formatDateTime(o.completeTime)}
+                              <span className="desktop-separator">• </span>Xong: {formatDateTime(o.completeTime)}
                             </span>
                           )}
                         </div>

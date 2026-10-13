@@ -451,7 +451,8 @@ export default function OrdersView() {
                     alignItems: 'center',
                     gap: '6px',
                     fontSize: '12.5px',
-                    color: 'var(--text-muted)'
+                    color: 'var(--text-muted)',
+                    flexWrap: 'wrap'
                   }}>
                     <span>Mã đơn:</span>
                     <span className="order-id-badge" style={{ fontWeight: '700', color: '#ea580c', fontSize: '13px', wordBreak: 'break-all' }}>

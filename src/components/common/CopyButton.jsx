@@ -65,7 +65,7 @@ export default function CopyButton({
         cursor: 'pointer',
         transition: 'all 0.2s ease',
         verticalAlign: 'middle',
-        marginLeft: '5px',
+        margin: 0,
         flexShrink: 0,
         ...style
       }}
@@ -80,11 +80,11 @@ export default function CopyButton({
           <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
         </svg>
       )}
-      {copied ? (
-        <span style={{ fontSize: '10.5px', fontWeight: '700', color: '#059669' }}>Đã copy</span>
-      ) : (
-        label ? <span style={{ fontSize: '10.5px' }}>{label}</span> : null
-      )}
+      {label ? (
+        <span style={{ fontSize: '10.5px', fontWeight: copied ? '700' : 'normal', color: copied ? '#059669' : 'inherit' }}>
+          {copied ? 'Đã copy' : label}
+        </span>
+      ) : null}
     </button>
   );
 }

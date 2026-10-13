@@ -594,17 +594,23 @@ export default function ConvertView() {
                   </div>
                 )}
 
-                {/* Nút Hành Động (Nút Mở link mua hàng nổi bật màu cam) */}
+                {/* Nút Hành Động (Nút Sao chép & Mở link mua hàng cùng kích thước đồng bộ) */}
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '8px', marginTop: '12px' }}>
                   <button
                     type="button"
                     onClick={() => handleCopy(finalLink, idx)}
                     className="lookup-admin-link"
                     style={{
-                      padding: '8px 16px',
-                      fontSize: '12.5px',
-                      borderRadius: '10px',
-                      fontWeight: '600'
+                      height: '32px',
+                      padding: '0 13px',
+                      fontSize: '12px',
+                      borderRadius: '8px',
+                      fontWeight: '600',
+                      boxSizing: 'border-box',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '5px',
+                      lineHeight: '1'
                     }}
                   >
                     <i className={isCopied ? 'fa-solid fa-circle-check text-emerald-500' : 'fa-solid fa-copy'}></i>
@@ -616,17 +622,21 @@ export default function ConvertView() {
                     target="_blank"
                     rel="noopener noreferrer"
                     style={{
-                      display: 'inline-flex',
-                      alignItems: 'center',
-                      gap: '6px',
-                      padding: '8px 18px',
-                      fontSize: '12.5px',
-                      fontWeight: '700',
-                      borderRadius: '10px',
+                      height: '32px',
+                      padding: '0 13px',
+                      fontSize: '12px',
+                      fontWeight: '600',
+                      borderRadius: '8px',
+                      border: '1px solid transparent',
                       background: 'linear-gradient(135deg, #f97316, #ea580c)',
                       color: '#ffffff',
                       textDecoration: 'none',
-                      boxShadow: '0 3px 8px rgba(234, 88, 12, 0.25)'
+                      boxSizing: 'border-box',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '5px',
+                      lineHeight: '1',
+                      boxShadow: '0 2px 6px rgba(234, 88, 12, 0.2)'
                     }}
                   >
                     <i className="fa-solid fa-arrow-up-right-from-square"></i>
@@ -923,7 +933,7 @@ export default function ConvertView() {
                           </div>
                         )}
 
-                        {/* Actions (Không hiển thị link dài) */}
+                        {/* Actions (Copy link & Mua ngay cùng kích thước đồng bộ) */}
                         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '8px' }}>
                           <button
                             type="button"
@@ -933,10 +943,16 @@ export default function ConvertView() {
                             }}
                             className="lookup-admin-link"
                             style={{
+                              height: '28px',
+                              padding: '0 10px',
                               fontSize: '11.5px',
-                              padding: '5px 12px',
-                              borderRadius: '8px',
-                              fontWeight: '600'
+                              borderRadius: '7px',
+                              fontWeight: '600',
+                              boxSizing: 'border-box',
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              gap: '5px',
+                              lineHeight: '1'
                             }}
                           >
                             <i className="fa-solid fa-copy"></i>
@@ -948,17 +964,21 @@ export default function ConvertView() {
                             target="_blank"
                             rel="noopener noreferrer"
                             style={{
-                              display: 'inline-flex',
-                              alignItems: 'center',
-                              gap: '5px',
+                              height: '28px',
+                              padding: '0 10px',
                               fontSize: '11.5px',
-                              padding: '5px 14px',
-                              borderRadius: '8px',
-                              fontWeight: '700',
+                              fontWeight: '600',
+                              borderRadius: '7px',
+                              border: '1px solid transparent',
                               background: 'linear-gradient(135deg, #f97316, #ea580c)',
                               color: '#fff',
                               textDecoration: 'none',
-                              boxShadow: '0 2px 6px rgba(234, 88, 12, 0.25)'
+                              boxSizing: 'border-box',
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              gap: '5px',
+                              lineHeight: '1',
+                              boxShadow: '0 2px 5px rgba(234, 88, 12, 0.2)'
                             }}
                           >
                             <i className="fa-solid fa-arrow-up-right-from-square"></i>

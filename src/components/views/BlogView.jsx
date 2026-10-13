@@ -1,115 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useApp } from '../../context/AppContext';
 
-const DEFAULT_CATEGORIES = [
-  { id: 'GUIDE', label: 'Hướng dẫn sử dụng' },
-  { id: 'TIPS', label: 'Mẹo kiếm tiền Affiliate' },
-  { id: 'SALE', label: 'Săn sale & Mã giảm giá' },
-  { id: 'SYSTEM', label: 'Cập nhật hệ thống' },
-];
-
-const DEFAULT_POSTS = [
-  {
-    id: 'post_1',
-    title: 'Hướng dẫn tự động chuyển đổi link Shopee & TikTok Shop nhận hoa hồng hoàn tiền đến 80%',
-    slug: 'huong-dan-chuyen-doi-link-shopee-tiktok',
-    category: 'GUIDE',
-    date: '12/10/2026',
-    readTime: '3 phút đọc',
-    author: 'Phạm Thắng',
-    image: 'https://images.unsplash.com/photo-1557804506-669a67965ba0?w=600&auto=format&fit=crop&q=80',
-    summary: 'Khám phá bí quyết tạo thu nhập thụ động mỗi ngày khi mua sắm online trên Shopee, TikTok Shop, Lazada và ShopeeFood với hệ thống Zalo Bot 28Symues.',
-    content: `Chào các sếp! Mua sắm online hiện đã trở thành thói quen mỗi ngày, nhưng hầu hết mọi người đều bỏ lỡ một khoản hoàn tiền hoa hồng cực kỳ lớn từ 5% đến hơn 30% giá trị đơn hàng.
-
-1. Nguyên lý hoạt động:
-Mỗi khi sếp cần mua bất kỳ món hàng nào trên Shopee, TikTok Shop, Lazada hay ShopeeFood, chỉ cần copy link sản phẩm và dán vào công cụ chuyển đổi link của 28Symues. Hệ thống bot sẽ tự động gắn mã tiếp thị affiliate độc quyền của sếp vào liên kết.
-
-2. Các bước thực hiện:
-• Bước 1: Vào ứng dụng Shopee / TikTok Shop, bấm nút Chia sẻ (Share) -> Sao chép liên kết.
-• Bước 2: Dán link vào ô chuyển đổi link trên Web Portal hoặc gửi trực tiếp vào nhóm Zalo.
-• Bước 3: Nhấp vào link tiếp thị vừa được tạo ra để đặt hàng như bình thường.
-• Bước 4: Sau khi đặt hàng thành công 5-10 phút, hệ thống sẽ tự động ghi nhận đơn vào mục "Đơn hàng đã đặt" và tích lũy tiền hoa hồng vào Ví của sếp!
-
-3. Lưu ý quan trọng:
-Để không bị mất hoa hồng, sếp hãy bấm vào link tiếp thị rồi ấn Mua ngay hoặc thêm vào giỏ hàng và thanh toán trong cùng phiên duyệt web, tránh click vào link tiếp thị của người khác đè cookie!`
-  },
-  {
-    id: 'post_2',
-    title: 'Top 5 sai lầm khiến bạn bị mất hoa hồng Shopee và cách phòng tránh triệt để',
-    slug: 'sai-lam-mat-hoa-hong-shopee',
-    category: 'TIPS',
-    date: '10/10/2026',
-    readTime: '5 phút đọc',
-    author: 'Admin 28Symues',
-    image: 'https://images.unsplash.com/photo-1563013544-824ae1b704d3?w=600&auto=format&fit=crop&q=80',
-    summary: 'Tại sao đơn hàng hoàn thành nhưng không nhận được hoa hồng? Tìm hiểu về cache live stream, video ưu tiên và cách mua hàng giữ nguyên cookie chuyển đổi link.',
-    content: `Rất nhiều bạn thắc mắc tại sao mình đã chuyển đổi link và mua hàng nhưng lại không thấy đơn hiển thị hoa hồng hoặc bị ghi nhận 0đ. Dưới đây là 5 nguyên nhân phổ biến nhất:
-
-1. Bị đè cookie bởi Live Stream hoặc Shopee Video:
-Shopee có cơ chế ưu tiên hoa hồng cho người phát Live hoặc Video ngắn. Nếu bạn bấm link tiếp thị xong lại bấm vào xem Live của Shop rồi mới mua, hoa hồng sẽ bị chuyển cho người live.
-
-2. Mua hàng từ giỏ hàng đã có sẵn từ lâu:
-Nếu bạn thêm hàng vào giỏ từ nhiều ngày trước rồi mới bấm link tiếp thị, cookie có thể không kích hoạt đúng. Hãy xóa sản phẩm khỏi giỏ, bấm link tiếp thị mới rồi thêm lại vào giỏ và thanh toán ngay.
-
-3. Áp dụng một số mã giảm giá đặc biệt của sàn:
-Một số voucher sàn của Shopee hoặc TikTok Shop có điều khoản loại trừ hoa hồng tiếp thị (Commission excluded).
-
-4. Trình duyệt chặn Cookie / Chế độ ẩn danh:
-Khi bấm link chuyển đổi, hãy để trình duyệt tự động mở ứng dụng Shopee / TikTok Shop chính thức, không nên mua qua tab ẩn danh trình duyệt.
-
-5. Đơn hàng bị hủy hoặc hoàn trả hàng:
-Hoa hồng chỉ được chi trả thực tế khi đơn hàng được giao thành công và người mua không yêu cầu trả hàng hoàn tiền.`
-  },
-  {
-    id: 'post_3',
-    title: 'Cơ chế trả hoa hồng và quy trình rút tiền về tài khoản ngân hàng siêu tốc trong ngày',
-    slug: 'quy-trinh-rut-tien-hoa-hong',
-    category: 'SYSTEM',
-    date: '08/10/2026',
-    readTime: '4 phút đọc',
-    author: 'Kế toán 28Symues',
-    image: 'https://images.unsplash.com/photo-1559526324-4b87b5e36e44?w=600&auto=format&fit=crop&q=80',
-    summary: 'Chính sách giải ngân hoa hồng minh bạch: điều kiện số dư tối thiểu 50.000đ, thời gian duyệt lệnh và hỗ trợ chuyển khoản 24/7 tới hơn 50 ngân hàng tại Việt Nam.',
-    content: `28Symues cam kết cơ chế đối soát hoa hồng minh bạch và thanh toán nhanh chóng nhất thị trường cho toàn thể cộng đồng thành viên:
-
-1. Cơ chế phân loại hoa hồng:
-• ⏳ Đang xử lý: Đơn hàng mới đặt hoặc đang trên đường vận chuyển.
-• 📦 Đã hoàn thành: Đơn hàng đã giao thành công và hoàn tất trên sàn thương mại điện tử.
-• 💵 Rút tiền khả dụng: Tiền hoa hồng đã qua thời gian chờ đối soát sàn (Shopee sau 3 ngày, TikTok Shop ngay khi đơn chốt) và sẵn sàng để tạo lệnh rút.
-• 🏦 Đã nhận: Tổng số tiền hoa hồng đã được kế toán duyệt và chuyển khoản thành công vào tài khoản ngân hàng của bạn.
-
-2. Điều kiện & Hạn mức rút tiền:
-• Số dư khả dụng tối thiểu để tạo lệnh rút: 50.000đ.
-• Không giới hạn số lần rút trong tuần.
-• Miễn phí 100% phí chuyển khoản ngân hàng tới tất cả các ngân hàng tại Việt Nam.
-
-3. Thời gian giải ngân:
-Lệnh rút tiền gửi trước 17:00 hàng ngày sẽ được phê duyệt và giải ngân trong vòng 2-4 tiếng cùng ngày!`
-  },
-  {
-    id: 'post_4',
-    title: 'Chiến lược xây dựng nhóm chat Zalo săn sale thu hút hàng nghìn thành viên',
-    slug: 'chien-luoc-xay-dung-nhom-zalo-san-sale',
-    category: 'TIPS',
-    date: '05/10/2026',
-    readTime: '6 phút đọc',
-    author: 'Phạm Thắng',
-    image: 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=600&auto=format&fit=crop&q=80',
-    summary: 'Chia sẻ kinh nghiệm thực chiến từ việc kéo mem, giữ tương tác, cấu hình bot trả lời tự động cho đến tối ưu doanh thu affiliate hàng tháng.',
-    content: `Xây dựng một cộng đồng săn sale chất lượng trên Zalo là cách nhanh nhất và bền vững nhất để tạo nguồn thu nhập affiliate ổn định.
-
-1. Tối ưu trải nghiệm thành viên với Zalo Bot tự động:
-Thành viên trong nhóm chỉ cần gửi link sản phẩm, Bot Zalo sẽ tự động trả lời kèm link hoàn tiền và thông báo hoa hồng tức thì. Điều này giúp nhóm luôn sôi động 24/7 mà bạn không cần trực chat thủ công.
-
-2. Lịch trình đăng bài deal hot mỗi ngày:
-• Khung giờ 0h: Khởi động săn mã giảm giá toàn sàn và freeship 0đ.
-• Khung giờ 9h - 12h: Tổng hợp deal hàng tiêu dùng, mỹ phẩm, thời trang.
-• Khung giờ 19h - 21h: Deal công nghệ, gia dụng, đồ chơi và quà tặng.
-
-3. Tri ân và tạo sự gắn kết:
-Tổ chức minigame tặng mã quà tặng hoặc hoàn tiền thêm cho top thành viên có nhiều đơn hàng trong tháng. Sự minh bạch về doanh thu và đối soát qua Web Portal giúp thành viên luôn an tâm mua sắm lâu dài!`
-  }
-];
+const DEFAULT_CATEGORIES = [];
+const DEFAULT_POSTS = [];
 
 const SUGGESTED_IMAGES = [
   { label: 'Thương mại', url: 'https://images.unsplash.com/photo-1556742049-0a67c5574f73?w=800&auto=format&fit=crop&q=80' },
@@ -117,6 +10,61 @@ const SUGGESTED_IMAGES = [
   { label: 'Tài chính', url: 'https://images.unsplash.com/photo-1559526324-4b87b5e36e44?w=800&auto=format&fit=crop&q=80' },
   { label: 'Marketing', url: 'https://images.unsplash.com/photo-1557804506-669a67965ba0?w=800&auto=format&fit=crop&q=80' },
 ];
+
+// Helper nén ảnh tự động qua Canvas (giảm từ 3-5MB xuống còn ~40-60KB, chống lỗi dung lượng)
+const compressImage = (file, maxWidth = 800, quality = 0.75) => {
+  return new Promise((resolve) => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        let width = img.width;
+        let height = img.height;
+        if (width > maxWidth) {
+          height = Math.round((height * maxWidth) / width);
+          width = maxWidth;
+        }
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, width, height);
+        const compressedDataUrl = canvas.toDataURL('image/jpeg', quality);
+        resolve(compressedDataUrl);
+      };
+      img.onerror = () => resolve(e.target.result);
+      img.src = e.target.result;
+    };
+    reader.onerror = () => resolve('');
+    reader.readAsDataURL(file);
+  });
+};
+
+// Helper nén trực tiếp chuỗi data URL nếu chuỗi quá dài
+const compressDataUrl = (dataUrl, maxWidth = 800, quality = 0.75) => {
+  return new Promise((resolve) => {
+    if (!dataUrl || !dataUrl.startsWith('data:image')) {
+      return resolve(dataUrl);
+    }
+    const img = new Image();
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      let width = img.width;
+      let height = img.height;
+      if (width > maxWidth) {
+        height = Math.round((height * maxWidth) / width);
+        width = maxWidth;
+      }
+      canvas.width = width;
+      canvas.height = height;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0, width, height);
+      resolve(canvas.toDataURL('image/jpeg', quality));
+    };
+    img.onerror = () => resolve(dataUrl);
+    img.src = dataUrl;
+  });
+};
 
 export default function BlogView() {
   const { setView, user, isAdmin, showToast, API_URL_ROOT } = useApp();
@@ -126,23 +74,31 @@ export default function BlogView() {
   const coverFileInputRef = useRef(null);
   const [uploadingCover, setUploadingCover] = useState(false);
 
-  // Danh mục động (LocalStorage)
+  // Danh mục động (Bỏ sạch các danh mục cứng cũ)
   const [categories, setCategories] = useState(() => {
     try {
       const saved = localStorage.getItem('web_blog_categories');
-      return saved ? JSON.parse(saved) : DEFAULT_CATEGORIES;
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        return parsed.filter(c => !['GUIDE', 'TIPS', 'SALE', 'SYSTEM'].includes(c.id));
+      }
+      return [];
     } catch (e) {
-      return DEFAULT_CATEGORIES;
+      return [];
     }
   });
 
-  // Bài viết động (LocalStorage)
+  // Bài viết động (Bỏ sạch 4 bài viết mẫu gán cứng cũ)
   const [posts, setPosts] = useState(() => {
     try {
       const saved = localStorage.getItem('web_blog_posts');
-      return saved ? JSON.parse(saved) : DEFAULT_POSTS;
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        return parsed.filter(p => !['post_1', 'post_2', 'post_3', 'post_4'].includes(p.id));
+      }
+      return [];
     } catch (e) {
-      return DEFAULT_POSTS;
+      return [];
     }
   });
 
@@ -150,20 +106,21 @@ export default function BlogView() {
   const [readingPost, setReadingPost] = useState(null);
   const [isCreatePostOpen, setIsCreatePostOpen] = useState(false);
   const [isCreateCatOpen, setIsCreateCatOpen] = useState(false);
+  const [editingPost, setEditingPost] = useState(null); // Bài viết đang sửa
 
-  // Form state tạo bài viết
+  // Form state tạo / sửa bài viết
   const [newTitle, setNewTitle] = useState('');
-  const [newCategory, setNewCategory] = useState('GUIDE');
-  const [newImage, setNewImage] = useState(SUGGESTED_IMAGES[0].url);
+  const [newCategory, setNewCategory] = useState('');
+  const [newImage, setNewImage] = useState(SUGGESTED_IMAGES[0]?.url || '');
   const [newSummary, setNewSummary] = useState('');
   const [newContent, setNewContent] = useState('');
-  const [newAuthor, setNewAuthor] = useState(user?.fullName || 'Phạm Thắng');
+  const [newAuthor, setNewAuthor] = useState(user?.fullName || 'Admin');
   const [newReadTime, setNewReadTime] = useState('3 phút đọc');
 
   // Form state tạo danh mục
   const [newCatName, setNewCatName] = useState('');
 
-  // Xử lý upload ảnh bìa từ file thiết bị
+  // Xử lý upload ảnh bìa từ file thiết bị (Có tự động nén ảnh)
   const handleCoverFileUpload = async (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -173,37 +130,36 @@ export default function BlogView() {
     }
     setUploadingCover(true);
     try {
-      const token = sessionStorage.getItem('adminToken') || '';
-      const formData = new FormData();
-      formData.append('file', file);
-      const res = await fetch(`${API_URL_ROOT}/api/admin/announcement/upload-image`, {
-        method: 'POST',
-        headers: { 'Authorization': `Bearer ${token}` },
-        body: formData,
-        credentials: 'include'
-      });
-      const data = await res.json();
-      if (res.ok && (data.imageUrl || data.url)) {
-        const fullUrl = (data.imageUrl || data.url).startsWith('http')
-          ? (data.imageUrl || data.url)
-          : `${API_URL_ROOT}${data.imageUrl || data.url}`;
-        setNewImage(fullUrl);
-        showToast('Tải lên ảnh bìa bài viết thành công! 🎉', 'success');
-      } else {
-        const reader = new FileReader();
-        reader.onload = () => {
-          setNewImage(reader.result);
-          showToast('Đã chèn ảnh bìa thành công!', 'success');
-        };
-        reader.readAsDataURL(file);
-      }
+      // 1. Tự động nén ảnh qua Canvas để dung lượng nhẹ và an toàn
+      const compressedData = await compressImage(file, 800, 0.75);
+
+      // 2. Thử upload lên server nếu backend có sẵn endpoint
+      try {
+        const token = sessionStorage.getItem('adminToken') || '';
+        const formData = new FormData();
+        formData.append('file', file);
+        const res = await fetch(`${API_URL_ROOT}/api/admin/announcement/upload-image`, {
+          method: 'POST',
+          headers: { 'Authorization': `Bearer ${token}` },
+          body: formData,
+          credentials: 'include'
+        });
+        const data = await res.json();
+        if (res.ok && (data.imageUrl || data.url)) {
+          const fullUrl = (data.imageUrl || data.url).startsWith('http')
+            ? (data.imageUrl || data.url)
+            : `${API_URL_ROOT}${data.imageUrl || data.url}`;
+          setNewImage(fullUrl);
+          showToast('Tải lên ảnh bìa bài viết thành công! 🎉', 'success');
+          return;
+        }
+      } catch (uploadErr) {}
+
+      // 3. Fallback dùng ảnh nén tối ưu
+      setNewImage(compressedData);
+      showToast('Đã tải và tối ưu ảnh bìa thành công!', 'success');
     } catch (err) {
-      const reader = new FileReader();
-      reader.onload = () => {
-        setNewImage(reader.result);
-        showToast('Đã chèn ảnh bìa thành công!', 'success');
-      };
-      reader.readAsDataURL(file);
+      showToast('Lỗi xử lý ảnh: ' + err.message, 'error');
     } finally {
       setUploadingCover(false);
       if (coverFileInputRef.current) coverFileInputRef.current.value = '';
@@ -233,15 +189,17 @@ export default function BlogView() {
     } catch (e) {}
   };
 
-  // Tải bài viết từ Database Backend
+  // Tải bài viết từ Backend (Database)
   const fetchPostsFromBackend = async () => {
     try {
       const res = await fetch(`${API_URL_ROOT}/api/public/posts`);
       const json = await res.json();
-      if (res.ok && json.data && json.data.length > 0) {
-        setPosts(json.data);
+      if (res.ok && Array.isArray(json.data)) {
+        // Lọc bỏ bài gán cứng cũ
+        const cleanList = json.data.filter(p => !['post_1', 'post_2', 'post_3', 'post_4'].includes(p.id));
+        setPosts(cleanList);
         try {
-          localStorage.setItem('web_blog_posts', JSON.stringify(json.data));
+          localStorage.setItem('web_blog_posts', JSON.stringify(cleanList));
         } catch (e) {}
       }
     } catch (err) {
@@ -252,6 +210,33 @@ export default function BlogView() {
   useEffect(() => {
     fetchPostsFromBackend();
   }, []);
+
+  // Mở modal tạo bài viết mới
+  const handleOpenCreate = () => {
+    setEditingPost(null);
+    setNewTitle('');
+    setNewCategory(categories[0]?.id || 'Chung');
+    setNewImage(SUGGESTED_IMAGES[0]?.url || '');
+    setNewSummary('');
+    setNewContent('');
+    setNewAuthor(user?.fullName || 'Admin');
+    setNewReadTime('3 phút đọc');
+    setIsCreatePostOpen(true);
+  };
+
+  // Mở modal sửa bài viết
+  const handleOpenEdit = (e, post) => {
+    if (e && e.stopPropagation) e.stopPropagation();
+    setEditingPost(post);
+    setNewTitle(post.title || '');
+    setNewCategory(post.category || (categories[0]?.id || 'Chung'));
+    setNewImage(post.image || '');
+    setNewSummary(post.summary || '');
+    setNewContent(post.content || '');
+    setNewAuthor(post.author || user?.fullName || 'Admin');
+    setNewReadTime(post.readTime || '3 phút đọc');
+    setIsCreatePostOpen(true);
+  };
 
   // Xử lý tạo danh mục mới
   const handleCreateCategory = (e) => {
@@ -270,10 +255,21 @@ export default function BlogView() {
     showToast(`Đã tạo danh mục "${createdCat.label}" thành công! 🎉`, 'success');
   };
 
+  // Xóa danh mục tùy chọn
+  const handleDeleteCategory = (catId) => {
+    if (window.confirm('Bạn có chắc chắn muốn xóa danh mục này không?')) {
+      const updated = categories.filter(c => c.id !== catId);
+      saveCategories(updated);
+      if (selectedCategory === catId) setSelectedCategory('ALL');
+      if (newCategory === catId) setNewCategory(updated[0]?.id || 'Chung');
+      showToast('Đã xóa danh mục thành công!', 'info');
+    }
+  };
+
   const [savingPost, setSavingPost] = useState(false);
 
-  // Xử lý tạo bài viết mới & Lưu vào Database
-  const handleCreatePost = async (e) => {
+  // Xử lý Lưu bài viết (Tạo mới hoặc Sửa)
+  const handleSavePost = async (e) => {
     e.preventDefault();
     if (!newTitle.trim()) {
       showToast('Vui lòng nhập tiêu đề bài viết!', 'warning');
@@ -289,72 +285,119 @@ export default function BlogView() {
     }
 
     setSavingPost(true);
+    let postImage = newImage.trim() || SUGGESTED_IMAGES[0]?.url || '';
+    if (postImage.startsWith('data:image') && postImage.length > 50000) {
+      try {
+        postImage = await compressDataUrl(postImage, 800, 0.75);
+      } catch (compressErr) {
+        console.warn('Lỗi nén ảnh data url:', compressErr);
+      }
+    }
+
+    const postPayload = {
+      title: newTitle.trim(),
+      slug: newTitle.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-'),
+      category: newCategory || (categories[0]?.id || 'Chung'),
+      date: new Date().toLocaleDateString('vi-VN'),
+      readTime: newReadTime || '3 phút đọc',
+      author: newAuthor.trim() || user?.fullName || 'Admin',
+      image: postImage,
+      summary: newSummary.trim(),
+      content: newContent.trim()
+    };
+
     try {
-      const postPayload = {
-        title: newTitle.trim(),
-        slug: newTitle.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-'),
-        category: newCategory,
-        date: new Date().toLocaleDateString('vi-VN'),
-        readTime: newReadTime || '3 phút đọc',
-        author: newAuthor.trim() || user?.fullName || 'Phạm Thắng',
-        image: newImage.trim() || SUGGESTED_IMAGES[0].url,
-        summary: newSummary.trim(),
-        content: newContent.trim()
-      };
+      if (editingPost) {
+        // SỬA BÀI VIẾT
+        let updatedPost = null;
+        try {
+          const res = await fetch(`${API_URL_ROOT}/api/public/posts/${editingPost.id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(postPayload)
+          });
+          const json = await res.json();
+          if (res.ok && json.data) {
+            updatedPost = { ...postPayload, ...json.data };
+          }
+        } catch (apiErr) {
+          console.warn('Lỗi gọi API cập nhật bài viết:', apiErr);
+        }
 
-      const res = await fetch(`${API_URL_ROOT}/api/public/posts`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(postPayload)
-      });
-      const json = await res.json();
+        if (!updatedPost) {
+          updatedPost = { ...editingPost, ...postPayload };
+        }
 
-      if (res.ok && json.data) {
-        const savedPost = json.data;
-        const updated = [savedPost, ...posts.filter(p => p.id !== savedPost.id)];
-        savePosts(updated);
+        const newPostsList = posts.map(p => (p.id === editingPost.id || String(p.id) === String(editingPost.id)) ? updatedPost : p);
+        savePosts(newPostsList);
+
+        if (readingPost && (readingPost.id === editingPost.id || String(readingPost.id) === String(editingPost.id))) {
+          setReadingPost(updatedPost);
+        }
+
         setIsCreatePostOpen(false);
-        setNewTitle('');
-        setNewSummary('');
-        setNewContent('');
-        showToast('Đăng bài viết mới và lưu vào cơ sở dữ liệu thành công! 🎉', 'success');
+        setEditingPost(null);
+        showToast('Đã lưu bài viết thành công! 🎉', 'success');
       } else {
-        // Fallback lưu local nếu server lỗi
-        const fallbackPost = { ...postPayload, id: 'post_' + Date.now() };
-        savePosts([fallbackPost, ...posts]);
+        // TẠO BÀI VIẾT MỚI
+        let createdPost = null;
+        try {
+          const res = await fetch(`${API_URL_ROOT}/api/public/posts`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(postPayload)
+          });
+          const json = await res.json();
+          if (res.ok && json.data) {
+            createdPost = { ...postPayload, ...json.data };
+          }
+        } catch (apiErr) {
+          console.warn('Lỗi gọi API lưu bài viết:', apiErr);
+        }
+
+        if (!createdPost) {
+          createdPost = { ...postPayload, id: 'post_' + Date.now() };
+        }
+
+        const newPostsList = [createdPost, ...posts.filter(p => p.id !== createdPost.id && String(p.id) !== String(createdPost.id))];
+        savePosts(newPostsList);
+
+        // Đảm bảo hiển thị ngay bài viết mới tạo
+        setSelectedCategory('ALL');
+        setSearchQuery('');
+
         setIsCreatePostOpen(false);
+        setEditingPost(null);
         setNewTitle('');
         setNewSummary('');
         setNewContent('');
-        showToast('Đã lưu bài viết vào bộ nhớ trình duyệt!', 'info');
+        setNewImage('');
+        showToast('Đã lưu bài viết thành công! 🎉', 'success');
       }
     } catch (err) {
-      showToast('Lỗi khi gửi bài viết: ' + err.message, 'error');
+      showToast('Lỗi khi lưu bài viết: ' + err.message, 'error');
     } finally {
       setSavingPost(false);
     }
   };
 
-  // Xử lý xóa bài viết khỏi Database
+  // Xử lý xóa bài viết
   const handleDeletePost = async (e, postId) => {
-    e.stopPropagation();
+    if (e && e.stopPropagation) e.stopPropagation();
     if (window.confirm('Bạn có chắc chắn muốn xóa bài viết này không?')) {
       try {
-        const res = await fetch(`${API_URL_ROOT}/api/public/posts/${postId}`, {
+        await fetch(`${API_URL_ROOT}/api/public/posts/${postId}`, {
           method: 'DELETE'
         });
-        if (res.ok) {
-          showToast('Đã xóa bài viết khỏi cơ sở dữ liệu thành công!', 'success');
-        }
       } catch (err) {
         console.warn('Lỗi gọi API xóa bài viết:', err);
       }
       const updated = posts.filter(p => p.id !== postId && String(p.id) !== String(postId));
       savePosts(updated);
-      if (readingPost?.id === postId || String(readingPost?.id) === String(postId)) {
+      if (readingPost && (readingPost.id === postId || String(readingPost.id) === String(postId))) {
         setReadingPost(null);
       }
-      showToast('Đã xóa bài viết!', 'info');
+      showToast('Đã xóa bài viết thành công!', 'info');
     }
   };
 
@@ -414,7 +457,7 @@ export default function BlogView() {
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', flexWrap: 'wrap', marginBottom: '22px' }}>
             <button
               type="button"
-              onClick={() => setIsCreatePostOpen(true)}
+              onClick={handleOpenCreate}
               className="lookup-btn"
               style={{ width: 'auto', padding: '10px 22px', fontSize: '13.5px', borderRadius: '12px', boxShadow: '0 4px 16px rgba(249, 115, 22, 0.35)' }}
             >
@@ -519,10 +562,33 @@ export default function BlogView() {
                 whiteSpace: 'nowrap',
                 flexShrink: 0,
                 transition: 'all 0.2s ease',
-                boxShadow: selectedCategory === cat.id ? '0 4px 12px rgba(249, 115, 22, 0.3)' : 'none'
+                boxShadow: selectedCategory === cat.id ? '0 4px 12px rgba(249, 115, 22, 0.3)' : 'none',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '6px'
               }}
             >
-              {cat.label}
+              <span>{cat.label}</span>
+              {isAdmin && cat.id !== 'ALL' && (
+                <span
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleDeleteCategory(cat.id);
+                  }}
+                  title="Xóa danh mục này"
+                  style={{
+                    fontSize: '11px',
+                    opacity: 0.7,
+                    padding: '0 4px',
+                    borderRadius: '50%',
+                    marginLeft: '2px',
+                    lineHeight: '1',
+                    color: selectedCategory === cat.id ? '#ffffff' : '#ef4444'
+                  }}
+                >
+                  ✕
+                </span>
+              )}
             </button>
           ))}
         </div>
@@ -560,11 +626,22 @@ export default function BlogView() {
       {/* 3. POSTS GRID */}
       {filteredPosts.length === 0 ? (
         <div className="lookup-card" style={{ padding: '48px 20px', textAlign: 'center', color: 'var(--text-muted)' }}>
-          <i className="fa-regular fa-folder-open" style={{ fontSize: '32px', marginBottom: '10px', color: 'var(--text-subtle)' }}></i>
-          <div style={{ fontSize: '15px', fontWeight: '800', color: 'var(--text-bright)' }}>Chưa tìm thấy bài viết phù hợp</div>
-          <p style={{ margin: '6px 0 0 0', fontSize: '13px' }}>
-            {isAdmin ? 'Hãy thử tìm kiếm với từ khóa khác hoặc bấm nút "+ Viết Bài Mới" để chia sẻ bài viết đầu tiên.' : 'Hãy thử tìm kiếm với từ khóa khác hoặc chọn danh mục khác để xem bài viết.'}
+          <i className="fa-regular fa-folder-open" style={{ fontSize: '36px', marginBottom: '12px', color: '#ea580c' }}></i>
+          <div style={{ fontSize: '16px', fontWeight: '800', color: 'var(--text-bright)' }}>Chưa có bài viết nào</div>
+          <p style={{ margin: '8px 0 16px 0', fontSize: '13px', maxWidth: '460px', marginLeft: 'auto', marginRight: 'auto' }}>
+            {isAdmin ? 'Hiện tại danh sách bài viết đang trống. Hãy bấm nút "Viết Bài Mới" để chia sẻ bài viết đầu tiên.' : 'Hiện tại chưa có bài viết nào trong danh mục này.'}
           </p>
+          {isAdmin && (
+            <button
+              type="button"
+              onClick={handleOpenCreate}
+              className="lookup-btn"
+              style={{ width: 'auto', margin: '0 auto', padding: '10px 22px', fontSize: '13.5px' }}
+            >
+              <i className="fa-solid fa-plus"></i>
+              <span>+ Viết Bài Mới Ngay</span>
+            </button>
+          )}
         </div>
       ) : (
         <div style={{
@@ -643,27 +720,48 @@ export default function BlogView() {
                   <div>
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '11.5px', color: 'var(--text-muted)', marginBottom: '8px' }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                        <span>{post.date}</span>
+                        <span>{post.date || (post.createdAt ? new Date(post.createdAt).toLocaleDateString('vi-VN') : new Date().toLocaleDateString('vi-VN'))}</span>
                         <span>•</span>
                         <span>{post.author}</span>
                       </div>
-                      <button
-                        type="button"
-                        onClick={(e) => handleDeletePost(e, post.id)}
-                        title="Xóa bài viết"
-                        style={{
-                          background: 'none',
-                          border: 'none',
-                          color: 'var(--text-subtle)',
-                          cursor: 'pointer',
-                          padding: '2px 4px',
-                          fontSize: '12px'
-                        }}
-                        onMouseEnter={e => e.currentTarget.style.color = '#ef4444'}
-                        onMouseLeave={e => e.currentTarget.style.color = 'var(--text-subtle)'}
-                      >
-                        <i className="fa-solid fa-trash-can"></i>
-                      </button>
+                      {isAdmin && (
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                          <button
+                            type="button"
+                            onClick={(e) => handleOpenEdit(e, post)}
+                            title="Sửa bài viết"
+                            style={{
+                              background: 'none',
+                              border: 'none',
+                              color: 'var(--text-subtle)',
+                              cursor: 'pointer',
+                              padding: '2px 4px',
+                              fontSize: '12px'
+                            }}
+                            onMouseEnter={e => e.currentTarget.style.color = '#ea580c'}
+                            onMouseLeave={e => e.currentTarget.style.color = 'var(--text-subtle)'}
+                          >
+                            <i className="fa-solid fa-pen-to-square"></i>
+                          </button>
+                          <button
+                            type="button"
+                            onClick={(e) => handleDeletePost(e, post.id)}
+                            title="Xóa bài viết"
+                            style={{
+                              background: 'none',
+                              border: 'none',
+                              color: 'var(--text-subtle)',
+                              cursor: 'pointer',
+                              padding: '2px 4px',
+                              fontSize: '12px'
+                            }}
+                            onMouseEnter={e => e.currentTarget.style.color = '#ef4444'}
+                            onMouseLeave={e => e.currentTarget.style.color = 'var(--text-subtle)'}
+                          >
+                            <i className="fa-solid fa-trash-can"></i>
+                          </button>
+                        </div>
+                      )}
                     </div>
 
                     <h3 style={{
@@ -803,7 +901,7 @@ export default function BlogView() {
             <div style={{ padding: '24px 28px', overflowY: 'auto', flex: 1 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12.5px', color: 'var(--text-muted)', marginBottom: '12px' }}>
                 <i className="fa-regular fa-calendar"></i>
-                <span>{readingPost.date}</span>
+                <span>{readingPost.date || (readingPost.createdAt ? new Date(readingPost.createdAt).toLocaleDateString('vi-VN') : new Date().toLocaleDateString('vi-VN'))}</span>
                 <span>•</span>
                 <i className="fa-regular fa-user"></i>
                 <span>Tác giả: <b>{readingPost.author}</b></span>
@@ -835,29 +933,54 @@ export default function BlogView() {
             {/* Footer */}
             <div style={{ padding: '16px 28px', borderTop: '1px solid var(--border-color)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px', background: 'var(--bg-main)' }}>
               {isAdmin && (
-                <button
-                  type="button"
-                  onClick={(e) => handleDeletePost(e, readingPost.id)}
-                  style={{
-                    background: 'rgba(239, 68, 68, 0.1)',
-                    border: '1px solid rgba(239, 68, 68, 0.3)',
-                    color: '#ef4444',
-                    borderRadius: '10px',
-                    padding: '8px 16px',
-                    fontSize: '12.5px',
-                    fontWeight: '700',
-                    cursor: 'pointer',
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: '6px',
-                    transition: 'all 0.2s ease'
-                  }}
-                  onMouseEnter={e => e.currentTarget.style.background = '#ef4444' && (e.currentTarget.style.color = '#ffffff')}
-                  onMouseLeave={e => (e.currentTarget.style.background = 'rgba(239, 68, 68, 0.1)') && (e.currentTarget.style.color = '#ef4444')}
-                >
-                  <i className="fa-solid fa-trash-can"></i>
-                  <span>Xóa bài viết này</span>
-                </button>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      const p = readingPost;
+                      setReadingPost(null);
+                      handleOpenEdit(e, p);
+                    }}
+                    style={{
+                      background: 'rgba(234, 88, 12, 0.1)',
+                      border: '1px solid rgba(234, 88, 12, 0.3)',
+                      color: '#ea580c',
+                      borderRadius: '10px',
+                      padding: '8px 16px',
+                      fontSize: '12.5px',
+                      fontWeight: '700',
+                      cursor: 'pointer',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '6px',
+                      transition: 'all 0.2s ease'
+                    }}
+                  >
+                    <i className="fa-solid fa-pen-to-square"></i>
+                    <span>Sửa bài viết</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={(e) => handleDeletePost(e, readingPost.id)}
+                    style={{
+                      background: 'rgba(239, 68, 68, 0.1)',
+                      border: '1px solid rgba(239, 68, 68, 0.3)',
+                      color: '#ef4444',
+                      borderRadius: '10px',
+                      padding: '8px 16px',
+                      fontSize: '12.5px',
+                      fontWeight: '700',
+                      cursor: 'pointer',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '6px',
+                      transition: 'all 0.2s ease'
+                    }}
+                  >
+                    <i className="fa-solid fa-trash-can"></i>
+                    <span>Xóa bài này</span>
+                  </button>
+                </div>
               )}
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginLeft: 'auto' }}>
                 <button
@@ -903,16 +1026,20 @@ export default function BlogView() {
             <div style={{ padding: '20px 24px', borderBottom: '1px solid var(--border-color)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'var(--bg-main)' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                 <div style={{ width: '38px', height: '38px', borderRadius: '12px', background: 'rgba(249, 115, 22, 0.15)', color: '#ea580c', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '18px' }}>
-                  <i className="fa-solid fa-pen-nib"></i>
+                  <i className={`fa-solid ${editingPost ? 'fa-pen-to-square' : 'fa-pen-nib'}`}></i>
                 </div>
                 <div>
-                  <h3 style={{ margin: 0, fontSize: '17px', fontWeight: '800', color: 'var(--text-bright)' }}>Soạn Thảo Bài Viết Mới</h3>
-                  <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>Tạo bài viết hướng dẫn, mẹo kiếm tiền hoặc chia sẻ deal hot</div>
+                  <h3 style={{ margin: 0, fontSize: '17px', fontWeight: '800', color: 'var(--text-bright)' }}>
+                    {editingPost ? 'Chỉnh Sửa Bài Viết' : 'Soạn Thảo Bài Viết Mới'}
+                  </h3>
+                  <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
+                    {editingPost ? 'Cập nhật nội dung bài viết và lưu thay đổi' : 'Tạo bài viết hướng dẫn, mẹo kiếm tiền hoặc chia sẻ deal hot'}
+                  </div>
                 </div>
               </div>
               <button
                 type="button"
-                onClick={() => setIsCreatePostOpen(false)}
+                onClick={() => { setIsCreatePostOpen(false); setEditingPost(null); }}
                 style={{ background: 'none', border: 'none', fontSize: '20px', color: 'var(--text-muted)', cursor: 'pointer' }}
               >
                 <i className="fa-solid fa-xmark"></i>
@@ -920,7 +1047,7 @@ export default function BlogView() {
             </div>
 
             {/* Form Body */}
-            <form onSubmit={handleCreatePost} style={{ padding: '20px 24px', overflowY: 'auto', flex: 1, display: 'flex', flexDirection: 'column', gap: '16px' }}>
+            <form onSubmit={handleSavePost} style={{ padding: '20px 24px', overflowY: 'auto', flex: 1, display: 'flex', flexDirection: 'column', gap: '16px' }}>
               {/* Tiêu đề */}
               <div className="lookup-input-group" style={{ margin: 0 }}>
                 <label className="lookup-label">Tiêu đề bài viết (*)</label>
@@ -953,6 +1080,7 @@ export default function BlogView() {
                     onChange={e => setNewCategory(e.target.value)}
                     style={{ cursor: 'pointer' }}
                   >
+                    {categories.length === 0 && <option value="Chung">Mặc định (Chung)</option>}
                     {categories.map(c => (
                       <option key={c.id} value={c.id}>{c.label}</option>
                     ))}
@@ -1121,7 +1249,10 @@ export default function BlogView() {
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '10px', marginTop: '10px' }}>
                 <button
                   type="button"
-                  onClick={() => setIsCreatePostOpen(false)}
+                  onClick={() => {
+                    setIsCreatePostOpen(false);
+                    setEditingPost(null);
+                  }}
                   className="lookup-admin-link"
                   style={{ padding: '10px 18px', fontSize: '13px' }}
                 >
@@ -1136,12 +1267,12 @@ export default function BlogView() {
                   {savingPost ? (
                     <>
                       <div className="lookup-spinner"></div>
-                      <span>Đang lưu vào Database...</span>
+                      <span>Đang lưu...</span>
                     </>
                   ) : (
                     <>
-                      <i className="fa-solid fa-paper-plane"></i>
-                      <span>Đăng Bài Viết Ngay</span>
+                      <i className="fa-solid fa-check"></i>
+                      <span>Lưu</span>
                     </>
                   )}
                 </button>

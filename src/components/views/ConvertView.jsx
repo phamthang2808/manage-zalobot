@@ -307,12 +307,14 @@ export default function ConvertView() {
         {/* Input Textarea Form */}
         <form onSubmit={handleConvert}>
           <div className="lookup-input-group" style={{ marginBottom: '14px' }}>
-            <label className="lookup-label" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-              <span>Dán link sản phẩm (hỗ trợ nhiều link, mỗi dòng 1 link):</span>
-              <span style={{ fontSize: '11.5px', textTransform: 'none', color: 'var(--text-muted)', fontWeight: '600' }}>
-                Đã nhập: <b>{inputText.split('\n').filter(l => l.trim()).length}</b> link
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px', marginBottom: '8px', flexWrap: 'wrap' }}>
+              <label className="lookup-label" style={{ margin: 0, fontSize: '13px' }}>
+                Dán link sản phẩm <span style={{ fontSize: '11px', fontWeight: '500', color: 'var(--text-muted)' }}>(mỗi dòng 1 link)</span>:
+              </label>
+              <span style={{ fontSize: '11.5px', textTransform: 'none', color: 'var(--text-muted)', fontWeight: '600', whiteSpace: 'nowrap', marginLeft: 'auto' }}>
+                Đã nhập: <b style={{ color: '#ea580c' }}>{inputText.split('\n').filter(l => l.trim()).length}</b> link
               </span>
-            </label>
+            </div>
             <textarea
               className="lookup-input"
               rows={3}
@@ -484,7 +486,7 @@ export default function ConvertView() {
                 }}>
                   <div>
                     <div style={{ fontSize: '11.5px', color: 'var(--text-muted)', fontWeight: '600', marginBottom: '3px', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                      <span>Bạn nhận ước tính</span>
+                      <span>Hoa hồng ước tính</span>
                       <i className="fa-solid fa-circle-info" style={{ fontSize: '11px', color: 'var(--text-subtle)' }} title="Số tiền hoàn lại ước tính sau khi đơn hàng hoàn thành"></i>
                     </div>
                     <div style={{
@@ -609,8 +611,8 @@ export default function ConvertView() {
               </div>
             </div>
 
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              {historyLinks.length > 0 && (
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px', width: '100%', marginTop: '4px' }}>
+              {historyLinks.length > 0 ? (
                 <button
                   type="button"
                   onClick={handleClearHistory}
@@ -620,12 +622,12 @@ export default function ConvertView() {
                   <i className="fa-solid fa-trash-can"></i>
                   <span>Xóa lịch sử</span>
                 </button>
-              )}
+              ) : <div />}
               <button
                 type="button"
                 onClick={() => setIsHistoryOpen(!isHistoryOpen)}
                 className="lookup-admin-link"
-                style={{ fontSize: '12px', padding: '5px 12px' }}
+                style={{ fontSize: '12px', padding: '5px 12px', marginLeft: 'auto' }}
               >
                 <span>{isHistoryOpen ? 'Thu gọn' : 'Mở ra'}</span>
                 <i className={`fa-solid fa-chevron-${isHistoryOpen ? 'up' : 'down'}`} style={{ marginLeft: '4px' }}></i>
@@ -809,7 +811,7 @@ export default function ConvertView() {
                         }}>
                           <div>
                             <div style={{ fontSize: '11px', color: 'var(--text-muted)', fontWeight: '600', marginBottom: '2px', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                              <span>Bạn nhận ước tính</span>
+                              <span>Hoa hồng ước tính</span>
                               <i className="fa-solid fa-circle-info" style={{ fontSize: '10px', color: 'var(--text-subtle)' }} title="Số tiền hoàn lại ước tính sau khi đơn hàng hoàn thành"></i>
                             </div>
                             <div style={{ fontSize: '17px', fontWeight: '800', color: '#10b981', lineHeight: '1.2' }}>

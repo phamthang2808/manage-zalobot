@@ -614,7 +614,8 @@ export default function OrdersTab() {
           content: none !important;
         }
         .orders-table-container table tbody tr td[data-label="Sản phẩm"],
-        .orders-table-container table tbody tr td[data-label="Mã đơn"] {
+        .orders-table-container table tbody tr td[data-label="Mã đơn"],
+        .orders-table-container table tbody tr td[data-label="Mã đơn & Thời gian"] {
           font-size: 13px !important;
           font-weight: normal !important;
           border-bottom: 1px solid var(--border-color) !important;
@@ -656,18 +657,17 @@ export default function OrdersTab() {
         <table className="orders-table" style={{ tableLayout: 'fixed', width: '100%', minWidth: '880px' }}>
           <thead>
             <tr>
-              <th style={{ width: '160px' }}>Mã đơn hàng</th>
+              <th style={{ width: '185px' }}>Mã đơn & Thời gian</th>
               <th style={{ width: '230px' }}>Tên sản phẩm</th>
               <th style={{ width: '210px' }}>Thành viên / Zalo ID</th>
-              <th style={{ width: '150px', textAlign: 'right' }}>Tích lũy hoa hồng</th>
-              <th style={{ width: '130px' }}>Thời gian</th>
+              <th style={{ width: '160px', textAlign: 'right' }}>Tích lũy hoa hồng</th>
               <th style={{ width: '120px', textAlign: 'center' }}>Trạng thái</th>
             </tr>
           </thead>
           <tbody>
             {filteredOrders.length === 0 ? (
               <tr className="empty-row">
-                <td colSpan="6" style={{ textAlign: 'center', color: 'var(--text-muted)', padding: '32px 16px' }}>
+                <td colSpan="5" style={{ textAlign: 'center', color: 'var(--text-muted)', padding: '32px 16px' }}>
                   Không tìm thấy đơn hàng {platformFilter} nào phù hợp
                 </td>
               </tr>
@@ -677,10 +677,23 @@ export default function OrdersTab() {
                 const commRaw = o.commission != null ? o.commission : (o.payout != null ? o.payout : 0);
                 const afterTax = commRaw * 0.9;
                 const afterDeduction = afterTax * 0.8;
+                const isCompleted = o.status === 2 || o.status === 'Hoàn thành' || o.status === 'Đã chốt HH' || o.status === 'Đã chốt';
+                const isCancelled = o.status === 3 || o.status === 'Đã hủy' || o.status === 'Hủy';
+
                 return (
                   <tr key={o.id}>
-                    <td data-label="Mã đơn">
-                      <code className="order-id-code" style={{ fontSize: '12px' }}>{o.orderId}</code>
+                    <td data-label="Mã đơn & Thời gian">
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '3px' }}>
+                        <code className="order-id-code" style={{ fontSize: '12px', fontWeight: '700' }}>{o.orderId}</code>
+                        <div style={{ fontSize: '11px', color: 'var(--text-muted)' }} title={`Đặt mua: ${formatDateTime(o.purchaseTime || o.orderDate || o.createdTime)}`}>
+                          Đặt: {formatDateTime(o.purchaseTime || o.orderDate || o.createdTime)}
+                        </div>
+                        {(isCompleted || o.completeTime) && o.completeTime && (
+                          <div style={{ fontSize: '11px', color: '#10b981', fontWeight: '700' }} title={`Hoàn thành: ${formatDateTime(o.completeTime)}`}>
+                            Xong: {formatDateTime(o.completeTime)}
+                          </div>
+                        )}
+                      </div>
                     </td>
                     <td data-label="Sản phẩm" title={o.productName}>
                       <span style={{ fontWeight: '600', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
@@ -746,20 +759,8 @@ export default function OrdersTab() {
                         <span style={{ color: 'var(--color-success)', fontWeight: '700' }}>Khách: {formatMoney(afterDeduction)}</span>
                       </div>
                     </td>
-                    <td data-label="Thời gian">
-                      <div style={{ fontSize: '12px' }} title={`Đặt mua: ${formatDateTime(o.purchaseTime || o.orderDate || o.createdTime)}`}>
-                        Đặt: {formatDateTime(o.purchaseTime || o.orderDate || o.createdTime)}
-                      </div>
-                      {o.completeTime && (
-                        <div style={{ fontSize: '11px', color: 'var(--text-muted)', marginTop: '2px' }}>
-                          Xong: {formatDateTime(o.completeTime)}
-                        </div>
-                      )}
-                    </td>
                     <td data-label="Trạng thái" style={{ textAlign: 'center' }}>
                       {(() => {
-                        const isCompleted = o.status === 2 || o.status === 'Hoàn thành' || o.status === 'Đã chốt HH' || o.status === 'Đã chốt';
-                        const isCancelled = o.status === 3 || o.status === 'Đã hủy' || o.status === 'Hủy';
                         const text = isCompleted ? 'Hoàn thành' : isCancelled ? 'Đã hủy' : (typeof o.status === 'number' ? (o.status === 2 ? 'Hoàn thành' : o.status === 3 ? 'Đã hủy' : 'Chờ kiểm duyệt') : (o.status || 'Chờ kiểm duyệt'));
                         const color = isCompleted ? '#10b981' : isCancelled ? '#ef4444' : '#f59e0b';
                         return (

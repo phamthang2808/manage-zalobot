@@ -119,10 +119,12 @@ const SUGGESTED_IMAGES = [
 ];
 
 export default function BlogView() {
-  const { setView, user, isAdmin, showToast } = useApp();
+  const { setView, user, isAdmin, showToast, API_URL_ROOT } = useApp();
   const [selectedCategory, setSelectedCategory] = useState('ALL');
   const [searchQuery, setSearchQuery] = useState('');
   const categoryContainerRef = useRef(null);
+  const coverFileInputRef = useRef(null);
+  const [uploadingCover, setUploadingCover] = useState(false);
 
   // Danh mục động (LocalStorage)
   const [categories, setCategories] = useState(() => {
@@ -160,6 +162,53 @@ export default function BlogView() {
 
   // Form state tạo danh mục
   const [newCatName, setNewCatName] = useState('');
+
+  // Xử lý upload ảnh bìa từ file thiết bị
+  const handleCoverFileUpload = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (!file.type.startsWith('image/')) {
+      showToast('Vui lòng chọn file hình ảnh (PNG, JPG, WEBP)!', 'warning');
+      return;
+    }
+    setUploadingCover(true);
+    try {
+      const token = sessionStorage.getItem('adminToken') || '';
+      const formData = new FormData();
+      formData.append('file', file);
+      const res = await fetch(`${API_URL_ROOT}/api/admin/announcement/upload-image`, {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${token}` },
+        body: formData,
+        credentials: 'include'
+      });
+      const data = await res.json();
+      if (res.ok && (data.imageUrl || data.url)) {
+        const fullUrl = (data.imageUrl || data.url).startsWith('http')
+          ? (data.imageUrl || data.url)
+          : `${API_URL_ROOT}${data.imageUrl || data.url}`;
+        setNewImage(fullUrl);
+        showToast('Tải lên ảnh bìa bài viết thành công! 🎉', 'success');
+      } else {
+        const reader = new FileReader();
+        reader.onload = () => {
+          setNewImage(reader.result);
+          showToast('Đã chèn ảnh bìa thành công!', 'success');
+        };
+        reader.readAsDataURL(file);
+      }
+    } catch (err) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        setNewImage(reader.result);
+        showToast('Đã chèn ảnh bìa thành công!', 'success');
+      };
+      reader.readAsDataURL(file);
+    } finally {
+      setUploadingCover(false);
+      if (coverFileInputRef.current) coverFileInputRef.current.value = '';
+    }
+  };
 
   // Cuộn danh mục sang trái / phải
   const scrollCategories = (direction) => {
@@ -841,15 +890,100 @@ export default function BlogView() {
 
               {/* Ảnh bìa */}
               <div className="lookup-input-group" style={{ margin: 0 }}>
-                <label className="lookup-label">Link ảnh bìa đại diện (URL)</label>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '6px' }}>
+                  <label className="lookup-label" style={{ margin: 0 }}>Ảnh bìa đại diện bài viết (*)</label>
+                  <div>
+                    <input
+                      ref={coverFileInputRef}
+                      type="file"
+                      accept="image/*"
+                      style={{ display: 'none' }}
+                      onChange={handleCoverFileUpload}
+                    />
+                    <button
+                      type="button"
+                      disabled={uploadingCover}
+                      onClick={() => coverFileInputRef.current?.click()}
+                      style={{
+                        padding: '4px 10px',
+                        background: 'rgba(234, 88, 12, 0.1)',
+                        border: '1px solid rgba(234, 88, 12, 0.4)',
+                        color: '#ea580c',
+                        borderRadius: '8px',
+                        fontSize: '11.5px',
+                        fontWeight: '700',
+                        cursor: 'pointer',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '5px'
+                      }}
+                    >
+                      <i className={`fa-solid ${uploadingCover ? 'fa-spinner fa-spin' : 'fa-cloud-arrow-up'}`}></i>
+                      <span>{uploadingCover ? 'Đang tải lên...' : 'Tải ảnh từ máy'}</span>
+                    </button>
+                  </div>
+                </div>
+
                 <input
                   type="text"
                   className="lookup-input"
-                  placeholder="https://..."
+                  placeholder="Hoặc dán URL ảnh trực tiếp (https://...)"
                   value={newImage}
                   onChange={e => setNewImage(e.target.value)}
+                  style={{ marginBottom: '8px' }}
                 />
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '8px', flexWrap: 'wrap' }}>
+
+                {/* Preview ảnh bìa đã chọn */}
+                {newImage && (
+                  <div style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '12px',
+                    padding: '8px 12px',
+                    background: 'var(--bg-main)',
+                    borderRadius: '10px',
+                    border: '1px solid var(--border-color)',
+                    marginBottom: '8px'
+                  }}>
+                    <img
+                      src={newImage}
+                      alt="Xem trước ảnh bìa"
+                      style={{
+                        width: '60px',
+                        height: '42px',
+                        objectFit: 'cover',
+                        borderRadius: '6px',
+                        border: '1px solid var(--border-color)'
+                      }}
+                    />
+                    <div style={{ flex: 1, minWidth: 0, fontSize: '11.5px', color: 'var(--text-muted)' }}>
+                      <div style={{ fontWeight: '600', color: 'var(--text-bright)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                        Ảnh bìa hiện tại
+                      </div>
+                      <div style={{ fontSize: '11px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                        {newImage.startsWith('data:') ? 'Ảnh tải lên từ thiết bị' : newImage}
+                      </div>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => setNewImage('')}
+                      style={{
+                        background: 'none',
+                        border: 'none',
+                        color: '#dc2626',
+                        cursor: 'pointer',
+                        padding: '4px 6px',
+                        fontSize: '12px',
+                        fontWeight: '600'
+                      }}
+                      title="Xóa ảnh này"
+                    >
+                      <i className="fa-solid fa-trash-can"></i>
+                    </button>
+                  </div>
+                )}
+
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
                   <span style={{ fontSize: '11.5px', color: 'var(--text-muted)' }}>Mẫu ảnh gợi ý:</span>
                   {SUGGESTED_IMAGES.map((img, i) => (
                     <button
@@ -857,8 +991,8 @@ export default function BlogView() {
                       type="button"
                       onClick={() => setNewImage(img.url)}
                       style={{
-                        padding: '4px 10px',
-                        borderRadius: '8px',
+                        padding: '3px 8px',
+                        borderRadius: '6px',
                         fontSize: '11px',
                         fontWeight: '600',
                         background: newImage === img.url ? 'rgba(249, 115, 22, 0.2)' : 'var(--bg-main)',

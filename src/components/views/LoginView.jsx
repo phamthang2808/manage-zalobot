@@ -22,6 +22,10 @@ export default function LoginView() {
   const [regLoading, setRegLoading] = useState(false);
   const [regError, setRegError] = useState('');
 
+  // Password visibility toggles
+  const [showLoginPassword, setShowLoginPassword] = useState(false);
+  const [showRegPassword, setShowRegPassword] = useState(false);
+
   useEffect(() => {
     setCfStatus('verifying');
     const timer = setTimeout(() => setCfStatus('success'), 1500);
@@ -320,15 +324,14 @@ export default function LoginView() {
           .login-page-split {
             height: 100vh;
             height: 100dvh;
-            min-height: 100vh;
-            min-height: 100dvh;
+            max-height: 100dvh;
             overflow-y: auto;
             display: flex;
             flex-direction: column;
             justify-content: flex-start;
           }
           .login-split-header {
-            padding: 10px 14px !important;
+            padding: 6px 12px !important;
             height: auto !important;
             display: flex !important;
             flex-wrap: nowrap !important;
@@ -344,11 +347,11 @@ export default function LoginView() {
           }
           .login-split-logo img {
             width: auto !important;
-            height: 85px !important;
+            height: clamp(38px, 8vw, 46px) !important;
             flex-shrink: 0 !important;
           }
           .login-split-logo span {
-            font-size: 14px !important;
+            font-size: 13px !important;
             white-space: nowrap !important;
           }
           .login-split-nav {
@@ -356,13 +359,13 @@ export default function LoginView() {
             flex-shrink: 0 !important;
           }
           .login-split-nav .btn-back {
-            padding: 4px 8px !important;
-            font-size: 11.5px !important;
+            padding: 3px 8px !important;
+            font-size: 11px !important;
             white-space: nowrap !important;
           }
           .login-split-content {
             flex-direction: column;
-            padding: 8px 16px 16px !important;
+            padding: 2px 12px 10px !important;
             gap: 0 !important;
             justify-content: center !important;
             align-items: center !important;
@@ -375,84 +378,77 @@ export default function LoginView() {
           .login-split-right {
             justify-content: center;
             width: 100%;
-            max-width: 420px;
+            max-width: 400px;
           }
           .login-split-card {
-            padding: 20px 18px !important;
+            padding: 12px 14px !important;
             width: 100%;
             max-width: 100%;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1) !important;
-            border-radius: 20px !important;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.08) !important;
+            border-radius: 16px !important;
           }
           .login-split-card h2 {
-            font-size: 22px !important;
-            margin-bottom: 4px !important;
+            font-size: 18px !important;
+            margin-bottom: 2px !important;
           }
           .login-split-card .subtitle {
-            font-size: 12.5px !important;
-            margin-bottom: 12px !important;
+            font-size: 11px !important;
+            margin-bottom: 8px !important;
+            line-height: 1.3 !important;
           }
           .login-split-card .form-group {
-            margin-bottom: 10px !important;
+            margin-bottom: 7px !important;
           }
           .login-split-card .form-label {
-            font-size: 12px !important;
-            margin-bottom: 4px !important;
+            font-size: 11.5px !important;
+            margin-bottom: 2px !important;
           }
           .login-split-card .form-input {
-            padding: 10px 14px !important;
+            padding: 7px 12px !important;
+            font-size: 13.5px !important;
+            border-radius: 8px !important;
+            min-height: 36px !important;
+          }
+          .login-split-card .cf-turnstile-sim {
+            margin: 6px 0 8px !important;
+            min-height: 40px !important;
+            padding: 6px 10px !important;
+          }
+          .login-split-card .modal-login-btn {
+            padding: 9px 14px !important;
             font-size: 14px !important;
             border-radius: 10px !important;
           }
-          .login-split-card .cf-turnstile-sim {
-            margin: 8px 0 12px !important;
-            min-height: 48px !important;
-            padding: 8px 12px !important;
-          }
-          .login-split-card .modal-login-btn {
-            padding: 11px 16px !important;
-            font-size: 15px !important;
-            border-radius: 12px !important;
-          }
           .login-split-card .modal-divider {
-            margin: 10px 0 !important;
-            font-size: 12px !important;
+            margin: 6px 0 !important;
+            font-size: 11px !important;
           }
           .login-split-card .btn-google-custom {
-            height: 40px !important;
-            font-size: 14px !important;
+            height: 36px !important;
+            font-size: 13px !important;
             border-radius: 10px !important;
           }
           .login-split-card .login-split-footer {
-            margin-top: 10px !important;
-            font-size: 12px !important;
+            margin-top: 8px !important;
+            font-size: 11.5px !important;
           }
         }
         @media (max-width: 480px) {
           .login-split-header {
-            padding: 8px 10px !important;
+            padding: 4px 10px !important;
           }
           .login-split-logo img {
             width: auto !important;
-            height: 80px !important;
-          }
-          .login-split-logo span {
-            font-size: 13px !important;
-            white-space: nowrap !important;
-          }
-          .login-split-nav .btn-back {
-            padding: 3px 7px !important;
-            font-size: 11px !important;
-            white-space: nowrap !important;
+            height: 40px !important;
           }
           .login-split-content {
-            padding: 4px 12px 12px !important;
+            padding: 2px 10px 6px !important;
           }
           .login-split-card {
-            padding: 16px 14px !important;
+            padding: 10px 12px !important;
           }
           .login-split-card h2 {
-            font-size: 20px !important;
+            font-size: 17px !important;
           }
         }
       `}} />
@@ -494,15 +490,15 @@ export default function LoginView() {
         <div className="login-split-right">
           <div className="login-split-card">
             {/* Auth Mode Tabs */}
-            <div style={{ display: 'flex', background: 'var(--bg-main)', padding: '4px', borderRadius: '14px', marginBottom: '22px', border: '1px solid var(--border-color)' }}>
+            <div style={{ display: 'flex', background: 'var(--bg-main)', padding: '3px', borderRadius: '12px', marginBottom: '12px', border: '1px solid var(--border-color)' }}>
               <button
                 type="button"
                 onClick={() => setAuthMode('login')}
                 style={{
-                  flex: 1, padding: '10px 16px', borderRadius: '10px', border: 'none',
+                  flex: 1, padding: '8px 14px', borderRadius: '8px', border: 'none',
                   background: authMode === 'login' ? 'var(--bg-card)' : 'transparent',
                   color: authMode === 'login' ? '#ea580c' : 'var(--text-muted)',
-                  fontWeight: '700', fontSize: '14px', cursor: 'pointer',
+                  fontWeight: '700', fontSize: '13.5px', cursor: 'pointer',
                   boxShadow: authMode === 'login' ? '0 2px 8px rgba(0,0,0,0.08)' : 'none',
                   transition: 'all 0.2s'
                 }}
@@ -513,10 +509,10 @@ export default function LoginView() {
                 type="button"
                 onClick={() => setAuthMode('register')}
                 style={{
-                  flex: 1, padding: '10px 16px', borderRadius: '10px', border: 'none',
+                  flex: 1, padding: '8px 14px', borderRadius: '8px', border: 'none',
                   background: authMode === 'register' ? 'var(--bg-card)' : 'transparent',
                   color: authMode === 'register' ? '#ea580c' : 'var(--text-muted)',
-                  fontWeight: '700', fontSize: '14px', cursor: 'pointer',
+                  fontWeight: '700', fontSize: '13.5px', cursor: 'pointer',
                   boxShadow: authMode === 'register' ? '0 2px 8px rgba(0,0,0,0.08)' : 'none',
                   transition: 'all 0.2s'
                 }}
@@ -533,18 +529,47 @@ export default function LoginView() {
                 {loginError && <div className="login-error-msg">{loginError}</div>}
 
                 <form onSubmit={handleLocalLogin}>
-                  <div className="form-group" style={{ marginBottom: '18px' }}>
+                  <div className="form-group" style={{ marginBottom: '12px' }}>
                     <label className="form-label">Email tài khoản</label>
                     <div className="form-input-wrapper">
                       <input type="email" className="form-input" placeholder="name@example.com" required
                         value={loginEmail} onChange={e => setLoginEmail(e.target.value)} />
                     </div>
                   </div>
-                  <div className="form-group" style={{ marginBottom: '18px' }}>
+                  <div className="form-group" style={{ marginBottom: '12px' }}>
                     <label className="form-label">Mật khẩu</label>
-                    <div className="form-input-wrapper">
-                      <input type="password" className="form-input" placeholder="••••••••••••" required
-                        value={loginPassword} onChange={e => setLoginPassword(e.target.value)} />
+                    <div className="form-input-wrapper" style={{ position: 'relative' }}>
+                      <input
+                        type={showLoginPassword ? 'text' : 'password'}
+                        className="form-input"
+                        placeholder="••••••••••••"
+                        required
+                        value={loginPassword}
+                        onChange={e => setLoginPassword(e.target.value)}
+                        style={{ paddingRight: '40px' }}
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowLoginPassword(!showLoginPassword)}
+                        style={{
+                          position: 'absolute',
+                          right: '10px',
+                          top: '50%',
+                          transform: 'translateY(-50%)',
+                          background: 'none',
+                          border: 'none',
+                          color: 'var(--text-muted)',
+                          cursor: 'pointer',
+                          padding: '4px',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          fontSize: '15px'
+                        }}
+                        title={showLoginPassword ? 'Ẩn mật khẩu' : 'Hiện mật khẩu'}
+                      >
+                        <i className={`fa-regular ${showLoginPassword ? 'fa-eye-slash' : 'fa-eye'}`}></i>
+                      </button>
                     </div>
                   </div>
 
@@ -618,12 +643,34 @@ export default function LoginView() {
             ) : (
               <>
                 <h2>Tạo tài khoản</h2>
-                <p className="subtitle">Đăng ký thành viên để tự chuyển đổi link và xem báo cáo hoa hồng.</p>
+                <p className="subtitle" style={{ marginBottom: '8px' }}>Đăng ký thành viên để tự chuyển đổi link và tích lũy hoa hồng.</p>
 
                 {regError && <div className="login-error-msg">{regError}</div>}
 
+                {/* Nút đăng ký nhanh bằng Google */}
+                <div style={{ position: 'relative', width: '100%', minHeight: '38px', margin: '0 auto 8px auto' }}>
+                  <button
+                    type="button"
+                    className="btn-google-custom"
+                    onClick={handleGoogleLoginMobile}
+                    style={{ width: '100%', height: '40px', background: 'var(--bg-card)', color: 'var(--text-bright)', border: '1.5px solid var(--border-color)', borderRadius: '12px', fontSize: '13.5px', fontWeight: '700', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px', boxShadow: '0 2px 8px rgba(0,0,0,0.06)', cursor: 'pointer', transition: 'all 0.25s ease' }}
+                    onMouseEnter={e => { e.currentTarget.style.background = '#fff7ed'; e.currentTarget.style.borderColor = '#f97316'; e.currentTarget.style.color = '#ea580c'; }}
+                    onMouseLeave={e => { e.currentTarget.style.background = ''; e.currentTarget.style.borderColor = ''; e.currentTarget.style.color = ''; }}
+                  >
+                    <svg width="18" height="18" viewBox="0 0 48 48">
+                      <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
+                      <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
+                      <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.28-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24s.92 7.54 2.56 10.78l7.97-6.19z"/>
+                      <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
+                    </svg>
+                    Đăng ký nhanh bằng Google
+                  </button>
+                </div>
+
+                <div className="modal-divider" style={{ margin: '6px 0 8px 0' }}>Hoặc đăng ký bằng email</div>
+
                 <form onSubmit={handleRegister}>
-                  <div className="form-group" style={{ marginBottom: '14px' }}>
+                  <div className="form-group" style={{ marginBottom: '8px' }}>
                     <label className="form-label">Họ và tên *</label>
                     <div className="form-input-wrapper">
                       <input type="text" className="form-input" placeholder="Nguyễn Văn A" required
@@ -631,7 +678,7 @@ export default function LoginView() {
                     </div>
                   </div>
 
-                  <div className="form-group" style={{ marginBottom: '14px' }}>
+                  <div className="form-group" style={{ marginBottom: '8px' }}>
                     <label className="form-label">Email đăng nhập *</label>
                     <div className="form-input-wrapper">
                       <input type="email" className="form-input" placeholder="name@example.com" required
@@ -639,42 +686,61 @@ export default function LoginView() {
                     </div>
                   </div>
 
-                  <div className="form-group" style={{ marginBottom: '14px' }}>
+                  <div className="form-group" style={{ marginBottom: '8px' }}>
                     <label className="form-label">Mật khẩu * (ít nhất 6 ký tự)</label>
-                    <div className="form-input-wrapper">
-                      <input type="password" className="form-input" placeholder="••••••••••••" required minLength={6}
-                        value={regPassword} onChange={e => setRegPassword(e.target.value)} />
+                    <div className="form-input-wrapper" style={{ position: 'relative' }}>
+                      <input
+                        type={showRegPassword ? 'text' : 'password'}
+                        className="form-input"
+                        placeholder="••••••••••••"
+                        required
+                        minLength={6}
+                        value={regPassword}
+                        onChange={e => setRegPassword(e.target.value)}
+                        style={{ paddingRight: '40px' }}
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowRegPassword(!showRegPassword)}
+                        style={{
+                          position: 'absolute',
+                          right: '10px',
+                          top: '50%',
+                          transform: 'translateY(-50%)',
+                          background: 'none',
+                          border: 'none',
+                          color: 'var(--text-muted)',
+                          cursor: 'pointer',
+                          padding: '4px',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          fontSize: '15px'
+                        }}
+                        title={showRegPassword ? 'Ẩn mật khẩu' : 'Hiện mật khẩu'}
+                      >
+                        <i className={`fa-regular ${showRegPassword ? 'fa-eye-slash' : 'fa-eye'}`}></i>
+                      </button>
                     </div>
                   </div>
 
-                  <div className="form-group" style={{ marginBottom: '14px' }}>
-                    <label className="form-label">Số điện thoại</label>
-                    <div className="form-input-wrapper">
-                      <input type="tel" className="form-input" placeholder="0987654321"
-                        value={regPhone} onChange={e => setRegPhone(e.target.value)} />
-                    </div>
-                  </div>
-
-                  <div className="form-group" style={{ marginBottom: '16px' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-                      <label className="form-label" style={{ margin: 0 }}>Zalo ID (Tùy chọn - Tự động đồng bộ)</label>
-                      <span style={{ fontSize: '11px', color: '#0284c7', background: 'rgba(2,132,199,0.1)', padding: '2px 8px', borderRadius: '10px', fontWeight: '600' }}>Khuyên dùng</span>
+                  <div className="form-group" style={{ marginBottom: '10px' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2px' }}>
+                      <label className="form-label" style={{ margin: 0 }}>Zalo ID (Tùy chọn)</label>
+                      <span style={{ fontSize: '10.5px', color: '#0284c7', background: 'rgba(2,132,199,0.1)', padding: '1px 6px', borderRadius: '8px', fontWeight: '600' }}>Khuyên dùng</span>
                     </div>
                     <div className="form-input-wrapper">
-                      <input type="text" className="form-input" placeholder="Nhập Zalo ID nếu bạn đã dùng bot Zalo"
+                      <input type="text" className="form-input" placeholder="Gõ /id trong bot Zalo để lấy ID"
                         value={regZaloId} onChange={e => setRegZaloId(e.target.value)} />
                     </div>
-                    <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginTop: '4px', textAlign: 'left', lineHeight: '1.4' }}>
-                      💡 Gõ <code>/id</code> trong nhóm Zalo của bot để lấy Zalo ID. Nhập vào đây để hợp nhất đơn hàng bot Zalo ngay lập tức!
-                    </div>
                   </div>
 
-                  <button type="submit" className="modal-login-btn" disabled={regLoading} style={{ marginTop: '10px' }}>
+                  <button type="submit" className="modal-login-btn" disabled={regLoading} style={{ marginTop: '4px' }}>
                     {regLoading ? 'Đang tạo tài khoản...' : 'Hoàn tất đăng ký'}
                   </button>
                 </form>
 
-                <div className="login-split-footer" style={{ marginTop: '18px' }}>
+                <div className="login-split-footer" style={{ marginTop: '10px' }}>
                   Đã có tài khoản?{' '}
                   <span onClick={() => setAuthMode('login')} style={{ color: '#ea580c', cursor: 'pointer', fontWeight: '700', textDecoration: 'underline' }}>
                     Đăng nhập tại đây

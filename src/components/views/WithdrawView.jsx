@@ -117,16 +117,27 @@ export default function WithdrawView() {
     fetchWalletAndPayouts();
   }, []);
 
+  const parseAmount = (val) => {
+    if (!val) return 0;
+    const str = String(val).trim().toLowerCase();
+    if (str.endsWith('k')) {
+      const numPart = parseFloat(str.slice(0, -1).replace(/,/g, '.').replace(/[^\d.]/g, ''));
+      return isNaN(numPart) ? 0 : Math.round(numPart * 1000);
+    }
+    const cleanDigits = str.replace(/[^\d]/g, '');
+    return cleanDigits ? parseFloat(cleanDigits) : 0;
+  };
+
   const handleRequestPayout = async (e) => {
     e.preventDefault();
-    const cleanAmount = parseFloat(amountInput.replace(/[^\d]/g, ''));
-    if (!cleanAmount || cleanAmount <= 0) {
-      showToast('Vui lòng nhập số tiền rút hợp lệ!', 'warning');
+    const cleanAmount = parseAmount(amountInput);
+    if (!cleanAmount || cleanAmount < 10000) {
+      showToast('Số tiền rút tối thiểu là 10.000đ!', 'warning');
       return;
     }
 
     if (cleanAmount > (wallet.balance || 0)) {
-      showToast('Số tiền rút vượt quá số dư khả dụng hiện tại!', 'error');
+      showToast(`Số tiền rút vượt quá số dư khả dụng (${formatMoney(wallet.balance)})!`, 'error');
       return;
     }
 
@@ -302,21 +313,6 @@ export default function WithdrawView() {
             <i className="fa-solid fa-money-bill-transfer" style={{ color: 'var(--text-muted)' }}></i>
             <span>Rút Tiền Hoa Hồng Khả Dụng</span>
           </h3>
-          <span style={{
-            fontSize: '13.5px',
-            fontWeight: '700',
-            color: '#059669',
-            background: 'rgba(5, 150, 105, 0.1)',
-            border: '1px solid rgba(5, 150, 105, 0.25)',
-            padding: '4px 12px',
-            borderRadius: '16px',
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: '6px'
-          }}>
-            <i className="fa-solid fa-circle-check" style={{ fontSize: '11px' }}></i>
-            <span>Khả dụng: {formatMoney(wallet.balance)}</span>
-          </span>
         </div>
 
         <p style={{ fontSize: '12.5px', color: 'var(--text-muted)', margin: '0 0 16px 0', lineHeight: '1.4' }}>
@@ -603,16 +599,19 @@ export default function WithdrawView() {
         {wallet.balance > 0 ? (
           <form onSubmit={handleRequestPayout} style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
             <div className="lookup-input-group" style={{ marginBottom: 0 }}>
-              <label className="lookup-label">Số Tiền Muốn Rút (đ)</label>
+              <label className="lookup-label">Số Tiền Muốn Rút (Tối thiểu 10.000đ)</label>
               <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
                 <input
                   type="text"
                   className="lookup-input"
-                  placeholder={`Tối đa: ${formatMoney(wallet.balance)}`}
+                  placeholder="Nhập số tiền hoặc 10k, 20k, 50k..."
                   value={amountInput}
-                  onChange={e => {
-                    const val = e.target.value.replace(/[^\d]/g, '');
-                    setAmountInput(val ? new Intl.NumberFormat('vi-VN').format(parseFloat(val)) : '');
+                  onChange={e => setAmountInput(e.target.value)}
+                  onBlur={() => {
+                    const parsed = parseAmount(amountInput);
+                    if (parsed > 0) {
+                      setAmountInput(new Intl.NumberFormat('vi-VN').format(parsed));
+                    }
                   }}
                   style={{ paddingRight: '80px' }}
                 />
@@ -623,6 +622,57 @@ export default function WithdrawView() {
                   onClick={() => setAmountInput(new Intl.NumberFormat('vi-VN').format(wallet.balance))}
                 >
                   Rút hết
+                </button>
+              </div>
+
+              {/* Live Preview quy đổi số tiền */}
+              {parseAmount(amountInput) > 0 && (
+                <div style={{ fontSize: '12px', color: '#059669', fontWeight: '700', marginTop: '6px', display: 'flex', alignItems: 'center', gap: '5px' }}>
+                  <i className="fa-solid fa-circle-check" style={{ fontSize: '11px' }}></i>
+                  <span>Quy đổi: {formatMoney(parseAmount(amountInput))}</span>
+                </div>
+              )}
+
+              {/* Nút chọn nhanh số tiền */}
+              <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap', marginTop: '8px' }}>
+                {[10000, 20000, 50000, 100000].map(amt => (
+                  <button
+                    key={amt}
+                    type="button"
+                    disabled={amt > wallet.balance}
+                    onClick={() => setAmountInput(new Intl.NumberFormat('vi-VN').format(amt))}
+                    style={{
+                      padding: '4px 10px',
+                      borderRadius: '20px',
+                      fontSize: '11.5px',
+                      fontWeight: '600',
+                      border: '1px solid var(--border-color)',
+                      background: 'var(--bg-main)',
+                      color: amt > wallet.balance ? 'var(--text-muted)' : 'var(--text-bright)',
+                      cursor: amt > wallet.balance ? 'not-allowed' : 'pointer',
+                      opacity: amt > wallet.balance ? 0.5 : 1,
+                      transition: 'all 0.15s ease'
+                    }}
+                  >
+                    {amt / 1000}k
+                  </button>
+                ))}
+                <button
+                  type="button"
+                  onClick={() => setAmountInput(new Intl.NumberFormat('vi-VN').format(wallet.balance))}
+                  style={{
+                    padding: '4px 10px',
+                    borderRadius: '20px',
+                    fontSize: '11.5px',
+                    fontWeight: '700',
+                    border: '1px solid #fed7aa',
+                    background: '#fff7ed',
+                    color: '#ea580c',
+                    cursor: 'pointer',
+                    transition: 'all 0.15s ease'
+                  }}
+                >
+                  Toàn bộ ({formatMoney(wallet.balance)})
                 </button>
               </div>
             </div>

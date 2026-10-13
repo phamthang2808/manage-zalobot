@@ -1151,15 +1151,30 @@ export default function OrderLookupView({ setView: propSetView } = {}) {
             ) : (
               searchedOrders.map(o => (
                 <div key={o.id} className="order-card-item">
-                  <div className="order-card-header">
-                    <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
-                      <i className="fa-regular fa-calendar" style={{ color: 'var(--text-muted)', fontSize: '13px' }}></i>
-                      <span>{formatDateTime(o.purchaseTime)}</span>
-                    </span>
-                    <span style={{ display: 'inline-flex', alignItems: 'center' }}>
-                      Mã đơn: <span className="order-id-badge" style={{ marginLeft: '4px' }}>{o.orderId}</span>
-                      <CopyButton text={o.orderId} title="Copy mã đơn hàng" toastMessage={`Đã copy mã đơn: ${o.orderId}`} />
-                    </span>
+                  <div className="order-card-header" style={{ display: 'flex', flexDirection: 'column', gap: '8px', alignItems: 'stretch' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
+                      <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', fontSize: '12px', color: 'var(--text-muted)' }}>
+                        <i className="fa-regular fa-calendar" style={{ fontSize: '12px' }}></i>
+                        <span>{formatDateTime(o.purchaseTime)}</span>
+                      </span>
+                    </div>
+                    <div style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      width: '100%',
+                      background: 'var(--bg-main, rgba(0, 0, 0, 0.03))',
+                      padding: '5px 10px',
+                      borderRadius: '8px',
+                      border: '1px solid var(--border-color, rgba(0, 0, 0, 0.06))'
+                    }}>
+                      <span style={{ fontSize: '12px', color: 'var(--text-muted)', display: 'inline-flex', alignItems: 'center', minWidth: 0, overflow: 'hidden' }}>
+                        Mã đơn: <span className="order-id-badge" style={{ marginLeft: '6px', wordBreak: 'break-all', fontSize: '12.5px' }}>{o.orderId}</span>
+                      </span>
+                      <div style={{ flexShrink: 0, marginLeft: '8px' }}>
+                        <CopyButton text={o.orderId} title="Copy mã đơn hàng" toastMessage={`Đã copy mã đơn: ${o.orderId}`} />
+                      </div>
+                    </div>
                   </div>
                   <div className="order-card-title" title={o.productName}>{o.productName}</div>
                   <div className="order-card-commission-row" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px', flexWrap: 'wrap', marginTop: '10px' }}>

@@ -125,9 +125,6 @@ export default function OrdersView() {
           box-shadow: 0 8px 24px rgba(0,0,0,0.08) !important;
         }
         .order-card-header {
-          display: flex !important;
-          justify-content: space-between !important;
-          align-items: center !important;
           margin-bottom: 10px !important;
           font-size: 13px !important;
           color: var(--text-muted) !important;
@@ -420,46 +417,42 @@ export default function OrdersView() {
 
             return (
               <div key={o.orderId || o.id || idx} className="order-card-item">
-                <div className="order-card-header" style={{ display: 'flex', flexDirection: 'column', gap: '8px', alignItems: 'stretch' }}>
-                  {/* Hàng 1: Ngày giờ mua hàng (trái) + Badge Sàn thương mại (phải) */}
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
-                    <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', fontSize: '12px', color: 'var(--text-muted)' }}>
-                      <i className="fa-regular fa-calendar" style={{ fontSize: '12px' }}></i>
-                      <span>{formatDateTime(o.purchaseTime || o.orderTime)}</span>
+                {/* Hàng Header: Mã đơn + Thời gian (bên cùng bên trái) và Badge Sàn (bên phải) */}
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px', width: '100%', marginBottom: '10px', flexWrap: 'wrap' }}>
+                  {/* BÊN TRÁI: Mã đơn hàng (sát mép trái) + Ngày đặt hàng */}
+                  <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap', minWidth: 0 }}>
+                    <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', fontSize: '12.5px', color: 'var(--text-muted)' }}>
+                      <span>Mã đơn:</span>
+                      <span className="order-id-badge" style={{ fontWeight: '700', color: '#ea580c', fontSize: '13px' }}>
+                        {o.orderId}
+                      </span>
+                      <CopyButton text={o.orderId} title="Copy mã đơn hàng" toastMessage={`Đã copy mã đơn: ${o.orderId}`} />
                     </span>
-                    <span
-                      className={platBadge.className || ''}
-                      style={{
-                        padding: '2px 8px',
-                        borderRadius: '6px',
-                        fontSize: '11px',
-                        fontWeight: '700',
-                        background: platBadge.bg,
-                        color: platBadge.color,
-                        border: platBadge.border,
-                        display: 'inline-flex',
-                        alignItems: 'center'
-                      }}
-                    >
-                      {platBadge.label}
+                    <span style={{ color: 'var(--text-subtle)', fontSize: '11px' }}>•</span>
+                    <span style={{ display: 'inline-flex', alignItems: 'center', gap: '5px', fontSize: '12px', color: 'var(--text-muted)' }}>
+                      <i className="fa-regular fa-calendar" style={{ fontSize: '11px' }}></i>
+                      <span>{formatDateTime(o.purchaseTime || o.orderTime)}</span>
                     </span>
                   </div>
 
-                  {/* Hàng 2: Mã đơn hàng sát nút Copy (Không có viền xám bao bọc) */}
-                  <div style={{
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: '6px',
-                    fontSize: '12.5px',
-                    color: 'var(--text-muted)',
-                    flexWrap: 'wrap'
-                  }}>
-                    <span>Mã đơn:</span>
-                    <span className="order-id-badge" style={{ fontWeight: '700', color: '#ea580c', fontSize: '13px', wordBreak: 'break-all' }}>
-                      {o.orderId}
-                    </span>
-                    <CopyButton text={o.orderId} title="Copy mã đơn hàng" toastMessage={`Đã copy mã đơn: ${o.orderId}`} />
-                  </div>
+                  {/* BÊN PHẢI: Badge Sàn thương mại */}
+                  <span
+                    className={platBadge.className || ''}
+                    style={{
+                      padding: '2px 8px',
+                      borderRadius: '6px',
+                      fontSize: '11px',
+                      fontWeight: '700',
+                      background: platBadge.bg,
+                      color: platBadge.color,
+                      border: platBadge.border,
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      flexShrink: 0
+                    }}
+                  >
+                    {platBadge.label}
+                  </span>
                 </div>
 
                 <div className="order-card-title" title={o.productName}>

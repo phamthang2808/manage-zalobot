@@ -2,6 +2,22 @@ import React, { useState, useEffect } from 'react';
 import { useApp } from '../../context/AppContext';
 import { formatMoney } from '../../utils/formatters';
 
+// Helper chuẩn hóa hiển thị phần trăm hoa hồng an toàn (VD: 3.69%, không hiện Tùy món / ngành hàng%)
+const formatCommissionRate = (rate) => {
+  if (rate === null || rate === undefined || rate === '') return '';
+  const str = String(rate).trim();
+  if (!str) return '';
+  if (str.toLowerCase().includes('tùy')) return '';
+  const cleanStr = str.replace('%', '').trim();
+  const num = parseFloat(cleanStr);
+  if (!isNaN(num)) {
+    if (num <= 0) return '';
+    return Number(num.toFixed(2)) + '%';
+  }
+  if (str.endsWith('%')) return str;
+  return str + '%';
+};
+
 export default function ConvertView() {
   const { API_URL_ROOT, user, showToast } = useApp();
   const [inputText, setInputText] = useState('');
@@ -24,19 +40,6 @@ export default function ConvertView() {
     }
   });
 
-  // Tải lại lịch sử khi đổi user (chỉ lấy 10 mục gần nhất)
-  useEffect(() => {
-    try {
-      const storageKey = `web_convert_history_${user?.id || 'default'}`;
-      const saved = localStorage.getItem(storageKey);
-      if (saved) {
-        setHistoryLinks(JSON.parse(saved).slice(0, 10));
-      } else {
-        setHistoryLinks([]);
-      }
-    } catch (e) {}
-  }, [user?.id]);
-
   // Lưu lịch sử vào localStorage (tối đa 10 mục gần nhất)
   const saveHistory = (newLinks) => {
     try {
@@ -46,6 +49,50 @@ export default function ConvertView() {
       setHistoryLinks(trimmed);
     } catch (e) {}
   };
+
+  // Đồng bộ lịch sử chuyển đổi từ Server Database (Đồng bộ điện thoại & máy tính)
+  const fetchHistoryFromBackend = async () => {
+    try {
+      const token = sessionStorage.getItem('adminToken') || '';
+      if (!token) return;
+      const res = await fetch(`${API_URL_ROOT}/api/user/convert-history`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      const resData = await res.json();
+      if (res.ok && Array.isArray(resData.data)) {
+        if (resData.data.length > 0) {
+          saveHistory(resData.data);
+        } else {
+          // Nếu DB chưa có nhưng máy này có lịch sử cũ, đẩy lên server để đồng bộ qua các máy khác
+          const storageKey = `web_convert_history_${user?.id || 'default'}`;
+          const saved = localStorage.getItem(storageKey);
+          if (saved) {
+            const localLinks = JSON.parse(saved);
+            if (Array.isArray(localLinks) && localLinks.length > 0) {
+              const syncRes = await fetch(`${API_URL_ROOT}/api/user/convert-history/sync`, {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                  'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify(localLinks)
+              });
+              const syncData = await syncRes.json();
+              if (syncRes.ok && Array.isArray(syncData.data)) {
+                saveHistory(syncData.data);
+              }
+            }
+          }
+        }
+      }
+    } catch (err) {
+      console.warn('[Convert History] Lỗi đồng bộ server:', err);
+    }
+  };
+
+  useEffect(() => {
+    fetchHistoryFromBackend();
+  }, [user?.id]);
 
   const handleConvert = async (e) => {
     e.preventDefault();
@@ -120,16 +167,34 @@ export default function ConvertView() {
     });
   };
 
-  const handleDeleteHistoryItem = (itemId) => {
+  const handleDeleteHistoryItem = async (itemId) => {
     const updated = historyLinks.filter(item => item.id !== itemId);
     saveHistory(updated);
     showToast('Đã xóa link khỏi lịch sử!', 'info');
+    try {
+      const token = sessionStorage.getItem('adminToken') || '';
+      if (token && typeof itemId === 'number') {
+        await fetch(`${API_URL_ROOT}/api/user/convert-history/${itemId}`, {
+          method: 'DELETE',
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+      }
+    } catch (err) {}
   };
 
-  const handleClearHistory = () => {
+  const handleClearHistory = async () => {
     if (window.confirm('Bạn có chắc chắn muốn xóa toàn bộ lịch sử chuyển đổi?')) {
       saveHistory([]);
       showToast('Đã dọn sạch lịch sử chuyển đổi!', 'info');
+      try {
+        const token = sessionStorage.getItem('adminToken') || '';
+        if (token) {
+          await fetch(`${API_URL_ROOT}/api/user/convert-history`, {
+            method: 'DELETE',
+            headers: { 'Authorization': `Bearer ${token}` }
+          });
+        }
+      } catch (err) {}
     }
   };
 
@@ -394,7 +459,14 @@ export default function ConvertView() {
             const finalLink = r.affiliateUrl || r.affiliateLink || r.shortUrl || r.url || '';
             const isCopied = copiedIndex === idx;
             const meta = getPlatformMeta(r.platform);
-            const estComm = r.commission || (r.price && r.commissionRate ? Math.round((Number(r.price) * Number(r.commissionRate)) / 100) : 0);
+            const rawComm = Number(r.commission);
+            const rawPrice = Number(r.price);
+            const rawRate = parseFloat(String(r.commissionRate || '').replace('%', ''));
+            const estComm = rawComm > 0 
+              ? rawComm 
+              : (rawPrice > 0 && !isNaN(rawRate) && rawRate > 0 ? Math.round((rawPrice * rawRate) / 100) : 0);
+            const hasCommission = estComm > 0;
+            const formattedRate = formatCommissionRate(r.commissionRate);
 
             return (
               <div key={idx} className="order-card-item" style={{ padding: '16px 18px', marginBottom: '12px' }}>
@@ -473,52 +545,54 @@ export default function ConvertView() {
                   </div>
                 </div>
 
-                {/* KHỐI HIỂN THỊ HOA HỒNG ƯỚC TÍNH & GIÁ (CHUẨN FORM MẪU) */}
-                <div style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  padding: '12px 16px',
-                  borderRadius: '14px',
-                  background: 'var(--bg-main, #0f172a)',
-                  border: '1px solid var(--border-color, rgba(255, 255, 255, 0.08))',
-                  marginBottom: '12px'
-                }}>
-                  <div>
-                    <div style={{ fontSize: '11.5px', color: 'var(--text-muted)', fontWeight: '600', marginBottom: '3px', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                      <span>Hoa hồng ước tính</span>
-                      <i className="fa-solid fa-circle-info" style={{ fontSize: '11px', color: 'var(--text-subtle)' }} title="Số tiền hoàn lại ước tính sau khi đơn hàng hoàn thành"></i>
+                {/* KHỐI HIỂN THỊ HOA HỒNG ƯỚC TÍNH & GIÁ (CHUẨN FORM MẪU) - CHỈ HIỂN THỊ KHI CÓ HOA HỒNG */}
+                {hasCommission && (
+                  <div style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    padding: '12px 16px',
+                    borderRadius: '14px',
+                    background: 'var(--bg-main, #0f172a)',
+                    border: '1px solid var(--border-color, rgba(255, 255, 255, 0.08))',
+                    marginBottom: '12px'
+                  }}>
+                    <div>
+                      <div style={{ fontSize: '11.5px', color: 'var(--text-muted)', fontWeight: '600', marginBottom: '3px', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                        <span>Hoa hồng ước tính</span>
+                        <i className="fa-solid fa-circle-info" style={{ fontSize: '11px', color: 'var(--text-subtle)' }} title="Số tiền hoàn lại ước tính sau khi đơn hàng hoàn thành"></i>
+                      </div>
+                      <div style={{
+                        fontSize: '20px',
+                        fontWeight: '800',
+                        color: '#10b981',
+                        lineHeight: '1.2'
+                      }}>
+                        ≈ {formatMoney(estComm)}
+                      </div>
+                      {r.price && (
+                        <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginTop: '3px' }}>
+                          Giá: <span style={{ color: 'var(--text-bright)', fontWeight: '600' }}>{formatMoney(r.price)}</span>
+                        </div>
+                      )}
                     </div>
-                    <div style={{
-                      fontSize: '20px',
-                      fontWeight: '800',
-                      color: '#10b981',
-                      lineHeight: '1.2'
-                    }}>
-                      ≈ {formatMoney(estComm || 0)}
-                    </div>
-                    {r.price && (
-                      <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginTop: '3px' }}>
-                        Giá: <span style={{ color: 'var(--text-bright)', fontWeight: '600' }}>{formatMoney(r.price)}</span>
+
+                    {formattedRate && (
+                      <div style={{
+                        padding: '5px 14px',
+                        borderRadius: '9999px',
+                        background: 'rgba(249, 115, 22, 0.12)',
+                        border: '1px solid rgba(249, 115, 22, 0.35)',
+                        color: '#ea580c',
+                        fontSize: '13px',
+                        fontWeight: '800',
+                        flexShrink: 0
+                      }}>
+                        {formattedRate}
                       </div>
                     )}
                   </div>
-
-                  {r.commissionRate && (
-                    <div style={{
-                      padding: '5px 14px',
-                      borderRadius: '9999px',
-                      background: 'rgba(249, 115, 22, 0.12)',
-                      border: '1px solid rgba(249, 115, 22, 0.35)',
-                      color: '#ea580c',
-                      fontSize: '13px',
-                      fontWeight: '800',
-                      flexShrink: 0
-                    }}>
-                      {r.commissionRate}%
-                    </div>
-                  )}
-                </div>
+                )}
 
                 {/* Nút Hành Động (Nút Mở link mua hàng nổi bật màu cam) */}
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '8px', marginTop: '12px' }}>
@@ -700,7 +774,14 @@ export default function ConvertView() {
                   {filteredHistory.slice(0, 10).map((item) => {
                     const finalLink = item.affiliateUrl || item.affiliateLink || item.shortUrl || item.url || '';
                     const meta = getPlatformMeta(item.platform);
-                    const itemEstComm = item.commission || (item.price && item.commissionRate ? Math.round((Number(item.price) * Number(item.commissionRate)) / 100) : 0);
+                    const rawItemComm = Number(item.commission);
+                    const rawItemPrice = Number(item.price);
+                    const rawItemRate = parseFloat(String(item.commissionRate || '').replace('%', ''));
+                    const itemEstComm = rawItemComm > 0 
+                      ? rawItemComm 
+                      : (rawItemPrice > 0 && !isNaN(rawItemRate) && rawItemRate > 0 ? Math.round((rawItemPrice * rawItemRate) / 100) : 0);
+                    const itemHasCommission = itemEstComm > 0;
+                    const itemFormattedRate = formatCommissionRate(item.commissionRate);
 
                     return (
                       <div
@@ -798,47 +879,49 @@ export default function ConvertView() {
                           </div>
                         </div>
 
-                        {/* KHỐI HIỂN THỊ HOA HỒNG ƯỚC TÍNH & GIÁ (CHUẨN FORM MẪU THAM KHẢO) */}
-                        <div style={{
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'space-between',
-                          padding: '10px 14px',
-                          borderRadius: '12px',
-                          background: 'var(--bg-card)',
-                          border: '1px solid var(--border-color)',
-                          marginBottom: '10px'
-                        }}>
-                          <div>
-                            <div style={{ fontSize: '11px', color: 'var(--text-muted)', fontWeight: '600', marginBottom: '2px', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                              <span>Hoa hồng ước tính</span>
-                              <i className="fa-solid fa-circle-info" style={{ fontSize: '10px', color: 'var(--text-subtle)' }} title="Số tiền hoàn lại ước tính sau khi đơn hàng hoàn thành"></i>
+                        {/* KHỐI HIỂN THỊ HOA HỒNG ƯỚC TÍNH & GIÁ (CHUẨN FORM MẪU THAM KHẢO) - CHỈ HIỆN KHI CÓ HOA HỒNG */}
+                        {itemHasCommission && (
+                          <div style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'space-between',
+                            padding: '10px 14px',
+                            borderRadius: '12px',
+                            background: 'var(--bg-card)',
+                            border: '1px solid var(--border-color)',
+                            marginBottom: '10px'
+                          }}>
+                            <div>
+                              <div style={{ fontSize: '11px', color: 'var(--text-muted)', fontWeight: '600', marginBottom: '2px', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                                <span>Hoa hồng ước tính</span>
+                                <i className="fa-solid fa-circle-info" style={{ fontSize: '10px', color: 'var(--text-subtle)' }} title="Số tiền hoàn lại ước tính sau khi đơn hàng hoàn thành"></i>
+                              </div>
+                              <div style={{ fontSize: '17px', fontWeight: '800', color: '#10b981', lineHeight: '1.2' }}>
+                                ≈ {formatMoney(itemEstComm)}
+                              </div>
+                              {item.price && (
+                                <div style={{ fontSize: '11.5px', color: 'var(--text-muted)', marginTop: '2px' }}>
+                                  Giá: <span style={{ color: 'var(--text-bright)', fontWeight: '600' }}>{formatMoney(item.price)}</span>
+                                </div>
+                              )}
                             </div>
-                            <div style={{ fontSize: '17px', fontWeight: '800', color: '#10b981', lineHeight: '1.2' }}>
-                              ≈ {formatMoney(itemEstComm || 0)}
-                            </div>
-                            {item.price && (
-                              <div style={{ fontSize: '11.5px', color: 'var(--text-muted)', marginTop: '2px' }}>
-                                Giá: <span style={{ color: 'var(--text-bright)', fontWeight: '600' }}>{formatMoney(item.price)}</span>
+
+                            {itemFormattedRate && (
+                              <div style={{
+                                padding: '4px 12px',
+                                borderRadius: '9999px',
+                                background: 'rgba(249, 115, 22, 0.12)',
+                                border: '1px solid rgba(249, 115, 22, 0.35)',
+                                color: '#ea580c',
+                                fontSize: '12.5px',
+                                fontWeight: '800',
+                                flexShrink: 0
+                              }}>
+                                {itemFormattedRate}
                               </div>
                             )}
                           </div>
-
-                          {item.commissionRate && (
-                            <div style={{
-                              padding: '4px 12px',
-                              borderRadius: '9999px',
-                              background: 'rgba(249, 115, 22, 0.12)',
-                              border: '1px solid rgba(249, 115, 22, 0.35)',
-                              color: '#ea580c',
-                              fontSize: '12.5px',
-                              fontWeight: '800',
-                              flexShrink: 0
-                            }}>
-                              {item.commissionRate}%
-                            </div>
-                          )}
-                        </div>
+                        )}
 
                         {/* Actions (Không hiển thị link dài) */}
                         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '8px' }}>

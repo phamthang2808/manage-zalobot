@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import MobileBottomNav from "./common/MobileBottomNav";
+import ThemeToggle from "./common/ThemeToggle";
 
 export function ProductLandingView({ code, apiRoot = "" }) {
   const [loading, setLoading] = useState(true);
@@ -186,8 +187,9 @@ export function ProductLandingView({ code, apiRoot = "" }) {
             onError={(e) => { e.target.src = "/MAIN.png"; }} 
           />
         </div>
-        <div className="sym-header-right" onClick={() => (window.location.href = "/")}>
-          <span className="sym-brand-domain-badge">{displayHost}</span>
+        <div className="sym-header-right">
+          <ThemeToggle style={{ width: '34px', height: '34px' }} />
+          <span className="sym-brand-domain-badge" onClick={() => (window.location.href = "/")}>{displayHost}</span>
         </div>
       </header>
 
@@ -532,7 +534,7 @@ body {
 .sym-header-right {
   display: flex;
   align-items: center;
-  cursor: pointer;
+  gap: 10px;
 }
 
 .sym-header-back {
@@ -1278,6 +1280,268 @@ body {
 .sym-container .mobile-bottom-nav-item.admin-badge-btn.active::before {
   background: linear-gradient(90deg, #8b5cf6, #6d28d9) !important;
   box-shadow: 0 2px 8px rgba(139, 92, 246, 0.5) !important;
+}
+
+/* ==========================================================================
+   DARK THEME STYLES FOR PRODUCT LANDING VIEW
+   ========================================================================== */
+html[data-theme="dark"] body,
+body.dark {
+  background-color: #090d16 !important;
+}
+
+html[data-theme="dark"] .sym-container,
+body.dark .sym-container {
+  background: linear-gradient(180deg, #0f172a 0%, #0b1120 40%, #080d19 100%) !important;
+  box-shadow: 0 0 60px rgba(0, 0, 0, 0.7), 0 0 20px rgba(234, 88, 12, 0.08) !important;
+  color: #f8fafc !important;
+}
+
+/* Header in dark mode */
+html[data-theme="dark"] .sym-header,
+body.dark .sym-header {
+  background: rgba(15, 23, 42, 0.9) !important;
+  backdrop-filter: blur(16px) !important;
+  -webkit-backdrop-filter: blur(16px) !important;
+  border-bottom: 1px solid rgba(51, 65, 85, 0.4) !important;
+}
+
+html[data-theme="dark"] .sym-header-back,
+body.dark .sym-header-back {
+  color: #fb923c !important;
+}
+
+html[data-theme="dark"] .sym-brand-logo-img,
+body.dark .sym-brand-logo-img {
+  filter: drop-shadow(0 2px 6px rgba(251, 146, 60, 0.3));
+}
+
+html[data-theme="dark"] .sym-brand-domain-badge,
+body.dark .sym-brand-domain-badge {
+  color: #fb923c !important;
+}
+
+/* Cards in dark mode */
+html[data-theme="dark"] .sym-card,
+body.dark .sym-card {
+  background: rgba(30, 41, 59, 0.85) !important;
+  border: 1px solid rgba(51, 65, 85, 0.5) !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35) !important;
+}
+
+/* User Card in dark mode */
+html[data-theme="dark"] .sym-user-greeting,
+body.dark .sym-user-greeting {
+  color: #cbd5e1 !important;
+}
+
+html[data-theme="dark"] .sym-user-name,
+body.dark .sym-user-name {
+  color: #fb923c !important;
+}
+
+html[data-theme="dark"] .sym-user-avatar-wrap,
+body.dark .sym-user-avatar-wrap {
+  background: #1e293b !important;
+  border: 1.5px solid rgba(249, 115, 22, 0.4) !important;
+  box-shadow: 0 0 12px rgba(249, 115, 22, 0.25) !important;
+}
+
+html[data-theme="dark"] .sym-btn-check-wallet,
+body.dark .sym-btn-check-wallet {
+  color: #fb923c !important;
+}
+
+html[data-theme="dark"] .sym-btn-check-wallet:hover,
+body.dark .sym-btn-check-wallet:hover {
+  color: #fed7aa !important;
+}
+
+/* Product Card in dark mode */
+html[data-theme="dark"] .sym-img-container,
+body.dark .sym-img-container {
+  background: #0f172a !important;
+  border: 1px solid rgba(51, 65, 85, 0.6) !important;
+}
+
+html[data-theme="dark"] .sym-prod-fallback,
+body.dark .sym-prod-fallback {
+  background: #0f172a !important;
+}
+
+html[data-theme="dark"] .sym-platform-badge,
+body.dark .sym-platform-badge {
+  color: #fb923c !important;
+}
+
+html[data-theme="dark"] .sym-prod-title,
+body.dark .sym-prod-title {
+  color: #f8fafc !important;
+  -webkit-text-fill-color: #f8fafc !important;
+}
+
+/* Commission Breakdown in dark mode */
+html[data-theme="dark"] .sym-breakdown-box,
+body.dark .sym-breakdown-box {
+  background: rgba(15, 23, 42, 0.7) !important;
+  border: 1px solid rgba(51, 65, 85, 0.45) !important;
+}
+
+html[data-theme="dark"] .sym-breakdown-title,
+body.dark .sym-breakdown-title {
+  color: #94a3b8 !important;
+}
+
+html[data-theme="dark"] .sym-row-label,
+body.dark .sym-row-label {
+  color: #cbd5e1 !important;
+}
+
+html[data-theme="dark"] .sym-val-price,
+body.dark .sym-val-price {
+  color: #f8fafc !important;
+}
+
+html[data-theme="dark"] .sym-val-sub,
+body.dark .sym-val-sub {
+  color: #cbd5e1 !important;
+}
+
+html[data-theme="dark"] .sym-rate-shopee,
+body.dark .sym-rate-shopee {
+  color: #fb923c !important;
+}
+
+html[data-theme="dark"] .sym-rate-seller,
+body.dark .sym-rate-seller {
+  color: #34d399 !important;
+}
+
+html[data-theme="dark"] .sym-rate-total,
+body.dark .sym-rate-total {
+  color: #fb923c !important;
+}
+
+html[data-theme="dark"] .sym-val-total,
+body.dark .sym-val-total {
+  color: #fb923c !important;
+}
+
+/* Action row in dark mode */
+html[data-theme="dark"] .sym-btn-copy-aff-row,
+body.dark .sym-btn-copy-aff-row {
+  background: rgba(249, 115, 22, 0.14) !important;
+  border-color: rgba(249, 115, 22, 0.4) !important;
+  color: #fb923c !important;
+}
+
+html[data-theme="dark"] .sym-btn-copy-aff-row:hover,
+body.dark .sym-btn-copy-aff-row:hover {
+  background: rgba(249, 115, 22, 0.24) !important;
+  border-color: #fb923c !important;
+  color: #fed7aa !important;
+}
+
+html[data-theme="dark"] .sym-btn-copy-aff-row.is-copied,
+body.dark .sym-btn-copy-aff-row.is-copied {
+  background: rgba(16, 185, 129, 0.18) !important;
+  border-color: rgba(52, 211, 153, 0.5) !important;
+  color: #34d399 !important;
+}
+
+/* Guide Card in dark mode */
+html[data-theme="dark"] .sym-guide-title,
+body.dark .sym-guide-title {
+  color: #f8fafc !important;
+}
+
+html[data-theme="dark"] .sym-tip-text,
+body.dark .sym-tip-text {
+  color: #94a3b8 !important;
+}
+
+html[data-theme="dark"] .sym-tip-text strong,
+body.dark .sym-tip-text strong {
+  color: #e2e8f0 !important;
+}
+
+/* Loading & Error in dark mode */
+html[data-theme="dark"] .sym-spinner,
+body.dark .sym-spinner {
+  border-color: #334155 !important;
+  border-top-color: #fb923c !important;
+  border-right-color: #ea580c !important;
+}
+
+html[data-theme="dark"] .sym-loading-sub,
+body.dark .sym-loading-sub {
+  color: #94a3b8 !important;
+}
+
+html[data-theme="dark"] .sym-error-card,
+body.dark .sym-error-card {
+  background: #1e293b !important;
+  border: 1px solid rgba(51, 65, 85, 0.6) !important;
+}
+
+html[data-theme="dark"] .sym-error-title,
+body.dark .sym-error-title {
+  color: #f8fafc !important;
+}
+
+html[data-theme="dark"] .sym-error-desc,
+body.dark .sym-error-desc {
+  color: #94a3b8 !important;
+}
+
+/* Bottom Nav in dark mode */
+html[data-theme="dark"] .sym-container .mobile-bottom-nav,
+body.dark .sym-container .mobile-bottom-nav {
+  background: rgba(15, 23, 42, 0.95) !important;
+  border-top: 1px solid rgba(51, 65, 85, 0.6) !important;
+  box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.5) !important;
+}
+
+html[data-theme="dark"] .sym-container .mobile-bottom-nav-item,
+body.dark .sym-container .mobile-bottom-nav-item {
+  color: #94a3b8 !important;
+}
+
+html[data-theme="dark"] .sym-container .mobile-bottom-nav-item.active,
+body.dark .sym-container .mobile-bottom-nav-item.active {
+  color: #fb923c !important;
+}
+
+html[data-theme="dark"] .sym-container .mobile-bottom-nav-item.active .nav-icon-wrap,
+body.dark .sym-container .mobile-bottom-nav-item.active .nav-icon-wrap {
+  color: #fb923c !important;
+}
+
+html[data-theme="dark"] .sym-container .mobile-bottom-nav-item.active .nav-label,
+body.dark .sym-container .mobile-bottom-nav-item.active .nav-label {
+  color: #fb923c !important;
+}
+
+html[data-theme="dark"] .sym-container .mobile-bottom-nav-item.active::before,
+body.dark .sym-container .mobile-bottom-nav-item.active::before {
+  background: linear-gradient(90deg, #fb923c, #ea580c) !important;
+  box-shadow: 0 2px 10px rgba(249, 115, 22, 0.5) !important;
+}
+
+html[data-theme="dark"] .sym-container .mobile-bottom-nav-item.admin-badge-btn,
+body.dark .sym-container .mobile-bottom-nav-item.admin-badge-btn {
+  color: #a78bfa !important;
+}
+
+html[data-theme="dark"] .sym-container .mobile-bottom-nav-item.admin-badge-btn.active,
+body.dark .sym-container .mobile-bottom-nav-item.admin-badge-btn.active {
+  color: #c084fc !important;
+}
+
+html[data-theme="dark"] .sym-container .mobile-bottom-nav-item.admin-badge-btn.active::before,
+body.dark .sym-container .mobile-bottom-nav-item.admin-badge-btn.active::before {
+  background: linear-gradient(90deg, #a78bfa, #c084fc) !important;
+  box-shadow: 0 2px 10px rgba(167, 139, 250, 0.5) !important;
 }
 `;
 

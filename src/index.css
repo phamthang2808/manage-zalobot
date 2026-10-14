@@ -3771,10 +3771,13 @@ body.dark {
 /* Landing Page Dark Mode Overrides */
 html[data-theme="dark"] .landing-container,
 html[data-theme="dark"] .landing-page,
+html[data-theme="dark"] .sym-container,
 html.dark .landing-container,
 html.dark .landing-page,
+html.dark .sym-container,
 body.dark .landing-container,
-body.dark .landing-page {
+body.dark .landing-page,
+body.dark .sym-container {
   background: #0f172a !important;
   color: #f8fafc !important;
 }

@@ -203,8 +203,21 @@ export default function WebUserDetailModal({ user, onClose, API_URL_ROOT }) {
                           </td>
                           <td style={{ padding: '10px 12px', fontWeight: '700' }}>{o.platform}</td>
                           <td style={{ padding: '10px 12px', fontFamily: 'monospace', fontWeight: '700' }}>{o.orderId}</td>
-                          <td style={{ padding: '10px 12px', maxWidth: '200px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={o.productName}>
-                            {o.productName || 'Sản phẩm tiếp thị'}
+                          <td style={{ padding: '10px 12px', maxWidth: '240px' }} title={o.productName}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                              {o.imageUrl && (
+                                <img
+                                  src={o.imageUrl}
+                                  alt=""
+                                  referrerPolicy="no-referrer"
+                                  style={{ width: '28px', height: '28px', borderRadius: '6px', objectFit: 'cover', flexShrink: 0, border: '1px solid #e2e8f0', background: '#f8fafc' }}
+                                  onError={(e) => { e.currentTarget.style.display = 'none'; }}
+                                />
+                              )}
+                              <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                                {o.productName || 'Sản phẩm tiếp thị'}
+                              </span>
+                            </div>
                           </td>
                           <td style={{ padding: '10px 12px', color: '#64748b', whiteSpace: 'nowrap' }}>{formatDateTime(o.purchaseTime)}</td>
                           <td style={{ padding: '10px 12px', textAlign: 'right', fontWeight: '800', color: '#ea580c' }}>

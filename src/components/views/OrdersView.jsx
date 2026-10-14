@@ -100,11 +100,11 @@ export default function OrdersView() {
 
   const getPlatformBadge = (p) => {
     const plat = (p || '').toUpperCase();
-    if (plat === 'SHOPEE') return { label: 'Shopee', color: '#ea580c', bg: 'rgba(234, 88, 12, 0.12)', border: '1px solid rgba(234, 88, 12, 0.25)' };
-    if (plat === 'TIKTOK' || plat.includes('TIKTOK')) return { label: 'TikTok', color: '#0f172a', bg: 'rgba(15, 23, 42, 0.08)', className: 'platform-badge-tiktok' };
-    if (plat === 'LAZADA') return { label: 'Lazada', color: '#0284c7', bg: 'rgba(2, 132, 199, 0.12)', border: '1px solid rgba(2, 132, 199, 0.25)' };
-    if (plat === 'SHOPEE_FOOD') return { label: 'ShopeeFood', color: '#dc2626', bg: 'rgba(220, 38, 38, 0.12)', border: '1px solid rgba(220, 38, 38, 0.25)' };
-    return { label: plat || 'Sàn TMĐT', color: '#64748b', bg: 'rgba(100, 116, 139, 0.12)', border: '1px solid rgba(100, 116, 139, 0.2)' };
+    if (plat === 'SHOPEE') return { label: 'Shopee', color: '#ea580c', bg: 'rgba(234, 88, 12, 0.12)', border: '1px solid rgba(234, 88, 12, 0.25)', icon: 'fa-solid fa-bag-shopping' };
+    if (plat === 'TIKTOK' || plat.includes('TIKTOK')) return { label: 'TikTok', color: '#0f172a', bg: 'rgba(15, 23, 42, 0.08)', className: 'platform-badge-tiktok', icon: 'fa-brands fa-tiktok' };
+    if (plat === 'LAZADA') return { label: 'Lazada', color: '#0284c7', bg: 'rgba(2, 132, 199, 0.12)', border: '1px solid rgba(2, 132, 199, 0.25)', icon: 'fa-solid fa-bag-shopping' };
+    if (plat === 'SHOPEE_FOOD') return { label: 'ShopeeFood', color: '#dc2626', bg: 'rgba(220, 38, 38, 0.12)', border: '1px solid rgba(220, 38, 38, 0.25)', icon: 'fa-solid fa-utensils' };
+    return { label: plat || 'Sàn TMĐT', color: '#64748b', bg: 'rgba(100, 116, 139, 0.12)', border: '1px solid rgba(100, 116, 139, 0.2)', icon: 'fa-solid fa-box' };
   };
 
   return (
@@ -140,7 +140,7 @@ export default function OrdersView() {
           font-size: 14.5px !important;
           font-weight: 650 !important;
           color: var(--text-bright) !important;
-          margin-bottom: 12px !important;
+          margin: 0 !important;
           line-height: 1.5 !important;
           overflow: hidden !important;
           text-overflow: ellipsis !important;
@@ -455,8 +455,58 @@ export default function OrdersView() {
                   </span>
                 </div>
 
-                <div className="order-card-title" title={o.productName}>
-                  {o.productName || 'Sản phẩm mua sắm qua link tiếp thị'}
+                {/* HÀNG HIỂN THỊ ẢNH & TÊN SẢN PHẨM */}
+                <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px', marginBottom: '12px' }}>
+                  {o.imageUrl ? (
+                    <img
+                      src={o.imageUrl}
+                      alt={o.productName || 'Ảnh sản phẩm'}
+                      referrerPolicy="no-referrer"
+                      style={{
+                        width: '56px',
+                        height: '56px',
+                        objectFit: 'cover',
+                        borderRadius: '10px',
+                        border: '1px solid var(--border-color)',
+                        flexShrink: 0,
+                        background: 'var(--bg-main)',
+                        cursor: 'pointer'
+                      }}
+                      title="Bấm để xem ảnh gốc"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        window.open(o.imageUrl, '_blank', 'noopener,noreferrer');
+                      }}
+                      onError={(e) => {
+                        e.currentTarget.style.display = 'none';
+                        if (e.currentTarget.nextElementSibling) {
+                          e.currentTarget.nextElementSibling.style.display = 'flex';
+                        }
+                      }}
+                    />
+                  ) : null}
+                  <div
+                    style={{
+                      width: '56px',
+                      height: '56px',
+                      borderRadius: '10px',
+                      background: 'var(--bg-main)',
+                      border: '1px solid var(--border-color)',
+                      display: o.imageUrl ? 'none' : 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      color: 'var(--text-muted)',
+                      fontSize: '20px',
+                      flexShrink: 0
+                    }}
+                  >
+                    <i className={platBadge.icon || 'fa-solid fa-bag-shopping'} style={{ opacity: 0.65 }}></i>
+                  </div>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div className="order-card-title" title={o.productName}>
+                      {o.productName || 'Sản phẩm mua sắm qua link tiếp thị'}
+                    </div>
+                  </div>
                 </div>
 
                 {/* Hàng Trạng thái & Hoa hồng: Cùng 1 hàng, không rớt dòng */}

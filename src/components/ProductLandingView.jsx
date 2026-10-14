@@ -1380,11 +1380,13 @@ body.dark .sym-prod-title {
   -webkit-text-fill-color: #f8fafc !important;
 }
 
-/* Commission Breakdown in dark mode */
+/* Commission Breakdown in dark mode: Liền mạch tự nhiên, không khung viền thô, giống hệt bên sáng */
 html[data-theme="dark"] .sym-breakdown-box,
 body.dark .sym-breakdown-box {
-  background: rgba(15, 23, 42, 0.7) !important;
-  border: 1px solid rgba(51, 65, 85, 0.45) !important;
+  background: transparent !important;
+  border: none !important;
+  padding: 8px 0 !important;
+  box-shadow: none !important;
 }
 
 html[data-theme="dark"] .sym-breakdown-title,

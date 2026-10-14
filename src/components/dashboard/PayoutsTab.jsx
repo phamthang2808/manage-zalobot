@@ -3,7 +3,7 @@ import { useApp } from '../../context/AppContext';
 import { formatDateTime, formatMoney, getBankAndAccount } from '../../utils/formatters';
 
 export default function PayoutsTab() {
-  const { payouts, users, handleApprovePayout } = useApp();
+  const { payouts, users, handleApprovePayout, handleRejectPayout } = useApp();
   const [payoutSearch, setPayoutSearch] = useState('');
 
   const filteredPayouts = payouts.filter(p => {
@@ -167,29 +167,64 @@ export default function PayoutsTab() {
                       <td data-label="Ngày gửi" style={{ fontSize: '12px' }}>{formatDateTime(p.createdAt)}</td>
                       <td data-label="Phê duyệt" style={{ fontSize: '12px' }}>{p.completedAt ? formatDateTime(p.completedAt) : '-'}</td>
                       <td data-label="Trạng thái" style={{ textAlign: 'center' }}>
-                        <span style={{ color: isCompleted ? '#10b981' : '#f59e0b', fontWeight: '700', fontSize: '13px' }}>
-                          {isCompleted ? 'Đã thanh toán' : 'Chờ duyệt'}
+                        <span style={{
+                          color: isCompleted ? '#10b981' : (p.status === 'REJECTED' ? '#ef4444' : '#f59e0b'),
+                          fontWeight: '700',
+                          fontSize: '13px'
+                        }}>
+                          {isCompleted ? 'Đã thanh toán' : (p.status === 'REJECTED' ? 'Đã từ chối' : 'Chờ duyệt')}
                         </span>
                       </td>
                       <td data-label="Thao tác" style={{ textAlign: 'center' }}>
                         {p.status === 'PENDING' ? (
-                          <button
-                            type="button"
-                            onClick={() => handleApprovePayout(p.id)}
-                            style={{
-                              background: 'none',
-                              border: 'none',
-                              color: '#10b981',
-                              fontWeight: '700',
-                              fontSize: '13px',
-                              cursor: 'pointer',
-                              padding: 0
-                            }}
-                          >
-                            ✓ Duyệt
-                          </button>
+                          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', justifyContent: 'center' }}>
+                            <button
+                              type="button"
+                              onClick={() => handleApprovePayout(p.id)}
+                              style={{
+                                background: 'rgba(16, 185, 129, 0.1)',
+                                border: '1px solid rgba(16, 185, 129, 0.4)',
+                                borderRadius: '6px',
+                                color: '#10b981',
+                                fontWeight: '700',
+                                fontSize: '12.5px',
+                                cursor: 'pointer',
+                                padding: '4px 10px',
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                gap: '4px',
+                                transition: 'all 0.15s ease'
+                              }}
+                              title="Duyệt rút tiền & hoàn tất chuyển khoản"
+                            >
+                              ✓ Duyệt
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => handleRejectPayout(p.id)}
+                              style={{
+                                background: 'rgba(239, 68, 68, 0.1)',
+                                border: '1px solid rgba(239, 68, 68, 0.4)',
+                                borderRadius: '6px',
+                                color: '#ef4444',
+                                fontWeight: '700',
+                                fontSize: '12.5px',
+                                cursor: 'pointer',
+                                padding: '4px 10px',
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                gap: '4px',
+                                transition: 'all 0.15s ease'
+                              }}
+                              title="Từ chối yêu cầu và hoàn lại tiền vào ví"
+                            >
+                              ✕ Từ chối
+                            </button>
+                          </div>
+                        ) : isCompleted ? (
+                          <span style={{ color: '#10b981', fontSize: '14px', fontWeight: 'bold' }}>✓</span>
                         ) : (
-                          <span style={{ color: '#10b981', fontSize: '16px', fontWeight: 'bold' }}>✓</span>
+                          <span style={{ color: '#ef4444', fontSize: '12px', fontWeight: 'bold' }}>✕ Đã từ chối</span>
                         )}
                       </td>
                     </tr>

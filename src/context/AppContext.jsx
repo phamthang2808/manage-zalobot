@@ -278,6 +278,26 @@ export function AppProvider({ children }) {
     }
   };
 
+  const handleRejectPayout = async (payoutId) => {
+    if (!window.confirm(`Bạn có chắc chắn muốn TỪ CHỐI yêu cầu rút tiền PT_${payoutId}? Số tiền sẽ được hoàn trả lại ví khả dụng cho thành viên.`)) {
+      return;
+    }
+    try {
+      const res = await fetch(`${API_BASE}/payouts/${payoutId}/reject`, {
+        method: 'POST',
+        credentials: 'include'
+      });
+      if (!res.ok) {
+        const text = await res.text();
+        throw new Error(text || 'Từ chối rút tiền thất bại');
+      }
+      showToast('Đã từ chối rút tiền và hoàn tiền vào ví thành viên!', 'success');
+      fetchData(token, user);
+    } catch (err) {
+      showToast(err.message, 'error');
+    }
+  };
+
   return (
     <AppContext.Provider value={{
       token, setToken, user, setUser,
@@ -289,7 +309,7 @@ export function AppProvider({ children }) {
       sidebarOpen, setSidebarOpen,
       mobileMenuOpen, setMobileMenuOpen,
       windowWidth, isAdmin,
-      fetchData, handleLogout, handleApprovePayout,
+      fetchData, handleLogout, handleApprovePayout, handleRejectPayout,
       API_URL_ROOT, API_BASE,
     }}>
       {children}

@@ -2,7 +2,7 @@ import { useApp } from '../../context/AppContext';
 import { formatDateTime, formatMoney, getBankAndAccount } from '../../utils/formatters';
 
 export default function OverviewTab() {
-  const { stats, payouts, users, orders, handleApprovePayout } = useApp();
+  const { stats, payouts, users, orders, handleApprovePayout, handleRejectPayout } = useApp();
 
   const pendingPayouts = payouts.filter(p => p.status === 'PENDING');
 
@@ -181,24 +181,46 @@ export default function OverviewTab() {
                       </td>
                       <td data-label="Thời gian gửi">{formatDateTime(p.createdAt)}</td>
                       <td data-label="Hành động">
-                        <button
-                          type="button"
-                          onClick={() => handleApprovePayout(p.id)}
-                          style={{
-                            background: 'none',
-                            border: 'none',
-                            color: '#10b981',
-                            fontWeight: '700',
-                            fontSize: '13px',
-                            cursor: 'pointer',
-                            padding: 0,
-                            display: 'inline-flex',
-                            alignItems: 'center',
-                            gap: '4px'
-                          }}
-                        >
-                          ✓ Phê duyệt
-                        </button>
+                        <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
+                          <button
+                            type="button"
+                            onClick={() => handleApprovePayout(p.id)}
+                            style={{
+                              background: 'rgba(16, 185, 129, 0.1)',
+                              border: '1px solid rgba(16, 185, 129, 0.4)',
+                              borderRadius: '6px',
+                              color: '#10b981',
+                              fontWeight: '700',
+                              fontSize: '12px',
+                              cursor: 'pointer',
+                              padding: '3px 8px',
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              gap: '3px'
+                            }}
+                          >
+                            ✓ Duyệt
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => handleRejectPayout(p.id)}
+                            style={{
+                              background: 'rgba(239, 68, 68, 0.1)',
+                              border: '1px solid rgba(239, 68, 68, 0.4)',
+                              borderRadius: '6px',
+                              color: '#ef4444',
+                              fontWeight: '700',
+                              fontSize: '12px',
+                              cursor: 'pointer',
+                              padding: '3px 8px',
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              gap: '3px'
+                            }}
+                          >
+                            ✕ Từ chối
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   );

@@ -194,8 +194,8 @@ export function ProductLandingView({ code, apiRoot = "" }) {
       </header>
 
       <main className="sym-main">
-        {/* User Card: Avatar favicon (/favaicon28symues.png) tròn tròn, ẩn Zalo ID để bảo mật danh tính */}
-        <div className="sym-card sym-user-card">
+        {/* User Card: Avatar favicon (/favaicon28symues.png) tròn tròn, hiển thị trọn vẹn tên thành viên */}
+        <div className="sym-card sym-user-card" onClick={handleGoUserWallet} title="Tra cứu ví và đơn hàng">
           <div className="sym-user-left">
             <div className="sym-user-avatar-wrap">
               <img 
@@ -210,9 +210,6 @@ export function ProductLandingView({ code, apiRoot = "" }) {
               </div>
             </div>
           </div>
-          <button type="button" onClick={handleGoUserWallet} className="sym-btn-check-wallet" title="Tra cứu đơn hàng và số dư ví">
-            Tra cứu ví ›
-          </button>
         </div>
 
         {/* Main Product Card */}
@@ -597,12 +594,16 @@ body {
   padding: 14px 16px;
 }
 
-/* User Card - Avatar favicon vừa khít, Zalo ID rõ nét, Nút tra cứu 1 hàng không bể */
 .sym-user-card {
   display: flex;
   align-items: center;
-  justify-content: space-between;
   gap: 12px;
+  cursor: pointer;
+  transition: transform 0.15s ease;
+}
+
+.sym-user-card:active {
+  transform: scale(0.99);
 }
 
 .sym-user-left {

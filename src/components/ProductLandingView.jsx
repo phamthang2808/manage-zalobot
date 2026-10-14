@@ -248,8 +248,7 @@ export function ProductLandingView({ code, apiRoot = "" }) {
           {/* Bảng Hoa Hồng Sản Phẩm (Đã căn thẳng hàng cột % hoa hồng) */}
           <div className="sym-breakdown-box">
             <div className="sym-breakdown-title">
-              <i className="fa-solid fa-chart-pie sym-icon-orange" style={{ marginRight: '6px' }}></i>
-              <span>THÔNG TIN HOA HỒNG SẢN PHẨM</span>
+              <span>📊 THÔNG TIN HOA HỒNG SẢN PHẨM</span>
             </div>
 
             <div className="sym-breakdown-grid">
@@ -257,7 +256,7 @@ export function ProductLandingView({ code, apiRoot = "" }) {
               {productPrice > 0 && (
                 <>
                   <div className="sym-row-label">
-                    <span className="sym-row-bullet"><i className="fa-solid fa-tag sym-icon-orange"></i></span>
+                    <span className="sym-row-bullet">💵</span>
                     <span>Giá tham khảo:</span>
                   </div>
                   <div className="sym-amt-col sym-val-price" style={{ gridColumn: '2 / span 2', textAlign: 'right' }}>
@@ -270,7 +269,7 @@ export function ProductLandingView({ code, apiRoot = "" }) {
               {hasSplit && (
                 <>
                   <div className="sym-row-label">
-                    <span className="sym-row-bullet"><i className="fa-solid fa-circle-dot sym-icon-orange"></i></span>
+                    <span className="sym-row-bullet">🔸</span>
                     <span>Hoa hồng Shopee:</span>
                   </div>
                   <div className="sym-rate-col sym-rate-shopee">
@@ -281,7 +280,7 @@ export function ProductLandingView({ code, apiRoot = "" }) {
                   </div>
 
                   <div className="sym-row-label">
-                    <span className="sym-row-bullet"><i className="fa-solid fa-circle-dot sym-icon-orange"></i></span>
+                    <span className="sym-row-bullet">🔹</span>
                     <span>Hoa hồng Shop:</span>
                   </div>
                   <div className="sym-rate-col sym-rate-seller">
@@ -295,7 +294,7 @@ export function ProductLandingView({ code, apiRoot = "" }) {
 
               {/* Dòng Tổng hoa hồng */}
               <div className="sym-row-label sym-label-total">
-                <span className="sym-row-bullet"><i className="fa-solid fa-sack-dollar sym-icon-orange"></i></span>
+                <span className="sym-row-bullet">💰</span>
                 <span><strong>Tổng hoa hồng:</strong></span>
               </div>
               <div className="sym-rate-col sym-rate-total">
@@ -350,21 +349,20 @@ export function ProductLandingView({ code, apiRoot = "" }) {
         {/* Mẹo Nhận Hoa Hồng Chuẩn 100% (Đã căn chỉnh không bể dòng & cập nhật chú thích ấn link lần 2) */}
         <div className="sym-card sym-guide-card">
           <div className="sym-guide-header">
-            <i className="fa-solid fa-lightbulb sym-icon-orange" style={{ marginRight: '6px', fontSize: '15px' }}></i>
-            <span className="sym-guide-title">Mẹo nhỏ nhận hoa hồng chuẩn 100%:</span>
+            <span className="sym-guide-title">💡 Mẹo nhỏ nhận hoa hồng chuẩn 100%:</span>
           </div>
 
           <div className="sym-tips-box">
             <div className="sym-tip-step">
-              <span className="sym-tip-bullet"><i className="fa-solid fa-circle-xmark sym-icon-orange"></i></span>
+              <span className="sym-tip-bullet">❌</span>
               <span className="sym-tip-text"><strong>Xóa sp cũ trong giỏ</strong> (nếu đã lỡ thêm từ trước).</span>
             </div>
             <div className="sym-tip-step">
-              <span className="sym-tip-bullet"><i className="fa-solid fa-arrow-right sym-icon-orange"></i></span>
+              <span className="sym-tip-bullet">➔</span>
               <span className="sym-tip-text"><strong>Bấm link vào App Shopee</strong> (nên ấn vào link lần 2 tăng tỉ lệ).</span>
             </div>
             <div className="sym-tip-step">
-              <span className="sym-tip-bullet"><i className="fa-solid fa-arrow-right sym-icon-orange"></i></span>
+              <span className="sym-tip-bullet">➔</span>
               <span className="sym-tip-text"><strong>Mua ngay (không xem Live/Video giữa chừng)</strong> nhé sếp ơi!</span>
             </div>
           </div>
@@ -833,27 +831,8 @@ body {
   white-space: nowrap;
 }
 
-.sym-icon-orange {
-  color: #ea580c;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  transition: color 0.2s ease, filter 0.2s ease;
-}
-
-html[data-theme="dark"] .sym-icon-orange,
-body.dark .sym-icon-orange {
-  color: #fb923c !important;
-  filter: drop-shadow(0 0 5px rgba(251, 146, 60, 0.45));
-}
-
 .sym-row-bullet {
   font-size: 13px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 18px;
-  flex-shrink: 0;
 }
 
 .sym-rate-col {
@@ -1112,13 +1091,9 @@ body.dark .sym-icon-orange {
 }
 
 .sym-tip-bullet {
-  font-size: 13px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 18px;
+  font-size: 14px;
+  line-height: 1.3;
   flex-shrink: 0;
-  margin-top: 1px;
 }
 
 .sym-tip-text {

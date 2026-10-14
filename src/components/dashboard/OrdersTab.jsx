@@ -665,14 +665,14 @@ export default function OrdersTab() {
       `}} />
 
       <div className="table-container orders-table-container" style={{ overflowX: 'auto', WebkitOverflowScrolling: 'touch' }}>
-        <table className="orders-table" style={{ tableLayout: 'fixed', width: '100%', minWidth: '890px' }}>
+        <table className="orders-table" style={{ tableLayout: 'fixed', width: '100%', minWidth: '940px' }}>
           <thead>
             <tr>
-              <th style={{ width: '210px' }}>Mã đơn & Thời gian</th>
-              <th style={{ width: '225px' }}>Tên sản phẩm</th>
-              <th style={{ width: '210px' }}>Thành viên / Zalo ID</th>
-              <th style={{ width: '160px', textAlign: 'right' }}>Tích lũy hoa hồng</th>
-              <th style={{ width: '120px', textAlign: 'center' }}>Trạng thái</th>
+              <th style={{ width: '190px' }}>Mã đơn & Thời gian</th>
+              <th style={{ width: '310px' }}>Tên sản phẩm</th>
+              <th style={{ width: '190px' }}>Thành viên / Zalo ID</th>
+              <th style={{ width: '150px', textAlign: 'right' }}>Tích lũy hoa hồng</th>
+              <th style={{ width: '110px', textAlign: 'center' }}>Trạng thái</th>
             </tr>
           </thead>
           <tbody>
@@ -728,9 +728,55 @@ export default function OrdersTab() {
                       </div>
                     </td>
                     <td data-label="Sản phẩm" title={o.productName}>
-                      <span style={{ fontWeight: '600', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
-                        {o.productName || `Sản phẩm ${platformFilter}`}
-                      </span>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                        {o.imageUrl ? (
+                          <img
+                            src={o.imageUrl}
+                            alt={o.productName || 'Ảnh sản phẩm'}
+                            referrerPolicy="no-referrer"
+                            style={{
+                              width: '46px',
+                              height: '46px',
+                              objectFit: 'cover',
+                              borderRadius: '8px',
+                              border: '1px solid var(--border-color, #cbd5e1)',
+                              flexShrink: 0,
+                              background: 'var(--bg-main, #f8fafc)',
+                              cursor: 'pointer'
+                            }}
+                            title="Bấm để xem ảnh gốc"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              window.open(o.imageUrl, '_blank', 'noopener,noreferrer');
+                            }}
+                            onError={(e) => {
+                              e.currentTarget.style.display = 'none';
+                              if (e.currentTarget.nextElementSibling) {
+                                e.currentTarget.nextElementSibling.style.display = 'flex';
+                              }
+                            }}
+                          />
+                        ) : null}
+                        <div
+                          style={{
+                            width: '46px',
+                            height: '46px',
+                            borderRadius: '8px',
+                            background: 'var(--bg-main, #f1f5f9)',
+                            border: '1px solid var(--border-color, #e2e8f0)',
+                            display: o.imageUrl ? 'none' : 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            flexShrink: 0,
+                            color: 'var(--text-muted, #94a3b8)'
+                          }}
+                        >
+                          <i className="fa-solid fa-bag-shopping" style={{ fontSize: '18px', opacity: 0.6 }}></i>
+                        </div>
+                        <span style={{ fontWeight: '600', fontSize: '13px', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden', lineHeight: '1.4' }}>
+                          {o.productName || `Sản phẩm ${platformFilter}`}
+                        </span>
+                      </div>
                     </td>
                     <td data-label="Thành viên">
                       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '5px' }}>

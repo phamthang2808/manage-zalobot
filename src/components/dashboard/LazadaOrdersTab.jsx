@@ -435,10 +435,56 @@ export default function LazadaOrdersTab({ onCountUpdate }) {
                           {o.orderId}
                         </td>
 
-                        <td style={{ padding: '12px 16px', maxWidth: '240px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={o.productName}>
-                          <span style={{ fontSize: '13px', fontWeight: '700', color: 'var(--text-bright, #0f172a)' }}>
-                            {o.productName || 'Sản phẩm Lazada'}
-                          </span>
+                        <td style={{ padding: '12px 16px', maxWidth: '300px' }} title={o.productName}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                            {o.imageUrl ? (
+                              <img
+                                src={o.imageUrl}
+                                alt={o.productName || 'Ảnh sản phẩm'}
+                                referrerPolicy="no-referrer"
+                                style={{
+                                  width: '44px',
+                                  height: '44px',
+                                  objectFit: 'cover',
+                                  borderRadius: '8px',
+                                  border: '1px solid var(--border-color, #cbd5e1)',
+                                  flexShrink: 0,
+                                  background: 'var(--bg-main, #f8fafc)',
+                                  cursor: 'pointer'
+                                }}
+                                title="Bấm để xem ảnh gốc"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  window.open(o.imageUrl, '_blank', 'noopener,noreferrer');
+                                }}
+                                onError={(e) => {
+                                  e.currentTarget.style.display = 'none';
+                                  if (e.currentTarget.nextElementSibling) {
+                                    e.currentTarget.nextElementSibling.style.display = 'flex';
+                                  }
+                                }}
+                              />
+                            ) : null}
+                            <div
+                              style={{
+                                width: '44px',
+                                height: '44px',
+                                borderRadius: '8px',
+                                background: 'var(--bg-main, #f1f5f9)',
+                                border: '1px solid var(--border-color, #e2e8f0)',
+                                display: o.imageUrl ? 'none' : 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                flexShrink: 0,
+                                color: 'var(--text-muted, #94a3b8)'
+                              }}
+                            >
+                              <i className="fa-solid fa-bag-shopping" style={{ fontSize: '16px', opacity: 0.6 }}></i>
+                            </div>
+                            <span style={{ fontSize: '13px', fontWeight: '700', color: 'var(--text-bright, #0f172a)', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden', lineHeight: '1.4' }}>
+                              {o.productName || 'Sản phẩm Lazada'}
+                            </span>
+                          </div>
                         </td>
 
                         <td style={{ padding: '12px 16px', fontSize: '12px' }}>

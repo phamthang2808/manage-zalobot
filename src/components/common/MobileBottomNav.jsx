@@ -45,37 +45,47 @@ export default function MobileBottomNav() {
     );
   }
 
+  const navigateView = (targetView, targetPath) => {
+    const isSpecialPath = typeof window !== 'undefined' && 
+      (window.location.pathname.includes('/p/') || window.location.pathname.includes('/s/'));
+
+    if (isSpecialPath) {
+      window.location.href = targetPath;
+      return;
+    }
+
+    if (targetView === 'home') {
+      setView('home');
+      sessionStorage.removeItem('adminView');
+      window.history.pushState({}, '', '/');
+    } else {
+      setView(targetView);
+      window.history.pushState({}, '', targetPath);
+    }
+    window.scrollTo(0, 0);
+  };
+
   // Giao diện điện thoại khách hàng: Chuyển link | Đơn hàng | Ví tiền | Tài khoản (+ Quản trị nếu là Admin)
   const handleCustomerTabClick = (targetView) => {
     if (targetView === 'account') {
       if (token) {
-        setView('account');
-        window.history.pushState({}, '', '/?view=account');
+        navigateView('account', '/?view=account');
       } else {
-        setView('login');
-        window.history.pushState({}, '', '/?view=login');
+        navigateView('login', '/?view=login');
       }
     } else {
       if (token) {
-        setView(targetView);
-        window.history.pushState({}, '', `/?view=${targetView}`);
+        navigateView(targetView, `/?view=${targetView}`);
       } else {
-        setView('login');
-        window.history.pushState({}, '', '/?view=login');
+        navigateView('login', '/?view=login');
       }
     }
-    window.scrollTo(0, 0);
   };
 
   return (
     <nav className="mobile-bottom-nav">
       <button type="button" className={`mobile-bottom-nav-item${view === 'home' || view === 'landing' ? ' active' : ''}`}
-        onClick={() => {
-          setView('home');
-          sessionStorage.removeItem('adminView');
-          window.history.pushState({}, '', '/');
-          window.scrollTo(0, 0);
-        }}>
+        onClick={() => navigateView('home', '/')}>
         <div className="nav-icon-wrap"><i className="fa-solid fa-house"></i></div>
         <span className="nav-label">Trang chủ</span>
       </button>
@@ -112,7 +122,10 @@ export default function MobileBottomNav() {
 
       {isAdmin && (
         <button type="button" className={`mobile-bottom-nav-item${view === 'admin' ? ' active' : ''}`}
-          onClick={() => { setView('admin'); sessionStorage.setItem('adminView', 'admin'); window.scrollTo(0, 0); }}>
+          onClick={() => {
+            sessionStorage.setItem('adminView', 'admin');
+            navigateView('admin', '/?view=admin');
+          }}>
           <div className="nav-icon-wrap"><i className="fa-solid fa-shield-halved"></i></div>
           <span className="nav-label">Quản trị</span>
         </button>

@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import MobileBottomNav from "./common/MobileBottomNav";
 
 export function ProductLandingView({ code, apiRoot = "" }) {
   const [loading, setLoading] = useState(true);
@@ -383,85 +384,8 @@ export function ProductLandingView({ code, apiRoot = "" }) {
         </div>
       </a>
 
-      {/* Menu Chân Trang CHUẨN CỦA WEBSITE - Nút bên phải cùng là Đăng nhập */}
-      <nav className="mobile-bottom-nav sym-site-nav">
-        {/* 1. Trang chủ */}
-        <button 
-          type="button" 
-          className="mobile-bottom-nav-item" 
-          onClick={() => { window.location.href = '/'; }}
-        >
-          <div className="nav-icon-wrap">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" />
-            </svg>
-          </div>
-          <span className="nav-label">Trang chủ</span>
-        </button>
-
-        {/* 2. Tra cứu (Nếu có Zalo ID thì tra cứu trực tiếp) */}
-        <button 
-          type="button" 
-          className="mobile-bottom-nav-item active" 
-          onClick={handleGoUserWallet}
-        >
-          <div className="nav-icon-wrap">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-              <circle cx="11" cy="11" r="8"></circle>
-              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-            </svg>
-          </div>
-          <span className="nav-label">Tra cứu</span>
-        </button>
-
-        {/* 3. Bot Zalo */}
-        <a 
-          href="https://zalo.me/g/0p083nqqoordpki9zgvy" 
-          target="_blank" 
-          rel="noreferrer" 
-          className="mobile-bottom-nav-item" 
-          title="Nhắn tin với Bot Zalo hoàn tiền"
-        >
-          <div className="nav-icon-wrap">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM6 9h12v2H6V9zm8 5H6v-2h8v2zm4-6H6V6h12v2z" />
-            </svg>
-          </div>
-          <span className="nav-label">Bot Zalo</span>
-        </a>
-
-        {/* 4. Hướng dẫn */}
-        <button 
-          type="button" 
-          className="mobile-bottom-nav-item" 
-          onClick={() => { window.location.href = '/#steps'; }}
-        >
-          <div className="nav-icon-wrap">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-              <circle cx="12" cy="12" r="10"></circle>
-              <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
-              <line x1="12" y1="17" x2="12.01" y2="17"></line>
-            </svg>
-          </div>
-          <span className="nav-label">Hướng dẫn</span>
-        </button>
-
-        {/* 5. Đăng nhập (Nút ngoài cùng bên phải) */}
-        <button 
-          type="button" 
-          className="mobile-bottom-nav-item" 
-          onClick={() => { window.location.href = '/?view=login'; }}
-        >
-          <div className="nav-icon-wrap">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" />
-              <polyline points="10 17 15 12 10 7" />
-              <line x1="15" y1="12" x2="3" y2="12" />
-            </svg>
-          </div>
-          <span className="nav-label">Đăng nhập</span>
-        </button>
-      </nav>
+      {/* Menu Chân Trang ĐỒNG BỘ 100% VỚI WEBSITE HIỆN TẠI */}
+      <MobileBottomNav />
     </div>
   );
 }
@@ -1229,54 +1153,16 @@ body {
   border-radius: 50%;
 }
 
-/* Menu chân trang chính thức của Website - Nút phải cùng là Đăng nhập */
-.sym-site-nav {
-  position: fixed;
-  bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 100%;
-  max-width: 480px;
-  background: rgba(255, 255, 255, 0.96);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
-  border-top: 1px solid rgba(254, 215, 170, 0.6);
-  display: flex;
-  align-items: center;
-  justify-content: space-around;
-  padding: 8px 10px 10px;
-  z-index: 60;
-  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.06);
-}
-
-.mobile-bottom-nav-item {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  background: none;
-  border: none;
-  text-decoration: none;
-  color: #667085;
-  font-size: 11px;
-  font-weight: 600;
-  cursor: pointer;
-  padding: 4px 8px;
-  gap: 3px;
-  transition: all 0.15s ease;
-}
-
-.mobile-bottom-nav-item:hover, .mobile-bottom-nav-item.active {
-  color: #ea580c;
-}
-
-.nav-icon-wrap {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.nav-label {
-  font-size: 10.5px;
-  font-weight: 700;
+/* Menu chân trang đồng bộ hoàn hảo với Website chính */
+.sym-container .mobile-bottom-nav {
+  display: flex !important;
+  position: fixed !important;
+  bottom: 0 !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  width: 100% !important;
+  max-width: 480px !important;
+  right: auto !important;
+  z-index: 9999 !important;
 }
 `;

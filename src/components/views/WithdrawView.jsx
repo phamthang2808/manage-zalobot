@@ -148,7 +148,7 @@ export default function WithdrawView() {
           'Authorization': `Bearer ${token}`
         },
         body: JSON.stringify({
-          amount: cleanAmount,
+          amount: amountVal,
           bankName: user?.bankName || user?.bankCode || '',
           accountNumber: user?.accountNumber || '',
           accountName: user?.accountName || user?.fullName || ''
@@ -158,7 +158,7 @@ export default function WithdrawView() {
 
       const data = await res.json();
       if (res.ok) {
-        showToast('Đã gửi yêu cầu rút tiền thành công! Admin sẽ duyệt sớm nhất. 🎉', 'success');
+        showToast('Đã gửi yêu cầu rút tiền thành công! Admin sẽ duyệt sớm nhất.', 'success');
         setAmountInput('');
         fetchWalletAndPayouts();
       } else {

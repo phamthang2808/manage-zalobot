@@ -2,28 +2,35 @@
   "name": "28Symues - Hoàn Tiền Mua Sắm",
   "short_name": "28Symues",
   "description": "Dịch vụ Zalo Bot Affiliate tự động đổi link Shopee, TikTok Shop & Lazada 24/7. Tích lũy hoa hồng và rút tiền tự động.",
-  "start_url": "/",
+  "start_url": "https://www.28symues.store/",
+  "scope": "/",
   "display": "standalone",
-  "background_color": "#0b0f17",
-  "theme_color": "#0b0f17",
+  "background_color": "#ffffff",
+  "theme_color": "#ffffff",
   "icons": [
     {
-      "src": "/apple-touch-icon.png",
+      "src": "/apple-touch-icon.png?v=3",
       "sizes": "180x180",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
     },
     {
-      "src": "/pwa-192.png",
+      "src": "/pwa-192.png?v=3",
       "sizes": "192x192",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
     },
     {
-      "src": "/pwa-512.png",
+      "src": "/pwa-512.png?v=3",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
+    },
+    {
+      "src": "/pwa-512.png?v=3",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
     }
   ]
 }

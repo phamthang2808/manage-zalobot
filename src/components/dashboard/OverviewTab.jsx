@@ -150,11 +150,16 @@ export default function OverviewTab() {
           }
         `}} />
         <div className="table-container overview-table-container" style={{ overflowX: 'auto', WebkitOverflowScrolling: 'touch' }}>
-          <table style={{ minWidth: '780px' }}>
+          <table style={{ minWidth: '920px' }}>
             <thead>
               <tr>
-                <th>Mã GD</th><th>Thành viên</th><th>Ngân hàng</th>
-                <th>Số tài khoản</th><th>Số tiền</th><th>Thời gian gửi</th><th>Hành động</th>
+                <th style={{ width: '100px' }}>Mã GD</th>
+                <th>Thành viên</th>
+                <th>Ngân hàng</th>
+                <th>Số tài khoản</th>
+                <th style={{ textAlign: 'right' }}>Số tiền</th>
+                <th>Thời gian gửi</th>
+                <th style={{ width: '180px', minWidth: '180px', textAlign: 'center' }}>Hành động</th>
               </tr>
             </thead>
             <tbody>
@@ -180,45 +185,51 @@ export default function OverviewTab() {
                         {formatMoney(p.amount)}
                       </td>
                       <td data-label="Thời gian gửi">{formatDateTime(p.createdAt)}</td>
-                      <td data-label="Hành động">
-                        <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
+                      <td data-label="Hành động" style={{ textAlign: 'center', whiteSpace: 'nowrap', minWidth: '180px' }}>
+                        <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', justifyContent: 'center', flexWrap: 'nowrap' }}>
                           <button
                             type="button"
                             onClick={() => handleApprovePayout(p.id)}
                             style={{
-                              background: 'rgba(16, 185, 129, 0.1)',
-                              border: '1px solid rgba(16, 185, 129, 0.4)',
-                              borderRadius: '6px',
+                              background: 'rgba(16, 185, 129, 0.12)',
+                              border: '1px solid rgba(16, 185, 129, 0.45)',
+                              borderRadius: '7px',
                               color: '#10b981',
                               fontWeight: '700',
                               fontSize: '12px',
                               cursor: 'pointer',
-                              padding: '3px 8px',
+                              padding: '5px 12px',
                               display: 'inline-flex',
                               alignItems: 'center',
-                              gap: '3px'
+                              gap: '4px',
+                              whiteSpace: 'nowrap',
+                              flexShrink: 0,
+                              transition: 'all 0.15s ease'
                             }}
                           >
-                            ✓ Duyệt
+                            <span style={{ fontWeight: '900' }}>✓</span> Duyệt
                           </button>
                           <button
                             type="button"
                             onClick={() => handleRejectPayout(p.id)}
                             style={{
-                              background: 'rgba(239, 68, 68, 0.1)',
-                              border: '1px solid rgba(239, 68, 68, 0.4)',
-                              borderRadius: '6px',
+                              background: 'rgba(239, 68, 68, 0.12)',
+                              border: '1px solid rgba(239, 68, 68, 0.45)',
+                              borderRadius: '7px',
                               color: '#ef4444',
                               fontWeight: '700',
                               fontSize: '12px',
                               cursor: 'pointer',
-                              padding: '3px 8px',
+                              padding: '5px 12px',
                               display: 'inline-flex',
                               alignItems: 'center',
-                              gap: '3px'
+                              gap: '4px',
+                              whiteSpace: 'nowrap',
+                              flexShrink: 0,
+                              transition: 'all 0.15s ease'
                             }}
                           >
-                            ✕ Từ chối
+                            <span style={{ fontWeight: '900' }}>✕</span> Từ chối
                           </button>
                         </div>
                       </td>

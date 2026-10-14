@@ -17,11 +17,20 @@ export function UserDetailModal({ selectedUser, onClose, orders }) {
     return 'Shopee';
   };
 
-  // Lấy toàn bộ đơn hàng của thành viên này (theo cả zaloId và subId)
-  const userOrders = (orders || []).filter(o => 
-    (o.zaloId && o.zaloId === selectedUser.zaloId) || 
-    (o.subId && o.subId === selectedUser.zaloId)
-  );
+  // Lấy toàn bộ đơn hàng của thành viên này (theo cả zaloId, subId và tài khoản Web đã liên kết)
+  const userOrders = (orders || []).filter(o => {
+    if (!o) return false;
+    const zid = selectedUser?.zaloId;
+    if (o.zaloId && o.zaloId === zid) return true;
+    if (o.subId && o.subId === zid) return true;
+    if (zid === '5128074989288259190' || zid === 'PhamThang') {
+      if (o.zaloId === 'PhamThang' || o.subId === 'PhamThang') return true;
+      if (o.subId && (o.subId.startsWith('phamthang_2_') || o.subId.startsWith('u2') || o.subId.startsWith('web_2_'))) return true;
+    }
+    const webUid = selectedUser?.webUserId;
+    if (webUid && o.subId && (o.subId.startsWith(`phamthang_${webUid}_`) || o.subId.startsWith(`u${webUid}`) || o.subId.startsWith(`web_${webUid}_`))) return true;
+    return false;
+  });
 
   const shopeeOrdersCount = userOrders.filter(o => getPlatform(o) !== 'TikTok Shop').length;
   const tiktokOrdersCount = userOrders.filter(o => getPlatform(o) === 'TikTok Shop').length;

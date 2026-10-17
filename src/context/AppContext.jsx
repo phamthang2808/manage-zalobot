@@ -81,12 +81,6 @@ export function AppProvider({ children }) {
   const showToast = (message, type = 'success') => {
     setToast({ message, type, id: Date.now() });
   };
-  useEffect(() => {
-    if (toast) {
-      const timer = setTimeout(() => setToast(null), 4000);
-      return () => clearTimeout(timer);
-    }
-  }, [toast]);
 
   // Sidebar
   const [sidebarOpen, setSidebarOpen] = useState(false);

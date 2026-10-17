@@ -3406,35 +3406,71 @@ tr:hover td {
 }
 
 /* ==========================================================================
-   CUSTOM TOAST (Admin Dashboard)
+   MODERN PILL TOAST (Dynamic Island / Sonner Style - Chuẩn Web Lớn)
    ========================================================================== */
-.custom-toast-popup {
+.modern-pill-toast {
   position: fixed;
-  top: 72px;
-  right: 20px;
-  z-index: 9999;
-  display: flex;
-  align-items: flex-start;
-  gap: 12px;
-  padding: 14px 16px;
-  min-width: 280px;
-  max-width: 380px;
-  border-radius: var(--radius-lg);
-  background: var(--white);
-  border: 1px solid var(--gray-200);
-  border-left: 4px solid var(--brand-500);
-  box-shadow: var(--shadow-lg);
-  animation: toastSlideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 99999999;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 16px 8px 12px;
+  min-width: 200px;
+  max-width: min(92vw, 480px);
+  border-radius: 9999px;
+  background: rgba(15, 23, 42, 0.90);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  box-shadow: 0 12px 32px -4px rgba(0, 0, 0, 0.5), 0 0 1px 1px rgba(255, 255, 255, 0.1);
+  color: #f8fafc;
+  font-size: 13.5px;
+  font-weight: 600;
+  cursor: pointer;
+  user-select: none;
+  animation: pillToastEnter 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s ease;
 }
 
-@keyframes toastSlideIn {
-  from { transform: translateX(120%); opacity: 0; }
-  to   { transform: translateX(0);   opacity: 1; }
+[data-theme="light"] .modern-pill-toast {
+  background: rgba(255, 255, 255, 0.94);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  box-shadow: 0 12px 32px -4px rgba(0, 0, 0, 0.15), 0 0 1px 1px rgba(0, 0, 0, 0.05);
+  color: #0f172a;
 }
 
-@keyframes toastProgress {
-  from { width: 100%; }
-  to   { width: 0%; }
+.modern-pill-toast:hover {
+  transform: translate(-50%, 2px) scale(1.01);
+  box-shadow: 0 14px 36px -4px rgba(0, 0, 0, 0.6), 0 0 1px 1px rgba(255, 255, 255, 0.15);
+}
+
+.modern-pill-toast.is-exiting {
+  animation: pillToastExit 0.22s cubic-bezier(0.4, 0, 1, 1) forwards !important;
+}
+
+@keyframes pillToastEnter {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -20px) scale(0.92);
+  }
+  100% {
+    opacity: 1;
+    transform: translate(-50%, 0) scale(1);
+  }
+}
+
+@keyframes pillToastExit {
+  0% {
+    opacity: 1;
+    transform: translate(-50%, 0) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -18px) scale(0.92);
+  }
 }
 
 /* ==========================================================================

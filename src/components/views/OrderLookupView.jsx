@@ -867,19 +867,20 @@ export default function OrderLookupView({ setView: propSetView } = {}) {
                         {lookupResult.referralCode ? lookupResult.referralCode.replace(/^GT/i, '') : ''}
                       </div>
 
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'nowrap', flexShrink: 0 }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap', flexShrink: 0 }}>
                         <button
                           type="button"
                           onClick={() => {
                             const code = lookupResult.referralCode ? lookupResult.referralCode.replace(/^GT/i, '') : '';
                             navigator.clipboard.writeText(code);
-                            showToast(`Đã sao chép mã giới thiệu: ${code}`, 'success');
+                            showToast(`Đã sao chép mã: ${code}`, 'success');
                           }}
                           style={{
                             background: 'var(--bg-card)',
                             border: '1px solid var(--border-color)',
                             color: 'var(--text-bright)',
-                            padding: '6px 12px',
+                            padding: '0 10px',
+                            height: '34px',
                             fontSize: '12px',
                             fontWeight: '600',
                             borderRadius: '8px',
@@ -888,11 +889,11 @@ export default function OrderLookupView({ setView: propSetView } = {}) {
                             gap: '5px',
                             cursor: 'pointer',
                             whiteSpace: 'nowrap',
-                            lineHeight: '1.4',
                             boxSizing: 'border-box'
                           }}
                           onMouseEnter={e => { e.currentTarget.style.borderColor = '#ea580c'; e.currentTarget.style.color = '#ea580c'; }}
                           onMouseLeave={e => { e.currentTarget.style.borderColor = 'var(--border-color)'; e.currentTarget.style.color = 'var(--text-bright)'; }}
+                          title="Sao chép riêng mã số giới thiệu"
                         >
                           <i className="fa-regular fa-copy" style={{ fontSize: '12px' }}></i>
                           <span>Copy Mã</span>
@@ -903,13 +904,43 @@ export default function OrderLookupView({ setView: propSetView } = {}) {
                             const code = lookupResult.referralCode ? lookupResult.referralCode.replace(/^GT/i, '') : '';
                             const cmd = `/gt_${code}`;
                             navigator.clipboard.writeText(cmd);
-                            showToast(`Đã sao chép cú pháp: ${cmd}`, 'success');
+                            showToast(`Đã sao chép cú pháp: ${cmd} (Dán vào nhóm Zalo để liên kết)`, 'success');
+                          }}
+                          style={{
+                            background: 'rgba(2, 132, 199, 0.08)',
+                            border: '1px solid rgba(2, 132, 199, 0.3)',
+                            color: '#0284c7',
+                            padding: '0 10px',
+                            height: '34px',
+                            fontSize: '12px',
+                            fontWeight: '700',
+                            borderRadius: '8px',
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '5px',
+                            cursor: 'pointer',
+                            whiteSpace: 'nowrap',
+                            boxSizing: 'border-box'
+                          }}
+                          title="Sao chép cú pháp lệnh /gt để dán vào nhóm Zalo"
+                        >
+                          <i className="fa-solid fa-robot" style={{ fontSize: '11px' }}></i>
+                          <span>Copy Lệnh /gt</span>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const code = lookupResult.referralCode ? lookupResult.referralCode.replace(/^GT/i, '') : '';
+                            const shareLink = `${window.location.origin}/?ref=${code}`;
+                            navigator.clipboard.writeText(shareLink);
+                            showToast('Đã sao chép link web! Bạn bè mở link sẽ tự động nhận mã 🎉', 'success');
                           }}
                           style={{
                             background: 'linear-gradient(135deg, #f97316, #ea580c)',
                             border: 'none',
                             color: '#ffffff',
-                            padding: '6px 12px',
+                            padding: '0 12px',
+                            height: '34px',
                             fontSize: '12px',
                             fontWeight: '700',
                             borderRadius: '8px',
@@ -919,12 +950,12 @@ export default function OrderLookupView({ setView: propSetView } = {}) {
                             cursor: 'pointer',
                             whiteSpace: 'nowrap',
                             boxShadow: '0 2px 8px rgba(249,115,22,0.25)',
-                            lineHeight: '1.4',
                             boxSizing: 'border-box'
                           }}
+                          title="Sao chép đường link web để gửi cho bạn bè"
                         >
-                          <i className="fa-solid fa-paper-plane" style={{ fontSize: '11px' }}></i>
-                          <span>Copy Cú Pháp</span>
+                          <i className="fa-solid fa-share-nodes" style={{ fontSize: '11px' }}></i>
+                          <span>Copy Link</span>
                         </button>
                       </div>
                     </div>

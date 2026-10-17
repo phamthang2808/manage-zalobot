@@ -759,19 +759,62 @@ export default function AccountView() {
                   {referralData.referralCode || 'Đang tạo...'}
                 </div>
 
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'nowrap', flexShrink: 0 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap', flexShrink: 0 }}>
                   <button
                     type="button"
                     onClick={() => {
                       if (!referralData.referralCode) return;
                       navigator.clipboard.writeText(referralData.referralCode);
-                      showToast(`Đã copy mã giới thiệu: ${referralData.referralCode}`, 'success');
+                      showToast(`Đã copy mã: ${referralData.referralCode}`, 'success');
                     }}
                     className="lookup-admin-link"
-                    style={{ fontSize: '12px', padding: '7px 12px', fontWeight: '700', color: '#ea580c', borderColor: 'rgba(234, 88, 12, 0.4)', whiteSpace: 'nowrap', display: 'inline-flex', alignItems: 'center', gap: '6px' }}
+                    style={{
+                      height: '34px',
+                      fontSize: '12px',
+                      padding: '0 10px',
+                      fontWeight: '700',
+                      color: '#ea580c',
+                      borderColor: 'rgba(234, 88, 12, 0.4)',
+                      whiteSpace: 'nowrap',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '5px',
+                      borderRadius: '8px',
+                      boxSizing: 'border-box'
+                    }}
+                    title="Sao chép riêng mã số giới thiệu"
                   >
                     <i className="fa-regular fa-copy"></i>
-                    <span style={{ whiteSpace: 'nowrap' }}>Copy Mã</span>
+                    <span>Copy Mã</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (!referralData.referralCode) return;
+                      const cmd = `/gt_${referralData.referralCode}`;
+                      navigator.clipboard.writeText(cmd);
+                      showToast(`Đã copy cú pháp: ${cmd} (Dán vào nhóm Zalo để liên kết)`, 'success');
+                    }}
+                    className="lookup-admin-link"
+                    style={{
+                      height: '34px',
+                      fontSize: '12px',
+                      padding: '0 10px',
+                      fontWeight: '700',
+                      color: 'var(--text-bright)',
+                      borderColor: 'var(--border-color)',
+                      whiteSpace: 'nowrap',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '5px',
+                      borderRadius: '8px',
+                      boxSizing: 'border-box'
+                    }}
+                    title="Sao chép cú pháp lệnh /gt để dán vào nhóm Zalo"
+                  >
+                    <i className="fa-solid fa-robot" style={{ color: '#0284c7' }}></i>
+                    <span>Copy Lệnh /gt</span>
                   </button>
 
                   <button
@@ -780,13 +823,26 @@ export default function AccountView() {
                       if (!referralData.referralCode) return;
                       const shareLink = `${window.location.origin}/?ref=${referralData.referralCode}`;
                       navigator.clipboard.writeText(shareLink);
-                      showToast('Đã copy link giới thiệu! Gửi link này cho bạn bè nhé 🎉', 'success');
+                      showToast('Đã copy link web! Bạn bè mở link sẽ tự động nhận mã 🎉', 'success');
                     }}
                     className="lookup-btn"
-                    style={{ width: 'auto', fontSize: '12px', padding: '7px 14px', fontWeight: '700', whiteSpace: 'nowrap', display: 'inline-flex', alignItems: 'center', gap: '6px' }}
+                    style={{
+                      height: '34px',
+                      width: 'auto',
+                      fontSize: '12px',
+                      padding: '0 12px',
+                      fontWeight: '700',
+                      whiteSpace: 'nowrap',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '5px',
+                      borderRadius: '8px',
+                      boxSizing: 'border-box'
+                    }}
+                    title="Sao chép đường link web để gửi cho bạn bè"
                   >
                     <i className="fa-solid fa-share-nodes"></i>
-                    <span style={{ whiteSpace: 'nowrap' }}>Copy Link</span>
+                    <span>Copy Link</span>
                   </button>
                 </div>
               </div>

@@ -24,12 +24,12 @@ export default function ReferralPromptModal() {
     const wasDismissed = sessionStorage.getItem(dismissedKey) === 'true';
 
     if (user.hasEnteredReferral === false && !wasDismissed) {
-      // Tự động lấy mã ref từ URL query param nếu có (?ref=58553)
+      // Tự động lấy mã ref từ URL query param nếu có (?ref=58553) hoặc từ localStorage đã lưu
       try {
         const urlParams = new URLSearchParams(window.location.search);
-        const refParam = urlParams.get('ref') || '';
+        const refParam = urlParams.get('ref') || localStorage.getItem('pendingReferralCode') || '';
         if (refParam) {
-          setReferralCode(refParam.trim());
+          setReferralCode(refParam.trim().replace(/^GT/i, ''));
         }
       } catch (e) {}
 
@@ -48,6 +48,9 @@ export default function ReferralPromptModal() {
   const markCompletedOnClient = () => {
     setIsOpen(false);
     sessionStorage.setItem(`referralPromptDismissed_${user.id}`, 'true');
+    try {
+      localStorage.removeItem('pendingReferralCode');
+    } catch (e) {}
     const updated = { ...user, hasEnteredReferral: true };
     setUser(updated);
     try {

@@ -405,13 +405,17 @@ export default function ConvertView() {
                 onClick={() => setInputText('')}
                 className="lookup-admin-link"
                 style={{
-                  fontSize: '12px',
-                  padding: '11px 12px',
+                  height: '40px',
+                  fontSize: '12.5px',
+                  padding: '0 14px',
                   whiteSpace: 'nowrap',
                   flexShrink: 0,
                   display: 'inline-flex',
                   alignItems: 'center',
-                  gap: '6px'
+                  justifyContent: 'center',
+                  gap: '6px',
+                  borderRadius: '10px',
+                  boxSizing: 'border-box'
                 }}
               >
                 <i className="fa-solid fa-trash-can"></i>
@@ -424,13 +428,16 @@ export default function ConvertView() {
               className="lookup-btn"
               style={{
                 flex: 1,
-                padding: '11px 14px',
-                fontSize: '13.5px',
+                height: '40px',
+                fontSize: '13px',
+                padding: '0 16px',
                 whiteSpace: 'nowrap',
                 display: 'inline-flex',
                 alignItems: 'center',
                 justifyContent: 'center',
                 gap: '8px',
+                borderRadius: '10px',
+                boxSizing: 'border-box',
                 minWidth: 0
               }}
             >
@@ -713,43 +720,27 @@ export default function ConvertView() {
               </div>
             </div>
 
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px', width: '100%', marginTop: '4px' }}>
-              {historyLinks.length > 0 ? (
-                <button
-                  type="button"
-                  onClick={handleClearHistory}
-                  className="lookup-admin-link"
-                  style={{ fontSize: '11.5px', padding: '5px 10px', color: '#dc2626', borderColor: 'rgba(220, 38, 38, 0.25)' }}
-                >
-                  <i className="fa-solid fa-trash-can"></i>
-                  <span>Xóa lịch sử</span>
-                </button>
-              ) : <div />}
-              <button
-                type="button"
-                onClick={() => setIsHistoryOpen(!isHistoryOpen)}
-                className="lookup-admin-link"
-                style={{ fontSize: '12px', padding: '5px 12px', marginLeft: 'auto' }}
-              >
-                <span>{isHistoryOpen ? 'Thu gọn' : 'Mở ra'}</span>
-                <i className={`fa-solid fa-chevron-${isHistoryOpen ? 'up' : 'down'}`} style={{ marginLeft: '4px' }}></i>
-              </button>
-            </div>
-          </div>
-
-          {/* Nội dung Lịch Sử (Khi mở) */}
-          {isHistoryOpen && (
-            <div>
-              {/* Bộ lọc lịch sử dạng ấn vào chọn (Gọn gàng, không cần vuốt kéo) */}
-              <div style={{ marginBottom: '14px', borderBottom: '1px solid var(--border-color)', paddingBottom: '10px' }}>
-                <div style={{ position: 'relative', display: 'flex', alignItems: 'center', maxWidth: '280px' }}>
+            {/* Thanh điều khiển cân đối: Bộ lọc sàn bên trái, Xóa lịch sử & Thu gọn bên phải */}
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              gap: '8px',
+              width: '100%',
+              marginTop: '10px',
+              paddingTop: '10px',
+              borderTop: isHistoryOpen ? '1px dashed var(--border-color)' : 'none',
+              flexWrap: 'wrap'
+            }}>
+              {isHistoryOpen ? (
+                <div style={{ position: 'relative', display: 'flex', alignItems: 'center', minWidth: '135px', maxWidth: '170px', flex: '1 1 auto' }}>
                   <i
                     className="fa-solid fa-filter"
                     style={{
                       position: 'absolute',
-                      left: '12px',
-                      color: 'var(--text-muted)',
-                      fontSize: '12px',
+                      left: '10px',
+                      color: 'var(--color-primary, #ea580c)',
+                      fontSize: '11px',
                       pointerEvents: 'none'
                     }}
                   ></i>
@@ -758,12 +749,13 @@ export default function ConvertView() {
                     onChange={e => setHistoryFilterPlatform(e.target.value)}
                     style={{
                       width: '100%',
-                      padding: '8px 28px 8px 32px',
-                      borderRadius: '10px',
+                      height: '34px',
+                      padding: '0 26px 0 28px',
+                      borderRadius: '8px',
                       border: '1px solid var(--border-color)',
                       background: 'var(--bg-main)',
                       color: 'var(--text-bright)',
-                      fontSize: '12.5px',
+                      fontSize: '12px',
                       fontWeight: '600',
                       outline: 'none',
                       cursor: 'pointer',
@@ -781,14 +773,43 @@ export default function ConvertView() {
                     className="fa-solid fa-chevron-down"
                     style={{
                       position: 'absolute',
-                      right: '12px',
+                      right: '10px',
                       color: 'var(--text-muted)',
-                      fontSize: '11px',
+                      fontSize: '10px',
                       pointerEvents: 'none'
                     }}
                   ></i>
                 </div>
+              ) : <div />}
+
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginLeft: 'auto', flexShrink: 0 }}>
+                {historyLinks.length > 0 && isHistoryOpen && (
+                  <button
+                    type="button"
+                    onClick={handleClearHistory}
+                    className="lookup-admin-link"
+                    style={{ height: '34px', fontSize: '11.5px', padding: '0 10px', color: '#dc2626', borderColor: 'rgba(220, 38, 38, 0.25)', display: 'inline-flex', alignItems: 'center', gap: '5px', borderRadius: '8px' }}
+                  >
+                    <i className="fa-solid fa-trash-can"></i>
+                    <span>Xóa lịch sử</span>
+                  </button>
+                )}
+                <button
+                  type="button"
+                  onClick={() => setIsHistoryOpen(!isHistoryOpen)}
+                  className="lookup-admin-link"
+                  style={{ height: '34px', fontSize: '12px', padding: '0 12px', display: 'inline-flex', alignItems: 'center', gap: '5px', borderRadius: '8px' }}
+                >
+                  <span>{isHistoryOpen ? 'Thu gọn' : 'Mở ra'}</span>
+                  <i className={`fa-solid fa-chevron-${isHistoryOpen ? 'up' : 'down'}`} style={{ fontSize: '10px' }}></i>
+                </button>
               </div>
+            </div>
+          </div>
+
+          {/* Nội dung Lịch Sử (Khi mở) */}
+          {isHistoryOpen && (
+            <div style={{ marginTop: '12px' }}>
 
               {/* Danh sách các link trong lịch sử */}
               {filteredHistory.length === 0 ? (

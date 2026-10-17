@@ -71,6 +71,18 @@ function App() {
     }
   }, []);
 
+  // 3. Tự động bắt mã giới thiệu (?ref=...) từ URL và lưu vào localStorage cho khách mới
+  useEffect(() => {
+    try {
+      const params = new URLSearchParams(window.location.search);
+      const ref = params.get('ref');
+      if (ref && ref.trim()) {
+        const cleanRef = ref.trim().replace(/^GT/i, '');
+        localStorage.setItem('pendingReferralCode', cleanRef);
+      }
+    } catch (e) {}
+  }, []);
+
   // Nếu đang ở luồng link rút gọn /s/code, render màn hình loading tối giản chờ redirect, tránh chớp nháy giao diện Workspace
   const isShortLink = typeof window !== 'undefined' && window.location.pathname.includes('/s/');
   if (isShortLink) {

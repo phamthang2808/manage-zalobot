@@ -22,7 +22,7 @@ export default function ToastNotification() {
       setCurrentToast(toast);
       setIsExiting(false);
 
-      // Web lớn dùng thời gian nhanh gọn: 2.3s cho thông thường, 3.5s cho lỗi
+      // Thời gian tự biến mất: 2.3s cho thông thường, 3.5s cho lỗi
       const duration = toast.type === 'error' ? 3500 : 2300;
       timerRef.current = setTimeout(() => {
         handleDismiss();
@@ -40,10 +40,6 @@ export default function ToastNotification() {
 
   if (!currentToast) return null;
 
-  const isSuccess = currentToast.type === 'success';
-  const isError = currentToast.type === 'error';
-  const isWarning = currentToast.type === 'warning';
-
   return (
     <div
       className={`modern-pill-toast ${isExiting ? 'is-exiting' : ''}`}
@@ -59,92 +55,35 @@ export default function ToastNotification() {
       title="Chạm để đóng nhanh"
       role="alert"
     >
-      {/* Icon Tròn Phát Sáng (Glow Icon) */}
+      {/* Message Text (Bỏ icon, căn chỉnh chữ gọn gàng) */}
       <div style={{
-        width: '24px',
-        height: '24px',
-        minWidth: '24px',
-        borderRadius: '50%',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        flexShrink: 0,
-        background: isSuccess
-          ? 'rgba(16, 185, 129, 0.16)'
-          : isError
-          ? 'rgba(239, 68, 68, 0.16)'
-          : isWarning
-          ? 'rgba(245, 158, 11, 0.16)'
-          : 'rgba(59, 130, 246, 0.16)',
-        border: `1.5px solid ${
-          isSuccess
-            ? '#10b981'
-            : isError
-            ? '#ef4444'
-            : isWarning
-            ? '#f59e0b'
-            : '#3b82f6'
-        }`,
-        color: isSuccess
-          ? '#10b981'
-          : isError
-          ? '#ef4444'
-          : isWarning
-          ? '#f59e0b'
-          : '#3b82f6',
-        boxShadow: isSuccess
-          ? '0 0 10px rgba(16, 185, 129, 0.35)'
-          : isError
-          ? '0 0 10px rgba(239, 68, 68, 0.35)'
-          : '0 0 10px rgba(59, 130, 246, 0.35)'
-      }}>
-        {isSuccess ? (
-          <svg style={{ width: '13px', height: '13px' }} fill="none" stroke="currentColor" strokeWidth="3" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5"></path>
-          </svg>
-        ) : isError ? (
-          <svg style={{ width: '13px', height: '13px' }} fill="none" stroke="currentColor" strokeWidth="3" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12"></path>
-          </svg>
-        ) : isWarning ? (
-          <svg style={{ width: '13px', height: '13px' }} fill="none" stroke="currentColor" strokeWidth="3" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v4m0 4h.01"></path>
-          </svg>
-        ) : (
-          <svg style={{ width: '13px', height: '13px' }} fill="none" stroke="currentColor" strokeWidth="3" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-          </svg>
-        )}
-      </div>
-
-      {/* Message Text */}
-      <span style={{
-        lineHeight: '1.4',
+        flex: 1,
+        lineHeight: '1.5',
         letterSpacing: '0.1px',
-        display: 'inline-block',
-        whiteSpace: 'normal',
-        wordBreak: 'break-word'
+        whiteSpace: 'pre-line',
+        wordBreak: 'break-word',
+        textAlign: 'left'
       }}>
         {currentToast.message}
-      </span>
+      </div>
 
       {/* Quick Dismiss Button */}
       <span
         style={{
           width: '18px',
           height: '18px',
-          borderRadius: '50%',
           display: 'inline-flex',
           alignItems: 'center',
           justifyContent: 'center',
-          fontSize: '11px',
-          opacity: 0.5,
+          fontSize: '12px',
+          opacity: 0.55,
           marginLeft: '4px',
           flexShrink: 0,
+          cursor: 'pointer',
           transition: 'opacity 0.15s ease'
         }}
         onMouseEnter={(e) => { e.currentTarget.style.opacity = '1'; }}
-        onMouseLeave={(e) => { e.currentTarget.style.opacity = '0.5'; }}
+        onMouseLeave={(e) => { e.currentTarget.style.opacity = '0.55'; }}
         title="Đóng"
       >
         ✕

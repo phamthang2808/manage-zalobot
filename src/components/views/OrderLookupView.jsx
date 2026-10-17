@@ -854,7 +854,7 @@ export default function OrderLookupView({ setView: propSetView } = {}) {
                         title="Chạm để sao chép mã"
                         style={{
                           fontFamily: 'monospace',
-                          fontSize: '22px',
+                          fontSize: '24px',
                           fontWeight: '900',
                           letterSpacing: '1px',
                           color: '#ea580c',
@@ -867,97 +867,34 @@ export default function OrderLookupView({ setView: propSetView } = {}) {
                         {lookupResult.referralCode ? lookupResult.referralCode.replace(/^GT/i, '') : ''}
                       </div>
 
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap', flexShrink: 0 }}>
-                        <button
-                          type="button"
-                          onClick={() => {
-                            const code = lookupResult.referralCode ? lookupResult.referralCode.replace(/^GT/i, '') : '';
-                            navigator.clipboard.writeText(code);
-                            showToast(`Đã sao chép mã: ${code}`, 'success');
-                          }}
-                          style={{
-                            background: 'var(--bg-card)',
-                            border: '1px solid var(--border-color)',
-                            color: 'var(--text-bright)',
-                            padding: '0 10px',
-                            height: '34px',
-                            fontSize: '12px',
-                            fontWeight: '600',
-                            borderRadius: '8px',
-                            display: 'inline-flex',
-                            alignItems: 'center',
-                            gap: '5px',
-                            cursor: 'pointer',
-                            whiteSpace: 'nowrap',
-                            boxSizing: 'border-box'
-                          }}
-                          onMouseEnter={e => { e.currentTarget.style.borderColor = '#ea580c'; e.currentTarget.style.color = '#ea580c'; }}
-                          onMouseLeave={e => { e.currentTarget.style.borderColor = 'var(--border-color)'; e.currentTarget.style.color = 'var(--text-bright)'; }}
-                          title="Sao chép riêng mã số giới thiệu"
-                        >
-                          <i className="fa-regular fa-copy" style={{ fontSize: '12px' }}></i>
-                          <span>Copy Mã</span>
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => {
-                            const code = lookupResult.referralCode ? lookupResult.referralCode.replace(/^GT/i, '') : '';
-                            const cmd = `/gt_${code}`;
-                            navigator.clipboard.writeText(cmd);
-                            showToast(`Đã sao chép cú pháp: ${cmd} (Dán vào nhóm Zalo để liên kết)`, 'success');
-                          }}
-                          style={{
-                            background: 'rgba(2, 132, 199, 0.08)',
-                            border: '1px solid rgba(2, 132, 199, 0.3)',
-                            color: '#0284c7',
-                            padding: '0 10px',
-                            height: '34px',
-                            fontSize: '12px',
-                            fontWeight: '700',
-                            borderRadius: '8px',
-                            display: 'inline-flex',
-                            alignItems: 'center',
-                            gap: '5px',
-                            cursor: 'pointer',
-                            whiteSpace: 'nowrap',
-                            boxSizing: 'border-box'
-                          }}
-                          title="Sao chép cú pháp lệnh /gt để dán vào nhóm Zalo"
-                        >
-                          <i className="fa-solid fa-robot" style={{ fontSize: '11px' }}></i>
-                          <span>Copy Lệnh /gt</span>
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => {
-                            const code = lookupResult.referralCode ? lookupResult.referralCode.replace(/^GT/i, '') : '';
-                            const shareLink = `${window.location.origin}/?ref=${code}`;
-                            navigator.clipboard.writeText(shareLink);
-                            showToast('Đã sao chép link web! Bạn bè mở link sẽ tự động nhận mã 🎉', 'success');
-                          }}
-                          style={{
-                            background: 'linear-gradient(135deg, #f97316, #ea580c)',
-                            border: 'none',
-                            color: '#ffffff',
-                            padding: '0 12px',
-                            height: '34px',
-                            fontSize: '12px',
-                            fontWeight: '700',
-                            borderRadius: '8px',
-                            display: 'inline-flex',
-                            alignItems: 'center',
-                            gap: '5px',
-                            cursor: 'pointer',
-                            whiteSpace: 'nowrap',
-                            boxShadow: '0 2px 8px rgba(249,115,22,0.25)',
-                            boxSizing: 'border-box'
-                          }}
-                          title="Sao chép đường link web để gửi cho bạn bè"
-                        >
-                          <i className="fa-solid fa-share-nodes" style={{ fontSize: '11px' }}></i>
-                          <span>Copy Link</span>
-                        </button>
-                      </div>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const code = lookupResult.referralCode ? lookupResult.referralCode.replace(/^GT/i, '') : '';
+                          navigator.clipboard.writeText(code);
+                          showToast(`Đã sao chép mã giới thiệu: ${code}`, 'success');
+                        }}
+                        className="lookup-btn"
+                        style={{
+                          height: '38px',
+                          width: 'auto',
+                          fontSize: '13px',
+                          padding: '0 16px',
+                          fontWeight: '700',
+                          borderRadius: '10px',
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: '6px',
+                          cursor: 'pointer',
+                          whiteSpace: 'nowrap',
+                          boxSizing: 'border-box',
+                          flexShrink: 0
+                        }}
+                        title="Sao chép mã giới thiệu"
+                      >
+                        <i className="fa-regular fa-copy"></i>
+                        <span>Copy Mã</span>
+                      </button>
                     </div>
                   </div>
 
@@ -979,7 +916,7 @@ export default function OrderLookupView({ setView: propSetView } = {}) {
 
                     <div style={{ display: 'flex', alignItems: 'flex-start', gap: '8px', marginBottom: '6px' }}>
                       <i className="fa-solid fa-paper-plane" style={{ color: '#ea580c', width: '16px', textAlign: 'center', flexShrink: 0, marginTop: '3px', fontSize: '12px' }}></i>
-                      <span>Gửi mã cho bạn bè, người được giới thiệu vào nhóm Zalo gõ: <strong style={{ color: '#ea580c', fontFamily: 'monospace' }}>/gt_{lookupResult.referralCode ? lookupResult.referralCode.replace(/^GT/i, '') : ''}</strong> để lưu liên kết.</span>
+                      <span>Gửi mã cho bạn bè, người được giới thiệu nhập mã trên Web hoặc gõ vào nhóm Zalo: <strong style={{ color: '#ea580c', fontFamily: 'monospace' }}>/gt {lookupResult.referralCode ? lookupResult.referralCode.replace(/^GT/i, '') : ''}</strong> để lưu liên kết.</span>
                     </div>
 
                     <div style={{ display: 'flex', alignItems: 'flex-start', gap: '8px', marginBottom: '6px' }}>

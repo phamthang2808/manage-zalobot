@@ -746,11 +746,11 @@ export default function AccountView() {
                 alignItems: 'center',
                 justifyContent: 'space-between',
                 gap: '12px',
-                flexWrap: 'wrap'
+                flexWrap: 'nowrap'
               }}>
                 <div style={{
                   fontFamily: 'monospace',
-                  fontSize: '22px',
+                  fontSize: '24px',
                   fontWeight: '900',
                   letterSpacing: '1.5px',
                   color: '#ea580c',
@@ -759,92 +759,33 @@ export default function AccountView() {
                   {referralData.referralCode || 'Đang tạo...'}
                 </div>
 
-                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap', flexShrink: 0 }}>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      if (!referralData.referralCode) return;
-                      navigator.clipboard.writeText(referralData.referralCode);
-                      showToast(`Đã copy mã: ${referralData.referralCode}`, 'success');
-                    }}
-                    className="lookup-admin-link"
-                    style={{
-                      height: '34px',
-                      fontSize: '12px',
-                      padding: '0 10px',
-                      fontWeight: '700',
-                      color: '#ea580c',
-                      borderColor: 'rgba(234, 88, 12, 0.4)',
-                      whiteSpace: 'nowrap',
-                      display: 'inline-flex',
-                      alignItems: 'center',
-                      gap: '5px',
-                      borderRadius: '8px',
-                      boxSizing: 'border-box'
-                    }}
-                    title="Sao chép riêng mã số giới thiệu"
-                  >
-                    <i className="fa-regular fa-copy"></i>
-                    <span>Copy Mã</span>
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => {
-                      if (!referralData.referralCode) return;
-                      const cmd = `/gt_${referralData.referralCode}`;
-                      navigator.clipboard.writeText(cmd);
-                      showToast(`Đã copy cú pháp: ${cmd} (Dán vào nhóm Zalo để liên kết)`, 'success');
-                    }}
-                    className="lookup-admin-link"
-                    style={{
-                      height: '34px',
-                      fontSize: '12px',
-                      padding: '0 10px',
-                      fontWeight: '700',
-                      color: 'var(--text-bright)',
-                      borderColor: 'var(--border-color)',
-                      whiteSpace: 'nowrap',
-                      display: 'inline-flex',
-                      alignItems: 'center',
-                      gap: '5px',
-                      borderRadius: '8px',
-                      boxSizing: 'border-box'
-                    }}
-                    title="Sao chép cú pháp lệnh /gt để dán vào nhóm Zalo"
-                  >
-                    <i className="fa-solid fa-robot" style={{ color: '#0284c7' }}></i>
-                    <span>Copy Lệnh /gt</span>
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => {
-                      if (!referralData.referralCode) return;
-                      const shareLink = `${window.location.origin}/?ref=${referralData.referralCode}`;
-                      navigator.clipboard.writeText(shareLink);
-                      showToast('Đã copy link web! Bạn bè mở link sẽ tự động nhận mã 🎉', 'success');
-                    }}
-                    className="lookup-btn"
-                    style={{
-                      height: '34px',
-                      width: 'auto',
-                      fontSize: '12px',
-                      padding: '0 12px',
-                      fontWeight: '700',
-                      whiteSpace: 'nowrap',
-                      display: 'inline-flex',
-                      alignItems: 'center',
-                      gap: '5px',
-                      borderRadius: '8px',
-                      boxSizing: 'border-box'
-                    }}
-                    title="Sao chép đường link web để gửi cho bạn bè"
-                  >
-                    <i className="fa-solid fa-share-nodes"></i>
-                    <span>Copy Link</span>
-                  </button>
-                </div>
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (!referralData.referralCode) return;
+                    navigator.clipboard.writeText(referralData.referralCode);
+                    showToast(`Đã copy mã giới thiệu: ${referralData.referralCode}`, 'success');
+                  }}
+                  className="lookup-btn"
+                  style={{
+                    height: '38px',
+                    width: 'auto',
+                    fontSize: '13px',
+                    padding: '0 16px',
+                    fontWeight: '700',
+                    whiteSpace: 'nowrap',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '6px',
+                    borderRadius: '10px',
+                    boxSizing: 'border-box',
+                    flexShrink: 0
+                  }}
+                  title="Sao chép mã giới thiệu"
+                >
+                  <i className="fa-regular fa-copy"></i>
+                  <span>Copy Mã</span>
+                </button>
               </div>
             </div>
 

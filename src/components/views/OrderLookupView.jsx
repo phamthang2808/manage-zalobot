@@ -867,7 +867,7 @@ export default function OrderLookupView({ setView: propSetView } = {}) {
                         {lookupResult.referralCode ? lookupResult.referralCode.replace(/^GT/i, '') : ''}
                       </div>
 
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'nowrap', flexShrink: 0 }}>
                         <button
                           type="button"
                           onClick={() => {

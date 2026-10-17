@@ -134,8 +134,14 @@ export default function PayoutsTab() {
               <tr>
                 <th style={{ width: '105px' }}>Mã GD</th>
                 <th style={{ width: '150px' }}>Thành viên</th>
-                <th style={{ width: '135px' }}>Ngân hàng</th>
-                <th style={{ width: '135px' }}>Số tài khoản</th>
+                <th style={{ width: '135px' }}>
+                  <i className="fa-solid fa-building-columns" style={{ marginRight: '5px', color: '#ea580c' }}></i>
+                  Ngân hàng
+                </th>
+                <th style={{ width: '135px' }}>
+                  <i className="fa-regular fa-credit-card" style={{ marginRight: '5px', color: '#ea580c' }}></i>
+                  Số tài khoản
+                </th>
                 <th style={{ width: '130px', textAlign: 'right' }}>Số tiền yêu cầu</th>
                 <th style={{ width: '125px' }}>Ngày gửi</th>
                 <th style={{ width: '125px' }}>Phê duyệt</th>
@@ -158,9 +164,25 @@ export default function PayoutsTab() {
                         <strong>{memberUser ? memberUser.zaloName : p.zaloId}</strong>
                       </td>
                       <td data-label="Ngân hàng" style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={bankAndAcc.bankName || 'Chưa cấu hình'}>
-                        {bankAndAcc.bankName || 'Chưa cấu hình'}
+                        {bankAndAcc.bankName ? (
+                          <span style={{ display: 'inline-flex', alignItems: 'center', gap: '5px', fontWeight: '600' }}>
+                            <i className="fa-solid fa-building-columns" style={{ color: '#ea580c', fontSize: '11px' }}></i>
+                            <span>{bankAndAcc.bankName}</span>
+                          </span>
+                        ) : (
+                          <span style={{ color: 'var(--text-muted)' }}>Chưa cấu hình</span>
+                        )}
                       </td>
-                      <td data-label="Số tài khoản" style={{ fontSize: '12.5px' }}><code>{bankAndAcc.accountNumber || 'Chưa cấu hình'}</code></td>
+                      <td data-label="Số tài khoản" style={{ fontSize: '12.5px' }}>
+                        {bankAndAcc.accountNumber ? (
+                          <span style={{ display: 'inline-flex', alignItems: 'center', gap: '5px' }}>
+                            <i className="fa-regular fa-credit-card" style={{ fontSize: '10px', color: 'var(--text-muted)' }}></i>
+                            <code>{bankAndAcc.accountNumber}</code>
+                          </span>
+                        ) : (
+                          <code>Chưa cấu hình</code>
+                        )}
+                      </td>
                       <td data-label="Số tiền" style={{ color: '#10b981', fontWeight: '700', fontSize: '13.5px', textAlign: 'right', background: 'transparent' }}>
                         {formatMoney(p.amount)}
                       </td>

@@ -745,7 +745,7 @@ export default function AccountView() {
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'space-between',
-                gap: '10px',
+                gap: '12px',
                 flexWrap: 'wrap'
               }}>
                 <div style={{
@@ -753,12 +753,13 @@ export default function AccountView() {
                   fontSize: '22px',
                   fontWeight: '900',
                   letterSpacing: '1.5px',
-                  color: '#ea580c'
+                  color: '#ea580c',
+                  lineHeight: '1.2'
                 }}>
                   {referralData.referralCode || 'Đang tạo...'}
                 </div>
 
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'nowrap', flexShrink: 0 }}>
                   <button
                     type="button"
                     onClick={() => {
@@ -767,10 +768,10 @@ export default function AccountView() {
                       showToast(`Đã copy mã giới thiệu: ${referralData.referralCode}`, 'success');
                     }}
                     className="lookup-admin-link"
-                    style={{ fontSize: '12px', padding: '6px 12px', fontWeight: '700', color: '#ea580c', borderColor: 'rgba(234, 88, 12, 0.4)', whiteSpace: 'nowrap' }}
+                    style={{ fontSize: '12px', padding: '7px 12px', fontWeight: '700', color: '#ea580c', borderColor: 'rgba(234, 88, 12, 0.4)', whiteSpace: 'nowrap', display: 'inline-flex', alignItems: 'center', gap: '6px' }}
                   >
                     <i className="fa-regular fa-copy"></i>
-                    <span>Copy Mã</span>
+                    <span style={{ whiteSpace: 'nowrap' }}>Copy Mã</span>
                   </button>
 
                   <button
@@ -782,10 +783,10 @@ export default function AccountView() {
                       showToast('Đã copy link giới thiệu! Gửi link này cho bạn bè nhé 🎉', 'success');
                     }}
                     className="lookup-btn"
-                    style={{ fontSize: '12px', padding: '6px 14px', fontWeight: '700', whiteSpace: 'nowrap' }}
+                    style={{ width: 'auto', fontSize: '12px', padding: '7px 14px', fontWeight: '700', whiteSpace: 'nowrap', display: 'inline-flex', alignItems: 'center', gap: '6px' }}
                   >
                     <i className="fa-solid fa-share-nodes"></i>
-                    <span>Copy Link</span>
+                    <span style={{ whiteSpace: 'nowrap' }}>Copy Link</span>
                   </button>
                 </div>
               </div>
@@ -860,12 +861,24 @@ export default function AccountView() {
                 padding: '12px 14px',
                 marginBottom: '14px'
               }}>
-                <div style={{ fontSize: '12px', fontWeight: '700', color: 'var(--text-bright)', marginBottom: '8px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                  <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+                <div style={{
+                  fontSize: '12px',
+                  fontWeight: '700',
+                  color: 'var(--text-bright)',
+                  marginBottom: '10px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  flexWrap: 'wrap',
+                  gap: '6px'
+                }}>
+                  <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', whiteSpace: 'nowrap' }}>
                     <i className="fa-solid fa-users" style={{ color: 'var(--text-muted)', fontSize: '13px' }}></i>
-                    <span>BẠN BÈ ĐÃ THAM GIA ({referralData.referredList.length})</span>
+                    <span style={{ whiteSpace: 'nowrap' }}>BẠN BÈ ĐÃ THAM GIA ({referralData.referredList.length})</span>
                   </span>
-                  <span style={{ fontSize: '11px', color: 'var(--text-muted)', fontWeight: 'normal' }}>Mốc nhận thưởng: 50.000đ</span>
+                  <span style={{ fontSize: '11px', color: 'var(--text-muted)', fontWeight: '500', whiteSpace: 'nowrap' }}>
+                    Mốc nhận thưởng: <b style={{ color: 'var(--text-bright)' }}>50.000đ</b>
+                  </span>
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                   {referralData.referredList.map((item, idx) => {
@@ -886,24 +899,29 @@ export default function AccountView() {
                         flexWrap: 'wrap',
                         gap: '8px'
                       }}>
-                        <div>
-                          <div style={{ fontWeight: '700', fontSize: '13px', color: 'var(--text-bright)' }}>
+                        <div style={{ minWidth: 0, flex: '1 1 auto' }}>
+                          <div style={{ fontWeight: '700', fontSize: '13px', color: 'var(--text-bright)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                             {item.referredName || 'Bạn mới'}
                           </div>
-                          <div style={{ fontSize: '11px', color: 'var(--text-muted)', marginTop: '2px' }}>
-                            Hoa hồng tích lũy: <b style={{ color: isDone ? '#059669' : '#ea580c' }}>{formatMoney(comm)}</b> / {formatMoney(target)}
-                            {formatJoinDate(item.createdAt) ? ` • Tham gia: ${formatJoinDate(item.createdAt)}` : ''}
+                          <div style={{ fontSize: '11px', color: 'var(--text-muted)', marginTop: '2px', display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: '6px' }}>
+                            <span style={{ whiteSpace: 'nowrap' }}>
+                              Hoa hồng tích lũy: <b style={{ color: isDone ? '#059669' : '#ea580c' }}>{formatMoney(comm)}</b> / {formatMoney(target)}
+                            </span>
+                            {formatJoinDate(item.createdAt) ? (
+                              <span style={{ whiteSpace: 'nowrap' }}>• Tham gia: {formatJoinDate(item.createdAt)}</span>
+                            ) : null}
                           </div>
                         </div>
 
-                        <div>
+                        <div style={{ flexShrink: 0 }}>
                           <span style={{
                             color: isDone ? '#059669' : '#ea580c',
                             fontSize: '11.5px',
                             fontWeight: '700',
                             border: 'none',
                             background: 'transparent',
-                            padding: 0
+                            padding: 0,
+                            whiteSpace: 'nowrap'
                           }}>
                             {isDone ? '✓ Đã đạt mốc (+10.000đ)' : `Đang tích lũy (${percent}%)`}
                           </span>

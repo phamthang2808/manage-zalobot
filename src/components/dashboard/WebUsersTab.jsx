@@ -214,7 +214,10 @@ export default function WebUsersTab() {
               <tr>
                 <th style={{ width: '180px' }}>Tên thành viên</th>
                 <th style={{ width: '160px' }}>Zalo ID</th>
-                <th style={{ width: '185px' }}>Tài khoản nhận tiền</th>
+                <th style={{ width: '185px' }}>
+                  <i className="fa-solid fa-building-columns" style={{ marginRight: '6px', color: '#ea580c' }}></i>
+                  Tài khoản nhận tiền
+                </th>
                 <th style={{ width: '110px', textAlign: 'right' }} title="Đơn đang chờ đối soát">Chờ xử lý</th>
                 <th style={{ width: '135px', textAlign: 'right' }}>Tổng đơn hàng</th>
                 <th style={{ width: '130px', textAlign: 'right' }} title="Số tiền có thể rút ngay">Khả dụng rút</th>
@@ -303,12 +306,38 @@ export default function WebUsersTab() {
                       </td>
 
                       <td data-label="Tài khoản nhận tiền" style={{ whiteSpace: 'nowrap' }}>
-                        <div style={{ fontSize: '13px', fontWeight: '600', color: u.bankName ? 'var(--text-bright)' : '#eab308' }}>
-                          {u.bankName || '⚠️ Chưa cập nhật'}
-                        </div>
-                        {u.accountNumber && (
-                          <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginTop: '2px', fontFamily: 'monospace' }}>
-                            <code>{u.accountNumber}</code>
+                        {u.bankName ? (
+                          <div>
+                            <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+                              <span style={{
+                                width: '22px',
+                                height: '22px',
+                                borderRadius: '6px',
+                                background: 'rgba(234, 88, 12, 0.1)',
+                                color: '#ea580c',
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                fontSize: '11px',
+                                flexShrink: 0
+                              }}>
+                                <i className="fa-solid fa-building-columns"></i>
+                              </span>
+                              <span style={{ fontSize: '13px', fontWeight: '700', color: 'var(--text-bright)' }}>
+                                {u.bankName}
+                              </span>
+                            </div>
+                            {u.accountNumber && (
+                              <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginTop: '3px', fontFamily: 'monospace', display: 'flex', alignItems: 'center', gap: '5px', paddingLeft: '28px' }}>
+                                <i className="fa-regular fa-credit-card" style={{ fontSize: '10px', opacity: 0.7 }}></i>
+                                <code>{u.accountNumber}</code>
+                              </div>
+                            )}
+                          </div>
+                        ) : (
+                          <div style={{ fontSize: '12.5px', fontWeight: '600', color: '#eab308', display: 'inline-flex', alignItems: 'center', gap: '5px' }}>
+                            <i className="fa-solid fa-triangle-exclamation"></i>
+                            <span>Chưa cập nhật</span>
                           </div>
                         )}
                       </td>

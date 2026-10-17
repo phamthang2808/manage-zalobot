@@ -398,33 +398,51 @@ export default function ConvertView() {
             />
           </div>
 
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', width: '100%', flexWrap: 'nowrap' }}>
             {inputText && (
               <button
                 type="button"
                 onClick={() => setInputText('')}
                 className="lookup-admin-link"
-                style={{ fontSize: '12.5px', padding: '10px 16px' }}
+                style={{
+                  fontSize: '12px',
+                  padding: '11px 12px',
+                  whiteSpace: 'nowrap',
+                  flexShrink: 0,
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '6px'
+                }}
               >
                 <i className="fa-solid fa-trash-can"></i>
-                <span>Xóa nội dung</span>
+                <span style={{ whiteSpace: 'nowrap' }}>Xóa nội dung</span>
               </button>
             )}
             <button
               type="submit"
               disabled={converting || !inputText.trim()}
               className="lookup-btn"
-              style={{ flex: 1, padding: '13px' }}
+              style={{
+                flex: 1,
+                padding: '11px 14px',
+                fontSize: '13.5px',
+                whiteSpace: 'nowrap',
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '8px',
+                minWidth: 0
+              }}
             >
               {converting ? (
                 <>
-                  <div className="lookup-spinner"></div>
-                  <span>Đang chuyển đổi link...</span>
+                  <div className="lookup-spinner" style={{ width: '15px', height: '15px', flexShrink: 0 }}></div>
+                  <span style={{ whiteSpace: 'nowrap' }}>Đang chuyển đổi...</span>
                 </>
               ) : (
                 <>
-                  <i className="fa-solid fa-arrows-rotate"></i>
-                  <span>Chuyển Đổi Link Ngay</span>
+                  <i className="fa-solid fa-arrows-rotate" style={{ flexShrink: 0 }}></i>
+                  <span style={{ whiteSpace: 'nowrap' }}>Chuyển Đổi Link Ngay</span>
                 </>
               )}
             </button>

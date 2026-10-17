@@ -3,7 +3,7 @@ import { useApp } from '../../context/AppContext';
 import ThemeToggle from './ThemeToggle';
 
 export default function UserNavbar() {
-  const { view, setView, user, isAdmin, handleLogout, showToast } = useApp();
+  const { view, setView, user, isAdmin, handleLogout, showToast, showConfirm } = useApp();
 
   const navItems = [
     { id: 'convert', label: 'Chuyển đổi', icon: 'fa-solid fa-link', color: '#f59e0b' },
@@ -178,8 +178,14 @@ export default function UserNavbar() {
             </div>
 
             <button
-              onClick={() => {
-                if (window.confirm('Bạn có chắc muốn đăng xuất?')) {
+              onClick={async () => {
+                const confirmed = await showConfirm({
+                  title: 'Đăng xuất tài khoản',
+                  message: 'Bạn có chắc chắn muốn đăng xuất khỏi hệ thống không?',
+                  confirmText: 'Đăng xuất',
+                  cancelText: 'Hủy bỏ'
+                });
+                if (confirmed) {
                   handleLogout();
                 }
               }}

@@ -13,7 +13,7 @@ export default function ToastNotification() {
       setIsExiting(false);
       setCurrentToast(null);
       setToast(null);
-    }, 220);
+    }, 200);
   };
 
   useEffect(() => {
@@ -22,8 +22,8 @@ export default function ToastNotification() {
       setCurrentToast(toast);
       setIsExiting(false);
 
-      // Thời gian tự biến mất: 2.3s cho thông thường, 3.5s cho lỗi
-      const duration = toast.type === 'error' ? 3500 : 2300;
+      // Tự động tắt nhanh sau 2.2 giây
+      const duration = toast.type === 'error' ? 3200 : 2200;
       timerRef.current = setTimeout(() => {
         handleDismiss();
       }, duration);
@@ -41,53 +41,55 @@ export default function ToastNotification() {
   if (!currentToast) return null;
 
   return (
-    <div
-      className={`modern-pill-toast ${isExiting ? 'is-exiting' : ''}`}
-      onClick={handleDismiss}
-      onMouseEnter={() => {
-        if (timerRef.current) clearTimeout(timerRef.current);
-      }}
-      onMouseLeave={() => {
-        if (!isExiting) {
-          timerRef.current = setTimeout(handleDismiss, 1200);
-        }
-      }}
-      title="Chạm để đóng nhanh"
-      role="alert"
-    >
-      {/* Message Text (Bỏ icon, căn chỉnh chữ gọn gàng) */}
-      <div style={{
-        flex: 1,
-        lineHeight: '1.5',
-        letterSpacing: '0.1px',
-        whiteSpace: 'pre-line',
-        wordBreak: 'break-word',
-        textAlign: 'left'
-      }}>
-        {currentToast.message}
-      </div>
-
-      {/* Quick Dismiss Button */}
-      <span
-        style={{
-          width: '18px',
-          height: '18px',
-          display: 'inline-flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          fontSize: '12px',
-          opacity: 0.55,
-          marginLeft: '4px',
-          flexShrink: 0,
-          cursor: 'pointer',
-          transition: 'opacity 0.15s ease'
+    <div className="modern-center-toast-overlay">
+      <div
+        className={`modern-center-toast ${isExiting ? 'is-exiting' : ''}`}
+        onClick={handleDismiss}
+        onMouseEnter={() => {
+          if (timerRef.current) clearTimeout(timerRef.current);
         }}
-        onMouseEnter={(e) => { e.currentTarget.style.opacity = '1'; }}
-        onMouseLeave={(e) => { e.currentTarget.style.opacity = '0.55'; }}
-        title="Đóng"
+        onMouseLeave={() => {
+          if (!isExiting) {
+            timerRef.current = setTimeout(handleDismiss, 1000);
+          }
+        }}
+        title="Chạm để đóng nhanh"
+        role="alert"
       >
-        ✕
-      </span>
+        {/* Message Text (Hiển thị chính giữa, không có icon rườm rà) */}
+        <div style={{
+          flex: 1,
+          lineHeight: '1.5',
+          letterSpacing: '0.1px',
+          whiteSpace: 'pre-line',
+          wordBreak: 'break-word',
+          textAlign: 'center'
+        }}>
+          {currentToast.message}
+        </div>
+
+        {/* Quick Dismiss Button */}
+        <span
+          style={{
+            width: '18px',
+            height: '18px',
+            display: 'inline-flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontSize: '12px',
+            opacity: 0.55,
+            marginLeft: '4px',
+            flexShrink: 0,
+            cursor: 'pointer',
+            transition: 'opacity 0.15s ease'
+          }}
+          onMouseEnter={(e) => { e.currentTarget.style.opacity = '1'; }}
+          onMouseLeave={(e) => { e.currentTarget.style.opacity = '0.55'; }}
+          title="Đóng"
+        >
+          ✕
+        </span>
+      </div>
     </div>
   );
 }

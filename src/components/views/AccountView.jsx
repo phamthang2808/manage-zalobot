@@ -19,7 +19,7 @@ const formatJoinDate = (raw) => {
 };
 
 export default function AccountView() {
-  const { API_URL_ROOT, user, setUser, showToast, handleLogout } = useApp();
+  const { API_URL_ROOT, user, setUser, showToast, handleLogout, showConfirm } = useApp();
 
   const [fullName, setFullName] = useState(user?.fullName || user?.name || '');
   const [phone, setPhone] = useState(user?.phone || '');
@@ -301,7 +301,14 @@ export default function AccountView() {
   };
 
   const handleUnlinkZalo = async () => {
-    if (!window.confirm('Bạn có chắc chắn muốn hủy liên kết Zalo ID này không?')) return;
+    const confirmed = await showConfirm({
+      title: 'Hủy liên kết Zalo ID',
+      message: 'Bạn có chắc chắn muốn hủy liên kết Zalo ID này không? Các đơn hàng qua Bot Zalo sẽ không tự động đồng bộ nữa.',
+      confirmText: 'Hủy liên kết',
+      cancelText: 'Giữ lại',
+      danger: true
+    });
+    if (!confirmed) return;
 
     setLinkingZalo(true);
     try {

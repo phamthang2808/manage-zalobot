@@ -15,6 +15,7 @@ import WorkspaceTopBar from './components/common/WorkspaceTopBar';
 import FloatingZaloContact from './components/common/FloatingZaloContact';
 import MobileBottomNav from './components/common/MobileBottomNav';
 import ToastNotification from './components/common/ToastNotification';
+import ConfirmModal from './components/common/ConfirmModal';
 import AnnouncementModal from './components/common/AnnouncementModal';
 import ReferralPromptModal from './components/common/ReferralPromptModal';
 
@@ -130,7 +131,13 @@ function App() {
   }
 
   if (view === 'admin') {
-    return <AdminView />;
+    return (
+      <>
+        <ToastNotification />
+        <ConfirmModal />
+        <AdminView />
+      </>
+    );
   }
 
   // Unified Workspace Layout for HOME, LOOKUP and ALL MEMBER TOOLS:
@@ -140,6 +147,7 @@ function App() {
   return (
     <div className="user-workspace-layout" style={{ minHeight: '100vh', minHeight: '100dvh', background: 'var(--bg-main)' }}>
       <ToastNotification />
+      <ConfirmModal />
       <AnnouncementModal apiRoot={API_URL_ROOT} />
       <ReferralPromptModal />
       <UserSidebar sidebarOpen={userSidebarOpen} setSidebarOpen={setUserSidebarOpen} />

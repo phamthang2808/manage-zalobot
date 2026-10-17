@@ -19,7 +19,7 @@ const formatCommissionRate = (rate) => {
 };
 
 export default function ConvertView() {
-  const { API_URL_ROOT, user, showToast } = useApp();
+  const { API_URL_ROOT, user, showToast, showConfirm } = useApp();
   const [inputText, setInputText] = useState('');
   const [activePlatform, setActivePlatform] = useState('ALL');
   const [converting, setConverting] = useState(false);
@@ -183,9 +183,16 @@ export default function ConvertView() {
   };
 
   const handleClearHistory = async () => {
-    if (window.confirm('Bạn có chắc chắn muốn xóa toàn bộ lịch sử chuyển đổi?')) {
-      saveHistory([]);
-      showToast('Đã dọn sạch lịch sử chuyển đổi!', 'info');
+    const confirmed = await showConfirm({
+      title: 'Xóa lịch sử chuyển đổi',
+      message: 'Bạn có chắc chắn muốn xóa toàn bộ danh sách lịch sử chuyển đổi link không?',
+      confirmText: 'Xóa toàn bộ',
+      cancelText: 'Hủy bỏ',
+      danger: true
+    });
+    if (!confirmed) return;
+    saveHistory([]);
+    showToast('Đã dọn sạch lịch sử chuyển đổi!', 'info');
       try {
         const token = sessionStorage.getItem('adminToken') || '';
         if (token) {
@@ -195,7 +202,6 @@ export default function ConvertView() {
           });
         }
       } catch (err) {}
-    }
   };
 
   // Helper lấy thông tin Badge Sàn

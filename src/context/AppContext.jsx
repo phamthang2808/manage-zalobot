@@ -82,6 +82,34 @@ export function AppProvider({ children }) {
     setToast({ message, type, id: Date.now() });
   };
 
+  // Custom Confirm Dialog (Thao tác xác nhận không dùng window.confirm)
+  const [confirmDialog, setConfirmDialog] = useState(null);
+  const showConfirm = ({
+    title = 'Xác nhận thao tác',
+    message = 'Bạn có chắc chắn muốn tiếp tục?',
+    confirmText = 'Đồng ý',
+    cancelText = 'Hủy bỏ',
+    danger = false
+  }) => {
+    return new Promise((resolve) => {
+      setConfirmDialog({
+        title,
+        message,
+        confirmText,
+        cancelText,
+        danger,
+        onConfirm: () => {
+          setConfirmDialog(null);
+          resolve(true);
+        },
+        onCancel: () => {
+          setConfirmDialog(null);
+          resolve(false);
+        }
+      });
+    });
+  };
+
   // Sidebar
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -273,9 +301,14 @@ export function AppProvider({ children }) {
   };
 
   const handleRejectPayout = async (payoutId) => {
-    if (!window.confirm(`Bạn có chắc chắn muốn TỪ CHỐI yêu cầu rút tiền PT_${payoutId}? Số tiền sẽ được hoàn trả lại ví khả dụng cho thành viên.`)) {
-      return;
-    }
+    const confirmed = await showConfirm({
+      title: 'Từ chối rút tiền',
+      message: `Bạn có chắc chắn muốn TỪ CHỐI yêu cầu rút tiền PT_${payoutId}? Số tiền sẽ được hoàn trả lại ví khả dụng cho thành viên.`,
+      confirmText: 'Từ chối & Hoàn tiền',
+      cancelText: 'Quay lại',
+      danger: true
+    });
+    if (!confirmed) return;
     try {
       const res = await fetch(`${API_BASE}/payouts/${payoutId}/reject`, {
         method: 'POST',
@@ -300,6 +333,7 @@ export function AppProvider({ children }) {
       stats, users, orders, payouts,
       loading, error,
       toast, showToast, setToast,
+      confirmDialog, setConfirmDialog, showConfirm,
       sidebarOpen, setSidebarOpen,
       mobileMenuOpen, setMobileMenuOpen,
       windowWidth, isAdmin,

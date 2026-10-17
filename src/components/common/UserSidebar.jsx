@@ -3,7 +3,7 @@ import { useApp } from '../../context/AppContext';
 import ThemeToggle from './ThemeToggle';
 
 export default function UserSidebar({ sidebarOpen, setSidebarOpen }) {
-  const { view, setView, user, isAdmin, handleLogout } = useApp();
+  const { view, setView, user, isAdmin, handleLogout, showConfirm } = useApp();
 
   const mainNavTabs = [
     { id: 'lookup', label: 'Tra cứu đơn hàng', icon: 'fa-solid fa-magnifying-glass' },
@@ -256,8 +256,14 @@ export default function UserSidebar({ sidebarOpen, setSidebarOpen }) {
           </div>
 
           <button
-            onClick={() => {
-              if (window.confirm('Bạn có chắc chắn muốn đăng xuất không?')) {
+            onClick={async () => {
+              const confirmed = await showConfirm({
+                title: 'Đăng xuất tài khoản',
+                message: 'Bạn có chắc chắn muốn đăng xuất khỏi hệ thống không?',
+                confirmText: 'Đăng xuất',
+                cancelText: 'Hủy bỏ'
+              });
+              if (confirmed) {
                 handleLogout();
               }
             }}

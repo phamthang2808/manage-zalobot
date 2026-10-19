@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100">
+  <rect width="100" height="100" rx="22" fill="#0C146D"/>
+  <defs>
+    <linearGradient id="lz-front" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#F51275"/>
+      <stop offset="50%" stop-color="#FF5C00"/>
+      <stop offset="100%" stop-color="#FF9000"/>
+    </linearGradient>
+    <linearGradient id="lz-side" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1E3CFF"/>
+      <stop offset="100%" stop-color="#0B15A5"/>
+    </linearGradient>
+    <linearGradient id="lz-top" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#FF388C"/>
+      <stop offset="100%" stop-color="#FF6B35"/>
+    </linearGradient>
+  </defs>
+  <!-- 3D Heart ribbon shape -->
+  <g transform="translate(14, 18) scale(0.72)">
+    <!-- Right side deep blue -->
+    <path d="M50 88 L12 48 C2 36 4 18 18 10 C32 2 46 10 50 20 C54 10 68 2 82 10 C96 18 98 36 88 48 Z" fill="url(#lz-front)"/>
+    <!-- Folded 3D inner pocket -->
+    <path d="M50 88 L50 20 C50 20 62 8 76 14 C86 20 88 34 80 44 L50 88 Z" fill="url(#lz-side)" opacity="0.85"/>
+    <!-- Left highlight -->
+    <path d="M50 20 C46 10 32 2 18 10 C6 18 4 34 14 46 L50 88 L34 46 C26 36 28 22 38 16 C44 12 50 20 50 20 Z" fill="url(#lz-top)"/>
+    <!-- Center Laz text -->
+    <text x="50" y="58" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-weight="900" font-size="24" fill="#FFFFFF" text-anchor="middle" letter-spacing="-1">Laz</text>
+  </g>
+</svg>

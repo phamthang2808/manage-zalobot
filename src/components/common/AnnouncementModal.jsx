@@ -263,7 +263,7 @@ export default function AnnouncementModal({ apiRoot, previewData = null, onClose
           <i className="fa-solid fa-xmark"></i>
         </button>
 
-        {/* Banner Image - Căn giữa chuẩn xác & Không bị cắt ảnh */}
+        {/* Banner Image - Ôm trọn viền (Cover) tràn viền hiện đại */}
         {bannerImg && (
           <div style={{
             width: '100%',
@@ -271,31 +271,30 @@ export default function AnnouncementModal({ apiRoot, previewData = null, onClose
             background: 'var(--bg-main, #0f172a)',
             overflow: 'hidden',
             borderBottom: '1px solid var(--border-color)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            maxHeight: '440px',
-            minHeight: '140px'
+            height: 'clamp(220px, 34vw, 320px)',
+            display: 'block'
           }}>
             {announcement.targetUrl ? (
               <a
                 href={announcement.targetUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', height: '100%', cursor: 'pointer' }}
+                style={{ display: 'block', width: '100%', height: '100%', cursor: 'pointer' }}
+                title="Bấm để mở liên kết"
               >
                 <img
                   src={bannerImg}
                   alt={announcement.title || 'Banner thông báo'}
                   style={{
-                    maxWidth: '100%',
-                    maxHeight: '440px',
-                    width: 'auto',
-                    height: 'auto',
-                    objectFit: 'contain',
+                    width: '100%',
+                    height: '100%',
+                    objectFit: 'cover',
+                    objectPosition: 'center 25%',
                     display: 'block',
-                    margin: '0 auto'
+                    transition: 'transform 0.3s ease'
                   }}
+                  onMouseEnter={e => { e.currentTarget.style.transform = 'scale(1.02)'; }}
+                  onMouseLeave={e => { e.currentTarget.style.transform = 'scale(1)'; }}
                   onError={e => { e.currentTarget.style.display = 'none'; }}
                 />
               </a>
@@ -304,14 +303,15 @@ export default function AnnouncementModal({ apiRoot, previewData = null, onClose
                 src={bannerImg}
                 alt={announcement.title || 'Banner thông báo'}
                 style={{
-                  maxWidth: '100%',
-                  maxHeight: '440px',
-                  width: 'auto',
-                  height: 'auto',
-                  objectFit: 'contain',
+                  width: '100%',
+                  height: '100%',
+                  objectFit: 'cover',
+                  objectPosition: 'center 25%',
                   display: 'block',
-                  margin: '0 auto'
+                  cursor: 'pointer'
                 }}
+                title="Bấm để xem ảnh gốc"
+                onClick={() => window.open(bannerImg, '_blank', 'noopener,noreferrer')}
                 onError={e => { e.currentTarget.style.display = 'none'; }}
               />
             )}

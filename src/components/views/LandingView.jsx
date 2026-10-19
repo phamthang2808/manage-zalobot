@@ -520,27 +520,48 @@ export default function LandingView({ inWorkspace = false }) {
                   ))}
                 </ul>
               </div>
-              <a href="https://zalo.me/0888728256" target="_blank" rel="noopener noreferrer" className="btn btn-glow-active"
-                onClick={() => showToast("Đang kết nối tới Zalo Admin Phạm Thắng (0888.728.256)...", 'info')}
+              <a 
+                href="https://zalo.me/0888728256" 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="landing-zalo-direct-btn"
+                onClick={(e) => {
+                  window.open("https://zalo.me/0888728256", "_blank", "noopener,noreferrer");
+                  if (typeof showToast === 'function') {
+                    showToast("Đang kết nối tới Zalo Admin Phạm Thắng (0888.728.256)...", 'info');
+                  }
+                }}
                 style={{
-                  width: '100%', padding: '12px 14px', borderRadius: '12px', fontSize: '13px', fontWeight: '800',
+                  width: '100%', 
+                  padding: '12px 10px', 
+                  borderRadius: '14px', 
+                  fontSize: '12.5px', 
+                  fontWeight: '800',
                   background: pkg.isVip 
-                    ? 'linear-gradient(135deg, #eab308, #f59e0b)' 
-                    : (pkg.featured ? 'linear-gradient(135deg, #f97316, #ea580c)' : 'linear-gradient(135deg, #0068ff, #0052cc)'),
-                  color: pkg.isVip ? '#0f172a' : '#ffffff',
-                  border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  gap: '8px', textDecoration: 'none', boxSizing: 'border-box',
-                  boxShadow: pkg.isVip ? '0 4px 15px rgba(234,179,8,0.35)' : (pkg.featured ? '0 4px 15px rgba(249,115,22,0.35)' : '0 4px 15px rgba(0,104,255,0.35)')
-                }}>
-                <span style={{
-                  width: '22px', height: '22px', borderRadius: '50%',
-                  background: pkg.isVip ? '#0f172a' : '#ffffff',
-                  display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
-                  fontWeight: '900', fontSize: '11px',
-                  color: pkg.isVip ? '#eab308' : '#0068ff',
-                  flexShrink: 0
-                }}>Z</span>
-                <span>{pkg.btnText || 'Liên Hệ Zalo Admin Phạm Thắng'}</span>
+                    ? 'linear-gradient(135deg, #eab308, #f59e0b) !important' 
+                    : (pkg.featured ? 'linear-gradient(135deg, #f97316, #ea580c) !important' : 'linear-gradient(135deg, #0068ff, #0052cc) !important'),
+                  color: pkg.isVip ? '#0f172a !important' : '#ffffff !important',
+                  border: 'none', 
+                  cursor: 'pointer', 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  justifyContent: 'center',
+                  gap: '8px', 
+                  textDecoration: 'none', 
+                  boxSizing: 'border-box',
+                  boxShadow: pkg.isVip ? '0 6px 20px rgba(234,179,8,0.45)' : (pkg.featured ? '0 6px 20px rgba(249,115,22,0.45)' : '0 6px 20px rgba(0,104,255,0.45)'),
+                  transition: 'all 0.25s ease'
+                }}
+              >
+                {/* Authentic Zalo SVG Badge */}
+                <svg viewBox="0 0 48 48" style={{ width: '22px', height: '22px', flexShrink: 0 }} xmlns="http://www.w3.org/2000/svg">
+                  <circle cx="24" cy="24" r="23" fill={pkg.isVip ? "#0f172a" : "#0068FF"}/>
+                  <path d="M12.5 24c0-6.35 5.15-11.5 11.5-11.5s11.5 5.15 11.5 11.5-5.15 11.5-11.5 11.5c-2.05 0-3.97-.54-5.64-1.48L11.5 35.5l1.67-4.3C12.38 29.35 12.5 26.75 12.5 24z" fill="#ffffff" fillOpacity="0.25"/>
+                  <text x="24" y="28.5" fill={pkg.isVip ? "#eab308" : "#ffffff"} fontFamily="system-ui, -apple-system, sans-serif" fontSize="12" fontWeight="900" textAnchor="middle">Zalo</text>
+                </svg>
+                <span style={{ color: pkg.isVip ? '#0f172a' : '#ffffff', whiteSpace: 'nowrap', fontWeight: '800' }}>
+                  {pkg.btnText || 'Liên Hệ Zalo Admin Phạm Thắng'}
+                </span>
               </a>
             </div>
           ))}

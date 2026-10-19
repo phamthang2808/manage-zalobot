@@ -8222,4 +8222,25 @@ body.dark .stat-card-item.referral .stat-card-value { color: #fb7185 !important;
   }
 }
 
+/* Pricing Zalo Direct CTA Button */
+.landing-zalo-direct-btn {
+  text-decoration: none !important;
+  cursor: pointer !important;
+  user-select: none !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 8px !important;
+  transition: transform 0.2s ease, filter 0.2s ease, box-shadow 0.2s ease !important;
+}
+
+.landing-zalo-direct-btn:hover {
+  transform: translateY(-2px) scale(1.02) !important;
+  filter: brightness(1.1) !important;
+}
+
+.landing-zalo-direct-btn:active {
+  transform: translateY(0) scale(0.98) !important;
+}
+
 

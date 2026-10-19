@@ -178,7 +178,7 @@ export default function LandingView({ inWorkspace = false }) {
       <section id="home" className="landing-block-container hero-showcase-container reveal-on-scroll" style={{ marginTop: '12px', marginBottom: '0px', paddingBottom: '0px', paddingTop: '10px', textAlign: 'center' }}>
 
         <h1 className="hero-title" style={{ fontSize: '38px', fontWeight: '700', color: 'var(--text-bright)', marginBottom: '14px', lineHeight: '1.25' }}>
-          Cho Thuê Zalo Bot Affiliate - Tự Động Đổi Link Shopee, TikTok Shop & Lazada 24/7
+          Cho Thuê Zalo Bot Affiliate - Tự Động Đổi Link Shopee, ShopeeFood, TikTok Shop & Lazada 24/7
         </h1>
         <p className="hero-subtitle" style={{ color: 'var(--text-muted)', fontSize: '16px', maxWidth: '780px', margin: '0 auto 16px', lineHeight: '1.6' }}>
           Biến mọi liên kết mua sắm trong nhóm chat Zalo của bạn thành nguồn thu nhập thụ động chỉ trong vài giây. Tiện lợi, tự động, ghi nhận sub_id chuẩn xác và hoàn toàn minh bạch.
@@ -218,7 +218,7 @@ export default function LandingView({ inWorkspace = false }) {
             </div>
             <div className="zigzag-content">
 
-              <h3 className="zigzag-title">Tự Động Đổi Link Shopee, TikTok Shop & Lazada</h3>
+              <h3 className="zigzag-title">Tự Động Đổi Link Shopee, ShopeeFood, TikTok Shop & Lazada</h3>
               <p className="zigzag-desc">
                 Thành viên trong nhóm chat Zalo chỉ cần dán link mua sắm sản phẩm. Zalo Bot tự động nhận biết người gửi, chuyển đổi thành link affiliate có gắn SubID chuẩn xác và phản hồi lại ngay lập tức.
               </p>
@@ -423,10 +423,10 @@ export default function LandingView({ inWorkspace = false }) {
           {[
             { 
               name: 'Zalo Bot Auto Link', 
-              desc: 'Tự động chuyển đổi link tiếp thị liên kết Shopee & TikTok Shop 24/7 trực tiếp trong nhóm Zalo', 
+              desc: 'Tự động chuyển đổi link Shopee, ShopeeFood, TikTok & Lazada 24/7 trực tiếp trong nhóm Zalo', 
               price: '199.000đ', 
               features: [
-                'Tự động đổi link mua sắm Shopee & TikTok Shop sang link nhận 100% hoa hồng về tài khoản của bạn.',
+                'Tự động đổi link Shopee, ShopeeFood, TikTok & Lazada sang link nhận 100% hoa hồng về tài khoản của bạn.',
                 'Hoạt động tự động 24/7 trong nhóm chat, phản hồi tức thì 1-2 giây không cần trực máy.',
                 'Tự nhận biết người gửi link: Ghi nhận chính xác ai gửi link trong nhóm để bạn theo dõi doanh số.',
                 'Tin nhắn tối ưu mua hàng: Mẫu phản hồi lịch sự, ngắn gọn, gắn thẻ khách hàng kích thích bấm mua.',
@@ -434,7 +434,7 @@ export default function LandingView({ inWorkspace = false }) {
               ], 
               featured: false,
               isVip: false,
-              btnText: 'Mua Gói 199k'
+              btnText: 'Liên Hệ Zalo Admin Phạm Thắng'
             },
             { 
               name: 'SaaS Zalo Bot Affiliate', 
@@ -443,37 +443,37 @@ export default function LandingView({ inWorkspace = false }) {
               features: [
                 'Bao gồm toàn bộ tính năng chuyển đổi 24/7 của gói Auto Link.',
                 'Trang Tra Cứu Khách Hàng (SaaS): Khách tự tra cứu đơn hàng, ví tích lũy, số dư khả dụng và tạo lệnh rút tiền.',
-                'Đầy đủ 16 lệnh Bot Zalo thông minh: Khách gõ /vitien, /donhang, /tracuu, /stk, /ruttien.',
+                'Bộ lệnh Bot Zalo thông minh: Khách tự gõ tra cứu ví (/vitien), đơn hàng (/donhang), rút tiền (/ruttien)...',
                 'Dashboard Quản Trị Trưởng Nhóm: Đăng nhập xem toàn bộ đơn hàng, quản lý thành viên và duyệt thanh toán 1-click.',
                 'Tùy Chỉnh Kênh SaaS Riêng: Tự cài đặt tỷ lệ chia hoa hồng (80/20, 70/30), thuế TNCN (10%) và ngày giữ tiền.',
-                'Duyệt rút tiền tức thì qua Zalo: Trưởng nhóm duyệt chi trả siêu tốc bằng lệnh /duyet_[MÃ_ID].'
+                'Tùy chỉnh mẫu tin nhắn Bot: Trưởng nhóm tự do chỉnh sửa mẫu tin nhắn phản hồi, lời chào và thông báo theo phong cách riêng.'
               ], 
               featured: true,
               isVip: false,
-              btnText: 'Mua Gói 299k (Ưu Đãi)'
+              btnText: 'Liên Hệ Zalo Admin Phạm Thắng'
             },
             { 
               name: 'Web Brand Độc Lập', 
-              desc: 'Sở hữu Website Affiliate hoàn tiền độc lập, chạy trên Tên Miền Riêng biệt (Mô hình Website Mai Lan)', 
+              desc: 'Sở hữu Website Affiliate hoàn tiền độc lập, vận hành trên Tên Miền Riêng biệt của bạn', 
               price: '399.000đ', 
               features: [
                 'Website Riêng Biệt & Tên Miền Riêng: Cài đặt Web chạy trên domain thương hiệu của bạn (hoantiencuaban.com).',
                 'Nhận Diện Thương Hiệu Độc Quyền 100%: Tùy biến toàn bộ Logo, màu sắc giao diện & banner mang bản sắc riêng.',
                 'Hệ thống Web Tra Cứu & Tích Lũy Ví chuyên sâu: Trải nghiệm hoàn hảo trên cả Mobile App Web và Desktop.',
-                'Bảng Quản Trị Admin Web Độc Lập: Phân loại sản phẩm, quản lý đơn Shopee/TikTok & xử lý thanh toán.',
+                'Bảng Quản Trị Admin Web Độc Lập: Phân loại sản phẩm, quản lý đơn Shopee, ShopeeFood, TikTok, Lazada & xử lý thanh toán.',
                 'Hạ Tầng & Cơ Sở Dữ Liệu Riêng Biệt: Vận hành ổn định, tải trang siêu tốc, bảo mật tuyệt đối không lo nghẽn mạng.',
                 'Hỗ trợ trỏ tên miền & cài đặt chứng chỉ bảo mật SSL (HTTPS) miễn phí trọn đời.'
               ], 
               featured: false,
               isVip: false,
-              btnText: 'Mua Gói 399k'
+              btnText: 'Liên Hệ Zalo Admin Phạm Thắng'
             },
             { 
               name: 'Web & Zalo Bot (2 Trong 1)', 
-              desc: 'Giải pháp tối cao: Chuyển đổi link trực tiếp ngay trên Web & Bot Zalo 24/7, kết hợp tên miền riêng & liên kết Google (Mô hình Trần Huyền)', 
+              desc: 'Giải pháp tối cao: Chuyển đổi link trực tiếp ngay trên Web & Bot Zalo 24/7, kết hợp tên miền riêng & liên kết Google', 
               price: '499.000đ', 
               features: [
-                'Chuyển đổi link Đa Nền Tảng (Web & Zalo): Hỗ trợ khách tự dán link chuyển đổi nhận hoàn tiền ngay trên Website và tự động chuyển đổi trong nhóm Zalo 24/7.',
+                'Chuyển đổi link Đa Nền Tảng (Web & Zalo): Hỗ trợ khách tự dán link chuyển đổi nhận hoàn tiền ngay trên Website và tự động chuyển đổi trong nhóm Zalo 24/7 (Shopee, ShopeeFood, TikTok, Lazada).',
                 'Website Tên Miền Riêng Độc Quyền: Cài đặt Web chạy trên domain thương hiệu của bạn, giao diện chuẩn SEO và tương thích 100% di động.',
                 'Liên kết Tài khoản Song Song: Thành viên Đăng nhập Google 1 chạm trên Web & Liên kết tài khoản Zalo ID mượt mà.',
                 'Đồng bộ hóa Ví & Đơn hàng 2 chiều: Khách tra cứu trên Web hay gõ lệnh Zalo (/vitien, /donhang) đều nhận cùng số dư chuẩn 100%.',
@@ -482,13 +482,13 @@ export default function LandingView({ inWorkspace = false }) {
               ], 
               featured: false,
               isVip: true,
-              btnText: 'Đăng Ký Gói VIP 499k'
+              btnText: 'Liên Hệ Zalo Admin Phạm Thắng'
             }
           ].map((pkg, i) => (
             <div key={i} className="pricing-card" style={{
               background: 'var(--bg-card)',
               border: pkg.featured ? '2px solid #f97316' : (pkg.isVip ? '2px solid #eab308' : '1px solid var(--border-color)'),
-              borderRadius: '24px', padding: '36px 24px', width: '100%', maxWidth: '290px', minWidth: '260px',
+              borderRadius: '24px', padding: '36px 24px', width: '100%', maxWidth: '295px', minWidth: '260px',
               backdropFilter: 'blur(10px)',
               boxShadow: pkg.featured ? '0 20px 40px -15px rgba(249,115,22,0.2)' : (pkg.isVip ? '0 20px 40px -15px rgba(234,179,8,0.2)' : '0 10px 30px -10px rgba(0,0,0,0.05)'),
               position: 'relative', overflow: 'hidden', display: 'flex', flexDirection: 'column',
@@ -498,7 +498,15 @@ export default function LandingView({ inWorkspace = false }) {
               {pkg.featured && <div style={{ position: 'absolute', top: '0', right: '0', background: 'linear-gradient(135deg, #f97316, #ea580c)', color: '#ffffff', padding: '6px 18px', borderBottomLeftRadius: '16px', fontSize: '10px', fontWeight: '800', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Phổ Biến Nhất</div>}
               {pkg.isVip && <div style={{ position: 'absolute', top: '0', right: '0', background: 'linear-gradient(135deg, #eab308, #f59e0b)', color: '#0f172a', padding: '6px 18px', borderBottomLeftRadius: '16px', fontSize: '10px', fontWeight: '800', textTransform: 'uppercase', letterSpacing: '0.5px' }}>VIP 2 Trong 1</div>}
               <div>
-                <h3 style={{ fontSize: '20px', color: 'var(--text-bright)', marginBottom: '8px', fontWeight: '800', marginTop: (pkg.featured || pkg.isVip) ? '12px' : '0' }}>{pkg.name}</h3>
+                <h3 style={{ 
+                  fontSize: pkg.name.length > 22 ? '15px' : (pkg.name.length > 18 ? '16.5px' : '20px'), 
+                  whiteSpace: 'nowrap',
+                  letterSpacing: '-0.3px',
+                  color: 'var(--text-bright)', 
+                  marginBottom: '8px', 
+                  fontWeight: '800', 
+                  marginTop: (pkg.featured || pkg.isVip) ? '12px' : '0' 
+                }}>{pkg.name}</h3>
                 <p style={{ color: 'var(--text-muted)', fontSize: '13px', marginBottom: '20px', lineHeight: '1.4' }}>{pkg.desc}</p>
                 <div style={{ marginBottom: '24px', paddingBottom: '16px', borderBottom: '1px solid var(--border-color)' }}>
                   <span style={{ fontSize: '36px', fontWeight: '800', color: pkg.isVip ? '#eab308' : (pkg.featured ? '#f97316' : 'var(--text-bright)'), fontFamily: 'var(--font-heading)' }}>{pkg.price}</span>
@@ -513,14 +521,26 @@ export default function LandingView({ inWorkspace = false }) {
                 </ul>
               </div>
               <a href="https://zalo.me/0888728256" target="_blank" rel="noopener noreferrer" className="btn btn-glow-active"
-                onClick={() => showToast("Đang kết nối tới Zalo Phạm Thắng...", 'info')}
+                onClick={() => showToast("Đang kết nối tới Zalo Admin Phạm Thắng (0888.728.256)...", 'info')}
                 style={{
-                  width: '100%', padding: '12px', borderRadius: '12px', fontSize: '14px', fontWeight: '800',
-                  background: pkg.isVip ? 'linear-gradient(135deg, #eab308, #f59e0b)' : (pkg.featured ? 'linear-gradient(135deg, #f97316, #ea580c)' : undefined),
-                  color: pkg.isVip ? '#0f172a' : undefined,
-                  border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', textDecoration: 'none', boxSizing: 'border-box'
+                  width: '100%', padding: '12px 14px', borderRadius: '12px', fontSize: '13px', fontWeight: '800',
+                  background: pkg.isVip 
+                    ? 'linear-gradient(135deg, #eab308, #f59e0b)' 
+                    : (pkg.featured ? 'linear-gradient(135deg, #f97316, #ea580c)' : 'linear-gradient(135deg, #0068ff, #0052cc)'),
+                  color: pkg.isVip ? '#0f172a' : '#ffffff',
+                  border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  gap: '8px', textDecoration: 'none', boxSizing: 'border-box',
+                  boxShadow: pkg.isVip ? '0 4px 15px rgba(234,179,8,0.35)' : (pkg.featured ? '0 4px 15px rgba(249,115,22,0.35)' : '0 4px 15px rgba(0,104,255,0.35)')
                 }}>
-                {pkg.btnText || 'Mua Ngay'}
+                <span style={{
+                  width: '22px', height: '22px', borderRadius: '50%',
+                  background: pkg.isVip ? '#0f172a' : '#ffffff',
+                  display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+                  fontWeight: '900', fontSize: '11px',
+                  color: pkg.isVip ? '#eab308' : '#0068ff',
+                  flexShrink: 0
+                }}>Z</span>
+                <span>{pkg.btnText || 'Liên Hệ Zalo Admin Phạm Thắng'}</span>
               </a>
             </div>
           ))}

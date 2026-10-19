@@ -469,7 +469,7 @@ export default function LandingView({ inWorkspace = false }) {
               btnText: 'Mua Gói 399k'
             },
             { 
-              name: 'Omnichannel All-in-One', 
+              name: 'Web & Zalo Bot (2 Trong 1)', 
               desc: 'Giải pháp tối cao: Chuyển đổi link trực tiếp ngay trên Web & Bot Zalo 24/7, kết hợp tên miền riêng & liên kết Google (Mô hình Trần Huyền)', 
               price: '499.000đ', 
               features: [
@@ -496,7 +496,7 @@ export default function LandingView({ inWorkspace = false }) {
               transform: (pkg.featured && windowWidth >= 768) ? 'scale(1.03)' : 'none', zIndex: pkg.featured ? 2 : 1
             }}>
               {pkg.featured && <div style={{ position: 'absolute', top: '0', right: '0', background: 'linear-gradient(135deg, #f97316, #ea580c)', color: '#ffffff', padding: '6px 18px', borderBottomLeftRadius: '16px', fontSize: '10px', fontWeight: '800', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Phổ Biến Nhất</div>}
-              {pkg.isVip && <div style={{ position: 'absolute', top: '0', right: '0', background: 'linear-gradient(135deg, #eab308, #f59e0b)', color: '#0f172a', padding: '6px 18px', borderBottomLeftRadius: '16px', fontSize: '10px', fontWeight: '800', textTransform: 'uppercase', letterSpacing: '0.5px' }}>VIP Toàn Diện</div>}
+              {pkg.isVip && <div style={{ position: 'absolute', top: '0', right: '0', background: 'linear-gradient(135deg, #eab308, #f59e0b)', color: '#0f172a', padding: '6px 18px', borderBottomLeftRadius: '16px', fontSize: '10px', fontWeight: '800', textTransform: 'uppercase', letterSpacing: '0.5px' }}>VIP 2 Trong 1</div>}
               <div>
                 <h3 style={{ fontSize: '20px', color: 'var(--text-bright)', marginBottom: '8px', fontWeight: '800', marginTop: (pkg.featured || pkg.isVip) ? '12px' : '0' }}>{pkg.name}</h3>
                 <p style={{ color: 'var(--text-muted)', fontSize: '13px', marginBottom: '20px', lineHeight: '1.4' }}>{pkg.desc}</p>

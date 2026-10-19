@@ -422,74 +422,105 @@ export default function LandingView({ inWorkspace = false }) {
         <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '24px', width: '100%', margin: '0 auto' }}>
           {[
             { 
-              name: 'Zalo Bot Affiliate', 
-              desc: 'Tự động chuyển đổi link tiếp thị liên kết 24/7 trực tiếp trong nhóm Zalo', 
+              name: 'Zalo Bot Auto Link', 
+              desc: 'Tự động chuyển đổi link tiếp thị liên kết Shopee & TikTok Shop 24/7 trực tiếp trong nhóm Zalo', 
               price: '199.000đ', 
               features: [
-                'Tự động đổi link mua sắm Shopee, Lazada, TikTok Shop sang link nhận hoa hồng của bạn.',
-                'Hoạt động 24/7 trong nhóm chat, tự động trả lời tin nhắn ngay lập tức không cần trực máy.',
+                'Tự động đổi link mua sắm Shopee & TikTok Shop sang link nhận 100% hoa hồng về tài khoản của bạn.',
+                'Hoạt động tự động 24/7 trong nhóm chat, phản hồi tức thì 1-2 giây không cần trực máy.',
                 'Tự nhận biết người gửi link: Ghi nhận chính xác ai gửi link trong nhóm để bạn theo dõi doanh số.',
-                'Phản hồi siêu tốc 24/7: Bot trả lời tin nhắn tức thì, bạn không cần túc trực máy tính.',
-                'Tin nhắn tối ưu mua hàng: Mẫu phản hồi lịch sự, ngắn gọn, gắn thẻ khách hàng kích thích bấm mua.'
+                'Tin nhắn tối ưu mua hàng: Mẫu phản hồi lịch sự, ngắn gọn, gắn thẻ khách hàng kích thích bấm mua.',
+                'Vận hành siêu nhẹ nhàng: Không tốn thời gian quản lý đối soát ví, tập trung tối đa đẩy số.'
               ], 
-              featured: false 
+              featured: false,
+              isVip: false,
+              btnText: 'Mua Gói 199k'
             },
             { 
-              name: 'Zalo Bot Affiliate Pro', 
-              desc: 'Bot Zalo + Nền tảng SaaS: Trang tra cứu ví hoa hồng cho khách & Dashboard quản trị cho chủ nhóm', 
+              name: 'SaaS Zalo Bot Affiliate', 
+              desc: 'Bot Zalo + Nền tảng SaaS: Cổng tra cứu ví hoa hồng cho khách & Dashboard quản trị Kênh riêng', 
+              price: '299.000đ', 
+              features: [
+                'Bao gồm toàn bộ tính năng chuyển đổi 24/7 của gói Auto Link.',
+                'Trang Tra Cứu Khách Hàng (SaaS): Khách tự tra cứu đơn hàng, ví tích lũy, số dư khả dụng và tạo lệnh rút tiền.',
+                'Đầy đủ 16 lệnh Bot Zalo thông minh: Khách gõ /vitien, /donhang, /tracuu, /stk, /ruttien.',
+                'Dashboard Quản Trị Trưởng Nhóm: Đăng nhập xem toàn bộ đơn hàng, quản lý thành viên và duyệt thanh toán 1-click.',
+                'Tùy Chỉnh Kênh SaaS Riêng: Tự cài đặt tỷ lệ chia hoa hồng (80/20, 70/30), thuế TNCN (10%) và ngày giữ tiền.',
+                'Duyệt rút tiền tức thì qua Zalo: Trưởng nhóm duyệt chi trả siêu tốc bằng lệnh /duyet_[MÃ_ID].'
+              ], 
+              featured: true,
+              isVip: false,
+              btnText: 'Mua Gói 299k (Ưu Đãi)'
+            },
+            { 
+              name: 'Web Brand Độc Lập', 
+              desc: 'Sở hữu Website Affiliate hoàn tiền độc lập, chạy trên Tên Miền Riêng biệt (Mô hình Website Mai Lan)', 
               price: '399.000đ', 
               features: [
-                'Bao gồm toàn bộ tính năng của bản Cơ Bản.',
-                'Trang Tra Cứu Khách Hàng (SaaS): Khách tự tra cứu đơn hàng, ví tích lũy, số dư khả dụng và tạo lệnh rút tiền.',
-                'Dashboard Quản Trị Trưởng Nhóm: Đăng nhập xem toàn bộ đơn hàng, quản lý thành viên và duyệt thanh toán 1-click.',
-                'Tùy Chỉnh Kênh SaaS Riêng: Tự cài đặt tỷ lệ chia hoa hồng (%), thuế TNCN (%) và số ngày giữ tiền (Holding days).',
-                'Tra cứu hoa hồng qua Zalo: Khách hàng gõ lệnh `/vitien` hoặc `/donhang` ngay trong nhóm để xem số dư tự động.'
+                'Website Riêng Biệt & Tên Miền Riêng: Cài đặt Web chạy trên domain thương hiệu của bạn (hoantiencuaban.com).',
+                'Nhận Diện Thương Hiệu Độc Quyền 100%: Tùy biến toàn bộ Logo, màu sắc giao diện & banner mang bản sắc riêng.',
+                'Hệ thống Web Tra Cứu & Tích Lũy Ví chuyên sâu: Trải nghiệm hoàn hảo trên cả Mobile App Web và Desktop.',
+                'Bảng Quản Trị Admin Web Độc Lập: Phân loại sản phẩm, quản lý đơn Shopee/TikTok & xử lý thanh toán.',
+                'Hạ Tầng & Cơ Sở Dữ Liệu Riêng Biệt: Vận hành ổn định, tải trang siêu tốc, bảo mật tuyệt đối không lo nghẽn mạng.',
+                'Hỗ trợ trỏ tên miền & cài đặt chứng chỉ bảo mật SSL (HTTPS) miễn phí trọn đời.'
               ], 
-              featured: true 
+              featured: false,
+              isVip: false,
+              btnText: 'Mua Gói 399k'
             },
             { 
-              name: 'Zalo Bot Affiliate Pro Max', 
-              desc: 'Giải pháp độc quyền: Sở hữu Website riêng biệt, tên miền riêng & bản sắc thương hiệu riêng cho chủ nhóm', 
+              name: 'Omnichannel All-in-One', 
+              desc: 'Giải pháp tối cao: Kết hợp cả Website Tên Miền Riêng + Bot Zalo 24/7, liên kết Google & Zalo (Mô hình Trần Huyền)', 
               price: '499.000đ', 
               features: [
-                'Bao gồm toàn bộ tính năng cao cấp của gói Pro (SaaS).',
-                'Website Riêng Biệt & Tên Miền Riêng: Cài đặt Web chạy trên tên miền thương hiệu riêng của bạn (VD: domaincuaban.com).',
-                'Nhận Diện Thương Hiệu Độc Quyền 100%: Logo, màu sắc giao diện, thông tin giới thiệu mang bản sắc riêng của sếp.',
-                'Hạ Tầng & Cơ Sở Dữ Liệu Riêng: Tốc độ tải trang siêu tốc, bảo mật tuyệt đối, vận hành ổn định không lo nghẽn mạng.',
-                'Tùy Biến Mẫu Tin Nhắn Bot Độc Quyền: Cá nhân hóa 15 mẫu tin nhắn Zalo bot và quy tắc ví theo yêu cầu riêng.',
-                'Hỗ Trợ Kỹ Thuật VIP 1-1: Ưu tiên cập nhật tính năng mới nhất và được hỗ trợ kỹ thuật trực tiếp 24/7.'
+                'Hệ sinh thái Hợp Nhất Đa Kênh: Kết nối đồng thời cả Website tên miền riêng biệt và Bot Zalo chạy 24/7.',
+                'Liên kết Tài khoản Song Song: Thành viên Đăng nhập Google 1 chạm trên Web & Liên kết tài khoản Zalo ID.',
+                'Đồng bộ hóa Ví & Đơn hàng 2 chiều: Khách tra cứu trên Web hay gõ lệnh Zalo đều nhận cùng số dư chuẩn 100%.',
+                'Hệ thống Thông Báo Biến Động Số Dư: Bot tự động gửi tin nhắn riêng cho khách khi đơn hoàn thành hoặc duyệt tiền.',
+                'Tùy biến Mẫu Tin Nhắn Bot & Quy tắc nghiệp vụ độc quyền theo kịch bản kinh doanh riêng của bạn.',
+                'Hỗ Trợ Kỹ Thuật VIP 1-1 Riêng Biệt: Ưu tiên cập nhật tính năng mới nhất & hỗ trợ kỹ thuật trực tiếp 24/7.'
               ], 
-              featured: false 
+              featured: false,
+              isVip: true,
+              btnText: 'Đăng Ký Gói VIP 499k'
             }
           ].map((pkg, i) => (
             <div key={i} className="pricing-card" style={{
-              background: 'var(--bg-card)', border: pkg.featured ? '2px solid #f97316' : '1px solid var(--border-color)',
-              borderRadius: '24px', padding: '40px 32px', width: '100%', maxWidth: '360px',
-              backdropFilter: 'blur(10px)', boxShadow: pkg.featured ? '0 20px 40px -15px rgba(249,115,22,0.15)' : '0 10px 30px -10px rgba(0,0,0,0.05)',
+              background: 'var(--bg-card)',
+              border: pkg.featured ? '2px solid #f97316' : (pkg.isVip ? '2px solid #eab308' : '1px solid var(--border-color)'),
+              borderRadius: '24px', padding: '36px 24px', width: '100%', maxWidth: '290px', minWidth: '260px',
+              backdropFilter: 'blur(10px)',
+              boxShadow: pkg.featured ? '0 20px 40px -15px rgba(249,115,22,0.2)' : (pkg.isVip ? '0 20px 40px -15px rgba(234,179,8,0.2)' : '0 10px 30px -10px rgba(0,0,0,0.05)'),
               position: 'relative', overflow: 'hidden', display: 'flex', flexDirection: 'column',
               justifyContent: 'space-between', transition: 'all 0.3s ease',
               transform: (pkg.featured && windowWidth >= 768) ? 'scale(1.03)' : 'none', zIndex: pkg.featured ? 2 : 1
             }}>
-              {pkg.featured && <div style={{ position: 'absolute', top: '0', right: '0', background: 'linear-gradient(135deg, #f97316, #ea580c)', color: '#ffffff', padding: '6px 20px', borderBottomLeftRadius: '16px', fontSize: '11px', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Phổ Biến Nhất</div>}
+              {pkg.featured && <div style={{ position: 'absolute', top: '0', right: '0', background: 'linear-gradient(135deg, #f97316, #ea580c)', color: '#ffffff', padding: '6px 18px', borderBottomLeftRadius: '16px', fontSize: '10px', fontWeight: '800', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Phổ Biến Nhất</div>}
+              {pkg.isVip && <div style={{ position: 'absolute', top: '0', right: '0', background: 'linear-gradient(135deg, #eab308, #f59e0b)', color: '#0f172a', padding: '6px 18px', borderBottomLeftRadius: '16px', fontSize: '10px', fontWeight: '800', textTransform: 'uppercase', letterSpacing: '0.5px' }}>VIP Toàn Diện</div>}
               <div>
-                <h3 style={{ fontSize: '22px', color: 'var(--text-bright)', marginBottom: '8px', fontWeight: '700', marginTop: pkg.featured ? '10px' : '0' }}>{pkg.name}</h3>
-                <p style={{ color: 'var(--text-muted)', fontSize: '14px', marginBottom: '24px' }}>{pkg.desc}</p>
-                <div style={{ marginBottom: '32px' }}>
-                  <span style={{ fontSize: '42px', fontWeight: '800', color: 'var(--text-bright)', fontFamily: 'var(--font-heading)' }}>{pkg.price}</span>
-                  <span style={{ color: 'var(--text-muted)', fontSize: '15px' }}> / tháng</span>
+                <h3 style={{ fontSize: '20px', color: 'var(--text-bright)', marginBottom: '8px', fontWeight: '800', marginTop: (pkg.featured || pkg.isVip) ? '12px' : '0' }}>{pkg.name}</h3>
+                <p style={{ color: 'var(--text-muted)', fontSize: '13px', marginBottom: '20px', lineHeight: '1.4' }}>{pkg.desc}</p>
+                <div style={{ marginBottom: '24px', paddingBottom: '16px', borderBottom: '1px solid var(--border-color)' }}>
+                  <span style={{ fontSize: '36px', fontWeight: '800', color: pkg.isVip ? '#eab308' : (pkg.featured ? '#f97316' : 'var(--text-bright)'), fontFamily: 'var(--font-heading)' }}>{pkg.price}</span>
+                  <span style={{ color: 'var(--text-muted)', fontSize: '14px' }}> / tháng</span>
                 </div>
-                <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 32px 0', textAlign: 'left', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 28px 0', textAlign: 'left', display: 'flex', flexDirection: 'column', gap: '14px' }}>
                   {pkg.features.map((f, j) => (
-                    <li key={j} style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', color: 'var(--text-main)', fontSize: '14px' }}>
-                      <span style={{ color: '#10b981', fontWeight: 'bold' }}>✓</span> {f}
+                    <li key={j} style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', color: 'var(--text-main)', fontSize: '13px', lineHeight: '1.45' }}>
+                      <span style={{ color: pkg.isVip ? '#eab308' : '#10b981', fontWeight: 'bold', shrink: 0 }}>✓</span> {f}
                     </li>
                   ))}
                 </ul>
               </div>
               <a href="https://zalo.me/0888728256" target="_blank" rel="noopener noreferrer" className="btn btn-glow-active"
                 onClick={() => showToast("Đang kết nối tới Zalo Phạm Thắng...", 'info')}
-                style={{ width: '100%', padding: '14px', borderRadius: '12px', fontSize: '15px', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', textDecoration: 'none', boxSizing: 'border-box' }}>
-                Mua Ngay
+                style={{
+                  width: '100%', padding: '12px', borderRadius: '12px', fontSize: '14px', fontWeight: '800',
+                  background: pkg.isVip ? 'linear-gradient(135deg, #eab308, #f59e0b)' : (pkg.featured ? 'linear-gradient(135deg, #f97316, #ea580c)' : undefined),
+                  color: pkg.isVip ? '#0f172a' : undefined,
+                  border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', textDecoration: 'none', boxSizing: 'border-box'
+                }}>
+                {pkg.btnText || 'Mua Ngay'}
               </a>
             </div>
           ))}

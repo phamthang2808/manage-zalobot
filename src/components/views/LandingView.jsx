@@ -430,11 +430,12 @@ export default function LandingView({ inWorkspace = false }) {
                 'Hoạt động tự động 24/7 trong nhóm chat, phản hồi tức thì 1-2 giây không cần trực máy.',
                 'Tự nhận biết người gửi link: Ghi nhận chính xác ai gửi link trong nhóm để bạn theo dõi doanh số.',
                 'Tin nhắn tối ưu mua hàng: Mẫu phản hồi lịch sự, ngắn gọn, gắn thẻ khách hàng kích thích bấm mua.',
-                'Vận hành siêu nhẹ nhàng: Không tốn thời gian quản lý đối soát ví, tập trung tối đa đẩy số.'
+                'Vận hành siêu nhẹ nhàng: Không tốn thời gian quản lý đối soát ví, tập trung tối đa đẩy số.',
+                'Kích hoạt nhanh chóng: Setup nhóm Zalo chỉ sau 5 phút, hỗ trợ kỹ thuật trọn gói A-Z.'
               ], 
               featured: false,
               isVip: false,
-              btnText: 'Liên Hệ Zalo Admin Phạm Thắng'
+              btnText: 'Liên Hệ Admin Phạm Thắng'
             },
             { 
               name: 'SaaS Zalo Bot Affiliate', 
@@ -450,7 +451,7 @@ export default function LandingView({ inWorkspace = false }) {
               ], 
               featured: true,
               isVip: false,
-              btnText: 'Liên Hệ Zalo Admin Phạm Thắng'
+              btnText: 'Liên Hệ Admin Phạm Thắng'
             },
             { 
               name: 'Web Brand Độc Lập', 
@@ -466,7 +467,7 @@ export default function LandingView({ inWorkspace = false }) {
               ], 
               featured: false,
               isVip: false,
-              btnText: 'Liên Hệ Zalo Admin Phạm Thắng'
+              btnText: 'Liên Hệ Admin Phạm Thắng'
             },
             { 
               name: 'Web & Zalo Bot (2 Trong 1)', 
@@ -482,7 +483,7 @@ export default function LandingView({ inWorkspace = false }) {
               ], 
               featured: false,
               isVip: true,
-              btnText: 'Liên Hệ Zalo Admin Phạm Thắng'
+              btnText: 'Liên Hệ Admin Phạm Thắng'
             }
           ].map((pkg, i) => (
             <div key={i} className="pricing-card" style={{
@@ -525,17 +526,13 @@ export default function LandingView({ inWorkspace = false }) {
                 target="_blank" 
                 rel="noopener noreferrer" 
                 className="landing-zalo-direct-btn"
-                onClick={(e) => {
-                  window.open("https://zalo.me/0888728256", "_blank", "noopener,noreferrer");
-                  if (typeof showToast === 'function') {
-                    showToast("Đang kết nối tới Zalo Admin Phạm Thắng (0888.728.256)...", 'info');
-                  }
-                }}
                 style={{
+                  position: 'relative',
+                  zIndex: 25,
                   width: '100%', 
                   padding: '12px 10px', 
                   borderRadius: '14px', 
-                  fontSize: '12.5px', 
+                  fontSize: '13px', 
                   fontWeight: '800',
                   background: pkg.isVip 
                     ? 'linear-gradient(135deg, #eab308, #f59e0b) !important' 
@@ -550,17 +547,18 @@ export default function LandingView({ inWorkspace = false }) {
                   textDecoration: 'none', 
                   boxSizing: 'border-box',
                   boxShadow: pkg.isVip ? '0 6px 20px rgba(234,179,8,0.45)' : (pkg.featured ? '0 6px 20px rgba(249,115,22,0.45)' : '0 6px 20px rgba(0,104,255,0.45)'),
-                  transition: 'all 0.25s ease'
+                  transition: 'all 0.25s ease',
+                  pointerEvents: 'auto'
                 }}
               >
                 {/* Authentic Zalo SVG Badge */}
-                <svg viewBox="0 0 48 48" style={{ width: '22px', height: '22px', flexShrink: 0 }} xmlns="http://www.w3.org/2000/svg">
+                <svg viewBox="0 0 48 48" style={{ width: '22px', height: '22px', flexShrink: 0, pointerEvents: 'none' }} xmlns="http://www.w3.org/2000/svg">
                   <circle cx="24" cy="24" r="23" fill={pkg.isVip ? "#0f172a" : "#0068FF"}/>
                   <path d="M12.5 24c0-6.35 5.15-11.5 11.5-11.5s11.5 5.15 11.5 11.5-5.15 11.5-11.5 11.5c-2.05 0-3.97-.54-5.64-1.48L11.5 35.5l1.67-4.3C12.38 29.35 12.5 26.75 12.5 24z" fill="#ffffff" fillOpacity="0.25"/>
                   <text x="24" y="28.5" fill={pkg.isVip ? "#eab308" : "#ffffff"} fontFamily="system-ui, -apple-system, sans-serif" fontSize="12" fontWeight="900" textAnchor="middle">Zalo</text>
                 </svg>
-                <span style={{ color: pkg.isVip ? '#0f172a' : '#ffffff', whiteSpace: 'nowrap', fontWeight: '800' }}>
-                  {pkg.btnText || 'Liên Hệ Zalo Admin Phạm Thắng'}
+                <span style={{ color: pkg.isVip ? '#0f172a' : '#ffffff', whiteSpace: 'nowrap', fontWeight: '800', pointerEvents: 'none' }}>
+                  {pkg.btnText || 'Liên Hệ Admin Phạm Thắng'}
                 </span>
               </a>
             </div>

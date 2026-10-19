@@ -2992,6 +2992,7 @@ tr:hover td {
   mask-composite: exclude;
   opacity: 0.15;
   transition: opacity 0.3s ease;
+  pointer-events: none !important;
 }
 
 .pricing-card:hover {
@@ -8231,6 +8232,8 @@ body.dark .stat-card-item.referral .stat-card-value { color: #fb7185 !important;
   align-items: center !important;
   justify-content: center !important;
   gap: 8px !important;
+  position: relative !important;
+  z-index: 25 !important;
   transition: transform 0.2s ease, filter 0.2s ease, box-shadow 0.2s ease !important;
 }
 

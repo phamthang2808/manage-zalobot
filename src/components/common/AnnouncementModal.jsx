@@ -3,7 +3,7 @@ import { createPortal } from 'react-dom';
 
 export default function AnnouncementModal({ apiRoot, previewData = null, onClose = null }) {
   const [announcement, setAnnouncement] = useState(previewData);
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(Boolean(previewData));
   const [dontShowAgain, setDontShowAgain] = useState(false);
 
   useEffect(() => {
@@ -57,8 +57,8 @@ export default function AnnouncementModal({ apiRoot, previewData = null, onClose
         return;
       }
 
-      // Kiểm tra session nếu vừa tắt trong phiên duyệt web hiện tại
-      const sessionKey = `28symues_announcement_closed_session_${data.id || '0'}`;
+      // Kiểm tra session nếu vừa tắt trong phiên duyệt web hiện tại (gắn liền với mốc thời gian updatedAt)
+      const sessionKey = `28symues_announcement_closed_session_${data.id || '0'}_${data.updatedAt || '0'}`;
       if (sessionStorage.getItem(sessionKey) === 'true') {
         return;
       }
@@ -86,7 +86,7 @@ export default function AnnouncementModal({ apiRoot, previewData = null, onClose
         const dismissKey = `28symues_announcement_dismiss_${announcement.id || '0'}_${announcement.updatedAt || ''}`;
         localStorage.setItem(dismissKey, 'true');
       } else {
-        const sessionKey = `28symues_announcement_closed_session_${announcement.id || '0'}`;
+        const sessionKey = `28symues_announcement_closed_session_${announcement.id || '0'}_${announcement.updatedAt || '0'}`;
         sessionStorage.setItem(sessionKey, 'true');
       }
     }

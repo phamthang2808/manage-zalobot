@@ -470,15 +470,15 @@ export default function LandingView({ inWorkspace = false }) {
             },
             { 
               name: 'Omnichannel All-in-One', 
-              desc: 'Giải pháp tối cao: Kết hợp cả Website Tên Miền Riêng + Bot Zalo 24/7, liên kết Google & Zalo (Mô hình Trần Huyền)', 
+              desc: 'Giải pháp tối cao: Chuyển đổi link trực tiếp ngay trên Web & Bot Zalo 24/7, kết hợp tên miền riêng & liên kết Google (Mô hình Trần Huyền)', 
               price: '499.000đ', 
               features: [
-                'Hệ sinh thái Hợp Nhất Đa Kênh: Kết nối đồng thời cả Website tên miền riêng biệt và Bot Zalo chạy 24/7.',
-                'Liên kết Tài khoản Song Song: Thành viên Đăng nhập Google 1 chạm trên Web & Liên kết tài khoản Zalo ID.',
-                'Đồng bộ hóa Ví & Đơn hàng 2 chiều: Khách tra cứu trên Web hay gõ lệnh Zalo đều nhận cùng số dư chuẩn 100%.',
-                'Hệ thống Thông Báo Biến Động Số Dư: Bot tự động gửi tin nhắn riêng cho khách khi đơn hoàn thành hoặc duyệt tiền.',
-                'Tùy biến Mẫu Tin Nhắn Bot & Quy tắc nghiệp vụ độc quyền theo kịch bản kinh doanh riêng của bạn.',
-                'Hỗ Trợ Kỹ Thuật VIP 1-1 Riêng Biệt: Ưu tiên cập nhật tính năng mới nhất & hỗ trợ kỹ thuật trực tiếp 24/7.'
+                'Chuyển đổi link Đa Nền Tảng (Web & Zalo): Hỗ trợ khách tự dán link chuyển đổi nhận hoàn tiền ngay trên Website và tự động chuyển đổi trong nhóm Zalo 24/7.',
+                'Website Tên Miền Riêng Độc Quyền: Cài đặt Web chạy trên domain thương hiệu của bạn, giao diện chuẩn SEO và tương thích 100% di động.',
+                'Liên kết Tài khoản Song Song: Thành viên Đăng nhập Google 1 chạm trên Web & Liên kết tài khoản Zalo ID mượt mà.',
+                'Đồng bộ hóa Ví & Đơn hàng 2 chiều: Khách tra cứu trên Web hay gõ lệnh Zalo (/vitien, /donhang) đều nhận cùng số dư chuẩn 100%.',
+                'Thông Báo Biến Động Số Dư Tự Động: Bot tự động gửi tin nhắn riêng cho khách khi đơn hoàn thành hoặc có lệnh duyệt thanh toán.',
+                'Hỗ Trợ Kỹ Thuật VIP 1-1 Riêng Biệt: Ưu tiên cập nhật tính năng mới nhất, setup trọn gói A-Z & hỗ trợ kỹ thuật trực tiếp 24/7.'
               ], 
               featured: false,
               isVip: true,

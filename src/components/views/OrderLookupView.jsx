@@ -1276,7 +1276,7 @@ export default function OrderLookupView({ setView: propSetView } = {}) {
                     bg: '#fef3c7',
                     color: '#b45309',
                     dotColor: '#f59e0b',
-                    border: '1px solid rgba(245, 158, 11, 0.25)'
+                    border: 'none'
                   };
 
                   if (isCompleted) {
@@ -1285,7 +1285,7 @@ export default function OrderLookupView({ setView: propSetView } = {}) {
                       bg: '#dcfce7',
                       color: '#15803d',
                       dotColor: '#22c55e',
-                      border: '1px solid rgba(34, 197, 94, 0.25)'
+                      border: 'none'
                     };
                   } else if (isCancelled) {
                     stBadge = {
@@ -1293,7 +1293,7 @@ export default function OrderLookupView({ setView: propSetView } = {}) {
                       bg: '#fee2e2',
                       color: '#b91c1c',
                       dotColor: '#ef4444',
-                      border: '1px solid rgba(239, 68, 68, 0.25)'
+                      border: 'none'
                     };
                   }
 
@@ -1334,7 +1334,7 @@ export default function OrderLookupView({ setView: propSetView } = {}) {
                             fontWeight: '700',
                             background: stBadge.bg,
                             color: stBadge.color,
-                            border: stBadge.border,
+                            border: 'none',
                             flexShrink: 0
                           }}
                         >

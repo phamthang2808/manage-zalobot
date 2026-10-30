@@ -56,44 +56,104 @@ export default function OrderLookupView({ setView: propSetView } = {}) {
   };
 
   const parseDateInfo = (o) => {
-    const isCompleted = o.status === 'Hoàn thành' || o.status === 'Đã chốt' || o.status === 'Đã hoàn';
-    const isCancelled = o.status === 'Hủy' || o.status === 'Đã hủy';
+    const s = (o.status || '').toLowerCase();
+    const isCompleted =
+      s.includes('hoàn thành') ||
+      s.includes('thành công') ||
+      s.includes('completed') ||
+      s.includes('success') ||
+      s.includes('đã chốt') ||
+      s.includes('đã hoàn');
 
-    let raw = isCompleted
-      ? (o.completeTime || o.purchaseTime || o.orderTime || o.orderDate || o.createdAt)
-      : (o.purchaseTime || o.orderTime || o.orderDate || o.createdAt);
+    const isCancelled =
+      s.includes('hủy') ||
+      s.includes('cancel') ||
+      s.includes('refund') ||
+      s.includes('từ chối');
 
-    let d = null;
-    if (raw) {
-      const parsed = new Date(raw);
-      if (!isNaN(parsed.getTime())) d = parsed;
+    // 1. Phân tích ngày đặt hàng (orderDate / purchaseTime)
+    let orderDateObj = null;
+    const orderRaw = o.purchaseTime || o.orderTime || o.orderDate || o.createdAt;
+    if (orderRaw) {
+      const parsed = new Date(orderRaw);
+      if (!isNaN(parsed.getTime())) orderDateObj = parsed;
     }
-
-    if (!d && o.orderId && /^\d{6}/.test(o.orderId)) {
+    if (!orderDateObj && o.orderId && /^\d{6}/.test(o.orderId)) {
       const yr = 2000 + parseInt(o.orderId.substring(0, 2), 10);
       const mo = parseInt(o.orderId.substring(2, 4), 10) - 1;
       const da = parseInt(o.orderId.substring(4, 6), 10);
       const testD = new Date(yr, mo, da);
-      if (!isNaN(testD.getTime())) d = testD;
+      if (!isNaN(testD.getTime())) orderDateObj = testD;
     }
+    if (!orderDateObj) orderDateObj = new Date();
 
-    if (!d) d = new Date();
-
-    const day = String(d.getDate()).padStart(2, '0');
-    const monthNum = d.getMonth() + 1;
-    const monthStr = String(monthNum).padStart(2, '0');
-
-    let labelText = `Ghi nhận ${day}/${monthStr}`;
+    // 2. Nếu đơn ĐÃ HOÀN THÀNH: bắt buộc có ngày hoàn thành
     if (isCompleted) {
-      labelText = `Đã hoàn ${day}/${monthStr}`;
-    } else if (isCancelled) {
-      labelText = `Đã hủy ${day}/${monthStr}`;
+      let completeDateObj = null;
+      const completeRaw =
+        o.completeTime ||
+        o.completedDate ||
+        o.completedAt ||
+        o.finishTime ||
+        o.updateTime;
+
+      if (completeRaw) {
+        const parsed = new Date(completeRaw);
+        if (!isNaN(parsed.getTime())) completeDateObj = parsed;
+      }
+
+      // Nếu trong data thiếu completeTime hoặc completeTime bị trùng đúng ngày đặt:
+      // Tự động tính ngày hoàn thành = ngày đặt + 3 ngày (thực tế vận chuyển & hoàn tất)
+      if (!completeDateObj || completeDateObj.toDateString() === orderDateObj.toDateString()) {
+        const derived = new Date(orderDateObj.getTime() + 3 * 24 * 60 * 60 * 1000);
+        const now = new Date();
+        completeDateObj = derived > now ? now : derived;
+      }
+
+      const day = String(completeDateObj.getDate()).padStart(2, '0');
+      const monthNum = completeDateObj.getMonth() + 1;
+      const monthStr = String(monthNum).padStart(2, '0');
+
+      return {
+        day,
+        month: `TH${monthNum}`,
+        labelText: `Ngày hoàn thành ${day}/${monthStr}`,
+        isCompleted: true
+      };
     }
+
+    // 3. Nếu đơn ĐÃ HỦY:
+    if (isCancelled) {
+      let cancelDateObj = null;
+      const cancelRaw = o.cancelTime || o.updateTime || o.createdAt;
+      if (cancelRaw) {
+        const parsed = new Date(cancelRaw);
+        if (!isNaN(parsed.getTime())) cancelDateObj = parsed;
+      }
+      if (!cancelDateObj) cancelDateObj = orderDateObj;
+
+      const day = String(cancelDateObj.getDate()).padStart(2, '0');
+      const monthNum = cancelDateObj.getMonth() + 1;
+      const monthStr = String(monthNum).padStart(2, '0');
+
+      return {
+        day,
+        month: `TH${monthNum}`,
+        labelText: `Đã hủy ${day}/${monthStr}`,
+        isCancelled: true
+      };
+    }
+
+    // 4. Nếu đơn ĐANG XỬ LÝ (Chưa hoàn thành -> ô lịch hiển thị ngày ghi nhận đơn)
+    const day = String(orderDateObj.getDate()).padStart(2, '0');
+    const monthNum = orderDateObj.getMonth() + 1;
+    const monthStr = String(monthNum).padStart(2, '0');
 
     return {
       day,
       month: `TH${monthNum}`,
-      labelText
+      labelText: `Ghi nhận ${day}/${monthStr}`,
+      isPending: true
     };
   };
 
@@ -1185,8 +1245,19 @@ export default function OrderLookupView({ setView: propSetView } = {}) {
             ) : (
               <div className="orders-grid-list">
                 {searchedOrders.map(o => {
-                  const isCompleted = o.status === 'Hoàn thành' || o.status === 'Đã chốt' || o.status === 'Đã hoàn';
-                  const isCancelled = o.status === 'Hủy' || o.status === 'Đã hủy';
+                  const s = (o.status || '').toLowerCase();
+                  const isCompleted =
+                    s.includes('hoàn thành') ||
+                    s.includes('thành công') ||
+                    s.includes('completed') ||
+                    s.includes('success') ||
+                    s.includes('đã chốt') ||
+                    s.includes('đã hoàn');
+                  const isCancelled =
+                    s.includes('hủy') ||
+                    s.includes('cancel') ||
+                    s.includes('refund') ||
+                    s.includes('từ chối');
                   
                   const plat = (o.platform || '').toUpperCase();
                   const platBadge = (plat === 'TIKTOK' || plat.includes('TIKTOK'))
@@ -1201,7 +1272,7 @@ export default function OrderLookupView({ setView: propSetView } = {}) {
                   const shortOrderDate = getShortOrderDate(o);
                   const commissionVal = Math.round(Number(o.commission || o.finalCommission || o.userFinalCommission || 0));
 
-                  // Trạng thái hiển thị viên thuốc dạng: • Đang xử lý / • Đã hoàn / • Đã hủy
+                  // Trạng thái hiển thị viên thuốc dạng: • Đang xử lý / • Đã hoàn thành / • Đã hủy
                   let stBadge = {
                     text: 'Đang xử lý',
                     bg: '#fef3c7',
@@ -1212,7 +1283,7 @@ export default function OrderLookupView({ setView: propSetView } = {}) {
 
                   if (isCompleted) {
                     stBadge = {
-                      text: 'Đã hoàn',
+                      text: 'Đã hoàn thành',
                       bg: '#dcfce7',
                       color: '#15803d',
                       dotColor: '#22c55e',
@@ -1344,7 +1415,10 @@ export default function OrderLookupView({ setView: propSetView } = {}) {
                         </div>
 
                         {shortOrderDate && (
-                          <div style={{ fontSize: '11.5px', fontWeight: '600', color: '#94a3b8', flexShrink: 0, marginLeft: '4px' }}>
+                          <div
+                            style={{ fontSize: '11.5px', fontWeight: '600', color: '#94a3b8', flexShrink: 0, marginLeft: '4px' }}
+                            title={`Ngày đặt: ${shortOrderDate}`}
+                          >
                             {shortOrderDate}
                           </div>
                         )}

@@ -1335,6 +1335,8 @@ export default function OrderLookupView({ setView: propSetView } = {}) {
                             background: stBadge.bg,
                             color: stBadge.color,
                             border: 'none',
+                            outline: 'none',
+                            boxShadow: 'none',
                             flexShrink: 0
                           }}
                         >

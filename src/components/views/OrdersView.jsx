@@ -254,8 +254,8 @@ export default function OrdersView() {
           gap: 12px;
         }
         .order-card-modern:hover {
-          border-color: rgba(234, 88, 12, 0.45);
-          box-shadow: 0 8px 24px -4px rgba(234, 88, 12, 0.12);
+          border-color: var(--border-color, rgba(0,0,0,0.07));
+          box-shadow: 0 8px 24px -4px rgba(0, 0, 0, 0.08);
           transform: translateY(-2px);
         }
         html[data-theme="dark"] .order-card-modern,
@@ -648,6 +648,8 @@ export default function OrdersView() {
                         background: stBadge.bg,
                         color: stBadge.color,
                         border: 'none',
+                        outline: 'none',
+                        boxShadow: 'none',
                         flexShrink: 0
                       }}
                     >

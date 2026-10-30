@@ -104,13 +104,109 @@ export default function OrdersView() {
     if (plat === 'TIKTOK' || plat.includes('TIKTOK')) return { label: 'TikTok', color: '#0f172a', bg: 'rgba(15, 23, 42, 0.08)', className: 'platform-badge-tiktok', icon: 'fa-brands fa-tiktok' };
     if (plat === 'LAZADA') return { label: 'Lazada', color: '#0284c7', bg: 'rgba(2, 132, 199, 0.12)', border: '1px solid rgba(2, 132, 199, 0.25)', icon: 'fa-solid fa-bag-shopping' };
     if (plat === 'SHOPEE_FOOD') return { label: 'ShopeeFood', color: '#dc2626', bg: 'rgba(220, 38, 38, 0.12)', border: '1px solid rgba(220, 38, 38, 0.25)', icon: 'fa-solid fa-utensils' };
-    return { label: plat || 'Sàn TMĐT', color: '#64748b', bg: 'rgba(100, 116, 139, 0.12)', border: '1px solid rgba(100, 116, 139, 0.2)', icon: 'fa-solid fa-box' };
+    return { label: plat || 'Shopee', color: '#ea580c', bg: 'rgba(234, 88, 12, 0.12)', border: '1px solid rgba(234, 88, 12, 0.25)', icon: 'fa-solid fa-bag-shopping' };
+  };
+
+  const parseDateInfo = (o) => {
+    const isCompleted = o.status === 'Hoàn thành' || o.status === 'Đã chốt' || o.status === 'Đã hoàn';
+    const isCancelled = o.status === 'Hủy' || o.status === 'Đã hủy';
+
+    let raw = isCompleted
+      ? (o.completeTime || o.purchaseTime || o.orderTime || o.orderDate || o.createdAt)
+      : (o.purchaseTime || o.orderTime || o.orderDate || o.createdAt);
+
+    let d = null;
+    if (raw) {
+      const parsed = new Date(raw);
+      if (!isNaN(parsed.getTime())) d = parsed;
+    }
+
+    if (!d && o.orderId && /^\d{6}/.test(o.orderId)) {
+      const yr = 2000 + parseInt(o.orderId.substring(0, 2), 10);
+      const mo = parseInt(o.orderId.substring(2, 4), 10) - 1;
+      const da = parseInt(o.orderId.substring(4, 6), 10);
+      const testD = new Date(yr, mo, da);
+      if (!isNaN(testD.getTime())) d = testD;
+    }
+
+    if (!d) d = new Date();
+
+    const day = String(d.getDate()).padStart(2, '0');
+    const monthNum = d.getMonth() + 1;
+    const monthStr = String(monthNum).padStart(2, '0');
+
+    let labelText = `Ghi nhận ${day}/${monthStr}`;
+    if (isCompleted) {
+      labelText = `Đã hoàn ${day}/${monthStr}`;
+    } else if (isCancelled) {
+      labelText = `Đã hủy ${day}/${monthStr}`;
+    }
+
+    return {
+      day,
+      month: `TH${monthNum}`,
+      labelText
+    };
+  };
+
+  const getShortOrderDate = (o) => {
+    let raw = o.purchaseTime || o.orderTime || o.orderDate || o.createdAt;
+    let d = null;
+    if (raw) {
+      const parsed = new Date(raw);
+      if (!isNaN(parsed.getTime())) d = parsed;
+    }
+    if (!d && o.orderId && /^\d{6}/.test(o.orderId)) {
+      const yr = 2000 + parseInt(o.orderId.substring(0, 2), 10);
+      const mo = parseInt(o.orderId.substring(2, 4), 10) - 1;
+      const da = parseInt(o.orderId.substring(4, 6), 10);
+      const testD = new Date(yr, mo, da);
+      if (!isNaN(testD.getTime())) d = testD;
+    }
+    if (!d) return '';
+    return `${String(d.getDate()).padStart(2, '0')}/${String(d.getMonth() + 1).padStart(2, '0')}`;
   };
 
   return (
     <div className="orders-view-wrapper" style={{ width: '100%', maxWidth: '820px', margin: '0 auto' }}>
       <style dangerouslySetInnerHTML={{ __html: `
-        .orders-container { width: 100%; max-width: 820px; }
+        .orders-container { width: 100%; max-width: 920px; }
+        .orders-grid-list {
+          display: grid;
+          grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+          gap: 16px;
+          width: 100%;
+        }
+        @media (max-width: 768px) {
+          .orders-grid-list {
+            grid-template-columns: 1fr;
+            gap: 12px;
+          }
+        }
+        .order-card-modern {
+          background: var(--bg-card, #ffffff);
+          border: 1px solid var(--border-color, rgba(0,0,0,0.07));
+          border-radius: 20px;
+          padding: 16px 18px;
+          box-shadow: 0 4px 16px -2px rgba(0,0,0,0.04);
+          transition: all 0.25s ease;
+          display: flex;
+          flex-direction: column;
+          justify-content: space-between;
+          gap: 12px;
+        }
+        .order-card-modern:hover {
+          border-color: rgba(234, 88, 12, 0.45);
+          box-shadow: 0 8px 24px -4px rgba(234, 88, 12, 0.12);
+          transform: translateY(-2px);
+        }
+        html[data-theme="dark"] .order-card-modern,
+        html.dark .order-card-modern,
+        body.dark .order-card-modern {
+          background: linear-gradient(145deg, #1e293b 0%, #0f172a 100%) !important;
+          border-color: rgba(255, 255, 255, 0.12) !important;
+          box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4) !important;
+        }
         .order-card-item {
           background: var(--bg-card) !important;
           border: 1px solid var(--border-color) !important;
@@ -409,131 +505,218 @@ export default function OrdersView() {
             </p>
           </div>
         ) : (
-          displayedOrders.map((o, idx) => {
-            const isCompleted = o.status === 'Hoàn thành' || o.status === 'Đã chốt';
-            const isPending = o.status === 'Chờ xử lý' || o.status === 'Đang xử lý' || o.status === 'Chờ duyệt';
-            const statusColor = isCompleted ? '#059669' : (isPending ? '#ea580c' : '#dc2626');
-            const platBadge = getPlatformBadge(o.platform);
+          <div className="orders-grid-list">
+            {displayedOrders.map((o, idx) => {
+              const isCompleted = o.status === 'Hoàn thành' || o.status === 'Đã chốt' || o.status === 'Đã hoàn';
+              const isCancelled = o.status === 'Hủy' || o.status === 'Đã hủy';
+              const platBadge = getPlatformBadge(o.platform);
+              const dateInfo = parseDateInfo(o);
+              const shortOrderDate = getShortOrderDate(o);
+              const commissionVal = Math.round(Number(o.commission || o.finalCommission || o.userFinalCommission || 0));
 
-            return (
-              <div key={o.orderId || o.id || idx} className="order-card-item">
-                {/* Hàng Header: Mã đơn + Thời gian (bên cùng bên trái) và Badge Sàn (bên phải) */}
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px', width: '100%', marginBottom: '10px', flexWrap: 'wrap' }}>
-                  {/* BÊN TRÁI: Mã đơn hàng (sát mép trái) + Ngày đặt hàng */}
-                  <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap', minWidth: 0 }}>
-                    <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', fontSize: '12.5px', color: 'var(--text-muted)' }}>
-                      <span>Mã đơn:</span>
-                      <span className="order-id-badge" style={{ fontWeight: '700', color: '#ea580c', fontSize: '13px' }}>
+              // Trạng thái hiển thị viên thuốc dạng: • Đang xử lý / • Đã hoàn / • Đã hủy
+              let stBadge = {
+                text: 'Đang xử lý',
+                bg: '#fef3c7',
+                color: '#b45309',
+                dotColor: '#f59e0b',
+                border: '1px solid rgba(245, 158, 11, 0.25)'
+              };
+
+              if (isCompleted) {
+                stBadge = {
+                  text: 'Đã hoàn',
+                  bg: '#dcfce7',
+                  color: '#15803d',
+                  dotColor: '#22c55e',
+                  border: '1px solid rgba(34, 197, 94, 0.25)'
+                };
+              } else if (isCancelled) {
+                stBadge = {
+                  text: 'Đã hủy',
+                  bg: '#fee2e2',
+                  color: '#b91c1c',
+                  dotColor: '#ef4444',
+                  border: '1px solid rgba(239, 68, 68, 0.25)'
+                };
+              }
+
+              return (
+                <div key={o.orderId || o.id || idx} className="order-card-modern">
+                  {/* HÀNG 1 (HEADER): NỀN TẢNG + MÃ ĐƠN HÀNG ĐẦY ĐỦ + NÚT COPY & BADGE TRẠNG THÁI */}
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px', flexWrap: 'wrap' }}>
+                    {/* BÊN TRÁI: Icon sàn + Tên sàn + Mã đơn đầy đủ + Nút Copy */}
+                    <div style={{ display: 'inline-flex', alignItems: 'center', gap: '7px', flexWrap: 'wrap', minWidth: 0 }}>
+                      <i className={platBadge.icon || 'fa-solid fa-bag-shopping'} style={{ color: platBadge.color || '#ea580c', fontSize: '15px' }}></i>
+                      <span style={{ fontWeight: '800', fontSize: '13.5px', color: 'var(--text-bright, #0f172a)' }}>
+                        {platBadge.label || 'Shopee'}
+                      </span>
+                      <span
+                        style={{
+                          fontSize: '12px',
+                          fontWeight: '700',
+                          fontFamily: 'monospace, sans-serif',
+                          color: '#64748b',
+                          letterSpacing: '0.2px'
+                        }}
+                        title={o.orderId}
+                      >
                         {o.orderId}
                       </span>
                       <CopyButton text={o.orderId} title="Copy mã đơn hàng" toastMessage={`Đã copy mã đơn: ${o.orderId}`} />
-                    </span>
-                    <span style={{ color: 'var(--text-subtle)', fontSize: '11px' }}>•</span>
-                    <span style={{ display: 'inline-flex', alignItems: 'center', gap: '5px', fontSize: '12px', color: 'var(--text-muted)' }}>
-                      <i className="fa-regular fa-calendar" style={{ fontSize: '11px' }}></i>
-                      <span>{formatDateTime(o.purchaseTime || o.orderTime)}</span>
-                    </span>
-                  </div>
+                    </div>
 
-                  {/* BÊN PHẢI: Badge Sàn thương mại */}
-                  <span
-                    className={platBadge.className || ''}
-                    style={{
-                      padding: '2px 8px',
-                      borderRadius: '6px',
-                      fontSize: '11px',
-                      fontWeight: '700',
-                      background: platBadge.bg,
-                      color: platBadge.color,
-                      border: platBadge.border,
-                      display: 'inline-flex',
-                      alignItems: 'center',
-                      flexShrink: 0
-                    }}
-                  >
-                    {platBadge.label}
-                  </span>
-                </div>
-
-                {/* HÀNG HIỂN THỊ ẢNH & TÊN SẢN PHẨM */}
-                <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px', marginBottom: '12px' }}>
-                  {o.imageUrl ? (
-                    <img
-                      src={o.imageUrl}
-                      alt={o.productName || 'Ảnh sản phẩm'}
-                      referrerPolicy="no-referrer"
+                    {/* BÊN PHẢI: Pill badge trạng thái có chấm tròn màu */}
+                    <div
                       style={{
-                        width: '56px',
-                        height: '56px',
-                        objectFit: 'cover',
-                        borderRadius: '10px',
-                        border: '1px solid var(--border-color)',
-                        flexShrink: 0,
-                        background: 'var(--bg-main)',
-                        cursor: 'pointer'
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '5px',
+                        padding: '3px 10px',
+                        borderRadius: '9999px',
+                        fontSize: '11px',
+                        fontWeight: '700',
+                        background: stBadge.bg,
+                        color: stBadge.color,
+                        border: stBadge.border,
+                        flexShrink: 0
                       }}
-                      title="Bấm để xem ảnh gốc"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        window.open(o.imageUrl, '_blank', 'noopener,noreferrer');
-                      }}
-                      onError={(e) => {
-                        e.currentTarget.style.display = 'none';
-                        if (e.currentTarget.nextElementSibling) {
-                          e.currentTarget.nextElementSibling.style.display = 'flex';
-                        }
-                      }}
-                    />
-                  ) : null}
-                  <div
-                    style={{
-                      width: '56px',
-                      height: '56px',
-                      borderRadius: '10px',
-                      background: 'var(--bg-main)',
-                      border: '1px solid var(--border-color)',
-                      display: o.imageUrl ? 'none' : 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      color: 'var(--text-muted)',
-                      fontSize: '20px',
-                      flexShrink: 0
-                    }}
-                  >
-                    <i className={platBadge.icon || 'fa-solid fa-bag-shopping'} style={{ opacity: 0.65 }}></i>
+                    >
+                      <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: stBadge.dotColor, display: 'inline-block' }}></span>
+                      <span>{stBadge.text}</span>
+                    </div>
                   </div>
-                  <div style={{ flex: 1, minWidth: 0 }}>
-                    <div className="order-card-title" title={o.productName}>
-                      {o.productName || 'Sản phẩm mua sắm qua link tiếp thị'}
+
+                  {/* HÀNG 2 (BODY): ẢNH + TÊN SẢN PHẨM + NGÀY THÁNG RÚT GỌN GÓC PHẢI */}
+                  <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
+                    {o.imageUrl ? (
+                      <img
+                        src={o.imageUrl}
+                        alt={o.productName || 'Ảnh sản phẩm'}
+                        referrerPolicy="no-referrer"
+                        style={{
+                          width: '54px',
+                          height: '54px',
+                          objectFit: 'cover',
+                          borderRadius: '12px',
+                          border: '1px solid var(--border-color, rgba(0,0,0,0.06))',
+                          flexShrink: 0,
+                          background: 'var(--bg-main, #f8fafc)',
+                          cursor: 'pointer'
+                        }}
+                        title="Bấm để xem ảnh gốc"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          window.open(o.imageUrl, '_blank', 'noopener,noreferrer');
+                        }}
+                        onError={(e) => {
+                          e.currentTarget.style.display = 'none';
+                          if (e.currentTarget.nextElementSibling) {
+                            e.currentTarget.nextElementSibling.style.display = 'flex';
+                          }
+                        }}
+                      />
+                    ) : null}
+                    <div
+                      style={{
+                        width: '54px',
+                        height: '54px',
+                        borderRadius: '12px',
+                        background: 'var(--bg-main, #f8fafc)',
+                        border: '1px solid var(--border-color, rgba(0,0,0,0.06))',
+                        display: o.imageUrl ? 'none' : 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        color: 'var(--text-muted, #94a3b8)',
+                        fontSize: '20px',
+                        flexShrink: 0
+                      }}
+                    >
+                      <i className={platBadge.icon || 'fa-solid fa-bag-shopping'} style={{ opacity: 0.65 }}></i>
+                    </div>
+
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <div
+                        className="order-card-title"
+                        title={o.productName}
+                        style={{
+                          fontSize: '13px',
+                          fontWeight: '700',
+                          color: 'var(--text-bright, #0f172a)',
+                          lineHeight: '1.4',
+                          margin: 0,
+                          overflow: 'hidden',
+                          textOverflow: 'ellipsis',
+                          display: '-webkit-box',
+                          WebkitLineClamp: 2,
+                          WebkitBoxOrient: 'vertical'
+                        }}
+                      >
+                        {o.productName || 'Sản phẩm mua sắm qua link tiếp thị'}
+                      </div>
+                    </div>
+
+                    {shortOrderDate && (
+                      <div style={{ fontSize: '11.5px', fontWeight: '600', color: '#94a3b8', flexShrink: 0, marginLeft: '4px' }}>
+                        {shortOrderDate}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* HÀNG 3 (FOOTER): Ô LỊCH NGÀY THÁNG BÊN TRÁI & HOA HỒNG BÊN PHẢI */}
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px', paddingTop: '6px' }}>
+                    {/* BÊN TRÁI: Ô LỊCH THỜI GIAN & TEXT GHI NHẬN / ĐÃ HOÀN */}
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <div
+                        style={{
+                          width: '36px',
+                          height: '36px',
+                          borderRadius: '10px',
+                          border: `1.5px solid ${isCompleted ? '#bbf7d0' : isCancelled ? '#fecaca' : '#fed7aa'}`,
+                          background: isCompleted ? '#f0fdf4' : isCancelled ? '#fef2f2' : '#fff7ed',
+                          display: 'flex',
+                          flexDirection: 'column',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          lineHeight: '1',
+                          flexShrink: 0
+                        }}
+                      >
+                        <span style={{ fontSize: '13px', fontWeight: '900', color: isCompleted ? '#16a34a' : isCancelled ? '#dc2626' : '#ea580c' }}>
+                          {dateInfo.day}
+                        </span>
+                        <span style={{ fontSize: '8px', fontWeight: '800', textTransform: 'uppercase', color: isCompleted ? '#16a34a' : isCancelled ? '#dc2626' : '#ea580c', marginTop: '1px' }}>
+                          {dateInfo.month}
+                        </span>
+                      </div>
+
+                      <span style={{ fontSize: '12px', fontWeight: '700', color: 'var(--text-bright, #334155)' }}>
+                        {dateInfo.labelText}
+                      </span>
+                    </div>
+
+                    {/* BÊN PHẢI: LABEL HOA HỒNG (NHƯ CŨ) & SỐ TIỀN HOA HỒNG TO NỔI BẬT */}
+                    <div style={{ textAlign: 'right', flexShrink: 0 }}>
+                      <div style={{ fontSize: '10px', fontWeight: '800', textTransform: 'uppercase', color: '#64748b', letterSpacing: '0.4px', marginBottom: '1px' }}>
+                        Hoa hồng
+                      </div>
+                      <div
+                        style={{
+                          fontSize: '15.5px',
+                          fontWeight: '900',
+                          fontFamily: 'monospace, sans-serif',
+                          color: isCompleted ? '#059669' : isCancelled ? '#94a3b8' : '#ea580c',
+                          letterSpacing: '-0.2px'
+                        }}
+                      >
+                        {commissionVal > 0 ? `+${formatMoney(commissionVal)}` : '0đ'}
+                      </div>
                     </div>
                   </div>
                 </div>
-
-                {/* Hàng Trạng thái & Hoa hồng: Cùng 1 hàng, không rớt dòng */}
-                <div className="order-card-commission-row" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px', flexWrap: 'nowrap', marginTop: '10px' }}>
-                  <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', minWidth: 0, overflow: 'hidden', whiteSpace: 'nowrap' }}>
-                    <span style={{
-                      color: statusColor,
-                      fontSize: '12.5px',
-                      fontWeight: '700',
-                      textOverflow: 'ellipsis',
-                      overflow: 'hidden'
-                    }}>
-                      {isCompleted ? (
-                        <span>Hoàn thành{o.completeTime ? ` • ${formatDateTime(o.completeTime)}` : ''}</span>
-                      ) : (
-                        <span>{o.status || 'Chờ xử lý'}</span>
-                      )}
-                    </span>
-                  </div>
-                  <div style={{ textAlign: 'right', marginLeft: 'auto', flexShrink: 0, whiteSpace: 'nowrap' }}>
-                    <span className="order-commission-label">Hoa hồng: </span>
-                    <span className="order-commission-val">{formatMoney(o.commission || 0)}</span>
-                  </div>
-                </div>
-              </div>
-            );
-          })
+              );
+            })}
+          </div>
         )}
 
         {/* Pagination */}

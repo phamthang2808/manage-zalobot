@@ -4714,7 +4714,8 @@ body.dark {
   .data-card,
   .lookup-card,
   .stat-card-item,
-  .order-card-item {
+  .order-card-item,
+  .order-card-modern {
     background: linear-gradient(145deg, #1e293b 0%, #0f172a 100%) !important;
     border: 1.5px solid rgba(255, 255, 255, 0.14) !important;
     box-shadow: 0 8px 24px -4px rgba(0, 0, 0, 0.4), 0 0 16px rgba(249, 115, 22, 0.08) !important;
@@ -4726,7 +4727,8 @@ body.dark {
   .data-card:hover,
   .lookup-card:hover,
   .stat-card-item:hover,
-  .order-card-item:hover {
+  .order-card-item:hover,
+  .order-card-modern:hover {
     border-color: rgba(249, 115, 22, 0.5) !important;
     box-shadow: 0 10px 28px -4px rgba(0, 0, 0, 0.5), 0 0 22px rgba(249, 115, 22, 0.25) !important;
   }
@@ -8247,3 +8249,34 @@ body.dark .stat-card-item.referral .stat-card-value { color: #fb7185 !important;
 }
 
 
+
+/* Modern Order Cards (Ảnh 1 Style) */
+.orders-grid-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 16px;
+  width: 100%;
+}
+@media (max-width: 768px) {
+  .orders-grid-list {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+}
+.order-card-modern {
+  background: var(--bg-card, #ffffff);
+  border: 1px solid var(--border-color, rgba(0,0,0,0.07));
+  border-radius: 20px;
+  padding: 16px 18px;
+  box-shadow: 0 4px 16px -2px rgba(0,0,0,0.04);
+  transition: all 0.25s ease;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 12px;
+}
+.order-card-modern:hover {
+  border-color: rgba(234, 88, 12, 0.45);
+  box-shadow: 0 8px 24px -4px rgba(234, 88, 12, 0.12);
+  transform: translateY(-2px);
+}

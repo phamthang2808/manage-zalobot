@@ -139,7 +139,11 @@ export default function OrdersView() {
     }
     if (!orderDateObj) orderDateObj = new Date();
 
-    // 2. Nếu đơn ĐÃ HOÀN THÀNH: bắt buộc có ngày hoàn thành
+    const orderDay = String(orderDateObj.getDate()).padStart(2, '0');
+    const orderMonthNum = orderDateObj.getMonth() + 1;
+    const orderMonthStr = String(orderMonthNum).padStart(2, '0');
+
+    // 2. Nếu đơn ĐÃ HOÀN THÀNH: ô lịch ở trước là ngày đặt, sau chữ 'Ngày hoàn thành' là ngày hoàn thành
     if (isCompleted) {
       let completeDateObj = null;
       const completeRaw =
@@ -162,14 +166,13 @@ export default function OrdersView() {
         completeDateObj = derived > now ? now : derived;
       }
 
-      const day = String(completeDateObj.getDate()).padStart(2, '0');
-      const monthNum = completeDateObj.getMonth() + 1;
-      const monthStr = String(monthNum).padStart(2, '0');
+      const compDay = String(completeDateObj.getDate()).padStart(2, '0');
+      const compMonthStr = String(completeDateObj.getMonth() + 1).padStart(2, '0');
 
       return {
-        day,
-        month: `TH${monthNum}`,
-        labelText: `Ngày hoàn thành ${day}/${monthStr}`,
+        day: orderDay, // Ô lịch ở trước là NGÀY ĐẶT
+        month: `TH${orderMonthNum}`,
+        labelText: `Ngày hoàn thành ${compDay}/${compMonthStr}`, // Phía sau là NGÀY HOÀN THÀNH
         isCompleted: true
       };
     }
@@ -184,27 +187,22 @@ export default function OrdersView() {
       }
       if (!cancelDateObj) cancelDateObj = orderDateObj;
 
-      const day = String(cancelDateObj.getDate()).padStart(2, '0');
-      const monthNum = cancelDateObj.getMonth() + 1;
-      const monthStr = String(monthNum).padStart(2, '0');
+      const cancelDay = String(cancelDateObj.getDate()).padStart(2, '0');
+      const cancelMonthStr = String(cancelDateObj.getMonth() + 1).padStart(2, '0');
 
       return {
-        day,
-        month: `TH${monthNum}`,
-        labelText: `Đã hủy ${day}/${monthStr}`,
+        day: orderDay, // Ô lịch ở trước là NGÀY ĐẶT
+        month: `TH${orderMonthNum}`,
+        labelText: `Đã hủy ${cancelDay}/${cancelMonthStr}`,
         isCancelled: true
       };
     }
 
-    // 4. Nếu đơn ĐANG XỬ LÝ (Chưa hoàn thành -> ô lịch hiển thị ngày ghi nhận đơn)
-    const day = String(orderDateObj.getDate()).padStart(2, '0');
-    const monthNum = orderDateObj.getMonth() + 1;
-    const monthStr = String(monthNum).padStart(2, '0');
-
+    // 4. Nếu đơn ĐANG XỬ LÝ (Chưa hoàn thành -> ô lịch phía trước là ngày đặt, text là Ghi nhận ngày đặt)
     return {
-      day,
-      month: `TH${monthNum}`,
-      labelText: `Ghi nhận ${day}/${monthStr}`,
+      day: orderDay,
+      month: `TH${orderMonthNum}`,
+      labelText: `Ghi nhận ${orderDay}/${orderMonthStr}`,
       isPending: true
     };
   };
@@ -726,15 +724,6 @@ export default function OrdersView() {
                         {o.productName || 'Sản phẩm mua sắm qua link tiếp thị'}
                       </div>
                     </div>
-
-                    {shortOrderDate && (
-                      <div
-                        style={{ fontSize: '11.5px', fontWeight: '600', color: '#94a3b8', flexShrink: 0, marginLeft: '4px' }}
-                        title={`Ngày đặt: ${shortOrderDate}`}
-                      >
-                        {shortOrderDate}
-                      </div>
-                    )}
                   </div>
 
                   {/* HÀNG 3 (FOOTER): Ô LỊCH NGÀY THÁNG BÊN TRÁI & HOA HỒNG BÊN PHẢI */}

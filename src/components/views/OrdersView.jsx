@@ -245,19 +245,31 @@ export default function OrdersView() {
           background: var(--bg-card, #ffffff);
           border: 1px solid var(--border-color, rgba(0,0,0,0.07));
           border-radius: 20px;
-          padding: 16px 18px;
+          padding: 0;
+          overflow: hidden;
           box-shadow: 0 4px 16px -2px rgba(0,0,0,0.04);
           transition: all 0.25s ease;
           display: flex;
           flex-direction: column;
           justify-content: space-between;
-          gap: 12px;
         }
         .order-card-modern:hover {
           border-color: var(--border-color, rgba(0,0,0,0.07));
-          box-shadow: 0 8px 24px -4px rgba(0, 0, 0, 0.08);
+          box-shadow: 0 8px 24px -4px rgba(234, 88, 12, 0.12);
           transform: translateY(-2px);
         }
+        .order-card-strip-pending { background: #FFFDF7 !important; }
+        .order-card-strip-success { background: #F6FAF7 !important; }
+        .order-card-strip-cancelled { background: #F8FAFC !important; }
+        html[data-theme="dark"] .order-card-strip-pending,
+        html.dark .order-card-strip-pending,
+        body.dark .order-card-strip-pending { background: rgba(245, 158, 11, 0.08) !important; }
+        html[data-theme="dark"] .order-card-strip-success,
+        html.dark .order-card-strip-success,
+        body.dark .order-card-strip-success { background: rgba(34, 197, 94, 0.08) !important; }
+        html[data-theme="dark"] .order-card-strip-cancelled,
+        html.dark .order-card-strip-cancelled,
+        body.dark .order-card-strip-cancelled { background: rgba(148, 163, 184, 0.08) !important; }
         html[data-theme="dark"] .order-card-modern,
         html.dark .order-card-modern,
         body.dark .order-card-modern {
@@ -583,37 +595,38 @@ export default function OrdersView() {
               const shortOrderDate = getShortOrderDate(o);
               const commissionVal = Math.round(Number(o.commission || o.finalCommission || o.userFinalCommission || 0));
 
-              // Trạng thái hiển thị viên thuốc dạng: • Đang xử lý / • Đã hoàn thành / • Đã hủy
+              // Trạng thái chỉ hiển thị chữ (bỏ khối màu nền xung quanh)
               let stBadge = {
                 text: 'Đang xử lý',
-                bg: '#fef3c7',
-                color: '#b45309',
-                dotColor: '#f59e0b',
-                border: 'none'
+                color: '#ea580c'
               };
 
               if (isCompleted) {
                 stBadge = {
                   text: 'Đã hoàn thành',
-                  bg: '#dcfce7',
-                  color: '#15803d',
-                  dotColor: '#22c55e',
-                  border: 'none'
+                  color: '#16a34a'
                 };
               } else if (isCancelled) {
                 stBadge = {
                   text: 'Đã hủy',
-                  bg: '#fee2e2',
-                  color: '#b91c1c',
-                  dotColor: '#ef4444',
-                  border: 'none'
+                  color: '#dc2626'
                 };
               }
 
               return (
                 <div key={o.orderId || o.id || idx} className="order-card-modern">
-                  {/* HÀNG 1 (HEADER): NỀN TẢNG + MÃ ĐƠN HÀNG ĐẦY ĐỦ + NÚT COPY & BADGE TRẠNG THÁI */}
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px', flexWrap: 'wrap' }}>
+                  {/* HÀNG 1 (HEADER): NỀN TẢNG + MÃ ĐƠN HÀNG ĐẦY ĐỦ + NÚT COPY & TRẠNG THÁI */}
+                  <div
+                    style={{
+                      padding: '14px 18px 10px 18px',
+                      borderBottom: '1px solid var(--border-color, rgba(0,0,0,0.04))',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      gap: '8px',
+                      flexWrap: 'wrap'
+                    }}
+                  >
                     {/* BÊN TRÁI: Icon sàn + Tên sàn + Mã đơn đầy đủ + Nút Copy */}
                     <div style={{ display: 'inline-flex', alignItems: 'center', gap: '7px', flexWrap: 'wrap', minWidth: 0 }}>
                       <i className={platBadge.icon || 'fa-solid fa-bag-shopping'} style={{ color: platBadge.color || '#ea580c', fontSize: '15px' }}></i>
@@ -635,31 +648,21 @@ export default function OrdersView() {
                       <CopyButton text={o.orderId} title="Copy mã đơn hàng" toastMessage={`Đã copy mã đơn: ${o.orderId}`} />
                     </div>
 
-                    {/* BÊN PHẢI: Pill badge trạng thái có chấm tròn màu */}
-                    <div
+                    {/* BÊN PHẢI: Trạng thái chỉ hiện chữ */}
+                    <span
                       style={{
-                        display: 'inline-flex',
-                        alignItems: 'center',
-                        gap: '5px',
-                        padding: '3px 10px',
-                        borderRadius: '9999px',
-                        fontSize: '11px',
+                        fontSize: '11.5px',
                         fontWeight: '700',
-                        background: stBadge.bg,
                         color: stBadge.color,
-                        border: 'none',
-                        outline: 'none',
-                        boxShadow: 'none',
                         flexShrink: 0
                       }}
                     >
-                      <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: stBadge.dotColor, display: 'inline-block' }}></span>
-                      <span>{stBadge.text}</span>
-                    </div>
+                      {stBadge.text}
+                    </span>
                   </div>
 
-                  {/* HÀNG 2 (BODY): ẢNH + TÊN SẢN PHẨM + NGÀY THÁNG RÚT GỌN GÓC PHẢI */}
-                  <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
+                  {/* HÀNG 2 (BODY): ẢNH + TÊN SẢN PHẨM */}
+                  <div style={{ padding: '12px 18px', display: 'flex', alignItems: 'flex-start', gap: '12px', flex: 1 }}>
                     {o.imageUrl ? (
                       <img
                         src={o.imageUrl}
@@ -728,9 +731,19 @@ export default function OrdersView() {
                     </div>
                   </div>
 
-                  {/* HÀNG 3 (FOOTER): Ô LỊCH NGÀY THÁNG BÊN TRÁI & HOA HỒNG BÊN PHẢI */}
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px', paddingTop: '6px' }}>
-                    {/* BÊN TRÁI: Ô LỊCH THỜI GIAN & TEXT GHI NHẬN / ĐÃ HOÀN */}
+                  {/* HÀNG 3 (FOOTER): DẢI CHÂN THẺ CÓ MÀU VÀNG NHẠT (ĐANG XỬ LÝ) / XÁM XANH NHẠT (ĐÃ HOÀN THÀNH) */}
+                  <div
+                    className={`order-card-strip ${isCompleted ? 'order-card-strip-success' : isCancelled ? 'order-card-strip-cancelled' : 'order-card-strip-pending'}`}
+                    style={{
+                      padding: '10px 18px 12px 18px',
+                      borderTop: '1px solid var(--border-color, rgba(0,0,0,0.05))',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      gap: '8px'
+                    }}
+                  >
+                    {/* BÊN TRÁI: Ô LỊCH THỜI GIAN & TEXT GHI NHẬN / NGÀY HOÀN THÀNH */}
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                       <div
                         style={{
@@ -738,13 +751,14 @@ export default function OrdersView() {
                           height: '36px',
                           borderRadius: '10px',
                           border: `1.5px solid ${isCompleted ? '#bbf7d0' : isCancelled ? '#fecaca' : '#fed7aa'}`,
-                          background: isCompleted ? '#f0fdf4' : isCancelled ? '#fef2f2' : '#fff7ed',
+                          background: '#ffffff',
                           display: 'flex',
                           flexDirection: 'column',
                           alignItems: 'center',
                           justifyContent: 'center',
                           lineHeight: '1',
-                          flexShrink: 0
+                          flexShrink: 0,
+                          boxShadow: '0 1px 2px rgba(0,0,0,0.04)'
                         }}
                       >
                         <span style={{ fontSize: '13px', fontWeight: '900', color: isCompleted ? '#16a34a' : isCancelled ? '#dc2626' : '#ea580c' }}>

@@ -8266,15 +8266,40 @@ body.dark .stat-card-item.referral .stat-card-value { color: #fb7185 !important;
   background: var(--bg-card, #ffffff);
   border: 1px solid var(--border-color, rgba(0,0,0,0.07));
   border-radius: 20px;
-  padding: 16px 18px;
+  padding: 0;
+  overflow: hidden;
   box-shadow: 0 4px 16px -2px rgba(0,0,0,0.04);
   transition: all 0.25s ease;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  gap: 12px;
 }
-.order-card-modern:hover { border-color: var(--border-color, rgba(0,0,0,0.07));
+.order-card-modern:hover {
+  border-color: var(--border-color, rgba(0,0,0,0.07));
   box-shadow: 0 8px 24px -4px rgba(234, 88, 12, 0.12);
   transform: translateY(-2px);
+}
+.order-card-strip-pending {
+  background: #FFFDF7 !important;
+}
+.order-card-strip-success {
+  background: #F6FAF7 !important;
+}
+.order-card-strip-cancelled {
+  background: #F8FAFC !important;
+}
+html[data-theme="dark"] .order-card-strip-pending,
+html.dark .order-card-strip-pending,
+body.dark .order-card-strip-pending {
+  background: rgba(245, 158, 11, 0.08) !important;
+}
+html[data-theme="dark"] .order-card-strip-success,
+html.dark .order-card-strip-success,
+body.dark .order-card-strip-success {
+  background: rgba(34, 197, 94, 0.08) !important;
+}
+html[data-theme="dark"] .order-card-strip-cancelled,
+html.dark .order-card-strip-cancelled,
+body.dark .order-card-strip-cancelled {
+  background: rgba(148, 163, 184, 0.08) !important;
 }

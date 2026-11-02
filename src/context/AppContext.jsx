@@ -13,12 +13,32 @@ export function AppProvider({ children }) {
     try { return saved ? JSON.parse(saved) : null; } catch (e) { return null; }
   });
 
+  // Helper nhận diện link tra cứu (hỗ trợ /lookup, /tracuu, /tra-cuu, /tra_cuu, ?view=tracuu, ?token=...)
+  const isLookupRoute = (path = '', search = '', hash = '') => {
+    const p = path.toLowerCase();
+    const s = search.toLowerCase();
+    const h = hash.toLowerCase();
+    return (
+      p.includes('/lookup') ||
+      p.includes('/tra-cuu') ||
+      p.includes('/tracuu') ||
+      p.includes('/tra_cuu') ||
+      s.includes('view=lookup') ||
+      s.includes('view=tracuu') ||
+      s.includes('view=tra-cuu') ||
+      s.includes('token=') ||
+      s.includes('zaloid=') ||
+      h.includes('lookup') ||
+      h.includes('tracuu')
+    );
+  };
+
   // Navigation
   const [view, setView] = useState(() => {
     const path = window.location.pathname;
     const search = window.location.search;
     const hash = window.location.hash;
-    if (path.includes('/lookup') || path.includes('/tra-cuu') || search.includes('view=lookup') || hash.includes('lookup')) return 'lookup';
+    if (isLookupRoute(path, search, hash)) return 'lookup';
     if (path.includes('/login') || search.includes('view=login') || hash.includes('login')) return 'login';
     if (path.includes('/convert') || search.includes('view=convert')) return 'convert';
     if (path.includes('/orders') || search.includes('view=orders')) return 'orders';
@@ -32,7 +52,7 @@ export function AppProvider({ children }) {
       const path = window.location.pathname;
       const search = window.location.search;
       const hash = window.location.hash;
-      if (path.includes('/lookup') || path.includes('/tra-cuu') || search.includes('view=lookup') || hash.includes('lookup')) {
+      if (isLookupRoute(path, search, hash)) {
         setView('lookup');
       } else if (path.includes('/login') || search.includes('view=login') || hash.includes('login')) {
         setView('login');

@@ -3,7 +3,7 @@ import { useApp } from '../../context/AppContext';
 import ThemeToggle from './ThemeToggle';
 
 export default function UserSidebar({ sidebarOpen, setSidebarOpen }) {
-  const { view, setView, user, isAdmin, handleLogout, showConfirm } = useApp();
+  const { view, setView, user, token, isAdmin, handleLogout, showConfirm } = useApp();
 
   const mainNavTabs = [
     { id: 'lookup', label: 'Tra cứu đơn hàng', icon: 'fa-solid fa-magnifying-glass' },
@@ -41,6 +41,9 @@ export default function UserSidebar({ sidebarOpen, setSidebarOpen }) {
     } else if (itemId === 'admin') {
       setView('admin');
       sessionStorage.setItem('adminView', 'admin');
+    } else if (['convert', 'orders', 'withdraw', 'account'].includes(itemId) && !token && !user) {
+      setView('login');
+      window.history.pushState({}, '', '/?view=login');
     } else {
       setView(itemId);
       window.history.pushState({}, '', `/?view=${itemId}`);
@@ -213,91 +216,129 @@ export default function UserSidebar({ sidebarOpen, setSidebarOpen }) {
           flexDirection: 'column',
           gap: '10px'
         }}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-            <div 
-              onClick={() => { setView('account'); window.history.pushState({}, '', '/?view=account'); if (setSidebarOpen) setSidebarOpen(false); }}
-              style={{ display: 'flex', alignItems: 'center', gap: '10px', minWidth: 0, cursor: 'pointer' }}
-              title="Xem & sửa thông tin cá nhân"
-            >
-              {user?.avatarUrl ? (
-                <img 
-                  src={user.avatarUrl} 
-                  alt="Avatar" 
-                  referrerPolicy="no-referrer"
-                  style={{ width: '34px', height: '34px', borderRadius: '50%', objectFit: 'cover' }} 
-                />
-              ) : (
-                <div style={{
-                  width: '34px',
-                  height: '34px',
-                  borderRadius: '50%',
-                  background: 'linear-gradient(135deg, #f97316, #ea580c)',
-                  color: '#fff',
+          {token || user ? (
+            <>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <div 
+                  onClick={() => { setView('account'); window.history.pushState({}, '', '/?view=account'); if (setSidebarOpen) setSidebarOpen(false); }}
+                  style={{ display: 'flex', alignItems: 'center', gap: '10px', minWidth: 0, cursor: 'pointer' }}
+                  title="Xem & sửa thông tin cá nhân"
+                >
+                  {user?.avatarUrl ? (
+                    <img 
+                      src={user.avatarUrl} 
+                      alt="Avatar" 
+                      referrerPolicy="no-referrer"
+                      style={{ width: '34px', height: '34px', borderRadius: '50%', objectFit: 'cover' }} 
+                    />
+                  ) : (
+                    <div style={{
+                      width: '34px',
+                      height: '34px',
+                      borderRadius: '50%',
+                      background: 'linear-gradient(135deg, #f97316, #ea580c)',
+                      color: '#fff',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontSize: '13px',
+                      fontWeight: '700'
+                    }}>
+                      {(user?.fullName || user?.name || 'U').substring(0, 1).toUpperCase()}
+                    </div>
+                  )}
+                  <div style={{ minWidth: 0, textAlign: 'left' }}>
+                    <div style={{ fontSize: '13.5px', fontWeight: '600', color: 'var(--text-bright)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', fontFamily: 'var(--font-sans)' }}>
+                      {user?.fullName || user?.name || 'Thành viên'}
+                    </div>
+                    <div style={{ fontSize: '11px', color: 'var(--text-muted, #64748b)', fontFamily: 'var(--font-sans)' }}>
+                      {user?.role || 'MEMBER'}
+                    </div>
+                  </div>
+                </div>
+
+                <ThemeToggle />
+              </div>
+
+              <button
+                onClick={async () => {
+                  const confirmed = await showConfirm({
+                    title: 'Đăng xuất tài khoản',
+                    message: 'Bạn có chắc chắn muốn đăng xuất khỏi hệ thống không?',
+                    confirmText: 'Đăng xuất',
+                    cancelText: 'Hủy bỏ'
+                  });
+                  if (confirmed) {
+                    handleLogout();
+                  }
+                }}
+                style={{
+                  width: '100%',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
+                  gap: '8px',
+                  padding: '9px 12px',
+                  background: 'var(--bg-main)',
+                  border: '1px solid var(--border-color)',
+                  color: 'var(--text-muted, #64748b)',
+                  borderRadius: '12px',
                   fontSize: '13px',
-                  fontWeight: '700'
-                }}>
-                  {(user?.fullName || 'U').substring(0, 1).toUpperCase()}
-                </div>
-              )}
-              <div style={{ minWidth: 0, textAlign: 'left' }}>
-                <div style={{ fontSize: '13.5px', fontWeight: '600', color: 'var(--text-bright)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', fontFamily: 'var(--font-sans)' }}>
-                  {user?.fullName || 'Thành viên'}
-                </div>
-                <div style={{ fontSize: '11px', color: 'var(--text-muted, #64748b)', fontFamily: 'var(--font-sans)' }}>
-                  {user?.role || 'MEMBER'}
-                </div>
+                  fontWeight: '500',
+                  fontFamily: 'var(--font-sans)',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s'
+                }}
+                onMouseEnter={e => {
+                  e.currentTarget.style.color = '#ef4444';
+                  e.currentTarget.style.borderColor = '#fca5a5';
+                  e.currentTarget.style.background = '#fef2f2';
+                }}
+                onMouseLeave={e => {
+                  e.currentTarget.style.color = 'var(--text-muted)';
+                  e.currentTarget.style.borderColor = 'var(--border-color)';
+                  e.currentTarget.style.background = 'var(--bg-main)';
+                }}
+              >
+                <i className="fa-solid fa-right-from-bracket"></i>
+                <span>Đăng xuất</span>
+              </button>
+            </>
+          ) : (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 4px' }}>
+                <span style={{ fontSize: '12px', color: 'var(--text-muted, #64748b)', fontWeight: '600' }}>Chưa đăng nhập</span>
+                <ThemeToggle />
               </div>
+              <button
+                type="button"
+                onClick={() => {
+                  setView('login');
+                  window.history.pushState({}, '', '/?view=login');
+                  if (setSidebarOpen) setSidebarOpen(false);
+                }}
+                style={{
+                  width: '100%',
+                  padding: '10px 14px',
+                  borderRadius: '12px',
+                  background: 'linear-gradient(135deg, #f97316 0%, #ea580c 100%)',
+                  color: '#ffffff',
+                  border: 'none',
+                  fontSize: '13px',
+                  fontWeight: '700',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '8px',
+                  boxShadow: '0 4px 12px rgba(249, 115, 22, 0.3)'
+                }}
+              >
+                <i className="fa-solid fa-right-to-bracket"></i>
+                <span>Đăng nhập / Đăng ký</span>
+              </button>
             </div>
-
-            <ThemeToggle />
-          </div>
-
-          <button
-            onClick={async () => {
-              const confirmed = await showConfirm({
-                title: 'Đăng xuất tài khoản',
-                message: 'Bạn có chắc chắn muốn đăng xuất khỏi hệ thống không?',
-                confirmText: 'Đăng xuất',
-                cancelText: 'Hủy bỏ'
-              });
-              if (confirmed) {
-                handleLogout();
-              }
-            }}
-            style={{
-              width: '100%',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: '8px',
-              padding: '9px 12px',
-              background: 'var(--bg-main)',
-              border: '1px solid var(--border-color)',
-              color: 'var(--text-muted, #64748b)',
-              borderRadius: '12px',
-              fontSize: '13px',
-              fontWeight: '500',
-              fontFamily: 'var(--font-sans)',
-              cursor: 'pointer',
-              transition: 'all 0.2s'
-            }}
-            onMouseEnter={e => {
-              e.currentTarget.style.color = '#ef4444';
-              e.currentTarget.style.borderColor = '#fca5a5';
-              e.currentTarget.style.background = '#fef2f2';
-            }}
-            onMouseLeave={e => {
-              e.currentTarget.style.color = 'var(--text-muted)';
-              e.currentTarget.style.borderColor = 'var(--border-color)';
-              e.currentTarget.style.background = 'var(--bg-main)';
-            }}
-          >
-            <i className="fa-solid fa-right-from-bracket"></i>
-            <span>Đăng xuất</span>
-          </button>
+          )}
         </div>
       </aside>
     </>

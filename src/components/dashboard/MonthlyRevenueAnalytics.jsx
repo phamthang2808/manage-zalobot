@@ -67,10 +67,10 @@ export default function MonthlyRevenueAnalytics() {
 
   // Toggle hiển thị từng cột trên biểu đồ
   const [visibleSeries, setVisibleSeries] = useState({
-    grossComm: true,      // Hoa hồng sàn
+    grossComm: true,       // Hoa hồng sàn
     customerCashback: true,// Khách nhận
-    adminProfit: true,    // Lợi nhuận Admin
-    tax: true             // Thuế TNCN (10%)
+    adminProfit: true,     // Lợi nhuận Admin
+    tax: true              // Thuế TNCN (10%)
   });
 
   const toggleSeries = (key) => {
@@ -151,7 +151,6 @@ export default function MonthlyRevenueAnalytics() {
       if (map.has(ym)) {
         map.get(ym).actualWithdrawn += (Number(payout.amount) || 0);
       } else {
-        // Nếu tháng có rút tiền nhưng chưa có đơn hàng
         map.set(ym, {
           ym,
           label: formatMonthTitle(ym),
@@ -242,31 +241,60 @@ export default function MonthlyRevenueAnalytics() {
     const plotWidth = svgWidth - paddingLeft - paddingRight;
     const plotHeight = svgHeight - paddingTop - paddingBottom;
 
-    // Tìm giá trị max tùy theo viewMode
+    // Tìm giá trị max & tạo các mốc trục Y tròn (500k, 1 triệu, v.v.)
     let maxVal = 0;
+    const yTicks = [];
+
     if (chartView === 'cash') {
+      let maxDataVal = 0;
       monthlyData.forEach(d => {
-        if (visibleSeries.grossComm && d.grossComm > maxVal) maxVal = d.grossComm;
-        if (visibleSeries.customerCashback && d.customerCashback > maxVal) maxVal = d.customerCashback;
-        if (visibleSeries.adminProfit && d.adminProfit > maxVal) maxVal = d.adminProfit;
-        if (visibleSeries.tax && d.tax > maxVal) maxVal = d.tax;
+        if (visibleSeries.grossComm && d.grossComm > maxDataVal) maxDataVal = d.grossComm;
+        if (visibleSeries.customerCashback && d.customerCashback > maxDataVal) maxDataVal = d.customerCashback;
+        if (visibleSeries.adminProfit && d.adminProfit > maxDataVal) maxDataVal = d.adminProfit;
+        if (visibleSeries.tax && d.tax > maxDataVal) maxDataVal = d.tax;
       });
-      if (maxVal === 0) maxVal = 1000000;
-      // Làm tròn đẹp cho trục Y (lên 10% để không chạm nóc)
-      maxVal = Math.ceil((maxVal * 1.15) / 100000) * 100000;
+
+      if (maxDataVal === 0) maxDataVal = 1000000;
+
+      // Bước nhảy tròn thân thiện (500k, 1 triệu...)
+      let step = 500000;
+      if (maxDataVal <= 4000000) {
+        step = 500000; // 0, 500k, 1tr, 1.5tr, 2tr, 2.5tr, 3tr, 3.5tr...
+      } else if (maxDataVal <= 10000000) {
+        step = 1000000; // 0, 1tr, 2tr, 3tr, 4tr, 5tr...
+      } else if (maxDataVal <= 25000000) {
+        step = 2000000; // 0, 2tr, 4tr, 6tr...
+      } else {
+        step = 5000000; // 0, 5tr, 10tr...
+      }
+
+      maxVal = Math.ceil((maxDataVal * 1.05) / step) * step;
+      if (maxVal < step) maxVal = step;
+
+      for (let v = 0; v <= maxVal; v += step) {
+        yTicks.push(v);
+      }
     } else {
-      // Số lượng đơn hàng
+      let maxOrders = 0;
       monthlyData.forEach(d => {
-        if (d.totalOrders > maxVal) maxVal = d.totalOrders;
+        if (d.totalOrders > maxOrders) maxOrders = d.totalOrders;
       });
-      if (maxVal === 0) maxVal = 10;
-      maxVal = Math.ceil(maxVal * 1.2);
+      if (maxOrders === 0) maxOrders = 10;
+
+      let step = 10;
+      if (maxOrders <= 20) step = 5;
+      else if (maxOrders <= 60) step = 10;
+      else if (maxOrders <= 150) step = 25;
+      else if (maxOrders <= 300) step = 50;
+      else step = 100;
+
+      maxVal = Math.ceil((maxOrders * 1.08) / step) * step;
+      if (maxVal < step) maxVal = step;
+
+      for (let v = 0; v <= maxVal; v += step) {
+        yTicks.push(v);
+      }
     }
-
-    // Tạo các mốc trục Y (5 mức)
-    const yTicks = [0, 0.25, 0.5, 0.75, 1].map(ratio => Math.round(maxVal * ratio));
-
-    // Chiều rộng mỗi nhóm tháng
     const groupWidth = plotWidth / dataLen;
     const barPadding = Math.min(18, groupWidth * 0.18);
     const availableGroupWidth = groupWidth - barPadding * 2;
@@ -321,7 +349,6 @@ export default function MonthlyRevenueAnalytics() {
       d.diffWithdrawn
     ]);
 
-    // Dòng tổng cộng
     rows.push([
       '"TỔNG CỘNG"',
       summaryKPIs.totalOrders,
@@ -352,14 +379,13 @@ export default function MonthlyRevenueAnalytics() {
 
   return (
     <div className="monthly-analytics-card" style={{
-      background: 'var(--bg-card, #ffffff)',
-      border: '1px solid var(--border-color, #e2e8f0)',
+      background: 'var(--bg-card, #1e293b)',
+      border: '1px solid var(--border-color, #334155)',
       borderRadius: '16px',
       padding: '24px',
-      marginBottom: '24px',
-      boxShadow: '0 4px 20px -2px rgba(16, 24, 40, 0.06)'
+      marginBottom: '24px'
     }}>
-      {/* 1. Header & Bộ chọn tỷ lệ % khách nhận */}
+      {/* 1. Header & Bộ nút chuyển chế độ xem */}
       <div style={{
         display: 'flex',
         flexWrap: 'wrap',
@@ -367,56 +393,42 @@ export default function MonthlyRevenueAnalytics() {
         justifyContent: 'space-between',
         gap: '16px',
         paddingBottom: '20px',
-        borderBottom: '1px solid var(--border-color, #e2e8f0)'
+        borderBottom: '1px solid var(--border-color, #334155)'
       }}>
-        <div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <div style={{
-              width: '38px',
-              height: '38px',
-              borderRadius: '10px',
-              background: 'linear-gradient(135deg, rgba(249, 138, 12, 0.15), rgba(234, 108, 2, 0.25))',
-              color: '#ea580c',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              fontSize: '18px'
-            }}>
-              <i className="fa-solid fa-chart-line"></i>
-            </div>
-            <div>
-              <h2 style={{ margin: 0, fontSize: '18px', fontWeight: '800', color: 'var(--text-main, #0f172a)' }}>
-                Thống Kê Doanh Thu & Đơn Hàng Theo Tháng
-              </h2>
-              <p style={{ margin: '3px 0 0', fontSize: '13px', color: 'var(--text-muted, #64748b)' }}>
-                Biểu đồ trực quan doanh thu hoa hồng sàn, thuế TNCN 10%, tiền hoàn cho khách và lợi nhuận Admin
-              </p>
-            </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          {/* Icon màu xám đồng bộ theo phong cách menu thanh bên, không bọc ô màu */}
+          <i className="fa-solid fa-chart-line" style={{ color: 'var(--text-muted, #94a3b8)', fontSize: '22px' }}></i>
+          <div>
+            <h2 style={{ margin: 0, fontSize: '18px', fontWeight: '800', color: 'var(--text-main, #f8fafc)' }}>
+              Thống Kê Doanh Thu & Đơn Hàng Theo Tháng
+            </h2>
+            <p style={{ margin: '3px 0 0', fontSize: '13px', color: 'var(--text-muted, #94a3b8)' }}>
+              Biểu đồ trực quan doanh thu hoa hồng sàn, thuế TNCN 10%, tiền hoàn cho khách và lợi nhuận Admin
+            </p>
           </div>
         </div>
 
-        {/* Nút hành động (Xuất CSV & Đổi view) */}
+        {/* Nút hành động */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
           <div style={{
             display: 'inline-flex',
-            background: 'var(--bg-main, #f1f5f9)',
+            background: 'transparent',
             padding: '3px',
             borderRadius: '10px',
-            border: '1px solid var(--border-color, #cbd5e1)'
+            border: '1px solid var(--border-color, #334155)'
           }}>
             <button
               type="button"
               onClick={() => setChartView('cash')}
               style={{
                 border: 'none',
-                background: chartView === 'cash' ? 'var(--bg-card, #ffffff)' : 'transparent',
-                color: chartView === 'cash' ? '#ea580c' : 'var(--text-muted, #64748b)',
+                background: chartView === 'cash' ? 'var(--border-color, #334155)' : 'transparent',
+                color: chartView === 'cash' ? 'var(--text-main, #f8fafc)' : 'var(--text-muted, #94a3b8)',
                 fontWeight: chartView === 'cash' ? '700' : '500',
                 fontSize: '12.5px',
                 padding: '6px 14px',
                 borderRadius: '8px',
                 cursor: 'pointer',
-                boxShadow: chartView === 'cash' ? '0 2px 6px rgba(0,0,0,0.08)' : 'none',
                 transition: 'all 0.15s ease'
               }}
             >
@@ -427,14 +439,13 @@ export default function MonthlyRevenueAnalytics() {
               onClick={() => setChartView('orders')}
               style={{
                 border: 'none',
-                background: chartView === 'orders' ? 'var(--bg-card, #ffffff)' : 'transparent',
-                color: chartView === 'orders' ? '#0284c7' : 'var(--text-muted, #64748b)',
+                background: chartView === 'orders' ? 'var(--border-color, #334155)' : 'transparent',
+                color: chartView === 'orders' ? 'var(--text-main, #f8fafc)' : 'var(--text-muted, #94a3b8)',
                 fontWeight: chartView === 'orders' ? '700' : '500',
                 fontSize: '12.5px',
                 padding: '6px 14px',
                 borderRadius: '8px',
                 cursor: 'pointer',
-                boxShadow: chartView === 'orders' ? '0 2px 6px rgba(0,0,0,0.08)' : 'none',
                 transition: 'all 0.15s ease'
               }}
             >
@@ -451,17 +462,17 @@ export default function MonthlyRevenueAnalytics() {
               gap: '6px',
               padding: '7px 14px',
               borderRadius: '9px',
-              background: 'rgba(16, 185, 129, 0.12)',
-              border: '1px solid rgba(16, 185, 129, 0.35)',
-              color: '#059669',
-              fontWeight: '700',
+              background: 'transparent',
+              border: '1px solid var(--border-color, #334155)',
+              color: 'var(--text-main, #f8fafc)',
+              fontWeight: '600',
               fontSize: '12.5px',
               cursor: 'pointer',
               transition: 'all 0.15s ease'
             }}
             title="Tải bảng báo cáo định dạng Excel / CSV"
           >
-            <i className="fa-solid fa-file-excel"></i> Xuất Excel / CSV
+            <i className="fa-solid fa-file-excel" style={{ color: 'var(--text-muted, #94a3b8)' }}></i> Xuất Excel / CSV
           </button>
         </div>
       </div>
@@ -471,8 +482,8 @@ export default function MonthlyRevenueAnalytics() {
         marginTop: '16px',
         padding: '16px',
         borderRadius: '12px',
-        background: 'var(--bg-main, #f8fafc)',
-        border: '1px solid var(--border-color, #e2e8f0)'
+        background: 'transparent',
+        border: '1px solid var(--border-color, #334155)'
       }}>
         <div style={{
           display: 'grid',
@@ -483,20 +494,17 @@ export default function MonthlyRevenueAnalytics() {
           {/* A. BỘ LỌC TỶ LỆ % KHÁCH NHẬN */}
           <div style={{ gridColumn: 'span 2', minWidth: '320px' }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
-              <span style={{ fontSize: '13px', fontWeight: '700', color: 'var(--text-main, #0f172a)', display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
-                <i className="fa-solid fa-percent" style={{ color: '#f97316' }}></i>
+              <span style={{ fontSize: '13px', fontWeight: '700', color: 'var(--text-main, #f8fafc)', display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
+                <i className="fa-solid fa-percent" style={{ color: 'var(--text-muted, #94a3b8)', fontSize: '12px' }}></i>
                 Tỷ lệ khách nhận hoàn tiền (Cấu hình % phân bổ):
               </span>
+              {/* Bỏ màu xung quanh chữ, để chữ thuần mộc đồng bộ */}
               <span style={{
-                background: 'rgba(249, 115, 22, 0.15)',
-                color: '#ea580c',
-                padding: '2px 10px',
-                borderRadius: '6px',
-                fontWeight: '800',
-                fontSize: '13px',
-                border: '1px solid rgba(249, 115, 22, 0.3)'
+                color: 'var(--text-muted, #94a3b8)',
+                fontWeight: '600',
+                fontSize: '13px'
               }}>
-                Khách: {customerRate}% | Admin: {100 - customerRate}%
+                Khách nhận: <strong style={{ color: 'var(--text-main, #f8fafc)' }}>{customerRate}%</strong> | Admin: <strong style={{ color: 'var(--text-main, #f8fafc)' }}>{100 - customerRate}%</strong>
               </span>
             </div>
 
@@ -507,9 +515,9 @@ export default function MonthlyRevenueAnalytics() {
                   type="button"
                   onClick={() => setCustomerRate(rate)}
                   style={{
-                    border: customerRate === rate ? '1.5px solid #ea580c' : '1px solid var(--border-color, #cbd5e1)',
-                    background: customerRate === rate ? '#ea580c' : 'var(--bg-card, #ffffff)',
-                    color: customerRate === rate ? '#ffffff' : 'var(--text-main, #334155)',
+                    border: customerRate === rate ? '1.5px solid #ea580c' : '1px solid var(--border-color, #334155)',
+                    background: customerRate === rate ? '#ea580c' : 'transparent',
+                    color: customerRate === rate ? '#ffffff' : 'var(--text-main, #f8fafc)',
                     padding: '5px 12px',
                     borderRadius: '7px',
                     fontSize: '12px',
@@ -548,16 +556,16 @@ export default function MonthlyRevenueAnalytics() {
                     fontWeight: '700',
                     textAlign: 'center',
                     borderRadius: '6px',
-                    border: '1px solid var(--border-color, #cbd5e1)',
-                    background: 'var(--bg-card, #ffffff)',
-                    color: 'var(--text-main, #0f172a)'
+                    border: '1px solid var(--border-color, #334155)',
+                    background: 'transparent',
+                    color: 'var(--text-main, #f8fafc)'
                   }}
                 />
-                <span style={{ fontSize: '12px', fontWeight: '700', color: 'var(--text-muted)' }}>%</span>
+                <span style={{ fontSize: '12px', fontWeight: '700', color: 'var(--text-muted, #94a3b8)' }}>%</span>
               </div>
             </div>
 
-            <div style={{ marginTop: '8px', fontSize: '11.5px', color: 'var(--text-muted, #64748b)', lineHeight: '1.4' }}>
+            <div style={{ marginTop: '8px', fontSize: '11.5px', color: 'var(--text-muted, #94a3b8)', lineHeight: '1.4' }}>
               💡 <em>Công thức:</em> Hoa hồng sàn ➔ <strong>Trừ 10% Thuế TNCN</strong> ➔ Còn 90% sau thuế.
               Khách hưởng <strong>{customerRate}%</strong> (={((customerRate * 0.9)).toFixed(1)}% tổng sàn),
               Admin giữ lại <strong>{100 - customerRate}%</strong> (={(((100 - customerRate) * 0.9)).toFixed(1)}% tổng sàn).
@@ -568,7 +576,7 @@ export default function MonthlyRevenueAnalytics() {
           <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'flex-end', gridColumn: 'span 1' }}>
             {/* Lọc Sàn */}
             <div>
-              <label style={{ display: 'block', fontSize: '11px', fontWeight: '700', color: 'var(--text-muted)', marginBottom: '4px' }}>
+              <label style={{ display: 'block', fontSize: '11px', fontWeight: '700', color: 'var(--text-muted, #94a3b8)', marginBottom: '4px' }}>
                 NỀN TẢNG SÀN:
               </label>
               <select
@@ -577,24 +585,24 @@ export default function MonthlyRevenueAnalytics() {
                 style={{
                   padding: '6px 10px',
                   borderRadius: '7px',
-                  border: '1px solid var(--border-color, #cbd5e1)',
-                  background: 'var(--bg-card, #ffffff)',
-                  color: 'var(--text-main, #0f172a)',
+                  border: '1px solid var(--border-color, #334155)',
+                  background: 'var(--bg-card, #1e293b)',
+                  color: 'var(--text-main, #f8fafc)',
                   fontSize: '12px',
                   fontWeight: '600',
                   cursor: 'pointer'
                 }}
               >
                 <option value="ALL">🌐 Tất cả các sàn</option>
-                <option value="Shopee">🟠 Shopee & Food</option>
-                <option value="TikTok Shop">🎵 TikTok Shop</option>
-                <option value="Lazada">🔵 Lazada</option>
+                <option value="Shopee">Shopee & Food</option>
+                <option value="TikTok Shop">TikTok Shop</option>
+                <option value="Lazada">Lazada</option>
               </select>
             </div>
 
             {/* Lọc Trạng thái */}
             <div>
-              <label style={{ display: 'block', fontSize: '11px', fontWeight: '700', color: 'var(--text-muted)', marginBottom: '4px' }}>
+              <label style={{ display: 'block', fontSize: '11px', fontWeight: '700', color: 'var(--text-muted, #94a3b8)', marginBottom: '4px' }}>
                 TRẠNG THÁI ĐƠN:
               </label>
               <select
@@ -603,23 +611,23 @@ export default function MonthlyRevenueAnalytics() {
                 style={{
                   padding: '6px 10px',
                   borderRadius: '7px',
-                  border: '1px solid var(--border-color, #cbd5e1)',
-                  background: 'var(--bg-card, #ffffff)',
-                  color: 'var(--text-main, #0f172a)',
+                  border: '1px solid var(--border-color, #334155)',
+                  background: 'var(--bg-card, #1e293b)',
+                  color: 'var(--text-main, #f8fafc)',
                   fontSize: '12px',
                   fontWeight: '600',
                   cursor: 'pointer'
                 }}
               >
-                <option value="ALL">📋 Tất cả trạng thái</option>
-                <option value="COMPLETED">✅ Chỉ đơn hoàn thành</option>
-                <option value="PENDING">⏳ Đang chờ xử lý</option>
+                <option value="ALL">Tất cả trạng thái</option>
+                <option value="COMPLETED">Chỉ đơn hoàn thành</option>
+                <option value="PENDING">Đang chờ xử lý</option>
               </select>
             </div>
 
             {/* Khung thời gian */}
             <div>
-              <label style={{ display: 'block', fontSize: '11px', fontWeight: '700', color: 'var(--text-muted)', marginBottom: '4px' }}>
+              <label style={{ display: 'block', fontSize: '11px', fontWeight: '700', color: 'var(--text-muted, #94a3b8)', marginBottom: '4px' }}>
                 KHUNG THỜI GIAN:
               </label>
               <select
@@ -628,23 +636,23 @@ export default function MonthlyRevenueAnalytics() {
                 style={{
                   padding: '6px 10px',
                   borderRadius: '7px',
-                  border: '1px solid var(--border-color, #cbd5e1)',
-                  background: 'var(--bg-card, #ffffff)',
-                  color: 'var(--text-main, #0f172a)',
+                  border: '1px solid var(--border-color, #334155)',
+                  background: 'var(--bg-card, #1e293b)',
+                  color: 'var(--text-main, #f8fafc)',
                   fontSize: '12px',
                   fontWeight: '600',
                   cursor: 'pointer'
                 }}
               >
-                <option value="6m">📅 6 tháng gần nhất</option>
-                <option value="12m">📅 12 tháng gần nhất</option>
-                <option value="all">📅 Toàn bộ lịch sử</option>
+                <option value="6m">6 tháng gần nhất</option>
+                <option value="12m">12 tháng gần nhất</option>
+                <option value="all">Toàn bộ lịch sử</option>
               </select>
             </div>
 
             {/* Tiêu chí ngày */}
             <div>
-              <label style={{ display: 'block', fontSize: '11px', fontWeight: '700', color: 'var(--text-muted)', marginBottom: '4px' }}>
+              <label style={{ display: 'block', fontSize: '11px', fontWeight: '700', color: 'var(--text-muted, #94a3b8)', marginBottom: '4px' }}>
                 TIÊU CHÍ NGÀY:
               </label>
               <select
@@ -653,23 +661,23 @@ export default function MonthlyRevenueAnalytics() {
                 style={{
                   padding: '6px 10px',
                   borderRadius: '7px',
-                  border: '1px solid var(--border-color, #cbd5e1)',
-                  background: 'var(--bg-card, #ffffff)',
-                  color: 'var(--text-main, #0f172a)',
+                  border: '1px solid var(--border-color, #334155)',
+                  background: 'var(--bg-card, #1e293b)',
+                  color: 'var(--text-main, #f8fafc)',
                   fontSize: '12px',
                   fontWeight: '600',
                   cursor: 'pointer'
                 }}
               >
-                <option value="purchase">🛒 Ngày đặt hàng</option>
-                <option value="complete">🏁 Ngày hoàn thành</option>
+                <option value="purchase">Ngày đặt hàng</option>
+                <option value="complete">Ngày hoàn thành</option>
               </select>
             </div>
           </div>
         </div>
       </div>
 
-      {/* 3. THẺ TỔNG HỢP CÁC CHỈ SỐ TÀI CHÍNH (SUMMARY CARDS) */}
+      {/* 3. THẺ TỔNG HỢP CÁC CHỈ SỐ TÀI CHÍNH (ĐỒNG BỘ NỀN VÀ ICON XÁM) */}
       <div style={{
         display: 'grid',
         gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
@@ -678,126 +686,132 @@ export default function MonthlyRevenueAnalytics() {
       }}>
         {/* Card 1: Tổng đơn */}
         <div style={{
-          background: 'var(--bg-main, #f8fafc)',
-          border: '1px solid var(--border-color, #e2e8f0)',
+          background: 'var(--bg-card, #1e293b)',
+          border: '1px solid var(--border-color, #334155)',
           borderRadius: '12px',
-          padding: '14px',
+          padding: '16px',
           display: 'flex',
           flexDirection: 'column',
           gap: '4px'
         }}>
-          <span style={{ fontSize: '12px', color: 'var(--text-muted, #64748b)', fontWeight: '600' }}>
-            📦 Tổng Đơn Hàng
+          <span style={{ fontSize: '12px', color: 'var(--text-muted, #94a3b8)', fontWeight: '600', display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <i className="fa-solid fa-boxes-stacked" style={{ color: 'var(--text-muted, #94a3b8)', fontSize: '13px' }}></i>
+            Tổng Đơn Hàng
           </span>
-          <span style={{ fontSize: '20px', fontWeight: '800', color: 'var(--text-main, #0f172a)' }}>
-            {summaryKPIs.totalOrders.toLocaleString()} <small style={{ fontSize: '12px', fontWeight: '500', color: 'var(--text-muted)' }}>đơn</small>
+          <span style={{ fontSize: '20px', fontWeight: '800', color: 'var(--text-main, #f8fafc)' }}>
+            {summaryKPIs.totalOrders.toLocaleString()} <small style={{ fontSize: '12px', fontWeight: '500', color: 'var(--text-muted, #94a3b8)' }}>đơn</small>
           </span>
-          <span style={{ fontSize: '11.5px', color: 'var(--text-muted)' }}>
+          <span style={{ fontSize: '11.5px', color: 'var(--text-muted, #94a3b8)' }}>
             Shopee: {summaryKPIs.shopeeOrders} | TikTok: {summaryKPIs.tiktokOrders}
           </span>
         </div>
 
         {/* Card 2: Hoa hồng sàn */}
         <div style={{
-          background: 'rgba(99, 102, 241, 0.06)',
-          border: '1px solid rgba(99, 102, 241, 0.25)',
+          background: 'var(--bg-card, #1e293b)',
+          border: '1px solid var(--border-color, #334155)',
           borderRadius: '12px',
-          padding: '14px',
+          padding: '16px',
           display: 'flex',
           flexDirection: 'column',
           gap: '4px'
         }}>
-          <span style={{ fontSize: '12px', color: '#4f46e5', fontWeight: '700' }}>
-            💰 Hoa Hồng Sàn (Gross)
+          <span style={{ fontSize: '12px', color: 'var(--text-muted, #94a3b8)', fontWeight: '600', display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <i className="fa-solid fa-coins" style={{ color: 'var(--text-muted, #94a3b8)', fontSize: '13px' }}></i>
+            Hoa Hồng Sàn (Gross)
           </span>
-          <span style={{ fontSize: '20px', fontWeight: '800', color: '#4338ca' }}>
+          <span style={{ fontSize: '20px', fontWeight: '800', color: 'var(--text-main, #f8fafc)' }}>
             {formatMoney(summaryKPIs.grossComm)}
           </span>
-          <span style={{ fontSize: '11.5px', color: '#6366f1' }}>
+          <span style={{ fontSize: '11.5px', color: 'var(--text-muted, #94a3b8)' }}>
             100% doanh thu tiếp thị
           </span>
         </div>
 
         {/* Card 3: Thuế TNCN (10%) */}
         <div style={{
-          background: 'rgba(239, 68, 68, 0.06)',
-          border: '1px solid rgba(239, 68, 68, 0.25)',
+          background: 'var(--bg-card, #1e293b)',
+          border: '1px solid var(--border-color, #334155)',
           borderRadius: '12px',
-          padding: '14px',
+          padding: '16px',
           display: 'flex',
           flexDirection: 'column',
           gap: '4px'
         }}>
-          <span style={{ fontSize: '12px', color: '#dc2626', fontWeight: '700' }}>
-            🏛️ Thuế TNCN Sàn (10%)
+          <span style={{ fontSize: '12px', color: 'var(--text-muted, #94a3b8)', fontWeight: '600', display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <i className="fa-solid fa-building-columns" style={{ color: 'var(--text-muted, #94a3b8)', fontSize: '13px' }}></i>
+            Thuế TNCN Sàn (10%)
           </span>
-          <span style={{ fontSize: '20px', fontWeight: '800', color: '#b91c1c' }}>
+          <span style={{ fontSize: '20px', fontWeight: '800', color: 'var(--text-main, #f8fafc)' }}>
             {formatMoney(summaryKPIs.tax)}
           </span>
-          <span style={{ fontSize: '11.5px', color: '#ef4444' }}>
+          <span style={{ fontSize: '11.5px', color: 'var(--text-muted, #94a3b8)' }}>
             Sau thuế: {formatMoney(summaryKPIs.afterTax)}
           </span>
         </div>
 
         {/* Card 4: Khách nhận */}
         <div style={{
-          background: 'rgba(16, 185, 129, 0.08)',
-          border: '1.5px solid rgba(16, 185, 129, 0.35)',
+          background: 'var(--bg-card, #1e293b)',
+          border: '1px solid var(--border-color, #334155)',
           borderRadius: '12px',
-          padding: '14px',
+          padding: '16px',
           display: 'flex',
           flexDirection: 'column',
           gap: '4px'
         }}>
-          <span style={{ fontSize: '12px', color: '#059669', fontWeight: '700' }}>
-            🎁 Khách Nhận ({customerRate}%)
+          <span style={{ fontSize: '12px', color: 'var(--text-muted, #94a3b8)', fontWeight: '600', display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <i className="fa-solid fa-gift" style={{ color: 'var(--text-muted, #94a3b8)', fontSize: '13px' }}></i>
+            Khách Nhận ({customerRate}%)
           </span>
-          <span style={{ fontSize: '20px', fontWeight: '800', color: '#047857' }}>
+          <span style={{ fontSize: '20px', fontWeight: '800', color: 'var(--text-main, #f8fafc)' }}>
             {formatMoney(summaryKPIs.customerCashback)}
           </span>
-          <span style={{ fontSize: '11.5px', color: '#10b981' }}>
+          <span style={{ fontSize: '11.5px', color: 'var(--text-muted, #94a3b8)' }}>
             Tiền hoàn trả cho thành viên
           </span>
         </div>
 
         {/* Card 5: Lợi nhuận Admin */}
         <div style={{
-          background: 'rgba(249, 115, 22, 0.08)',
-          border: '1.5px solid rgba(249, 115, 22, 0.35)',
+          background: 'var(--bg-card, #1e293b)',
+          border: '1px solid var(--border-color, #334155)',
           borderRadius: '12px',
-          padding: '14px',
+          padding: '16px',
           display: 'flex',
           flexDirection: 'column',
           gap: '4px'
         }}>
-          <span style={{ fontSize: '12px', color: '#ea580c', fontWeight: '700' }}>
-            💼 Lợi Nhuận Admin ({100 - customerRate}%)
+          <span style={{ fontSize: '12px', color: 'var(--text-muted, #94a3b8)', fontWeight: '600', display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <i className="fa-solid fa-briefcase" style={{ color: 'var(--text-muted, #94a3b8)', fontSize: '13px' }}></i>
+            Lợi Nhuận Admin ({100 - customerRate}%)
           </span>
-          <span style={{ fontSize: '20px', fontWeight: '800', color: '#c2410c' }}>
+          <span style={{ fontSize: '20px', fontWeight: '800', color: 'var(--text-main, #f8fafc)' }}>
             {formatMoney(summaryKPIs.adminProfit)}
           </span>
-          <span style={{ fontSize: '11.5px', color: '#f97316' }}>
+          <span style={{ fontSize: '11.5px', color: 'var(--text-muted, #94a3b8)' }}>
             Doanh thu ròng của hệ thống
           </span>
         </div>
 
         {/* Card 6: Đã thanh toán thực tế */}
         <div style={{
-          background: 'rgba(2, 132, 199, 0.06)',
-          border: '1px solid rgba(2, 132, 199, 0.25)',
+          background: 'var(--bg-card, #1e293b)',
+          border: '1px solid var(--border-color, #334155)',
           borderRadius: '12px',
-          padding: '14px',
+          padding: '16px',
           display: 'flex',
           flexDirection: 'column',
           gap: '4px'
         }}>
-          <span style={{ fontSize: '12px', color: '#0284c7', fontWeight: '700' }}>
-            💳 Đã Thanh Toán (Thực tế)
+          <span style={{ fontSize: '12px', color: 'var(--text-muted, #94a3b8)', fontWeight: '600', display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <i className="fa-solid fa-credit-card" style={{ color: 'var(--text-muted, #94a3b8)', fontSize: '13px' }}></i>
+            Đã Thanh Toán (Thực tế)
           </span>
-          <span style={{ fontSize: '20px', fontWeight: '800', color: '#0369a1' }}>
+          <span style={{ fontSize: '20px', fontWeight: '800', color: 'var(--text-main, #f8fafc)' }}>
             {formatMoney(summaryKPIs.actualWithdrawn)}
           </span>
-          <span style={{ fontSize: '11.5px', color: '#38bdf8' }}>
+          <span style={{ fontSize: '11.5px', color: 'var(--text-muted, #94a3b8)' }}>
             Đã duyệt chuyển khoản ví
           </span>
         </div>
@@ -808,8 +822,8 @@ export default function MonthlyRevenueAnalytics() {
         marginTop: '20px',
         padding: '16px',
         borderRadius: '12px',
-        border: '1px solid var(--border-color, #e2e8f0)',
-        background: 'var(--bg-main, #f8fafc)',
+        border: '1px solid var(--border-color, #334155)',
+        background: 'transparent',
         position: 'relative'
       }}>
         {/* Legend bật tắt cột */}
@@ -821,7 +835,7 @@ export default function MonthlyRevenueAnalytics() {
           gap: '12px',
           marginBottom: '12px',
           paddingBottom: '8px',
-          borderBottom: '1px dashed var(--border-color, #e2e8f0)'
+          borderBottom: '1px dashed var(--border-color, #334155)'
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '14px', flexWrap: 'wrap', fontSize: '12px' }}>
             {chartView === 'cash' ? (
@@ -837,7 +851,7 @@ export default function MonthlyRevenueAnalytics() {
                     alignItems: 'center',
                     gap: '6px',
                     opacity: visibleSeries.grossComm ? 1 : 0.4,
-                    color: 'var(--text-main, #0f172a)',
+                    color: 'var(--text-main, #f8fafc)',
                     fontWeight: '600'
                   }}
                 >
@@ -856,7 +870,7 @@ export default function MonthlyRevenueAnalytics() {
                     alignItems: 'center',
                     gap: '6px',
                     opacity: visibleSeries.customerCashback ? 1 : 0.4,
-                    color: 'var(--text-main, #0f172a)',
+                    color: 'var(--text-main, #f8fafc)',
                     fontWeight: '600'
                   }}
                 >
@@ -875,7 +889,7 @@ export default function MonthlyRevenueAnalytics() {
                     alignItems: 'center',
                     gap: '6px',
                     opacity: visibleSeries.adminProfit ? 1 : 0.4,
-                    color: 'var(--text-main, #0f172a)',
+                    color: 'var(--text-main, #f8fafc)',
                     fontWeight: '600'
                   }}
                 >
@@ -894,7 +908,7 @@ export default function MonthlyRevenueAnalytics() {
                     alignItems: 'center',
                     gap: '6px',
                     opacity: visibleSeries.tax ? 1 : 0.4,
-                    color: 'var(--text-main, #0f172a)',
+                    color: 'var(--text-main, #f8fafc)',
                     fontWeight: '600'
                   }}
                 >
@@ -904,15 +918,15 @@ export default function MonthlyRevenueAnalytics() {
               </>
             ) : (
               <>
-                <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', fontWeight: '600', color: 'var(--text-main)' }}>
+                <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', fontWeight: '600', color: 'var(--text-main, #f8fafc)' }}>
                   <span style={{ width: '12px', height: '12px', borderRadius: '3px', background: '#ee4d2d', display: 'inline-block' }}></span>
                   Shopee
                 </div>
-                <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', fontWeight: '600', color: 'var(--text-main)' }}>
+                <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', fontWeight: '600', color: 'var(--text-main, #f8fafc)' }}>
                   <span style={{ width: '12px', height: '12px', borderRadius: '3px', background: '#0284c7', display: 'inline-block' }}></span>
                   TikTok Shop
                 </div>
-                <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', fontWeight: '600', color: 'var(--text-main)' }}>
+                <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', fontWeight: '600', color: 'var(--text-main, #f8fafc)' }}>
                   <span style={{ width: '12px', height: '12px', borderRadius: '3px', background: '#10b981', display: 'inline-block' }}></span>
                   Đơn hoàn thành
                 </div>
@@ -920,14 +934,14 @@ export default function MonthlyRevenueAnalytics() {
             )}
           </div>
 
-          <span style={{ fontSize: '11.5px', color: 'var(--text-muted)' }}>
+          <span style={{ fontSize: '11.5px', color: 'var(--text-muted, #94a3b8)' }}>
             💡 Rê chuột vào cột để xem chi tiết từng tháng
           </span>
         </div>
 
         {/* Khung vẽ SVG */}
         {monthlyData.length === 0 ? (
-          <div style={{ textAlign: 'center', padding: '40px 20px', color: 'var(--text-muted)' }}>
+          <div style={{ textAlign: 'center', padding: '40px 20px', color: 'var(--text-muted, #94a3b8)' }}>
             <i className="fa-solid fa-chart-column" style={{ fontSize: '32px', marginBottom: '8px', opacity: 0.5 }}></i>
             <p style={{ margin: 0 }}>Không tìm thấy dữ liệu đơn hàng trong khoảng thời gian đã chọn.</p>
           </div>
@@ -976,7 +990,7 @@ export default function MonthlyRevenueAnalytics() {
                       y1={y}
                       x2={chartConfig.svgWidth - chartConfig.paddingRight}
                       y2={y}
-                      stroke="var(--border-color, #e2e8f0)"
+                      stroke="var(--border-color, #334155)"
                       strokeDasharray={idx === 0 ? 'none' : '4 4'}
                       strokeWidth={idx === 0 ? '1.5' : '1'}
                     />
@@ -985,7 +999,7 @@ export default function MonthlyRevenueAnalytics() {
                       y={y + 4}
                       textAnchor="end"
                       fontSize="11"
-                      fill="var(--text-muted, #64748b)"
+                      fill="var(--text-muted, #94a3b8)"
                       fontWeight="500"
                     >
                       {chartView === 'cash' ? formatCompactNumber(val) : val}
@@ -1000,14 +1014,12 @@ export default function MonthlyRevenueAnalytics() {
                 const isHovered = hoveredMonth?.ym === d.ym;
                 const isSelected = selectedMonth === d.ym;
 
-                // Các chuỗi cột hiển thị trong chế độ 'cash'
                 const activeCashSeries = [];
                 if (visibleSeries.grossComm) activeCashSeries.push({ key: 'grossComm', val: d.grossComm, fill: 'url(#gradGross)' });
                 if (visibleSeries.customerCashback) activeCashSeries.push({ key: 'customerCashback', val: d.customerCashback, fill: 'url(#gradCustomer)' });
                 if (visibleSeries.adminProfit) activeCashSeries.push({ key: 'adminProfit', val: d.adminProfit, fill: 'url(#gradAdmin)' });
                 if (visibleSeries.tax) activeCashSeries.push({ key: 'tax', val: d.tax, fill: 'url(#gradTax)' });
 
-                // Các chuỗi cột trong chế độ 'orders'
                 const activeOrderSeries = [
                   { key: 'shopee', val: d.shopeeOrders, fill: 'url(#gradShopee)' },
                   { key: 'tiktok', val: d.tiktokOrders, fill: 'url(#gradTiktok)' }
@@ -1034,7 +1046,7 @@ export default function MonthlyRevenueAnalytics() {
                         y={chartConfig.paddingTop}
                         width={chartConfig.groupWidth - 8}
                         height={chartConfig.plotHeight}
-                        fill={isSelected ? 'rgba(234, 88, 12, 0.12)' : 'rgba(100, 116, 139, 0.08)'}
+                        fill={isSelected ? 'rgba(234, 88, 12, 0.12)' : 'rgba(148, 163, 184, 0.08)'}
                         rx="6"
                       />
                     )}
@@ -1070,7 +1082,7 @@ export default function MonthlyRevenueAnalytics() {
                       textAnchor="middle"
                       fontSize={isHovered || isSelected ? '12' : '11'}
                       fontWeight={isHovered || isSelected ? '800' : '600'}
-                      fill={isSelected ? '#ea580c' : (isHovered ? 'var(--text-main, #0f172a)' : 'var(--text-muted, #64748b)')}
+                      fill={isSelected ? '#ea580c' : (isHovered ? 'var(--text-main, #f8fafc)' : 'var(--text-muted, #94a3b8)')}
                     >
                       {d.ym.slice(5)}/{d.ym.slice(2, 4)}
                     </text>
@@ -1081,15 +1093,15 @@ export default function MonthlyRevenueAnalytics() {
           </div>
         )}
 
-        {/* 5. FLOATING TOOLTIP CHI TIẾT KHI RÊ HOẶC CHỌN THÁNG */}
+        {/* 5. TOOLTIP CHI TIẾT KHI RÊ HOẶC CHỌN THÁNG (ĐỒNG BỘ NỀN VÀ KHÔNG BỌC MÀU CHỮ) */}
         {activeHoverData && (
           <div style={{
             marginTop: '12px',
             padding: '12px 18px',
             borderRadius: '10px',
-            background: 'var(--bg-card, #ffffff)',
-            border: '1.5px solid #ea580c',
-            boxShadow: '0 8px 24px rgba(234, 88, 12, 0.15)',
+            background: 'var(--bg-card, #1e293b)',
+            border: '1px solid var(--border-color, #334155)',
+            boxShadow: '0 8px 24px rgba(0, 0, 0, 0.25)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
@@ -1098,54 +1110,51 @@ export default function MonthlyRevenueAnalytics() {
           }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
               <span style={{
-                background: '#ea580c',
-                color: '#ffffff',
-                padding: '3px 8px',
-                borderRadius: '6px',
-                fontSize: '12px',
+                color: 'var(--text-main, #f8fafc)',
+                fontSize: '13px',
                 fontWeight: '800'
               }}>
-                {activeHoverData.label}
+                {activeHoverData.label}:
               </span>
-              <span style={{ fontSize: '13px', fontWeight: '700', color: 'var(--text-main)' }}>
-                Tổng: {activeHoverData.totalOrders} đơn (Shopee: {activeHoverData.shopeeOrders} | TikTok: {activeHoverData.tiktokOrders})
+              <span style={{ fontSize: '13px', fontWeight: '600', color: 'var(--text-muted, #94a3b8)' }}>
+                {activeHoverData.totalOrders} đơn (Shopee: {activeHoverData.shopeeOrders} | TikTok: {activeHoverData.tiktokOrders})
               </span>
             </div>
 
             <div style={{ display: 'flex', alignItems: 'center', gap: '16px', flexWrap: 'wrap', fontSize: '12.5px' }}>
               <div>
-                <span style={{ color: 'var(--text-muted)' }}>Sàn: </span>
-                <strong style={{ color: '#4f46e5' }}>{formatMoney(activeHoverData.grossComm)}</strong>
+                <span style={{ color: 'var(--text-muted, #94a3b8)' }}>Sàn: </span>
+                <strong style={{ color: 'var(--text-main, #f8fafc)' }}>{formatMoney(activeHoverData.grossComm)}</strong>
               </div>
               <div>
-                <span style={{ color: 'var(--text-muted)' }}>Thuế (10%): </span>
-                <strong style={{ color: '#dc2626' }}>{formatMoney(activeHoverData.tax)}</strong>
+                <span style={{ color: 'var(--text-muted, #94a3b8)' }}>Thuế (10%): </span>
+                <strong style={{ color: 'var(--text-main, #f8fafc)' }}>{formatMoney(activeHoverData.tax)}</strong>
               </div>
               <div>
-                <span style={{ color: 'var(--text-muted)' }}>Khách ({customerRate}%): </span>
-                <strong style={{ color: '#059669' }}>{formatMoney(activeHoverData.customerCashback)}</strong>
+                <span style={{ color: 'var(--text-muted, #94a3b8)' }}>Khách ({customerRate}%): </span>
+                <strong style={{ color: 'var(--text-main, #f8fafc)' }}>{formatMoney(activeHoverData.customerCashback)}</strong>
               </div>
               <div>
-                <span style={{ color: 'var(--text-muted)' }}>Admin ({100 - customerRate}%): </span>
-                <strong style={{ color: '#ea580c' }}>{formatMoney(activeHoverData.adminProfit)}</strong>
+                <span style={{ color: 'var(--text-muted, #94a3b8)' }}>Admin ({100 - customerRate}%): </span>
+                <strong style={{ color: 'var(--text-main, #f8fafc)' }}>{formatMoney(activeHoverData.adminProfit)}</strong>
               </div>
               <div>
-                <span style={{ color: 'var(--text-muted)' }}>Đã rút thực tế: </span>
-                <strong style={{ color: '#0284c7' }}>{formatMoney(activeHoverData.actualWithdrawn)}</strong>
+                <span style={{ color: 'var(--text-muted, #94a3b8)' }}>Đã rút thực tế: </span>
+                <strong style={{ color: 'var(--text-main, #f8fafc)' }}>{formatMoney(activeHoverData.actualWithdrawn)}</strong>
               </div>
             </div>
           </div>
         )}
       </div>
 
-      {/* 6. BẢNG THỐNG KÊ CHI TIẾT THEO TỪNG THÁNG (BREAKDOWN TABLE) */}
+      {/* 6. BẢNG THỐNG KÊ CHI TIẾT THEO TỪNG THÁNG (BỎ MÀU NỀN CỘT THUẦN CHỮ) */}
       <div style={{ marginTop: '24px' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
-          <h3 style={{ margin: 0, fontSize: '15px', fontWeight: '700', color: 'var(--text-main)' }}>
-            <i className="fa-solid fa-table-list" style={{ color: '#f97316', marginRight: '6px' }}></i>
+          <h3 style={{ margin: 0, fontSize: '15px', fontWeight: '700', color: 'var(--text-main, #f8fafc)', display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <i className="fa-solid fa-table-list" style={{ color: 'var(--text-muted, #94a3b8)' }}></i>
             Bảng Chi Tiết Doanh Thu & Phân Bổ Hoa Hồng Từng Tháng
           </h3>
-          <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
+          <span style={{ fontSize: '12px', color: 'var(--text-muted, #94a3b8)' }}>
             Hiển thị {monthlyData.length} tháng gần nhất
           </span>
         </div>
@@ -1153,31 +1162,30 @@ export default function MonthlyRevenueAnalytics() {
         <div className="table-container" style={{ overflowX: 'auto', WebkitOverflowScrolling: 'touch' }}>
           <table style={{ width: '100%', minWidth: '940px', borderCollapse: 'collapse', fontSize: '13px' }}>
             <thead>
-              <tr style={{ background: 'var(--bg-main, #f8fafc)', borderBottom: '2px solid var(--border-color, #e2e8f0)' }}>
-                <th style={{ padding: '10px 12px', textAlign: 'left', fontWeight: '700' }}>Tháng</th>
-                <th style={{ padding: '10px 12px', textAlign: 'center', fontWeight: '700' }}>Số đơn</th>
-                <th style={{ padding: '10px 12px', textAlign: 'right', fontWeight: '700', color: '#4f46e5' }}>Hoa hồng sàn</th>
-                <th style={{ padding: '10px 12px', textAlign: 'right', fontWeight: '700', color: '#dc2626' }}>Thuế TNCN (10%)</th>
-                <th style={{ padding: '10px 12px', textAlign: 'right', fontWeight: '700' }}>Sau thuế (90%)</th>
-                <th style={{ padding: '10px 12px', textAlign: 'right', fontWeight: '700', color: '#059669', background: 'rgba(16, 185, 129, 0.05)' }}>
+              <tr style={{ background: 'transparent', borderBottom: '2px solid var(--border-color, #334155)' }}>
+                <th style={{ padding: '10px 12px', textAlign: 'left', fontWeight: '700', color: 'var(--text-muted, #94a3b8)' }}>Tháng</th>
+                <th style={{ padding: '10px 12px', textAlign: 'center', fontWeight: '700', color: 'var(--text-muted, #94a3b8)' }}>Số đơn</th>
+                <th style={{ padding: '10px 12px', textAlign: 'right', fontWeight: '700', color: 'var(--text-muted, #94a3b8)' }}>Hoa hồng sàn</th>
+                <th style={{ padding: '10px 12px', textAlign: 'right', fontWeight: '700', color: 'var(--text-muted, #94a3b8)' }}>Thuế TNCN (10%)</th>
+                <th style={{ padding: '10px 12px', textAlign: 'right', fontWeight: '700', color: 'var(--text-muted, #94a3b8)' }}>Sau thuế (90%)</th>
+                <th style={{ padding: '10px 12px', textAlign: 'right', fontWeight: '700', color: 'var(--text-muted, #94a3b8)' }}>
                   Khách nhận ({customerRate}%)
                 </th>
-                <th style={{ padding: '10px 12px', textAlign: 'right', fontWeight: '700', color: '#ea580c', background: 'rgba(249, 115, 22, 0.05)' }}>
+                <th style={{ padding: '10px 12px', textAlign: 'right', fontWeight: '700', color: 'var(--text-muted, #94a3b8)' }}>
                   Lợi nhuận Admin ({100 - customerRate}%)
                 </th>
-                <th style={{ padding: '10px 12px', textAlign: 'right', fontWeight: '700', color: '#0284c7' }}>Đã rút thực tế</th>
-                <th style={{ padding: '10px 12px', textAlign: 'right', fontWeight: '700' }}>Chênh lệch ví</th>
+                <th style={{ padding: '10px 12px', textAlign: 'right', fontWeight: '700', color: 'var(--text-muted, #94a3b8)' }}>Đã rút thực tế</th>
+                <th style={{ padding: '10px 12px', textAlign: 'right', fontWeight: '700', color: 'var(--text-muted, #94a3b8)' }}>Chênh lệch ví</th>
               </tr>
             </thead>
             <tbody>
               {monthlyData.length === 0 ? (
                 <tr>
-                  <td colSpan="9" style={{ textAlign: 'center', padding: '24px', color: 'var(--text-muted)' }}>
+                  <td colSpan="9" style={{ textAlign: 'center', padding: '24px', color: 'var(--text-muted, #94a3b8)' }}>
                     Không có dữ liệu trong khoảng thời gian này
                   </td>
                 </tr>
               ) : (
-                // Hiển thị tháng mới nhất lên trước trong bảng để tiện theo dõi
                 [...monthlyData].reverse().map(d => {
                   const isRowSelected = selectedMonth === d.ym;
                   return (
@@ -1185,40 +1193,40 @@ export default function MonthlyRevenueAnalytics() {
                       key={d.ym}
                       onClick={() => setSelectedMonth(isRowSelected ? null : d.ym)}
                       style={{
-                        borderBottom: '1px solid var(--border-color, #e2e8f0)',
-                        background: isRowSelected ? 'rgba(249, 115, 22, 0.1)' : 'transparent',
+                        borderBottom: '1px solid var(--border-color, #334155)',
+                        background: isRowSelected ? 'rgba(148, 163, 184, 0.08)' : 'transparent',
                         cursor: 'pointer',
                         transition: 'background 0.15s ease'
                       }}
                     >
-                      <td style={{ padding: '10px 12px', fontWeight: '700', whiteSpace: 'nowrap' }}>
+                      <td style={{ padding: '10px 12px', fontWeight: '700', whiteSpace: 'nowrap', color: 'var(--text-main, #f8fafc)' }}>
                         <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
-                          {isRowSelected && <span style={{ color: '#ea580c' }}>▶</span>}
+                          {isRowSelected && <span style={{ color: 'var(--text-muted, #94a3b8)' }}>▶</span>}
                           {d.label}
                         </span>
                       </td>
-                      <td style={{ padding: '10px 12px', textAlign: 'center', whiteSpace: 'nowrap' }}>
+                      <td style={{ padding: '10px 12px', textAlign: 'center', whiteSpace: 'nowrap', color: 'var(--text-main, #f8fafc)' }}>
                         <strong>{d.totalOrders}</strong>
-                        <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>
+                        <div style={{ fontSize: '11px', color: 'var(--text-muted, #94a3b8)' }}>
                           SP: {d.shopeeOrders} | TT: {d.tiktokOrders}
                         </div>
                       </td>
-                      <td style={{ padding: '10px 12px', textAlign: 'right', fontWeight: '700', color: '#4f46e5' }}>
+                      <td style={{ padding: '10px 12px', textAlign: 'right', fontWeight: '700', color: 'var(--text-main, #f8fafc)' }}>
                         {formatMoney(d.grossComm)}
                       </td>
-                      <td style={{ padding: '10px 12px', textAlign: 'right', color: '#dc2626' }}>
+                      <td style={{ padding: '10px 12px', textAlign: 'right', color: 'var(--text-muted, #94a3b8)' }}>
                         {formatMoney(d.tax)}
                       </td>
-                      <td style={{ padding: '10px 12px', textAlign: 'right', color: 'var(--text-main)' }}>
+                      <td style={{ padding: '10px 12px', textAlign: 'right', color: 'var(--text-main, #f8fafc)' }}>
                         {formatMoney(d.afterTax)}
                       </td>
-                      <td style={{ padding: '10px 12px', textAlign: 'right', fontWeight: '700', color: '#059669', background: 'rgba(16, 185, 129, 0.05)' }}>
+                      <td style={{ padding: '10px 12px', textAlign: 'right', fontWeight: '700', color: 'var(--text-main, #f8fafc)' }}>
                         {formatMoney(d.customerCashback)}
                       </td>
-                      <td style={{ padding: '10px 12px', textAlign: 'right', fontWeight: '700', color: '#ea580c', background: 'rgba(249, 115, 22, 0.05)' }}>
+                      <td style={{ padding: '10px 12px', textAlign: 'right', fontWeight: '700', color: 'var(--text-main, #f8fafc)' }}>
                         {formatMoney(d.adminProfit)}
                       </td>
-                      <td style={{ padding: '10px 12px', textAlign: 'right', color: '#0284c7' }}>
+                      <td style={{ padding: '10px 12px', textAlign: 'right', color: 'var(--text-muted, #94a3b8)' }}>
                         {formatMoney(d.actualWithdrawn)}
                       </td>
                       <td style={{
@@ -1238,22 +1246,22 @@ export default function MonthlyRevenueAnalytics() {
             {monthlyData.length > 0 && (
               <tfoot>
                 <tr style={{
-                  background: 'var(--bg-main, #f1f5f9)',
-                  borderTop: '2px solid var(--border-color, #cbd5e1)',
+                  background: 'transparent',
+                  borderTop: '2px solid var(--border-color, #334155)',
                   fontWeight: '800'
                 }}>
-                  <td style={{ padding: '12px', color: 'var(--text-main)' }}>TỔNG CỘNG</td>
-                  <td style={{ padding: '12px', textAlign: 'center' }}>{summaryKPIs.totalOrders.toLocaleString()} đơn</td>
-                  <td style={{ padding: '12px', textAlign: 'right', color: '#4f46e5' }}>{formatMoney(summaryKPIs.grossComm)}</td>
-                  <td style={{ padding: '12px', textAlign: 'right', color: '#dc2626' }}>{formatMoney(summaryKPIs.tax)}</td>
-                  <td style={{ padding: '12px', textAlign: 'right' }}>{formatMoney(summaryKPIs.afterTax)}</td>
-                  <td style={{ padding: '12px', textAlign: 'right', color: '#059669', background: 'rgba(16, 185, 129, 0.1)' }}>
+                  <td style={{ padding: '12px', color: 'var(--text-main, #f8fafc)' }}>TỔNG CỘNG</td>
+                  <td style={{ padding: '12px', textAlign: 'center', color: 'var(--text-main, #f8fafc)' }}>{summaryKPIs.totalOrders.toLocaleString()} đơn</td>
+                  <td style={{ padding: '12px', textAlign: 'right', color: 'var(--text-main, #f8fafc)' }}>{formatMoney(summaryKPIs.grossComm)}</td>
+                  <td style={{ padding: '12px', textAlign: 'right', color: 'var(--text-muted, #94a3b8)' }}>{formatMoney(summaryKPIs.tax)}</td>
+                  <td style={{ padding: '12px', textAlign: 'right', color: 'var(--text-main, #f8fafc)' }}>{formatMoney(summaryKPIs.afterTax)}</td>
+                  <td style={{ padding: '12px', textAlign: 'right', color: 'var(--text-main, #f8fafc)' }}>
                     {formatMoney(summaryKPIs.customerCashback)}
                   </td>
-                  <td style={{ padding: '12px', textAlign: 'right', color: '#ea580c', background: 'rgba(249, 115, 22, 0.1)' }}>
+                  <td style={{ padding: '12px', textAlign: 'right', color: 'var(--text-main, #f8fafc)' }}>
                     {formatMoney(summaryKPIs.adminProfit)}
                   </td>
-                  <td style={{ padding: '12px', textAlign: 'right', color: '#0284c7' }}>{formatMoney(summaryKPIs.actualWithdrawn)}</td>
+                  <td style={{ padding: '12px', textAlign: 'right', color: 'var(--text-muted, #94a3b8)' }}>{formatMoney(summaryKPIs.actualWithdrawn)}</td>
                   <td style={{ padding: '12px', textAlign: 'right', color: (summaryKPIs.customerCashback - summaryKPIs.actualWithdrawn) >= 0 ? '#10b981' : '#f43f5e' }}>
                     {formatMoney(summaryKPIs.customerCashback - summaryKPIs.actualWithdrawn)}
                   </td>

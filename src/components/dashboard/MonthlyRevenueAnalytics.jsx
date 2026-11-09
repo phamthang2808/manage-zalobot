@@ -55,8 +55,10 @@ const formatCompactNumber = (num) => {
 export default function MonthlyRevenueAnalytics() {
   const { orders = [], payouts = [] } = useApp();
 
+  // Tỷ lệ hoàn tiền cố định 80/20 duy nhất
+  const customerRate = 80;
+
   // Bộ lọc
-  const [customerRate, setCustomerRate] = useState(80); // Mặc định 80%
   const [platformFilter, setPlatformFilter] = useState('ALL'); // ALL, Shopee, TikTok Shop, ShopeeFood, Lazada
   const [statusFilter, setStatusFilter] = useState('ALL'); // ALL, COMPLETED, PENDING
   const [dateBasis, setDateBasis] = useState('purchase'); // 'purchase' | 'complete'
@@ -477,202 +479,129 @@ export default function MonthlyRevenueAnalytics() {
         </div>
       </div>
 
-      {/* 2. KHU VỰC ĐIỀU CHỈNH TỶ LỆ % KHÁCH NHẬN & BỘ LỌC CHI TIẾT */}
+      {/* 2. BỘ LỌC CHI TIẾT THEO SÀN, TRẠNG THÁI, THỜI GIAN (TỶ LỆ CỐ ĐỊNH 80%) */}
       <div style={{
         marginTop: '16px',
-        padding: '16px',
+        padding: '14px 18px',
         borderRadius: '12px',
         background: 'transparent',
-        border: '1px solid var(--border-color, #334155)'
+        border: '1px solid var(--border-color, #334155)',
+        display: 'flex',
+        flexWrap: 'wrap',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        gap: '16px'
       }}>
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
-          gap: '16px',
-          alignItems: 'center'
-        }}>
-          {/* A. BỘ LỌC TỶ LỆ % KHÁCH NHẬN */}
-          <div style={{ gridColumn: 'span 2', minWidth: '320px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
-              <span style={{ fontSize: '13px', fontWeight: '700', color: 'var(--text-main, #f8fafc)', display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
-                <i className="fa-solid fa-percent" style={{ color: 'var(--text-muted, #94a3b8)', fontSize: '12px' }}></i>
-                Tỷ lệ khách nhận hoàn tiền (Cấu hình % phân bổ):
-              </span>
-              {/* Bỏ màu xung quanh chữ, để chữ thuần mộc đồng bộ */}
-              <span style={{
-                color: 'var(--text-muted, #94a3b8)',
+        {/* Thông tin tỷ lệ hoàn tiền cố định 80/20 */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+          <span style={{ fontSize: '13px', fontWeight: '700', color: 'var(--text-main, #f8fafc)' }}>
+            Tỷ lệ chia sẻ cố định: Khách nhận 80% | Admin giữ 20%
+          </span>
+          <span style={{ fontSize: '12px', color: 'var(--text-muted, #94a3b8)' }}>
+            (Tính sau khi trừ 10% thuế TNCN của sàn)
+          </span>
+        </div>
+
+        {/* Các bộ lọc dropdown */}
+        <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap', alignItems: 'center' }}>
+          {/* Lọc Sàn */}
+          <div>
+            <label style={{ display: 'block', fontSize: '11px', fontWeight: '700', color: 'var(--text-muted, #94a3b8)', marginBottom: '4px' }}>
+              NỀN TẢNG SÀN:
+            </label>
+            <select
+              value={platformFilter}
+              onChange={(e) => setPlatformFilter(e.target.value)}
+              style={{
+                padding: '6px 10px',
+                borderRadius: '7px',
+                border: '1px solid var(--border-color, #334155)',
+                background: 'var(--bg-card, #1e293b)',
+                color: 'var(--text-main, #f8fafc)',
+                fontSize: '12px',
                 fontWeight: '600',
-                fontSize: '13px'
-              }}>
-                Khách nhận: <strong style={{ color: 'var(--text-main, #f8fafc)' }}>{customerRate}%</strong> | Admin: <strong style={{ color: 'var(--text-main, #f8fafc)' }}>{100 - customerRate}%</strong>
-              </span>
-            </div>
-
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
-              {[70, 75, 80, 85, 90, 100].map(rate => (
-                <button
-                  key={rate}
-                  type="button"
-                  onClick={() => setCustomerRate(rate)}
-                  style={{
-                    border: customerRate === rate ? '1.5px solid #ea580c' : '1px solid var(--border-color, #334155)',
-                    background: customerRate === rate ? '#ea580c' : 'transparent',
-                    color: customerRate === rate ? '#ffffff' : 'var(--text-main, #f8fafc)',
-                    padding: '5px 12px',
-                    borderRadius: '7px',
-                    fontSize: '12px',
-                    fontWeight: customerRate === rate ? '800' : '600',
-                    cursor: 'pointer',
-                    transition: 'all 0.15s ease'
-                  }}
-                >
-                  {rate}% {rate === 80 && '(Chuẩn)'}
-                </button>
-              ))}
-
-              <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', marginLeft: 'auto' }}>
-                <input
-                  type="range"
-                  min="0"
-                  max="100"
-                  step="1"
-                  value={customerRate}
-                  onChange={(e) => setCustomerRate(Number(e.target.value))}
-                  style={{ width: '110px', accentColor: '#ea580c', cursor: 'pointer' }}
-                />
-                <input
-                  type="number"
-                  min="0"
-                  max="100"
-                  value={customerRate}
-                  onChange={(e) => {
-                    const v = Math.min(100, Math.max(0, Number(e.target.value) || 0));
-                    setCustomerRate(v);
-                  }}
-                  style={{
-                    width: '56px',
-                    padding: '4px 6px',
-                    fontSize: '12px',
-                    fontWeight: '700',
-                    textAlign: 'center',
-                    borderRadius: '6px',
-                    border: '1px solid var(--border-color, #334155)',
-                    background: 'transparent',
-                    color: 'var(--text-main, #f8fafc)'
-                  }}
-                />
-                <span style={{ fontSize: '12px', fontWeight: '700', color: 'var(--text-muted, #94a3b8)' }}>%</span>
-              </div>
-            </div>
-
-            <div style={{ marginTop: '8px', fontSize: '11.5px', color: 'var(--text-muted, #94a3b8)', lineHeight: '1.4' }}>
-              💡 <em>Công thức:</em> Hoa hồng sàn ➔ <strong>Trừ 10% Thuế TNCN</strong> ➔ Còn 90% sau thuế.
-              Khách hưởng <strong>{customerRate}%</strong> (={((customerRate * 0.9)).toFixed(1)}% tổng sàn),
-              Admin giữ lại <strong>{100 - customerRate}%</strong> (={(((100 - customerRate) * 0.9)).toFixed(1)}% tổng sàn).
-            </div>
+                cursor: 'pointer'
+              }}
+            >
+              <option value="ALL">🌐 Tất cả các sàn</option>
+              <option value="Shopee">Shopee & Food</option>
+              <option value="TikTok Shop">TikTok Shop</option>
+              <option value="Lazada">Lazada</option>
+            </select>
           </div>
 
-          {/* B. BỘ LỌC SÀN, TRẠNG THÁI, THỜI GIAN */}
-          <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'flex-end', gridColumn: 'span 1' }}>
-            {/* Lọc Sàn */}
-            <div>
-              <label style={{ display: 'block', fontSize: '11px', fontWeight: '700', color: 'var(--text-muted, #94a3b8)', marginBottom: '4px' }}>
-                NỀN TẢNG SÀN:
-              </label>
-              <select
-                value={platformFilter}
-                onChange={(e) => setPlatformFilter(e.target.value)}
-                style={{
-                  padding: '6px 10px',
-                  borderRadius: '7px',
-                  border: '1px solid var(--border-color, #334155)',
-                  background: 'var(--bg-card, #1e293b)',
-                  color: 'var(--text-main, #f8fafc)',
-                  fontSize: '12px',
-                  fontWeight: '600',
-                  cursor: 'pointer'
-                }}
-              >
-                <option value="ALL">🌐 Tất cả các sàn</option>
-                <option value="Shopee">Shopee & Food</option>
-                <option value="TikTok Shop">TikTok Shop</option>
-                <option value="Lazada">Lazada</option>
-              </select>
-            </div>
+          {/* Lọc Trạng thái */}
+          <div>
+            <label style={{ display: 'block', fontSize: '11px', fontWeight: '700', color: 'var(--text-muted, #94a3b8)', marginBottom: '4px' }}>
+              TRẠNG THÁI ĐƠN:
+            </label>
+            <select
+              value={statusFilter}
+              onChange={(e) => setStatusFilter(e.target.value)}
+              style={{
+                padding: '6px 10px',
+                borderRadius: '7px',
+                border: '1px solid var(--border-color, #334155)',
+                background: 'var(--bg-card, #1e293b)',
+                color: 'var(--text-main, #f8fafc)',
+                fontSize: '12px',
+                fontWeight: '600',
+                cursor: 'pointer'
+              }}
+            >
+              <option value="ALL">Tất cả trạng thái</option>
+              <option value="COMPLETED">Chỉ đơn hoàn thành</option>
+              <option value="PENDING">Đang chờ xử lý</option>
+            </select>
+          </div>
 
-            {/* Lọc Trạng thái */}
-            <div>
-              <label style={{ display: 'block', fontSize: '11px', fontWeight: '700', color: 'var(--text-muted, #94a3b8)', marginBottom: '4px' }}>
-                TRẠNG THÁI ĐƠN:
-              </label>
-              <select
-                value={statusFilter}
-                onChange={(e) => setStatusFilter(e.target.value)}
-                style={{
-                  padding: '6px 10px',
-                  borderRadius: '7px',
-                  border: '1px solid var(--border-color, #334155)',
-                  background: 'var(--bg-card, #1e293b)',
-                  color: 'var(--text-main, #f8fafc)',
-                  fontSize: '12px',
-                  fontWeight: '600',
-                  cursor: 'pointer'
-                }}
-              >
-                <option value="ALL">Tất cả trạng thái</option>
-                <option value="COMPLETED">Chỉ đơn hoàn thành</option>
-                <option value="PENDING">Đang chờ xử lý</option>
-              </select>
-            </div>
+          {/* Khung thời gian */}
+          <div>
+            <label style={{ display: 'block', fontSize: '11px', fontWeight: '700', color: 'var(--text-muted, #94a3b8)', marginBottom: '4px' }}>
+              KHUNG THỜI GIAN:
+            </label>
+            <select
+              value={timeRange}
+              onChange={(e) => setTimeRange(e.target.value)}
+              style={{
+                padding: '6px 10px',
+                borderRadius: '7px',
+                border: '1px solid var(--border-color, #334155)',
+                background: 'var(--bg-card, #1e293b)',
+                color: 'var(--text-main, #f8fafc)',
+                fontSize: '12px',
+                fontWeight: '600',
+                cursor: 'pointer'
+              }}
+            >
+              <option value="6m">6 tháng gần nhất</option>
+              <option value="12m">12 tháng gần nhất</option>
+              <option value="all">Toàn bộ lịch sử</option>
+            </select>
+          </div>
 
-            {/* Khung thời gian */}
-            <div>
-              <label style={{ display: 'block', fontSize: '11px', fontWeight: '700', color: 'var(--text-muted, #94a3b8)', marginBottom: '4px' }}>
-                KHUNG THỜI GIAN:
-              </label>
-              <select
-                value={timeRange}
-                onChange={(e) => setTimeRange(e.target.value)}
-                style={{
-                  padding: '6px 10px',
-                  borderRadius: '7px',
-                  border: '1px solid var(--border-color, #334155)',
-                  background: 'var(--bg-card, #1e293b)',
-                  color: 'var(--text-main, #f8fafc)',
-                  fontSize: '12px',
-                  fontWeight: '600',
-                  cursor: 'pointer'
-                }}
-              >
-                <option value="6m">6 tháng gần nhất</option>
-                <option value="12m">12 tháng gần nhất</option>
-                <option value="all">Toàn bộ lịch sử</option>
-              </select>
-            </div>
-
-            {/* Tiêu chí ngày */}
-            <div>
-              <label style={{ display: 'block', fontSize: '11px', fontWeight: '700', color: 'var(--text-muted, #94a3b8)', marginBottom: '4px' }}>
-                TIÊU CHÍ NGÀY:
-              </label>
-              <select
-                value={dateBasis}
-                onChange={(e) => setDateBasis(e.target.value)}
-                style={{
-                  padding: '6px 10px',
-                  borderRadius: '7px',
-                  border: '1px solid var(--border-color, #334155)',
-                  background: 'var(--bg-card, #1e293b)',
-                  color: 'var(--text-main, #f8fafc)',
-                  fontSize: '12px',
-                  fontWeight: '600',
-                  cursor: 'pointer'
-                }}
-              >
-                <option value="purchase">Ngày đặt hàng</option>
-                <option value="complete">Ngày hoàn thành</option>
-              </select>
-            </div>
+          {/* Tiêu chí ngày */}
+          <div>
+            <label style={{ display: 'block', fontSize: '11px', fontWeight: '700', color: 'var(--text-muted, #94a3b8)', marginBottom: '4px' }}>
+              TIÊU CHÍ NGÀY:
+            </label>
+            <select
+              value={dateBasis}
+              onChange={(e) => setDateBasis(e.target.value)}
+              style={{
+                padding: '6px 10px',
+                borderRadius: '7px',
+                border: '1px solid var(--border-color, #334155)',
+                background: 'var(--bg-card, #1e293b)',
+                color: 'var(--text-main, #f8fafc)',
+                fontSize: '12px',
+                fontWeight: '600',
+                cursor: 'pointer'
+              }}
+            >
+              <option value="purchase">Ngày đặt hàng</option>
+              <option value="complete">Ngày hoàn thành</option>
+            </select>
           </div>
         </div>
       </div>

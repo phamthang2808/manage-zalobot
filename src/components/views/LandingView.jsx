@@ -90,13 +90,13 @@ export default function LandingView({ inWorkspace = false }) {
         {/* MENU TRỰC TIẾP: TRANG CHỦ & CÁC TIỆN ÍCH THÀNH VIÊN */}
         <nav className={`landing-nav${mobileMenuOpen ? ' open' : ''}`}>
           <a href="#home" onClick={() => setMobileMenuOpen(false)}>Trang chủ</a>
-          <a href="#" onClick={e => { e.preventDefault(); setView('convert'); window.history.pushState({}, '', '/?view=convert'); setMobileMenuOpen(false); }} style={{ color: 'var(--color-primary, #ea580c)', fontWeight: '700' }}>
+          <a href="#" onClick={e => { e.preventDefault(); if (!token) { setView('login'); window.history.pushState({}, '', '/?view=login'); } else { setView('convert'); window.history.pushState({}, '', '/?view=convert'); } setMobileMenuOpen(false); }} style={{ color: 'var(--color-primary, #ea580c)', fontWeight: '700' }}>
             <i className="fa-solid fa-link" style={{ marginRight: '5px' }}></i>Chuyển đổi
           </a>
-          <a href="#" onClick={e => { e.preventDefault(); setView('orders'); window.history.pushState({}, '', '/?view=orders'); setMobileMenuOpen(false); }}>
+          <a href="#" onClick={e => { e.preventDefault(); if (!token) { setView('login'); window.history.pushState({}, '', '/?view=login'); } else { setView('orders'); window.history.pushState({}, '', '/?view=orders'); } setMobileMenuOpen(false); }}>
             <i className="fa-solid fa-boxes-stacked" style={{ marginRight: '5px' }}></i>Đơn hàng
           </a>
-          <a href="#" onClick={e => { e.preventDefault(); setView('withdraw'); window.history.pushState({}, '', '/?view=withdraw'); setMobileMenuOpen(false); }}>
+          <a href="#" onClick={e => { e.preventDefault(); if (!token) { setView('login'); window.history.pushState({}, '', '/?view=login'); } else { setView('withdraw'); window.history.pushState({}, '', '/?view=withdraw'); } setMobileMenuOpen(false); }}>
             <i className="fa-solid fa-wallet" style={{ marginRight: '5px' }}></i>Ví tiền
           </a>
           <a href="#" onClick={e => { e.preventDefault(); setView('lookup'); window.history.pushState({}, '', '/?view=lookup'); setMobileMenuOpen(false); }}>

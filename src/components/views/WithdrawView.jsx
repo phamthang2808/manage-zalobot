@@ -84,9 +84,13 @@ export default function WithdrawView() {
   };
 
   const fetchWalletAndPayouts = async () => {
+    const token = sessionStorage.getItem('adminToken') || '';
+    if (!token) {
+      setLoading(false);
+      return;
+    }
     setLoading(true);
     try {
-      const token = sessionStorage.getItem('adminToken') || '';
       const [resWallet, resPayouts, resOrders] = await Promise.all([
         fetch(`${API_URL_ROOT}/api/user/wallet`, { headers: { 'Authorization': `Bearer ${token}` }, credentials: 'include' }),
         fetch(`${API_URL_ROOT}/api/user/payouts`, { headers: { 'Authorization': `Bearer ${token}` }, credentials: 'include' }),
@@ -170,6 +174,59 @@ export default function WithdrawView() {
       setSubmitting(false);
     }
   };
+
+  const hasAuth = !!(sessionStorage.getItem('adminToken') || user);
+  if (!hasAuth) {
+    return (
+      <div className="withdraw-view-wrapper" style={{ width: '100%', maxWidth: '680px', margin: '40px auto', padding: '0 16px' }}>
+        <div style={{
+          background: 'var(--card-bg, #ffffff)',
+          border: '1px solid var(--border-color, #e2e8f0)',
+          borderRadius: '16px',
+          padding: '36px 24px',
+          textAlign: 'center',
+          boxShadow: '0 4px 20px rgba(0,0,0,0.06)'
+        }}>
+          <div style={{
+            width: '64px',
+            height: '64px',
+            borderRadius: '50%',
+            background: 'linear-gradient(135deg, #f97316, #ea580c)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            margin: '0 auto 18px',
+            color: '#fff',
+            fontSize: '26px'
+          }}>
+            <i className="fa-solid fa-wallet"></i>
+          </div>
+          <h2 style={{ fontSize: '20px', fontWeight: '700', color: 'var(--text-bright, #1e293b)', marginBottom: '10px' }}>
+            Bạn Chưa Đăng Nhập
+          </h2>
+          <p style={{ fontSize: '14px', color: 'var(--text-muted, #64748b)', lineHeight: '1.6', maxWidth: '480px', margin: '0 auto 24px' }}>
+            Ví tiền này dành cho thành viên có tài khoản Web. Thành viên Zalo vui lòng sử dụng trang Tra Cứu Đơn để quản lý ví và rút tiền không cần đăng nhập.
+          </p>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', maxWidth: '420px', margin: '0 auto' }}>
+            <button
+              onClick={() => { setView('login'); window.history.pushState({}, '', '/?view=login'); }}
+              style={{ width: '100%', padding: '12px 20px', borderRadius: '10px', background: 'linear-gradient(135deg, #2563eb, #1d4ed8)', color: '#fff', border: 'none', fontWeight: '600', fontSize: '14px', cursor: 'pointer' }}
+            >
+              <i className="fa-solid fa-arrow-right-to-bracket" style={{ marginRight: '8px' }}></i>
+              Đăng Nhập / Đăng Ký Tài Khoản Web
+            </button>
+            <button
+              onClick={() => { setView('lookup'); window.history.pushState({}, '', '/tracuu'); }}
+              style={{ width: '100%', padding: '12px 20px', borderRadius: '10px', background: 'linear-gradient(135deg, #10b981, #059669)', color: '#fff', border: 'none', fontWeight: '600', fontSize: '14px', cursor: 'pointer' }}
+            >
+              <i className="fa-solid fa-magnifying-glass" style={{ marginRight: '8px' }}></i>
+              Thành Viên Zalo: Tra Cứu Đơn &amp; Ví Rút Tiền
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="withdraw-view-wrapper" style={{ width: '100%', maxWidth: '820px', margin: '0 auto' }}>

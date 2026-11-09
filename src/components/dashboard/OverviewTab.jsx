@@ -1,5 +1,6 @@
 import { useApp } from '../../context/AppContext';
 import { formatDateTime, formatMoney, getBankAndAccount } from '../../utils/formatters';
+import MonthlyRevenueAnalytics from './MonthlyRevenueAnalytics';
 
 export default function OverviewTab() {
   const { stats, payouts, users, orders, handleApprovePayout, handleRejectPayout } = useApp();
@@ -90,6 +91,9 @@ export default function OverviewTab() {
           <span className="stat-val">{formatMoney(stats.totalWithdrawn)}</span>
         </div>
       </div>
+
+      {/* Thống kê & Phân tích Doanh thu theo tháng */}
+      <MonthlyRevenueAnalytics />
 
       <div className="data-card">
         <div className="card-header">

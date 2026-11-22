@@ -25,6 +25,18 @@ export default function ConvertView() {
   const [converting, setConverting] = useState(false);
   const [results, setResults] = useState([]);
   const [copiedIndex, setCopiedIndex] = useState(null);
+  const [reelsActive, setReelsActive] = useState(false);
+
+  useEffect(() => {
+    fetch(`${API_URL_ROOT}/api/user/reels-status`)
+      .then(res => res.json())
+      .then(resData => {
+        if (resData && resData.data && typeof resData.data.enabled === 'boolean') {
+          setReelsActive(resData.data.enabled);
+        }
+      })
+      .catch(() => {});
+  }, [API_URL_ROOT]);
 
   // Lịch sử chuyển đổi (tối đa 10 mục gần nhất)
   const [isHistoryOpen, setIsHistoryOpen] = useState(true);
@@ -674,6 +686,61 @@ export default function ConvertView() {
                     <span>Mở link mua hàng</span>
                   </a>
                 </div>
+
+                {/* HÀNG 2: MUA QUA REELS (Chỉ hiện khi Quản trị viên BẬT và link có reelUrl) */}
+                {reelsActive && r.reelUrl && (
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '8px', marginTop: '8px' }}>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        navigator.clipboard.writeText(r.reelUrl);
+                        showToast('Đã sao chép link Reels! 🎉', 'success');
+                      }}
+                      className="lookup-admin-link"
+                      style={{
+                        height: '32px',
+                        padding: '0 13px',
+                        fontSize: '12px',
+                        borderRadius: '8px',
+                        fontWeight: '600',
+                        boxSizing: 'border-box',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '5px',
+                        lineHeight: '1'
+                      }}
+                    >
+                      <i className="fa-solid fa-copy"></i>
+                      <span>Sao chép link Reels</span>
+                    </button>
+
+                    <a
+                      href={r.reelUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      style={{
+                        height: '32px',
+                        padding: '0 14px',
+                        fontSize: '12px',
+                        fontWeight: '700',
+                        borderRadius: '8px',
+                        border: '1px solid transparent',
+                        background: 'linear-gradient(135deg, #C88A7A, #B85042)',
+                        color: '#ffffff',
+                        textDecoration: 'none',
+                        boxSizing: 'border-box',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '6px',
+                        lineHeight: '1',
+                        boxShadow: '0 2px 6px rgba(184, 80, 66, 0.25)'
+                      }}
+                    >
+                      <i className="fa-brands fa-facebook"></i>
+                      <span>Mua qua Reels (+5% hoa hồng)</span>
+                    </a>
+                  </div>
+                )}
               </div>
             );
           })}
@@ -1029,6 +1096,34 @@ export default function ConvertView() {
                             <i className="fa-solid fa-arrow-up-right-from-square"></i>
                             <span>Mua ngay</span>
                           </a>
+
+                          {reelsActive && item.reelUrl && (
+                            <a
+                              href={item.reelUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              style={{
+                                height: '28px',
+                                padding: '0 10px',
+                                fontSize: '11.5px',
+                                fontWeight: '700',
+                                borderRadius: '7px',
+                                border: '1px solid transparent',
+                                background: 'linear-gradient(135deg, #C88A7A, #B85042)',
+                                color: '#fff',
+                                textDecoration: 'none',
+                                boxSizing: 'border-box',
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                gap: '4px',
+                                lineHeight: '1'
+                              }}
+                              title="Mua qua Reels Facebook (+5% HH)"
+                            >
+                              <i className="fa-brands fa-facebook"></i>
+                              <span>Reels</span>
+                            </a>
+                          )}
                         </div>
                       </div>
                     );

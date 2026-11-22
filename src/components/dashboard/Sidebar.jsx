@@ -83,6 +83,13 @@ export default function Sidebar() {
             <i className="fa-solid fa-bullhorn" style={{ width: '17px', fontSize: '15px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}></i>
             Thông Báo Popup
           </li>
+          <li
+            className={`menu-item ${activeTab === 'reels_config' ? 'active' : ''}`}
+            onClick={() => { setActiveTab('reels_config'); sessionStorage.setItem('adminTab', 'reels_config'); sessionStorage.setItem('adminView', 'admin'); setSidebarOpen(false); }}
+          >
+            <i className="fa-brands fa-facebook" style={{ width: '17px', fontSize: '15px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#1877F2' }}></i>
+            Cấu hình Reels
+          </li>
         </ul>
 
         <div className="sidebar-footer">

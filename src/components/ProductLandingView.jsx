@@ -7,6 +7,7 @@ export function ProductLandingView({ code, apiRoot = "" }) {
   const [info, setInfo] = useState(null);
   const [error, setError] = useState("");
   const [copiedAff, setCopiedAff] = useState(false);
+  const [copiedReel, setCopiedReel] = useState(false);
   const [imgError, setImgError] = useState(false);
 
   useEffect(() => {
@@ -87,6 +88,24 @@ export function ProductLandingView({ code, apiRoot = "" }) {
     }
   };
 
+  // Mở link Reels hoặc copy link Reels
+  const handleOpenReel = () => {
+    if (info && info.reelUrl) {
+      window.open(info.reelUrl, "_blank");
+    } else if (info && info.longUrl) {
+      window.location.href = info.longUrl;
+    }
+  };
+
+  const handleCopyReelLink = () => {
+    const targetLink = (info && info.reelUrl) ? info.reelUrl : (info?.longUrl || "");
+    if (targetLink) {
+      navigator.clipboard.writeText(targetLink);
+      setCopiedReel(true);
+      setTimeout(() => setCopiedReel(false), 2000);
+    }
+  };
+
   const handleOpenTarget = () => {
     if (info && info.longUrl) {
       // Mở trực tiếp link dài affiliate để app Shopee kích hoạt mở app ngay lập tức
@@ -160,6 +179,9 @@ export function ProductLandingView({ code, apiRoot = "" }) {
 
   // Tính toán hoa hồng khi mua qua Reels (Hoa hồng Shopee tăng từ 2.5% lên 7.5%, trần tối đa 40.000đ)
   const isShopee = !isTiktok;
+  // Trạng thái BẬT/TẮT tính năng Reels theo cấu hình Quản trị viên
+  const isReelsEnabled = isShopee && (info.reelsActive !== false || !!info.reelUrl);
+
   const sellerRateNum = parseFloat(String(sellerRate || "").replace("%", "")) || 0;
   const reelsShopeeRateNum = 7.5;
   const reelsTotalRateNum = sellerRateNum + reelsShopeeRateNum;
@@ -316,14 +338,25 @@ export function ProductLandingView({ code, apiRoot = "" }) {
                 ~ {rawComm > 0 ? formatVnd(rawComm) : "Chờ cập nhật"}
               </div>
 
-              {/* Dòng Mua qua Reels (Hoa hồng Shopee tăng lên 7.5%) */}
-              {isShopee && (
+              {/* Chi tiết hoa hồng khi mua qua Reels (Chỉ hiện khi tính năng Reels BẬT) */}
+              {isReelsEnabled && (
                 <>
+                  <div className="sym-row-label">
+                    <span className="sym-row-bullet">🔸</span>
+                    <span>Shopee qua Reels:</span>
+                  </div>
+                  <div className="sym-rate-col sym-rate-shopee">
+                    7.5%
+                  </div>
+                  <div className="sym-amt-col sym-val-sub">
+                    ~ {reelsShopeeComm > 0 ? formatVnd(reelsShopeeComm) : "Chờ cập nhật"}
+                  </div>
+
                   <div className="sym-row-label sym-label-reels" style={{ color: '#ea580c', fontWeight: '700' }}>
                     <span className="sym-row-bullet">🎬</span>
-                    <span><strong>Mua qua Reels:</strong></span>
+                    <span><strong>Tổng mua qua Reels:</strong></span>
                   </div>
-                  <div className="sym-rate-col sym-rate-reels" style={{ color: '#ea580c', fontWeight: '700' }}>
+                  <div className="sym-rate-col sym-rate-reels" style={{ color: '#ea580c', fontWeight: '800' }}>
                     {reelsTotalRateText}
                   </div>
                   <div className="sym-amt-col sym-val-reels" style={{ color: '#ea580c', fontWeight: '800' }}>
@@ -334,29 +367,30 @@ export function ProductLandingView({ code, apiRoot = "" }) {
             </div>
           </div>
 
-          {/* HÀNG NÚT: MUA NGAY TRÊN SHOPEE + COPY LINK DÀI CÙNG 1 HÀNG */}
-          <div className="sym-action-row">
-            <button type="button" className="sym-btn-cta-main" onClick={handleOpenTarget}>
-              <div className="sym-cta-glow"></div>
-              <div className="sym-cta-body">
-                <div className="sym-cta-icon-box">
-                  <svg className="sym-cta-shopee-svg" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M19 6h-2c0-2.76-2.24-5-5-5S7 3.24 7 6H5c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm-7-3c1.66 0 3 1.34 3 3H9c0-1.66 1.34-3 3-3zm7 17H5V8h14v12zm-7-8c-1.66 0-3-1.34-3-3H7c0 2.76 2.24 5 5 5s5-2.24 5-5h-2c0 1.66-1.34 3-3 3z" />
-                  </svg>
+          {/* HÀNG NÚT: GỒM 2 HÀNG THẲNG TẮP VỚI NHAU, THU GỌN VỪA VẶN */}
+          <div className="sym-action-container">
+            {/* Hàng 1: Mua ngay trên Shopee + Copy link (thẳng hàng) */}
+            <div className="sym-action-row">
+              <button type="button" className="sym-btn-cta-main" onClick={handleOpenTarget}>
+                <div className="sym-cta-glow"></div>
+                <div className="sym-cta-body">
+                  <div className="sym-cta-icon-box">
+                    <svg className="sym-cta-shopee-svg" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M19 6h-2c0-2.76-2.24-5-5-5S7 3.24 7 6H5c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm-7-3c1.66 0 3 1.34 3 3H9c0-1.66 1.34-3 3-3zm7 17H5V8h14v12zm-7-8c-1.66 0-3-1.34-3-3H7c0 2.76 2.24 5 5 5s5-2.24 5-5h-2c0 1.66-1.34 3-3 3z" />
+                    </svg>
+                  </div>
+                  <span className="sym-cta-title-text">
+                    Mua ngay trên {platformName}
+                  </span>
+                  <i className="fa-solid fa-chevron-right sym-cta-arrow"></i>
                 </div>
-                <span className="sym-cta-title-text">
-                  Mua ngay trên {platformName}
-                </span>
-                <i className="fa-solid fa-chevron-right sym-cta-arrow"></i>
-              </div>
-            </button>
+              </button>
 
-            {info.longUrl && (
               <button 
                 type="button" 
                 className={`sym-btn-copy-aff-row ${copiedAff ? "is-copied" : ""}`} 
                 onClick={handleCopyAffiliateLink} 
-                title="Sao chép link affiliate dài Shopee"
+                title="Sao chép link affiliate Shopee"
               >
                 {copiedAff ? (
                   <>
@@ -370,6 +404,43 @@ export function ProductLandingView({ code, apiRoot = "" }) {
                   </>
                 )}
               </button>
+            </div>
+
+            {/* Hàng 2: Mua qua Reels (+5% HH) + Copy link Reels (Chỉ hiện khi tính năng Reels BẬT) */}
+            {isReelsEnabled && (
+              <div className="sym-action-row sym-action-row-reels">
+                <button type="button" className="sym-btn-cta-reels" onClick={handleOpenReel}>
+                  <div className="sym-cta-glow"></div>
+                  <div className="sym-cta-body">
+                    <div className="sym-cta-icon-box sym-icon-box-reels">
+                      <i className="fa-brands fa-facebook" style={{ fontSize: '13px', color: '#ffffff' }}></i>
+                    </div>
+                    <span className="sym-cta-title-text">
+                      Mua qua Reels (+5% HH)
+                    </span>
+                    <i className="fa-solid fa-chevron-right sym-cta-arrow"></i>
+                  </div>
+                </button>
+
+                <button 
+                  type="button" 
+                  className={`sym-btn-copy-reels-row ${copiedReel ? "is-copied" : ""}`} 
+                  onClick={handleCopyReelLink} 
+                  title="Sao chép link Reels"
+                >
+                  {copiedReel ? (
+                    <>
+                      <i className="fa-solid fa-check sym-copy-icon"></i>
+                      <span>Đã chép</span>
+                    </>
+                  ) : (
+                    <>
+                      <i className="fa-solid fa-copy sym-copy-icon"></i>
+                      <span>Copy link Reels</span>
+                    </>
+                  )}
+                </button>
+              </div>
             )}
           </div>
         </div>
@@ -908,7 +979,14 @@ body {
   font-size: 15px;
 }
 
-/* HÀNG NÚT: MUA NGAY TRÊN SHOPEE + COPY LINK DÀI CÙNG 1 HÀNG */
+/* HÀNG NÚT: GỒM 2 HÀNG THẲNG HÀNG NHAU, THU GỌN VỪA VẶN */
+.sym-action-container {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+}
+
 .sym-action-row {
   display: flex;
   align-items: center;
@@ -917,18 +995,18 @@ body {
 }
 
 .sym-btn-cta-main {
-  flex: 1.4;
+  flex: 1.25;
   min-width: 0;
-  height: 48px;
+  height: 38px;
   border: none;
   background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
-  border-radius: 12px;
+  border-radius: 9px;
   padding: 0 10px;
   color: #ffffff;
   cursor: pointer;
   position: relative;
   overflow: hidden;
-  box-shadow: 0 6px 18px -2px rgba(234, 88, 12, 0.42), 0 2px 4px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 4px 14px rgba(234, 88, 12, 0.32);
   transition: all 0.2s ease;
   display: flex;
   align-items: center;
@@ -938,11 +1016,44 @@ body {
 .sym-btn-cta-main:hover {
   transform: translateY(-1.5px);
   background: linear-gradient(135deg, #fb923c 0%, #f97316 100%);
-  box-shadow: 0 10px 24px -2px rgba(234, 88, 12, 0.55);
+  box-shadow: 0 6px 18px rgba(234, 88, 12, 0.45);
 }
 
 .sym-btn-cta-main:active {
   transform: translateY(0) scale(0.98);
+}
+
+.sym-btn-cta-reels {
+  flex: 1.25;
+  min-width: 0;
+  height: 38px;
+  border: none;
+  background: linear-gradient(135deg, #C88A7A 0%, #B85042 100%);
+  border-radius: 9px;
+  padding: 0 10px;
+  color: #ffffff;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 4px 14px rgba(184, 80, 66, 0.32);
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sym-btn-cta-reels:hover {
+  transform: translateY(-1.5px);
+  background: linear-gradient(135deg, #d49586 0%, #c45b4d 100%);
+  box-shadow: 0 6px 18px rgba(184, 80, 66, 0.45);
+}
+
+.sym-btn-cta-reels:active {
+  transform: translateY(0) scale(0.98);
+}
+
+.sym-icon-box-reels {
+  background: rgba(255, 255, 255, 0.2) !important;
 }
 
 .sym-cta-glow {
@@ -973,10 +1084,10 @@ body {
 }
 
 .sym-cta-icon-box {
-  width: 24px;
-  height: 24px;
+  width: 20px;
+  height: 20px;
   background: rgba(255, 255, 255, 0.22);
-  border-radius: 6px;
+  border-radius: 5px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -984,14 +1095,14 @@ body {
 }
 
 .sym-cta-shopee-svg {
-  width: 14px;
-  height: 14px;
+  width: 12px;
+  height: 12px;
   fill: #ffffff;
 }
 
 .sym-cta-title-text {
-  font-size: 13.5px;
-  font-weight: 800;
+  font-size: 12.5px;
+  font-weight: 700;
   letter-spacing: -0.2px;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
   white-space: nowrap;
@@ -1000,12 +1111,13 @@ body {
 }
 
 .sym-cta-arrow {
-  font-size: 10px;
+  font-size: 9px;
   opacity: 0.9;
   flex-shrink: 0;
 }
 
-.sym-btn-cta-main:hover .sym-cta-arrow {
+.sym-btn-cta-main:hover .sym-cta-arrow,
+.sym-btn-cta-reels:hover .sym-cta-arrow {
   transform: translateX(2px);
 }
 
@@ -1013,14 +1125,14 @@ body {
 .sym-btn-copy-aff-row {
   flex: 1;
   min-width: 0;
-  height: 48px;
+  height: 38px;
   background: rgba(249, 115, 22, 0.09);
   border: 1.5px solid rgba(249, 115, 22, 0.28);
   color: #ea580c;
-  font-size: 13px;
-  font-weight: 800;
-  padding: 0 10px;
-  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 0 8px;
+  border-radius: 9px;
   cursor: pointer;
   white-space: nowrap;
   box-shadow: none;
@@ -1028,7 +1140,7 @@ body {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
+  gap: 5px;
 }
 
 .sym-btn-copy-aff-row:hover {
@@ -1048,6 +1160,44 @@ body {
   color: #059669;
 }
 
+.sym-btn-copy-reels-row {
+  flex: 1;
+  min-width: 0;
+  height: 38px;
+  background: rgba(184, 80, 66, 0.09);
+  border: 1.5px solid rgba(184, 80, 66, 0.3);
+  color: #B85042;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 0 8px;
+  border-radius: 9px;
+  cursor: pointer;
+  white-space: nowrap;
+  box-shadow: none;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+}
+
+.sym-btn-copy-reels-row:hover {
+  background: rgba(184, 80, 66, 0.18);
+  border-color: #B85042;
+  color: #993d31;
+  transform: translateY(-1.5px);
+}
+
+.sym-btn-copy-reels-row:active {
+  transform: translateY(0) scale(0.97);
+}
+
+.sym-btn-copy-reels-row.is-copied {
+  background: rgba(16, 185, 129, 0.12);
+  border-color: rgba(16, 185, 129, 0.35);
+  color: #059669;
+}
+
 .sym-copy-icon {
   font-size: 12px;
   flex-shrink: 0;
@@ -1055,27 +1205,29 @@ body {
 
 @media (max-width: 420px) {
   .sym-cta-title-text {
-    font-size: 12.5px;
+    font-size: 11.5px;
     letter-spacing: -0.3px;
   }
-  .sym-btn-cta-main {
-    height: 46px;
+  .sym-btn-cta-main,
+  .sym-btn-cta-reels {
+    height: 36px;
     padding: 0 6px;
-    border-radius: 10px;
+    border-radius: 8px;
   }
-  .sym-btn-copy-aff-row {
-    height: 46px;
+  .sym-btn-copy-aff-row,
+  .sym-btn-copy-reels-row {
+    height: 36px;
     padding: 0 6px;
-    font-size: 12px;
-    border-radius: 10px;
+    font-size: 11.5px;
+    border-radius: 8px;
   }
   .sym-cta-icon-box {
-    width: 22px;
-    height: 22px;
+    width: 18px;
+    height: 18px;
   }
   .sym-cta-shopee-svg {
-    width: 13px;
-    height: 13px;
+    width: 11px;
+    height: 11px;
   }
 }
 
@@ -1475,6 +1627,27 @@ body.dark .sym-btn-copy-aff-row:hover {
 
 html[data-theme="dark"] .sym-btn-copy-aff-row.is-copied,
 body.dark .sym-btn-copy-aff-row.is-copied {
+  background: rgba(16, 185, 129, 0.18) !important;
+  border-color: rgba(52, 211, 153, 0.5) !important;
+  color: #34d399 !important;
+}
+
+html[data-theme="dark"] .sym-btn-copy-reels-row,
+body.dark .sym-btn-copy-reels-row {
+  background: rgba(184, 80, 66, 0.18) !important;
+  border-color: rgba(200, 138, 122, 0.45) !important;
+  color: #fca5a5 !important;
+}
+
+html[data-theme="dark"] .sym-btn-copy-reels-row:hover,
+body.dark .sym-btn-copy-reels-row:hover {
+  background: rgba(184, 80, 66, 0.28) !important;
+  border-color: #f87171 !important;
+  color: #fee2e2 !important;
+}
+
+html[data-theme="dark"] .sym-btn-copy-reels-row.is-copied,
+body.dark .sym-btn-copy-reels-row.is-copied {
   background: rgba(16, 185, 129, 0.18) !important;
   border-color: rgba(52, 211, 153, 0.5) !important;
   color: #34d399 !important;

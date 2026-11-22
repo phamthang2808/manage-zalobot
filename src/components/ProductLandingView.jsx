@@ -179,8 +179,11 @@ export function ProductLandingView({ code, apiRoot = "" }) {
 
   // Tính toán hoa hồng khi mua qua Reels (Hoa hồng Shopee tăng từ 2.5% lên 7.5%, trần tối đa 40.000đ)
   const isShopee = !isTiktok;
-  // Trạng thái BẬT/TẮT tính năng Reels theo cấu hình Quản trị viên
-  const isReelsEnabled = isShopee && (info.reelsActive !== false || !!info.reelUrl);
+  const shopeeRateNum = parseFloat(String(shopeeRate || "").replace("%", "")) || 0;
+  const isHighShopeeRate = shopeeRateNum > 2.5;
+
+  // Trạng thái BẬT/TẮT tính năng Reels: Tự động bỏ qua ngành thời trang có hoa hồng sàn cao (> 2.5%)
+  const isReelsEnabled = isShopee && (info.reelsActive !== false && !isHighShopeeRate);
 
   const sellerRateNum = parseFloat(String(sellerRate || "").replace("%", "")) || 0;
   const reelsShopeeRateNum = 7.5;
@@ -299,20 +302,51 @@ export function ProductLandingView({ code, apiRoot = "" }) {
                 </>
               )}
 
-              {/* Chia 2 phần hoa hồng: Shopee & Shop (thẳng hàng tuyệt đối cả cột % và cột số tiền) */}
-              {hasSplit && (
+              {/* TRƯỜNG HỢP 1: KHI TẮT TÍNH NĂNG REELS (HOẶC SP KHÔNG ÁP DỤNG REELS) -> GIAO DIỆN NGUYÊN BẢN CŨ */}
+              {!isReelsEnabled ? (
                 <>
-                  <div className="sym-row-label">
-                    <span className="sym-row-bullet">🔸</span>
-                    <span>Hoa hồng Shopee:</span>
-                  </div>
-                  <div className="sym-rate-col sym-rate-shopee">
-                    {shopeeRate}
-                  </div>
-                  <div className="sym-amt-col sym-val-sub">
-                    ~ {formatVnd(shopeeComm)}
-                  </div>
+                  {hasSplit && (
+                    <>
+                      <div className="sym-row-label">
+                        <span className="sym-row-bullet">🔸</span>
+                        <span>Hoa hồng Shopee:</span>
+                      </div>
+                      <div className="sym-rate-col sym-rate-shopee">
+                        {shopeeRate}
+                      </div>
+                      <div className="sym-amt-col sym-val-sub">
+                        ~ {formatVnd(shopeeComm)}
+                      </div>
 
+                      <div className="sym-row-label">
+                        <span className="sym-row-bullet">🔹</span>
+                        <span>Hoa hồng Shop:</span>
+                      </div>
+                      <div className="sym-rate-col sym-rate-seller">
+                        {sellerRate}
+                      </div>
+                      <div className="sym-amt-col sym-val-sub">
+                        ~ {formatVnd(sellerComm)}
+                      </div>
+                    </>
+                  )}
+
+                  {/* Dòng Tổng hoa hồng */}
+                  <div className="sym-row-label sym-label-total">
+                    <span className="sym-row-bullet">💰</span>
+                    <span><strong>Tổng hoa hồng:</strong></span>
+                  </div>
+                  <div className="sym-rate-col sym-rate-total">
+                    {totalRate}
+                  </div>
+                  <div className="sym-amt-col sym-val-total">
+                    ~ {rawComm > 0 ? formatVnd(rawComm) : "Chờ cập nhật"}
+                  </div>
+                </>
+              ) : (
+                /* TRƯỜNG HỢP 2: KHI BẬT REELS -> PHÂN TÁCH RÕ RÀNG SHOP / SHOPEE THƯỜNG / SHOPEE REELS */
+                <>
+                  {/* 1. Hoa hồng Shop (Cố định ở cả 2 cách mua) */}
                   <div className="sym-row-label">
                     <span className="sym-row-bullet">🔹</span>
                     <span>Hoa hồng Shop:</span>
@@ -323,43 +357,68 @@ export function ProductLandingView({ code, apiRoot = "" }) {
                   <div className="sym-amt-col sym-val-sub">
                     ~ {formatVnd(sellerComm)}
                   </div>
-                </>
-              )}
 
-              {/* Dòng Tổng hoa hồng */}
-              <div className="sym-row-label sym-label-total">
-                <span className="sym-row-bullet">💰</span>
-                <span><strong>Tổng hoa hồng:</strong></span>
-              </div>
-              <div className="sym-rate-col sym-rate-total">
-                {totalRate}
-              </div>
-              <div className="sym-amt-col sym-val-total">
-                ~ {rawComm > 0 ? formatVnd(rawComm) : "Chờ cập nhật"}
-              </div>
+                  {/* 2. Khối Mua Shopee Thường */}
+                  <div style={{ gridColumn: '1 / span 3', margin: '4px 0', borderTop: '1px dashed var(--border-color, #e2e8f0)', paddingTop: '6px' }}>
+                    <span style={{ fontSize: '11px', fontWeight: '700', color: 'var(--text-muted, #64748b)', textTransform: 'uppercase', letterSpacing: '0.3px', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                      <span>🛒 Khi mua Shopee thường:</span>
+                    </span>
+                  </div>
 
-              {/* Chi tiết hoa hồng khi mua qua Reels (Chỉ hiện khi tính năng Reels BẬT) */}
-              {isReelsEnabled && (
-                <>
-                  <div className="sym-row-label">
+                  <div className="sym-row-label" style={{ paddingLeft: '8px' }}>
                     <span className="sym-row-bullet">🔸</span>
-                    <span>Shopee qua Reels:</span>
+                    <span>Hoa hồng Shopee:</span>
                   </div>
                   <div className="sym-rate-col sym-rate-shopee">
-                    7.5%
+                    {shopeeRate}
                   </div>
                   <div className="sym-amt-col sym-val-sub">
+                    ~ {formatVnd(shopeeComm)}
+                  </div>
+
+                  <div className="sym-row-label sym-label-total" style={{ paddingLeft: '8px' }}>
+                    <span className="sym-row-bullet">💰</span>
+                    <span><strong>Tổng hoa hồng:</strong></span>
+                  </div>
+                  <div className="sym-rate-col sym-rate-total">
+                    {totalRate}
+                  </div>
+                  <div className="sym-amt-col sym-val-total">
+                    ~ {rawComm > 0 ? formatVnd(rawComm) : "Chờ cập nhật"}
+                  </div>
+
+                  {/* 3. Khối Mua qua Reels (Hoa hồng Shopee tăng vọt từ 2.5% lên 7.5%) */}
+                  <div style={{ gridColumn: '1 / span 3', margin: '6px 0 4px 0', borderTop: '1.5px solid rgba(184, 80, 66, 0.25)', paddingTop: '6px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                      <span style={{ fontSize: '11.5px', fontWeight: '800', color: '#B85042', display: 'flex', alignItems: 'center', gap: '5px' }}>
+                        <i className="fa-brands fa-facebook" style={{ fontSize: '12px' }}></i>
+                        <span>Khi mua qua Reels Facebook:</span>
+                      </span>
+                      <span style={{ fontSize: '10px', fontWeight: '800', background: 'rgba(184, 80, 66, 0.12)', color: '#B85042', padding: '1px 6px', borderRadius: '4px' }}>
+                        +5% Shopee 🔥
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="sym-row-label" style={{ paddingLeft: '8px', color: '#B85042' }}>
+                    <span className="sym-row-bullet">🔸</span>
+                    <span>Shopee Reels (tăng lên):</span>
+                  </div>
+                  <div className="sym-rate-col" style={{ color: '#B85042', fontWeight: '800' }}>
+                    7.5%
+                  </div>
+                  <div className="sym-amt-col sym-val-sub" style={{ color: '#B85042', fontWeight: '800' }}>
                     ~ {reelsShopeeComm > 0 ? formatVnd(reelsShopeeComm) : "Chờ cập nhật"}
                   </div>
 
-                  <div className="sym-row-label sym-label-reels" style={{ color: '#ea580c', fontWeight: '700' }}>
+                  <div className="sym-row-label sym-label-reels" style={{ paddingLeft: '8px', color: '#B85042', fontWeight: '800' }}>
                     <span className="sym-row-bullet">🎬</span>
-                    <span><strong>Tổng mua qua Reels:</strong></span>
+                    <span><strong>Tổng nhận qua Reels:</strong></span>
                   </div>
-                  <div className="sym-rate-col sym-rate-reels" style={{ color: '#ea580c', fontWeight: '800' }}>
+                  <div className="sym-rate-col sym-rate-reels" style={{ color: '#B85042', fontWeight: '900' }}>
                     {reelsTotalRateText}
                   </div>
-                  <div className="sym-amt-col sym-val-reels" style={{ color: '#ea580c', fontWeight: '800' }}>
+                  <div className="sym-amt-col sym-val-reels" style={{ color: '#B85042', fontWeight: '900' }}>
                     ~ {reelsTotalComm > 0 ? formatVnd(reelsTotalComm) : "Chờ cập nhật"}
                   </div>
                 </>
@@ -464,6 +523,16 @@ export function ProductLandingView({ code, apiRoot = "" }) {
               <span className="sym-tip-bullet">➔</span>
               <span className="sym-tip-text"><strong>Mua ngay (không xem Live/Video giữa chừng)</strong> nhé sếp ơi!</span>
             </div>
+
+            {/* Mẹo nhận tối đa hoa hồng qua Reels (Chỉ hiện khi tính năng Reels BẬT) */}
+            {isReelsEnabled && (
+              <div className="sym-tip-step" style={{ background: 'rgba(184, 80, 66, 0.08)', padding: '8px 10px', borderRadius: '9px', border: '1px dashed rgba(184, 80, 66, 0.35)', marginTop: '4px' }}>
+                <span className="sym-tip-bullet">🔥</span>
+                <span className="sym-tip-text" style={{ color: '#B85042', lineHeight: '1.45' }}>
+                  <strong>Mẹo nhận thêm +5% hoa hồng:</strong> Mua qua <strong>Reels Facebook</strong> để hoa hồng sàn Shopee được tự động tăng từ <strong>2.5% lên 7.5%</strong> (hoa hồng Shop giữ nguyên)!
+                </span>
+              </div>
+            )}
           </div>
         </div>
       </main>

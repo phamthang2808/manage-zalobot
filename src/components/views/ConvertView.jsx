@@ -637,36 +637,16 @@ export default function ConvertView() {
                   </div>
                 )}
 
-                {/* Nút Hành Động (Nút Sao chép & Mở link mua hàng cùng kích thước đồng bộ) */}
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '8px', marginTop: '12px' }}>
-                  <button
-                    type="button"
-                    onClick={() => handleCopy(finalLink, idx)}
-                    className="lookup-admin-link"
-                    style={{
-                      height: '32px',
-                      padding: '0 13px',
-                      fontSize: '12px',
-                      borderRadius: '8px',
-                      fontWeight: '600',
-                      boxSizing: 'border-box',
-                      display: 'inline-flex',
-                      alignItems: 'center',
-                      gap: '5px',
-                      lineHeight: '1'
-                    }}
-                  >
-                    <i className={isCopied ? 'fa-solid fa-circle-check text-emerald-500' : 'fa-solid fa-copy'}></i>
-                    <span>{isCopied ? 'Đã sao chép!' : 'Sao chép'}</span>
-                  </button>
-
+                {/* Nút Hành Động (Mở link mua hàng bên trái & Sao chép bên phải, 2 nút bằng nhau 50-50) */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '12px' }}>
                   <a
                     href={finalLink}
                     target="_blank"
                     rel="noopener noreferrer"
                     style={{
-                      height: '32px',
-                      padding: '0 13px',
+                      flex: 1,
+                      height: '34px',
+                      padding: '0 10px',
                       fontSize: '12px',
                       fontWeight: '600',
                       borderRadius: '8px',
@@ -677,6 +657,7 @@ export default function ConvertView() {
                       boxSizing: 'border-box',
                       display: 'inline-flex',
                       alignItems: 'center',
+                      justifyContent: 'center',
                       gap: '5px',
                       lineHeight: '1',
                       boxShadow: '0 2px 6px rgba(234, 88, 12, 0.2)'
@@ -685,42 +666,42 @@ export default function ConvertView() {
                     <i className="fa-solid fa-arrow-up-right-from-square"></i>
                     <span>Mở link mua hàng</span>
                   </a>
+
+                  <button
+                    type="button"
+                    onClick={() => handleCopy(finalLink, idx)}
+                    className="lookup-admin-link"
+                    style={{
+                      flex: 1,
+                      height: '34px',
+                      padding: '0 10px',
+                      fontSize: '12px',
+                      borderRadius: '8px',
+                      fontWeight: '600',
+                      boxSizing: 'border-box',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '5px',
+                      lineHeight: '1'
+                    }}
+                  >
+                    <i className={isCopied ? 'fa-solid fa-circle-check text-emerald-500' : 'fa-solid fa-copy'}></i>
+                    <span>{isCopied ? 'Đã sao chép!' : 'Sao chép'}</span>
+                  </button>
                 </div>
 
-                {/* HÀNG 2: MUA QUA REELS (Chỉ hiện khi Quản trị viên BẬT và link có reelUrl) */}
+                {/* HÀNG 2: MUA QUA REELS (Mua qua Reels bên trái & Sao chép link Reels bên phải, 2 nút bằng nhau 50-50) */}
                 {reelsActive && r.reelUrl && (
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '8px', marginTop: '8px' }}>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        navigator.clipboard.writeText(r.reelUrl);
-                        showToast('Đã sao chép link Reels! 🎉', 'success');
-                      }}
-                      className="lookup-admin-link"
-                      style={{
-                        height: '32px',
-                        padding: '0 13px',
-                        fontSize: '12px',
-                        borderRadius: '8px',
-                        fontWeight: '600',
-                        boxSizing: 'border-box',
-                        display: 'inline-flex',
-                        alignItems: 'center',
-                        gap: '5px',
-                        lineHeight: '1'
-                      }}
-                    >
-                      <i className="fa-solid fa-copy"></i>
-                      <span>Sao chép link Reels</span>
-                    </button>
-
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '8px' }}>
                     <a
                       href={r.reelUrl}
                       target="_blank"
                       rel="noopener noreferrer"
                       style={{
-                        height: '32px',
-                        padding: '0 14px',
+                        flex: 1,
+                        height: '34px',
+                        padding: '0 10px',
                         fontSize: '12px',
                         fontWeight: '700',
                         borderRadius: '8px',
@@ -731,6 +712,7 @@ export default function ConvertView() {
                         boxSizing: 'border-box',
                         display: 'inline-flex',
                         alignItems: 'center',
+                        justifyContent: 'center',
                         gap: '6px',
                         lineHeight: '1',
                         boxShadow: '0 2px 6px rgba(184, 80, 66, 0.25)'
@@ -739,6 +721,32 @@ export default function ConvertView() {
                       <i className="fa-brands fa-facebook"></i>
                       <span>Mua qua Reels (+5% hoa hồng)</span>
                     </a>
+
+                    <button
+                      type="button"
+                      onClick={() => {
+                        navigator.clipboard.writeText(r.reelUrl);
+                        showToast('Đã sao chép link Reels! 🎉', 'success');
+                      }}
+                      className="lookup-admin-link"
+                      style={{
+                        flex: 1,
+                        height: '34px',
+                        padding: '0 10px',
+                        fontSize: '12px',
+                        borderRadius: '8px',
+                        fontWeight: '600',
+                        boxSizing: 'border-box',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: '5px',
+                        lineHeight: '1'
+                      }}
+                    >
+                      <i className="fa-solid fa-copy"></i>
+                      <span>Sao chép link Reels</span>
+                    </button>
                   </div>
                 )}
               </div>

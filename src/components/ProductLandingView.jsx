@@ -158,6 +158,18 @@ export function ProductLandingView({ code, apiRoot = "" }) {
   const platformName = isTiktok ? "TikTok Shop" : "Shopee";
   const displayHost = "28symues.store";
 
+  // Tính toán hoa hồng khi mua qua Reels (Hoa hồng Shopee tăng từ 2.5% lên 7.5%, trần tối đa 40.000đ)
+  const isShopee = !isTiktok;
+  const sellerRateNum = parseFloat(String(sellerRate || "").replace("%", "")) || 0;
+  const reelsShopeeRateNum = 7.5;
+  const reelsTotalRateNum = sellerRateNum + reelsShopeeRateNum;
+  const reelsTotalRateText = `${Number.isInteger(reelsTotalRateNum) ? reelsTotalRateNum : reelsTotalRateNum.toFixed(1)}%`;
+  
+  const reelsShopeeComm = productPrice > 0 
+    ? Math.min(Math.round(productPrice * (reelsShopeeRateNum / 100)), 40000) 
+    : (shopeeComm > 0 ? Math.min(Math.round((shopeeComm / 2.5) * 7.5), 40000) : 0);
+  const reelsTotalComm = sellerComm + reelsShopeeComm;
+
   return (
     <div className="sym-container">
       <style>{symuesLandingStyles}</style>
@@ -303,6 +315,22 @@ export function ProductLandingView({ code, apiRoot = "" }) {
               <div className="sym-amt-col sym-val-total">
                 ~ {rawComm > 0 ? formatVnd(rawComm) : "Chờ cập nhật"}
               </div>
+
+              {/* Dòng Mua qua Reels (Hoa hồng Shopee tăng lên 7.5%) */}
+              {isShopee && (
+                <>
+                  <div className="sym-row-label sym-label-reels" style={{ color: '#ea580c', fontWeight: '700' }}>
+                    <span className="sym-row-bullet">🎬</span>
+                    <span><strong>Mua qua Reels:</strong></span>
+                  </div>
+                  <div className="sym-rate-col sym-rate-reels" style={{ color: '#ea580c', fontWeight: '700' }}>
+                    {reelsTotalRateText}
+                  </div>
+                  <div className="sym-amt-col sym-val-reels" style={{ color: '#ea580c', fontWeight: '800' }}>
+                    ~ {reelsTotalComm > 0 ? formatVnd(reelsTotalComm) : "Chờ cập nhật"}
+                  </div>
+                </>
+              )}
             </div>
           </div>
 

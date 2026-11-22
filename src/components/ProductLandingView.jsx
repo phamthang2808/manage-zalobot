@@ -282,6 +282,16 @@ export function ProductLandingView({ code, apiRoot = "" }) {
             </div>
           </div>
 
+          {/* Mẹo nhận thêm +5% hoa hồng qua Reels (Đưa lên trên đầu để người dùng vào là thấy ngay trên điện thoại) */}
+          {isReelsEnabled && (
+            <div className="sym-reels-top-tip">
+              <span className="sym-reels-tip-fire">🔥</span>
+              <span className="sym-reels-tip-text">
+                <strong>Mẹo nhận thêm +5% hoa hồng:</strong> Mua qua <strong>Reels Facebook</strong> để hoa hồng sàn Shopee được tự động tăng từ <strong>2.5% lên 7.5%</strong> (hoa hồng Shop giữ nguyên)!
+              </span>
+            </div>
+          )}
+
           {/* Bảng Hoa Hồng Sản Phẩm (Đã căn thẳng hàng cột % hoa hồng) */}
           <div className="sym-breakdown-box">
             <div className="sym-breakdown-title">
@@ -394,7 +404,7 @@ export function ProductLandingView({ code, apiRoot = "" }) {
                         <i className="fa-brands fa-facebook" style={{ fontSize: '12px' }}></i>
                         <span>Khi mua qua Reels Facebook:</span>
                       </span>
-                      <span style={{ fontSize: '10px', fontWeight: '800', background: 'rgba(184, 80, 66, 0.12)', color: '#B85042', padding: '1px 6px', borderRadius: '4px' }}>
+                      <span className="sym-badge-reels-text" style={{ fontSize: '11px', fontWeight: '800', color: '#B85042' }}>
                         +5% Shopee 🔥
                       </span>
                     </div>
@@ -523,16 +533,6 @@ export function ProductLandingView({ code, apiRoot = "" }) {
               <span className="sym-tip-bullet">➔</span>
               <span className="sym-tip-text"><strong>Mua ngay (không xem Live/Video giữa chừng)</strong> nhé sếp ơi!</span>
             </div>
-
-            {/* Mẹo nhận tối đa hoa hồng qua Reels (Chỉ hiện khi tính năng Reels BẬT) */}
-            {isReelsEnabled && (
-              <div className="sym-tip-step" style={{ background: 'rgba(184, 80, 66, 0.08)', padding: '8px 10px', borderRadius: '9px', border: '1px dashed rgba(184, 80, 66, 0.35)', marginTop: '4px' }}>
-                <span className="sym-tip-bullet">🔥</span>
-                <span className="sym-tip-text" style={{ color: '#B85042', lineHeight: '1.45' }}>
-                  <strong>Mẹo nhận thêm +5% hoa hồng:</strong> Mua qua <strong>Reels Facebook</strong> để hoa hồng sàn Shopee được tự động tăng từ <strong>2.5% lên 7.5%</strong> (hoa hồng Shop giữ nguyên)!
-                </span>
-              </div>
-            )}
           </div>
         </div>
       </main>
@@ -957,6 +957,35 @@ body {
   overflow: hidden;
   text-shadow: none !important;
   opacity: 1 !important;
+}
+
+/* Top Reels Banner Tip */
+.sym-reels-top-tip {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  background: rgba(184, 80, 66, 0.08);
+  border: 1px dashed rgba(184, 80, 66, 0.35);
+  border-radius: 10px;
+  padding: 8px 10px;
+}
+
+.sym-reels-tip-fire {
+  font-size: 14px;
+  line-height: 1.3;
+  flex-shrink: 0;
+}
+
+.sym-reels-tip-text {
+  font-size: 12px;
+  line-height: 1.45;
+  color: #B85042;
+  font-weight: 500;
+}
+
+.sym-reels-tip-text strong {
+  color: #991b1b;
+  font-weight: 800;
 }
 
 /* Commission Breakdown Grid (Căn thẳng hàng tuyệt đối cột % và cột số tiền) */
@@ -1736,6 +1765,28 @@ body.dark .sym-tip-text {
 html[data-theme="dark"] .sym-tip-text strong,
 body.dark .sym-tip-text strong {
   color: #e2e8f0 !important;
+}
+
+/* Top Reels Tip in dark mode */
+html[data-theme="dark"] .sym-reels-top-tip,
+body.dark .sym-reels-top-tip {
+  background: rgba(184, 80, 66, 0.16) !important;
+  border-color: rgba(248, 113, 113, 0.4) !important;
+}
+
+html[data-theme="dark"] .sym-reels-tip-text,
+body.dark .sym-reels-tip-text {
+  color: #fca5a5 !important;
+}
+
+html[data-theme="dark"] .sym-reels-tip-text strong,
+body.dark .sym-reels-tip-text strong {
+  color: #fecaca !important;
+}
+
+html[data-theme="dark"] .sym-badge-reels-text,
+body.dark .sym-badge-reels-text {
+  color: #f87171 !important;
 }
 
 /* Loading & Error in dark mode */

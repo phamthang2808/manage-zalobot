@@ -8303,3 +8303,44 @@ html.dark .order-card-strip-cancelled,
 body.dark .order-card-strip-cancelled {
   background: rgba(148, 163, 184, 0.08) !important;
 }
+
+/* =========================================================================
+   DARK MODE CHO TAB CẤU HÌNH REELS (REELS CONFIG TAB)
+   ========================================================================= */
+html[data-theme="dark"] .reels-config-card,
+html.dark .reels-config-card,
+body.dark .reels-config-card {
+  background: #1e293b !important;
+  border-color: #334155 !important;
+  color: #f8fafc !important;
+}
+
+html[data-theme="dark"] .reels-config-card h2,
+html[data-theme="dark"] .reels-config-card h3,
+html.dark .reels-config-card h2,
+html.dark .reels-config-card h3,
+body.dark .reels-config-card h2,
+body.dark .reels-config-card h3 {
+  color: #f8fafc !important;
+}
+
+html[data-theme="dark"] .reels-config-card p,
+html.dark .reels-config-card p,
+body.dark .reels-config-card p {
+  color: #94a3b8 !important;
+}
+
+html[data-theme="dark"] .reels-config-subcard,
+html.dark .reels-config-subcard,
+body.dark .reels-config-subcard {
+  background: #0f172a !important;
+  border-color: #334155 !important;
+}
+
+html[data-theme="dark"] .reels-config-input,
+html.dark .reels-config-input,
+body.dark .reels-config-input {
+  background: #0f172a !important;
+  border-color: #334155 !important;
+  color: #f8fafc !important;
+}

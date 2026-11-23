@@ -693,61 +693,79 @@ export default function ConvertView() {
 
                 {/* HÀNG 2: MUA QUA REELS (Mua qua Reels bên trái & Sao chép link Reels bên phải, 2 nút bằng nhau 50-50) */}
                 {reelsActive && r.reelUrl && (
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '8px' }}>
-                    <a
-                      href={r.reelUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      style={{
-                        flex: 1,
-                        height: '34px',
-                        padding: '0 10px',
-                        fontSize: '12px',
-                        fontWeight: '700',
-                        borderRadius: '8px',
-                        border: '1px solid transparent',
-                        background: 'linear-gradient(135deg, #C88A7A, #B85042)',
-                        color: '#ffffff',
-                        textDecoration: 'none',
-                        boxSizing: 'border-box',
-                        display: 'inline-flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        gap: '6px',
-                        lineHeight: '1',
-                        boxShadow: '0 2px 6px rgba(184, 80, 66, 0.25)'
-                      }}
-                    >
-                      <i className="fa-brands fa-facebook"></i>
-                      <span>Mua qua Reels (+5% hoa hồng)</span>
-                    </a>
+                  <>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '8px' }}>
+                      <a
+                        href={r.reelUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        style={{
+                          flex: 1,
+                          height: '34px',
+                          padding: '0 10px',
+                          fontSize: '12px',
+                          fontWeight: '700',
+                          borderRadius: '8px',
+                          border: '1px solid transparent',
+                          background: 'linear-gradient(135deg, #C88A7A, #B85042)',
+                          color: '#ffffff',
+                          textDecoration: 'none',
+                          boxSizing: 'border-box',
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          gap: '6px',
+                          lineHeight: '1',
+                          boxShadow: '0 2px 6px rgba(184, 80, 66, 0.25)'
+                        }}
+                      >
+                        <i className="fa-brands fa-facebook"></i>
+                        <span>Mua qua Reels (+5% hoa hồng)</span>
+                      </a>
 
-                    <button
-                      type="button"
-                      onClick={() => {
-                        navigator.clipboard.writeText(r.reelUrl);
-                        showToast('Đã sao chép link Reels! 🎉', 'success');
-                      }}
-                      className="lookup-admin-link"
-                      style={{
-                        flex: 1,
-                        height: '34px',
-                        padding: '0 10px',
-                        fontSize: '12px',
-                        borderRadius: '8px',
-                        fontWeight: '600',
-                        boxSizing: 'border-box',
-                        display: 'inline-flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        gap: '5px',
-                        lineHeight: '1'
-                      }}
-                    >
-                      <i className="fa-solid fa-copy"></i>
-                      <span>Sao chép link Reels</span>
-                    </button>
-                  </div>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          navigator.clipboard.writeText(r.reelUrl);
+                          showToast('Đã sao chép link Reels! 🎉', 'success');
+                        }}
+                        className="lookup-admin-link"
+                        style={{
+                          flex: 1,
+                          height: '34px',
+                          padding: '0 10px',
+                          fontSize: '12px',
+                          borderRadius: '8px',
+                          fontWeight: '600',
+                          boxSizing: 'border-box',
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          gap: '5px',
+                          lineHeight: '1'
+                        }}
+                      >
+                        <i className="fa-solid fa-copy"></i>
+                        <span>Sao chép link Reels</span>
+                      </button>
+                    </div>
+
+                    <div style={{
+                      fontSize: '11px',
+                      color: 'var(--text-secondary, #64748b)',
+                      marginTop: '6px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '5px',
+                      padding: '4px 8px',
+                      background: 'rgba(184, 80, 66, 0.06)',
+                      borderRadius: '6px',
+                      border: '1px dashed rgba(184, 80, 66, 0.25)'
+                    }}>
+                      <i className="fa-solid fa-circle-info" style={{ color: '#B85042', fontSize: '11px', flexShrink: 0 }}></i>
+                      <span>Khi mở Facebook Reel, hãy chọn mục <strong>"Bình luận mới nhất"</strong> để thấy link mua của bạn ở đầu nhé!</span>
+                    </div>
+                  </>
                 )}
               </div>
             );

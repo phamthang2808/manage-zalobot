@@ -287,7 +287,7 @@ export function ProductLandingView({ code, apiRoot = "" }) {
             <div className="sym-reels-top-tip">
               <span className="sym-reels-tip-fire">🔥</span>
               <span className="sym-reels-tip-text">
-                <strong>Mẹo nhận thêm +5% hoa hồng:</strong> Mua qua <strong>Reels Facebook</strong> để hoa hồng sàn Shopee được tự động tăng từ <strong>2.5% lên 7.5%</strong> (hoa hồng Shop giữ nguyên)!
+                <strong>Mẹo nhận thêm +5% hoa hồng:</strong> Mua qua <strong>Reels Facebook</strong> để hoa hồng sàn Shopee được tự động tăng từ <strong>2.5% lên 7.5%</strong> (hoa hồng Shop giữ nguyên)! Khi mở video Reel, hãy chọn mục <strong>"Bình luận mới nhất"</strong> để bấm link mua nhé!
               </span>
             </div>
           )}
@@ -477,39 +477,49 @@ export function ProductLandingView({ code, apiRoot = "" }) {
 
             {/* Hàng 2: Mua qua Reels (+5% HH) + Copy link Reels (Chỉ hiện khi tính năng Reels BẬT) */}
             {isReelsEnabled && (
-              <div className="sym-action-row sym-action-row-reels">
-                <button type="button" className="sym-btn-cta-reels" onClick={handleOpenReel}>
-                  <div className="sym-cta-glow"></div>
-                  <div className="sym-cta-body">
-                    <div className="sym-cta-icon-box sym-icon-box-reels">
-                      <i className="fa-brands fa-facebook" style={{ fontSize: '13px', color: '#ffffff' }}></i>
+              <>
+                <div className="sym-action-row sym-action-row-reels">
+                  <button type="button" className="sym-btn-cta-reels" onClick={handleOpenReel}>
+                    <div className="sym-cta-glow"></div>
+                    <div className="sym-cta-body">
+                      <div className="sym-cta-icon-box sym-icon-box-reels">
+                        <i className="fa-brands fa-facebook" style={{ fontSize: '13px', color: '#ffffff' }}></i>
+                      </div>
+                      <span className="sym-cta-title-text">
+                        Mua qua Reels (+5% HH)
+                      </span>
+                      <i className="fa-solid fa-chevron-right sym-cta-arrow"></i>
                     </div>
-                    <span className="sym-cta-title-text">
-                      Mua qua Reels (+5% HH)
-                    </span>
-                    <i className="fa-solid fa-chevron-right sym-cta-arrow"></i>
-                  </div>
-                </button>
+                  </button>
 
-                <button 
-                  type="button" 
-                  className={`sym-btn-copy-reels-row ${copiedReel ? "is-copied" : ""}`} 
-                  onClick={handleCopyReelLink} 
-                  title="Sao chép link Reels"
-                >
-                  {copiedReel ? (
-                    <>
-                      <i className="fa-solid fa-check sym-copy-icon"></i>
-                      <span>Đã chép</span>
-                    </>
-                  ) : (
-                    <>
-                      <i className="fa-solid fa-copy sym-copy-icon"></i>
-                      <span>Copy link Reels</span>
-                    </>
-                  )}
-                </button>
-              </div>
+                  <button 
+                    type="button" 
+                    className={`sym-btn-copy-reels-row ${copiedReel ? "is-copied" : ""}`} 
+                    onClick={handleCopyReelLink} 
+                    title="Sao chép link Reels"
+                  >
+                    {copiedReel ? (
+                      <>
+                        <i className="fa-solid fa-check sym-copy-icon"></i>
+                        <span>Đã chép</span>
+                      </>
+                    ) : (
+                      <>
+                        <i className="fa-solid fa-copy sym-copy-icon"></i>
+                        <span>Copy link Reels</span>
+                      </>
+                    )}
+                  </button>
+                </div>
+
+                {/* Hướng dẫn chọn bình luận mới nhất khi mua qua Reels */}
+                <div className="sym-reels-hint-box">
+                  <i className="fa-solid fa-circle-info sym-reels-hint-icon"></i>
+                  <span className="sym-reels-hint-text">
+                    Khi mở Facebook Reel ➔ Bấm vào <strong>Bình luận</strong> ➔ Chọn mục <strong>"Bình luận mới nhất"</strong> để thấy link mua của bạn ở trên cùng nhé!
+                  </span>
+                </div>
+              </>
             )}
           </div>
         </div>
@@ -533,6 +543,12 @@ export function ProductLandingView({ code, apiRoot = "" }) {
               <span className="sym-tip-bullet">➔</span>
               <span className="sym-tip-text"><strong>Mua ngay (không xem Live/Video giữa chừng)</strong> nhé sếp ơi!</span>
             </div>
+            {isReelsEnabled && (
+              <div className="sym-tip-step sym-tip-step-reels">
+                <span className="sym-tip-bullet">🎬</span>
+                <span className="sym-tip-text"><strong>Mua qua Reels:</strong> Mở Reel ➔ Chọn <strong>"Bình luận mới nhất"</strong> ➔ Bấm link mua trong bình luận.</span>
+              </div>
+            )}
           </div>
         </div>
       </main>
@@ -984,6 +1000,37 @@ body {
 }
 
 .sym-reels-tip-text strong {
+  color: #991b1b;
+  font-weight: 800;
+}
+
+/* Reels Comment Guide Hint Box */
+.sym-reels-hint-box {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  background: rgba(184, 80, 66, 0.08);
+  border: 1px dashed rgba(184, 80, 66, 0.35);
+  border-radius: 8px;
+  padding: 6px 10px;
+  margin-top: 4px;
+}
+
+.sym-reels-hint-icon {
+  font-size: 11px;
+  color: #B85042;
+  margin-top: 2px;
+  flex-shrink: 0;
+}
+
+.sym-reels-hint-text {
+  font-size: 11px;
+  color: #B85042;
+  line-height: 1.45;
+  font-weight: 500;
+}
+
+.sym-reels-hint-text strong {
   color: #991b1b;
   font-weight: 800;
 }
@@ -1787,6 +1834,28 @@ body.dark .sym-reels-tip-text strong {
 html[data-theme="dark"] .sym-badge-reels-text,
 body.dark .sym-badge-reels-text {
   color: #f87171 !important;
+}
+
+/* Reels Hint Box in dark mode */
+html[data-theme="dark"] .sym-reels-hint-box,
+body.dark .sym-reels-hint-box {
+  background: rgba(184, 80, 66, 0.16) !important;
+  border-color: rgba(248, 113, 113, 0.4) !important;
+}
+
+html[data-theme="dark"] .sym-reels-hint-icon,
+body.dark .sym-reels-hint-icon {
+  color: #f87171 !important;
+}
+
+html[data-theme="dark"] .sym-reels-hint-text,
+body.dark .sym-reels-hint-text {
+  color: #fca5a5 !important;
+}
+
+html[data-theme="dark"] .sym-reels-hint-text strong,
+body.dark .sym-reels-hint-text strong {
+  color: #fecaca !important;
 }
 
 /* Loading & Error in dark mode */

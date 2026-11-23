@@ -287,7 +287,7 @@ export function ProductLandingView({ code, apiRoot = "" }) {
             <div className="sym-reels-top-tip">
               <span className="sym-reels-tip-fire">🔥</span>
               <span className="sym-reels-tip-text">
-                <strong>Mẹo nhận thêm +5% hoa hồng:</strong> Mua qua <strong>Reels Facebook</strong> để hoa hồng sàn Shopee được tự động tăng từ <strong>2.5% lên 7.5%</strong> (hoa hồng Shop giữ nguyên)! Khi mở video Reel, hãy chọn mục <strong>"Bình luận mới nhất"</strong> để bấm link mua nhé!
+                <strong>Mẹo nhận thêm +5% hoa hồng:</strong> Mua qua <strong>Reels Facebook</strong> để hoa hồng sàn Shopee được tự động tăng từ <strong>2.5% lên 7.5%</strong> (hoa hồng Shop giữ nguyên)!
               </span>
             </div>
           )}
@@ -543,12 +543,6 @@ export function ProductLandingView({ code, apiRoot = "" }) {
               <span className="sym-tip-bullet">➔</span>
               <span className="sym-tip-text"><strong>Mua ngay (không xem Live/Video giữa chừng)</strong> nhé sếp ơi!</span>
             </div>
-            {isReelsEnabled && (
-              <div className="sym-tip-step sym-tip-step-reels">
-                <span className="sym-tip-bullet">🎬</span>
-                <span className="sym-tip-text"><strong>Mua qua Reels:</strong> Mở Reel ➔ Chọn <strong>"Bình luận mới nhất"</strong> ➔ Bấm link mua trong bình luận.</span>
-              </div>
-            )}
           </div>
         </div>
       </main>
